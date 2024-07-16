@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <!--main-->
+    <color name="bg">#101010</color>
+    <color name="item">#171717</color>
+    <color name="point">#5828E1</color>
+    <color name="stroke">#202020</color>
+    <color name="hint">#7E7E7E</color>
+    <color name="text">#FFFFFFFF</color>
+
+    <!--dialog-->
+    <color name="dialog_bg">#2B2B33</color>
+    <color name="dialog_point">#8944BE</color>
+    <color name="dialog_hint">#B3B3B3</color>
+    <color name="dialog_cancel">#464650</color>
+
+</resources>
