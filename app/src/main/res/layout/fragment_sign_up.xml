@@ -19,7 +19,7 @@
             android:layout_height="wrap_content">
 
             <ImageView
-                android:id="@+id/iv_SignUp1"
+                android:id="@+id/iv_SignUp_Back"
                 android:layout_width="45dp"
                 android:layout_height="45dp"
                 android:layout_marginStart="20dp"
@@ -33,10 +33,10 @@
                 android:layout_height="18dp"
                 android:layout_marginEnd="3dp"
                 android:background="@drawable/ic_back"
-                app:layout_constraintBottom_toBottomOf="@+id/iv_SignUp1"
-                app:layout_constraintEnd_toEndOf="@+id/iv_SignUp1"
-                app:layout_constraintStart_toStartOf="@+id/iv_SignUp1"
-                app:layout_constraintTop_toTopOf="@+id/iv_SignUp1" />
+                app:layout_constraintBottom_toBottomOf="@+id/iv_SignUp_Back"
+                app:layout_constraintEnd_toEndOf="@+id/iv_SignUp_Back"
+                app:layout_constraintStart_toStartOf="@+id/iv_SignUp_Back"
+                app:layout_constraintTop_toTopOf="@+id/iv_SignUp_Back" />
 
             <TextView
                 android:id="@+id/tv_SignUp1"
@@ -47,9 +47,9 @@
                 android:textColor="@color/text"
                 android:textSize="35sp"
                 android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="@id/iv_SignUp1"
-                app:layout_constraintStart_toEndOf="@id/iv_SignUp1"
-                app:layout_constraintTop_toTopOf="@id/iv_SignUp1" />
+                app:layout_constraintBottom_toBottomOf="@id/iv_SignUp_Back"
+                app:layout_constraintStart_toEndOf="@id/iv_SignUp_Back"
+                app:layout_constraintTop_toTopOf="@id/iv_SignUp_Back" />
 
             <ImageView
                 android:id="@+id/iv_SignUp_Photo"
@@ -171,35 +171,35 @@
             android:textColor="@color/text"
             android:textSize="20sp"
             android:textStyle="bold"
-            app:layout_constraintBottom_toTopOf="@+id/tv_Login4" />
+            app:layout_constraintBottom_toBottomOf="parent" />
 
-        <TextView
-            android:id="@+id/tv_Login4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="25dp"
-            android:text="이미 계정이 있으신가요?"
-            android:textColor="@color/hint"
-            android:textSize="14sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/tv_Login_SignUp"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintHorizontal_chainStyle="packed"
-            app:layout_constraintStart_toStartOf="parent" />
+<!--        <TextView-->
+<!--            android:id="@+id/tv_Login4"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginBottom="25dp"-->
+<!--            android:text="이미 계정이 있으신가요?"-->
+<!--            android:textColor="@color/hint"-->
+<!--            android:textSize="14sp"-->
+<!--            app:layout_constraintBottom_toBottomOf="parent"-->
+<!--            app:layout_constraintEnd_toStartOf="@+id/tv_Login_SignUp"-->
+<!--            app:layout_constraintHorizontal_bias="0.5"-->
+<!--            app:layout_constraintHorizontal_chainStyle="packed"-->
+<!--            app:layout_constraintStart_toStartOf="parent" />-->
 
-        <TextView
-            android:id="@+id/tv_Login_SignUp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="7dp"
-            android:text="로그인"
-            android:textColor="@color/text"
-            android:textSize="14sp"
-            app:layout_constraintBottom_toBottomOf="@+id/tv_Login4"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/tv_Login4"
-            app:layout_constraintTop_toTopOf="@+id/tv_Login4" />
+<!--        <TextView-->
+<!--            android:id="@+id/tv_Login_SignUp"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginStart="7dp"-->
+<!--            android:text="로그인"-->
+<!--            android:textColor="@color/text"-->
+<!--            android:textSize="14sp"-->
+<!--            app:layout_constraintBottom_toBottomOf="@+id/tv_Login4"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintHorizontal_bias="0.5"-->
+<!--            app:layout_constraintStart_toEndOf="@+id/tv_Login4"-->
+<!--            app:layout_constraintTop_toTopOf="@+id/tv_Login4" />-->
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
