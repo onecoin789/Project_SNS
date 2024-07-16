@@ -1,12 +1,11 @@
 package com.example.project_sns
 
-import  android.os.Bundle
-import android.view.ViewGroup
-import android.widget.Button
+import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import com.example.project_sns.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -23,6 +22,9 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
+        window.apply {
+            WindowInsetsControllerCompat(this, this.decorView).isAppearanceLightStatusBars = false
+        }
 
 
     }
