@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg"
+    tools:context=".main.SettingFragment">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/iv_Setting_Back"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="25dp"
+                android:background="@drawable/item_btn_back"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:layout_marginEnd="3dp"
+                android:background="@drawable/ic_back"
+                app:layout_constraintBottom_toBottomOf="@+id/iv_Setting_Back"
+                app:layout_constraintEnd_toEndOf="@+id/iv_Setting_Back"
+                app:layout_constraintStart_toStartOf="@+id/iv_Setting_Back"
+                app:layout_constraintTop_toTopOf="@+id/iv_Setting_Back" />
+
+            <TextView
+                android:id="@+id/tv_Setting1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="25dp"
+                android:text="설정"
+                android:textColor="@color/text"
+                android:textSize="35sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@id/iv_Setting_Back"
+                app:layout_constraintStart_toEndOf="@id/iv_Setting_Back"
+                app:layout_constraintTop_toTopOf="@id/iv_Setting_Back" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/cl_Setting_Personal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="20dp"
+                android:layout_marginTop="50dp"
+                android:layout_marginHorizontal="5dp"
+                android:background="@drawable/item_list"
+                app:layout_constraintTop_toBottomOf="@id/tv_Setting1">
+
+                <ImageView
+                    android:id="@+id/iv_Setting1"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:background="@color/white"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="개인정보 처리방침"
+                    android:textColor="@color/text"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:layout_marginStart="30dp"
+                    app:layout_constraintTop_toTopOf="@id/iv_Setting1"
+                    app:layout_constraintBottom_toBottomOf="@id/iv_Setting1"
+                    app:layout_constraintStart_toEndOf="@id/iv_Setting1"/>
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:background="@drawable/ic_back"
+                    android:scaleX="-1"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/iv_Setting1"
+                    app:layout_constraintBottom_toBottomOf="@id/iv_Setting1"/>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/cl_Setting_Dark"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="20dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginHorizontal="5dp"
+                android:background="@drawable/item_list"
+                app:layout_constraintTop_toBottomOf="@id/cl_Setting_Personal">
+
+                <ImageView
+                    android:id="@+id/iv_Setting2"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:background="@color/white"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="다크모드 설정"
+                    android:textColor="@color/text"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:layout_marginStart="30dp"
+                    app:layout_constraintTop_toTopOf="@id/iv_Setting2"
+                    app:layout_constraintBottom_toBottomOf="@id/iv_Setting2"
+                    app:layout_constraintStart_toEndOf="@id/iv_Setting2"/>
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:background="@drawable/ic_back"
+                    android:scaleX="-1"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/iv_Setting2"
+                    app:layout_constraintBottom_toBottomOf="@id/iv_Setting2"/>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/cl_Setting_Info"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="20dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginHorizontal="5dp"
+                android:background="@drawable/item_list"
+                app:layout_constraintTop_toBottomOf="@id/cl_Setting_Dark">
+
+                <ImageView
+                    android:id="@+id/iv_Setting3"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:background="@color/white"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="고객센터"
+                    android:textColor="@color/text"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:layout_marginStart="30dp"
+                    app:layout_constraintTop_toTopOf="@id/iv_Setting3"
+                    app:layout_constraintBottom_toBottomOf="@id/iv_Setting3"
+                    app:layout_constraintStart_toEndOf="@id/iv_Setting3"/>
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:background="@drawable/ic_back"
+                    android:scaleX="-1"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/iv_Setting3"
+                    app:layout_constraintBottom_toBottomOf="@id/iv_Setting3"/>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/cl_Setting_Leave"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="20dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginHorizontal="5dp"
+                android:background="@drawable/item_list"
+                app:layout_constraintTop_toBottomOf="@id/cl_Setting_Info">
+
+                <ImageView
+                    android:id="@+id/iv_Setting4"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:background="@color/white"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="회원탈퇴"
+                    android:textColor="@color/text"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:layout_marginStart="30dp"
+                    app:layout_constraintTop_toTopOf="@id/iv_Setting4"
+                    app:layout_constraintBottom_toBottomOf="@id/iv_Setting4"
+                    app:layout_constraintStart_toEndOf="@id/iv_Setting4"/>
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:background="@drawable/ic_back"
+                    android:scaleX="-1"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/iv_Setting4"
+                    app:layout_constraintBottom_toBottomOf="@id/iv_Setting4"/>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/cl_Setting_Logout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="20dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginHorizontal="5dp"
+                android:background="@drawable/item_list"
+                app:layout_constraintTop_toBottomOf="@id/cl_Setting_Leave">
+
+                <ImageView
+                    android:id="@+id/iv_Setting5"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:background="@color/white"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="로그아웃"
+                    android:textColor="@color/text"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:layout_marginStart="30dp"
+                    app:layout_constraintTop_toTopOf="@id/iv_Setting5"
+                    app:layout_constraintBottom_toBottomOf="@id/iv_Setting5"
+                    app:layout_constraintStart_toEndOf="@id/iv_Setting5"/>
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:background="@drawable/ic_back"
+                    android:scaleX="-1"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/iv_Setting5"
+                    app:layout_constraintBottom_toBottomOf="@id/iv_Setting5"/>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="ver. release"
+        android:textSize="16sp"
+        android:textColor="@color/hint"
+        android:layout_margin="5dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
