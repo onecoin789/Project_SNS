@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg"
+    tools:context=".main.MyProfileFragment">
+
+    <ImageView
+        android:id="@+id/iv_My_Setting"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_margin="10dp"
+        android:background="@drawable/ic_setting"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        app:layout_constraintTop_toBottomOf="@id/iv_My_Setting">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/cl_My_Profile"
+                android:layout_width="110dp"
+                android:layout_height="110dp"
+                android:layout_marginStart="30dp"
+                android:background="@drawable/item_btn_point"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <ImageView
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_margin="35dp"
+                    android:background="@drawable/ic_main"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <TextView
+                android:id="@+id/tv_My_Name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="25dp"
+                android:layout_marginTop="10dp"
+                android:text="name"
+                android:textColor="@color/text"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toEndOf="@id/cl_My_Profile"
+                app:layout_constraintTop_toTopOf="@id/cl_My_Profile" />
+
+            <TextView
+                android:id="@+id/tv_My_Email"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="email@email.com"
+                android:textColor="@color/text"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/tv_My_Name"
+                app:layout_constraintTop_toBottomOf="@+id/tv_My_Name" />
+
+            <TextView
+                android:id="@+id/tv_My_Intro"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="한줄 소개"
+                android:textColor="@color/text"
+                android:textSize="15sp"
+                app:layout_constraintStart_toStartOf="@id/tv_My_Email"
+                app:layout_constraintTop_toBottomOf="@id/tv_My_Email" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_My_Edit"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="50dp"
+                android:layout_marginEnd="15dp"
+                android:background="@drawable/item_btn_ripple"
+                android:text="프로필 수정"
+                android:textColor="@color/text"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toStartOf="@+id/btn_My_Friend"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/cl_My_Profile" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_My_Friend"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="50dp"
+                android:layout_marginEnd="15dp"
+                android:background="@drawable/item_btn_ripple"
+                android:text="친구 목록"
+                android:textColor="@color/text"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/btn_My_Edit"
+                app:layout_constraintTop_toBottomOf="@id/cl_My_Profile" />
+
+            <TextView
+                android:id="@+id/tv_My_Number"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="9"
+                android:textColor="@color/text"
+                android:textSize="25sp"
+                android:textStyle="bold"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="30dp"
+                app:layout_constraintTop_toBottomOf="@id/btn_My_Edit"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <TextView
+                android:id="@+id/tv_My1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="개"
+                android:textColor="@color/text"
+                android:textSize="22sp"
+                android:textStyle="bold"
+                android:layout_marginStart="3dp"
+                app:layout_constraintTop_toTopOf="@id/tv_My_Number"
+                app:layout_constraintBottom_toBottomOf="@id/tv_My_Number"
+                app:layout_constraintStart_toEndOf="@id/tv_My_Number" />
+
+            <TextView
+                android:id="@+id/tv_My2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="게시글"
+                android:textColor="@color/hint"
+                android:textSize="22sp"
+                android:textStyle="bold"
+                app:layout_constraintTop_toBottomOf="@id/tv_My_Number"
+                app:layout_constraintStart_toStartOf="@id/tv_My_Number" />
+
+            <ImageView
+                android:id="@+id/iv_My_Add"
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:layout_marginEnd="10dp"
+                android:background="@drawable/ic_add"
+                app:layout_constraintEnd_toStartOf="@id/iv_My_Delete"
+                app:layout_constraintTop_toTopOf="@+id/tv_My1"
+                app:layout_constraintBottom_toBottomOf="@id/tv_My2" />
+
+            <ImageView
+                android:id="@+id/iv_My_Delete"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:layout_marginEnd="20dp"
+                android:background="@drawable/ic_delete"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/tv_My1"
+                app:layout_constraintBottom_toBottomOf="@id/tv_My2" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_My"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                android:layout_marginTop="30dp"
+                app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                tools:listitem="@layout/rv_item_my_post"
+                app:spanCount="3"
+                app:layout_constraintTop_toBottomOf="@id/tv_My2" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

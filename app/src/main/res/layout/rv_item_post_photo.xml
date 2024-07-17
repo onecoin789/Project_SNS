@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl_Item_Home_T"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:background="@color/bg"
+        android:padding="10dp"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/iv_Item_Home_User"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:background="@drawable/ic_user_fill"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_Item_Home_Name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:text="name"
+            android:textColor="@color/text"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@+id/tv_Item_Home_Email"
+            app:layout_constraintStart_toEndOf="@id/iv_Item_Home_User"
+            app:layout_constraintTop_toTopOf="@id/iv_Item_Home_User"
+            app:layout_constraintVertical_chainStyle="packed" />
+
+        <TextView
+            android:id="@+id/tv_Item_Home_Email"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="email@email.com"
+            android:textColor="@color/hint"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="@id/iv_Item_Home_User"
+            app:layout_constraintStart_toStartOf="@+id/tv_Item_Home_Name"
+            app:layout_constraintTop_toBottomOf="@+id/tv_Item_Home_Name" />
+
+        <ImageView
+            android:id="@+id/iv_Item_Home"
+            android:layout_width="match_parent"
+            android:layout_height="350dp"
+            android:layout_marginTop="10dp"
+            android:scaleType="centerCrop"
+            android:background="@color/hint"
+            app:layout_constraintTop_toBottomOf="@+id/iv_Item_Home_User"/>
+
+        <ImageView
+            android:id="@+id/iv_Item_Home_Heart"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="5dp"
+            android:background="@drawable/ic_heart"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/iv_Item_Home"/>
+
+        <ImageView
+            android:id="@+id/iv_Item_Home_Share"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginStart="10dp"
+            android:background="@drawable/ic_share"
+            app:layout_constraintStart_toEndOf="@id/iv_Item_Home_Heart"
+            app:layout_constraintTop_toTopOf="@id/iv_Item_Home_Heart"
+            app:layout_constraintBottom_toBottomOf="@+id/iv_Item_Home_Heart"/>
+
+        <TextView
+            android:id="@+id/tv_Item_Home_Post"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/text"
+            android:textSize="17sp"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="5dp"
+            android:maxLines="2"
+            android:text="asdasdasdasdasdasdasd"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/iv_Item_Home_Heart"
+            app:layout_constraintStart_toStartOf="parent"/>
+
+        <TextView
+            android:id="@+id/tv_Item_Home_Comment"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/hint"
+            android:textSize="16sp"
+            android:layout_marginTop="5dp"
+            android:layout_marginStart="1dp"
+            android:text="댓글 보기"
+            app:layout_constraintTop_toBottomOf="@+id/tv_Item_Home_Post"
+            app:layout_constraintStart_toStartOf="@+id/tv_Item_Home_Post"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
