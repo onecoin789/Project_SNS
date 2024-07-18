@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/bg"
-    tools:context=".main.MyProfileFragment">
+    tools:context=".profile.MyProfileFragment">
 
     <ImageView
         android:id="@+id/iv_My_Setting"
@@ -14,7 +14,8 @@
         android:layout_margin="10dp"
         android:background="@drawable/ic_setting"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:contentDescription="@string/contentDescription"/>
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
@@ -43,7 +44,8 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:contentDescription="@string/contentDescription"/>
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <TextView
@@ -90,7 +92,7 @@
                 android:layout_marginTop="50dp"
                 android:layout_marginEnd="15dp"
                 android:background="@drawable/item_btn_ripple"
-                android:text="프로필 수정"
+                android:text="@string/my_profile"
                 android:textColor="@color/text"
                 android:textSize="16sp"
                 android:textStyle="bold"
@@ -107,7 +109,7 @@
                 android:layout_marginTop="50dp"
                 android:layout_marginEnd="15dp"
                 android:background="@drawable/item_btn_ripple"
-                android:text="친구 목록"
+                android:text="@string/my_friend"
                 android:textColor="@color/text"
                 android:textSize="16sp"
                 android:textStyle="bold"
@@ -133,7 +135,7 @@
                 android:id="@+id/tv_My1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="개"
+                android:text="@string/my_number"
                 android:textColor="@color/text"
                 android:textSize="22sp"
                 android:textStyle="bold"
@@ -146,7 +148,7 @@
                 android:id="@+id/tv_My2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="게시글"
+                android:text="@string/my_post"
                 android:textColor="@color/hint"
                 android:textSize="22sp"
                 android:textStyle="bold"
@@ -161,7 +163,8 @@
                 android:background="@drawable/ic_add"
                 app:layout_constraintEnd_toStartOf="@id/iv_My_Delete"
                 app:layout_constraintTop_toTopOf="@+id/tv_My1"
-                app:layout_constraintBottom_toBottomOf="@id/tv_My2" />
+                app:layout_constraintBottom_toBottomOf="@id/tv_My2"
+                android:contentDescription="@string/contentDescription"/>
 
             <ImageView
                 android:id="@+id/iv_My_Delete"
@@ -171,7 +174,8 @@
                 android:background="@drawable/ic_delete"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/tv_My1"
-                app:layout_constraintBottom_toBottomOf="@id/tv_My2" />
+                app:layout_constraintBottom_toBottomOf="@id/tv_My2"
+                android:contentDescription="@string/contentDescription"/>
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_My"

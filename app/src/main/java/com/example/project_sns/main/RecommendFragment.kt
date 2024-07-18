@@ -6,14 +6,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.example.project_sns.R
-import com.example.project_sns.databinding.FragmentMyProfileBinding
+import com.example.project_sns.databinding.FragmentRecommendBinding
 
 
-class MyProfileFragment : Fragment() {
+class RecommendFragment : Fragment() {
 
-    private var _binding : FragmentMyProfileBinding? = null
+    private var _binding : FragmentRecommendBinding? = null
     private val binding get() = _binding!!
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -23,8 +22,7 @@ class MyProfileFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-       _binding = FragmentMyProfileBinding.inflate(inflater, container, false)
-
+        _binding = FragmentRecommendBinding.inflate(inflater, container, false)
 
         return binding.root
     }

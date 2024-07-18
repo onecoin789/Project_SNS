@@ -18,9 +18,11 @@
         android:padding="18dp"
         android:textSize="17sp"
         android:background="@drawable/item_edittext"
-        android:hint="이메일 or 키워드를 입력해주세요."
+        android:hint="@string/search_text"
         android:textColor="@color/text"
         android:textColorHint="@color/hint"
+        android:autofillHints="no"
+        android:inputType="text"
         app:layout_constraintTop_toTopOf="parent"/>
 
     <ImageView
@@ -31,7 +33,8 @@
         android:background="@drawable/ic_x_circle"
         app:layout_constraintTop_toTopOf="@+id/et_Search"
         app:layout_constraintBottom_toBottomOf="@+id/et_Search"
-        app:layout_constraintEnd_toEndOf="@+id/et_Search"/>
+        app:layout_constraintEnd_toEndOf="@+id/et_Search"
+        android:contentDescription="@string/contentDescription"/>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/cl_Search_T"
@@ -50,7 +53,8 @@
             android:layout_height="55dp"
             android:background="@drawable/item_btn_back"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            android:contentDescription="@string/contentDescription"/>
 
         <ImageView
             android:layout_width="30dp"
@@ -59,13 +63,13 @@
             app:layout_constraintBottom_toBottomOf="@+id/iv_Search"
             app:layout_constraintEnd_toEndOf="@+id/iv_Search"
             app:layout_constraintStart_toStartOf="@+id/iv_Search"
-            app:layout_constraintTop_toTopOf="@+id/iv_Search" />
+            app:layout_constraintTop_toTopOf="@+id/iv_Search"
+            android:contentDescription="@string/contentDescription"/>
 
         <TextView
             android:id="@+id/tv_Search_Word"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="'키워드'"
             android:textColor="@color/text"
             android:textSize="18sp"
             android:textStyle="bold"
@@ -77,7 +81,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="에 대한 검색"
+            android:text="@string/search_text2"
             android:textColor="@color/text"
             android:textSize="18sp"
             android:layout_marginStart="5dp"

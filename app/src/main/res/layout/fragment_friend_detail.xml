@@ -15,7 +15,8 @@
         android:layout_marginTop="25dp"
         android:background="@drawable/item_btn_back"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:contentDescription="@string/contentDescription"/>
 
     <ImageView
         android:layout_width="18dp"
@@ -25,7 +26,8 @@
         app:layout_constraintBottom_toBottomOf="@+id/iv_FD_Back"
         app:layout_constraintEnd_toEndOf="@+id/iv_FD_Back"
         app:layout_constraintStart_toStartOf="@+id/iv_FD_Back"
-        app:layout_constraintTop_toTopOf="@+id/iv_FD_Back" />
+        app:layout_constraintTop_toTopOf="@+id/iv_FD_Back"
+        android:contentDescription="@string/contentDescription"/>
 
     <ImageView
         android:id="@+id/iv_FD_Like"
@@ -35,7 +37,8 @@
         android:layout_marginTop="25dp"
         android:background="@drawable/ic_star"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintEnd_toEndOf="parent"
+        android:contentDescription="@string/contentDescription"/>
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
@@ -64,7 +67,8 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:contentDescription="@string/contentDescription"/>
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <TextView
@@ -111,7 +115,7 @@
                 android:layout_marginTop="50dp"
                 android:layout_marginEnd="15dp"
                 android:background="@drawable/item_btn_ripple"
-                android:text="친구 요청"
+                android:text="@string/my_request"
                 android:textColor="@color/text"
                 android:textSize="16sp"
                 android:textStyle="bold"
@@ -128,7 +132,7 @@
                 android:layout_marginTop="50dp"
                 android:layout_marginEnd="15dp"
                 android:background="@drawable/item_btn_ripple"
-                android:text="메세지 보내기"
+                android:text="@string/my_message"
                 android:textColor="@color/text"
                 android:textSize="16sp"
                 android:textStyle="bold"
@@ -155,7 +159,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="3dp"
-                android:text="개"
+                android:text="@string/my_number"
                 android:textColor="@color/text"
                 android:textSize="22sp"
                 android:textStyle="bold"
@@ -167,32 +171,13 @@
                 android:id="@+id/tv_FD2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="게시글"
+                android:text="@string/my_post"
                 android:textColor="@color/hint"
                 android:textSize="22sp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="@id/tv_FD_Number"
                 app:layout_constraintTop_toBottomOf="@id/tv_FD_Number" />
 
-            <ImageView
-                android:id="@+id/iv_FD_Add"
-                android:layout_width="43dp"
-                android:layout_height="43dp"
-                android:layout_marginEnd="10dp"
-                android:background="@drawable/ic_add"
-                app:layout_constraintBottom_toBottomOf="@id/tv_FD2"
-                app:layout_constraintEnd_toStartOf="@id/iv_FD_Delete"
-                app:layout_constraintTop_toTopOf="@+id/tv_FD1" />
-
-            <ImageView
-                android:id="@+id/iv_FD_Delete"
-                android:layout_width="45dp"
-                android:layout_height="45dp"
-                android:layout_marginEnd="20dp"
-                android:background="@drawable/ic_delete"
-                app:layout_constraintBottom_toBottomOf="@id/tv_FD2"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/tv_FD1" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_FD"

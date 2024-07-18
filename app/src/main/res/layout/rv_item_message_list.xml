@@ -19,14 +19,14 @@
             android:layout_height="60dp"
             android:background="@drawable/ic_user_fill"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            android:contentDescription="@string/contentDescription"/>
 
         <TextView
             android:id="@+id/tv_Item_List_Name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="15dp"
-            android:text="name"
             android:textColor="@color/text"
             android:textSize="20sp"
             android:textStyle="bold"
@@ -38,7 +38,7 @@
             android:id="@+id/tv_Item_List"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="마지막으로 전송한 시각"
+            android:text="@string/item_time"
             android:textColor="@color/hint"
             android:textSize="18sp"
             android:layout_marginTop="20dp"
@@ -49,7 +49,6 @@
             android:id="@+id/tv_Item_List_Time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="11:11"
             android:textColor="@color/hint"
             android:textSize="18sp"
             android:layout_marginStart="15dp"

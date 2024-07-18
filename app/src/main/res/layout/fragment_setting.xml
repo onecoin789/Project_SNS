@@ -25,7 +25,8 @@
                 android:layout_marginTop="25dp"
                 android:background="@drawable/item_btn_back"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                android:contentDescription="@string/contentDescription"/>
 
             <ImageView
                 android:layout_width="18dp"
@@ -35,14 +36,15 @@
                 app:layout_constraintBottom_toBottomOf="@+id/iv_Setting_Back"
                 app:layout_constraintEnd_toEndOf="@+id/iv_Setting_Back"
                 app:layout_constraintStart_toStartOf="@+id/iv_Setting_Back"
-                app:layout_constraintTop_toTopOf="@+id/iv_Setting_Back" />
+                app:layout_constraintTop_toTopOf="@+id/iv_Setting_Back"
+                android:contentDescription="@string/contentDescription"/>
 
             <TextView
                 android:id="@+id/tv_Setting1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="25dp"
-                android:text="설정"
+                android:text="@string/setting"
                 android:textColor="@color/text"
                 android:textSize="35sp"
                 android:textStyle="bold"
@@ -67,12 +69,13 @@
                     android:background="@drawable/ic_lock"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"/>
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:contentDescription="@string/contentDescription"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="개인정보 처리방침"
+                    android:text="@string/setting_personal"
                     android:textColor="@color/text"
                     android:textStyle="bold"
                     android:textSize="16sp"
@@ -88,7 +91,8 @@
                     android:scaleX="-1"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@id/iv_Setting1"
-                    app:layout_constraintBottom_toBottomOf="@id/iv_Setting1"/>
+                    app:layout_constraintBottom_toBottomOf="@id/iv_Setting1"
+                    android:contentDescription="@string/contentDescription"/>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -109,12 +113,13 @@
                     android:background="@drawable/ic_moon"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"/>
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:contentDescription="@string/contentDescription"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="다크모드 설정"
+                    android:text="@string/setting_mode"
                     android:textColor="@color/text"
                     android:textStyle="bold"
                     android:textSize="16sp"
@@ -130,7 +135,8 @@
                     android:scaleX="-1"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@id/iv_Setting2"
-                    app:layout_constraintBottom_toBottomOf="@id/iv_Setting2"/>
+                    app:layout_constraintBottom_toBottomOf="@id/iv_Setting2"
+                    android:contentDescription="@string/contentDescription"/>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -151,12 +157,13 @@
                     android:background="@drawable/ic_info"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"/>
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:contentDescription="@string/contentDescription"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="고객센터"
+                    android:text="@string/setting_info"
                     android:textColor="@color/text"
                     android:textStyle="bold"
                     android:textSize="16sp"
@@ -172,7 +179,8 @@
                     android:scaleX="-1"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@id/iv_Setting3"
-                    app:layout_constraintBottom_toBottomOf="@id/iv_Setting3"/>
+                    app:layout_constraintBottom_toBottomOf="@id/iv_Setting3"
+                    android:contentDescription="@string/contentDescription"/>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -193,12 +201,13 @@
                     android:background="@drawable/ic_leave"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"/>
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:contentDescription="@string/contentDescription"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="회원탈퇴"
+                    android:text="@string/setting_leave"
                     android:textColor="@color/text"
                     android:textStyle="bold"
                     android:textSize="16sp"
@@ -214,7 +223,8 @@
                     android:scaleX="-1"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@id/iv_Setting4"
-                    app:layout_constraintBottom_toBottomOf="@id/iv_Setting4"/>
+                    app:layout_constraintBottom_toBottomOf="@id/iv_Setting4"
+                    android:contentDescription="@string/contentDescription"/>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -235,12 +245,13 @@
                     android:background="@drawable/ic_logout"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"/>
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:contentDescription="@string/contentDescription"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="로그아웃"
+                    android:text="@string/setting_logout"
                     android:textColor="@color/text"
                     android:textStyle="bold"
                     android:textSize="16sp"
@@ -256,7 +267,8 @@
                     android:scaleX="-1"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@id/iv_Setting5"
-                    app:layout_constraintBottom_toBottomOf="@id/iv_Setting5"/>
+                    app:layout_constraintBottom_toBottomOf="@id/iv_Setting5"
+                    android:contentDescription="@string/contentDescription"/>
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -265,7 +277,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="ver. release"
+        android:text="@string/setting_ver"
         android:textSize="16sp"
         android:textColor="@color/hint"
         android:layout_margin="5dp"

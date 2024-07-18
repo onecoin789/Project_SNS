@@ -15,7 +15,8 @@
         android:layout_marginTop="25dp"
         android:background="@drawable/item_btn_back"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:contentDescription="@string/contentDescription"/>
 
     <ImageView
         android:layout_width="18dp"
@@ -25,14 +26,15 @@
         app:layout_constraintBottom_toBottomOf="@+id/iv_Chat_List_Back"
         app:layout_constraintEnd_toEndOf="@+id/iv_Chat_List_Back"
         app:layout_constraintStart_toStartOf="@+id/iv_Chat_List_Back"
-        app:layout_constraintTop_toTopOf="@+id/iv_Chat_List_Back" />
+        app:layout_constraintTop_toTopOf="@+id/iv_Chat_List_Back"
+        android:contentDescription="@string/contentDescription"/>
 
     <TextView
         android:id="@+id/tv_Chat_List1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="25dp"
-        android:text="메시지"
+        android:text="@string/message"
         android:textColor="@color/text"
         android:textSize="35sp"
         android:textStyle="bold"
