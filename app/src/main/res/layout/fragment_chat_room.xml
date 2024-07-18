@@ -22,13 +22,14 @@
             android:background="@drawable/ic_back"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            android:contentDescription="@string/contentDescription"/>
 
         <TextView
             android:id="@+id/tv_Chat_Room_Name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="name"
+            android:text=""
             android:textColor="@color/text"
             android:textSize="25sp"
             android:textStyle="bold"
@@ -40,7 +41,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
-            android:text="email@email.com"
+            android:text=""
             android:textColor="@color/hint"
             android:textSize="15sp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -76,12 +77,14 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="5dp"
             android:background="@drawable/item_edittext_radius"
-            android:hint="메세지를 입력해주세요."
+            android:hint="@string/chat_text"
             android:paddingVertical="15dp"
             android:paddingStart="25dp"
             android:paddingEnd="0dp"
             android:textColor="@color/text"
             android:textColorHint="@color/hint"
+            android:autofillHints="no"
+            android:inputType="text"
             app:layout_constraintBottom_toBottomOf="parent" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -103,7 +106,8 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                android:contentDescription="@string/contentDescription"/>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -129,7 +133,8 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            android:contentDescription="@string/contentDescription"/>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
 

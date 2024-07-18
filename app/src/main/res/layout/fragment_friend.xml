@@ -15,7 +15,8 @@
         android:layout_marginTop="25dp"
         android:background="@drawable/item_btn_back"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:contentDescription="@string/contentDescription"/>
 
     <ImageView
         android:layout_width="18dp"
@@ -25,14 +26,15 @@
         app:layout_constraintBottom_toBottomOf="@+id/iv_Friend_Back"
         app:layout_constraintEnd_toEndOf="@+id/iv_Friend_Back"
         app:layout_constraintStart_toStartOf="@+id/iv_Friend_Back"
-        app:layout_constraintTop_toTopOf="@+id/iv_Friend_Back" />
+        app:layout_constraintTop_toTopOf="@+id/iv_Friend_Back"
+        android:contentDescription="@string/contentDescription"/>
 
     <TextView
         android:id="@+id/tv_Friend1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="25dp"
-        android:text="친구 목록"
+        android:text="@string/friend"
         android:textColor="@color/text"
         android:textSize="35sp"
         android:textStyle="bold"
@@ -48,13 +50,15 @@
         android:layout_marginTop="20dp"
         android:layout_marginEnd="10dp"
         android:background="@drawable/item_edittext"
-        android:hint="친구의 이름이나 이메일을 입력해주세요."
+        android:hint="@string/friend_text"
         android:paddingVertical="15dp"
         android:paddingStart="20dp"
         android:paddingEnd="0dp"
         android:textColor="@color/text"
         android:textColorHint="@color/hint"
         android:textSize="15sp"
+        android:autofillHints="no"
+        android:inputType="text"
         app:layout_constraintTop_toBottomOf="@id/tv_Friend1" />
 
     <ImageView
@@ -65,7 +69,8 @@
         android:background="@drawable/ic_x_circle"
         app:layout_constraintBottom_toBottomOf="@+id/et_Friend"
         app:layout_constraintEnd_toEndOf="@+id/et_Friend"
-        app:layout_constraintTop_toTopOf="@+id/et_Friend" />
+        app:layout_constraintTop_toTopOf="@+id/et_Friend"
+        android:contentDescription="@string/contentDescription"/>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"

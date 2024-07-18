@@ -15,7 +15,8 @@
         android:layout_margin="10dp"
         android:background="@drawable/ic_message"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:contentDescription="@string/contentDescription"/>
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
@@ -33,7 +34,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
-                android:text="오늘의 추천 운동"
+                android:text="@string/home_today"
                 android:textColor="@color/text"
                 android:textSize="23sp"
                 android:textStyle="bold"
@@ -63,8 +64,8 @@
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:id="@+id/cl_Home1"
-                        android:layout_width="100dp"
-                        android:layout_height="100dp"
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
                         android:background="@drawable/item_edittext"
                         android:backgroundTint="@color/white"
                         app:layout_constraintStart_toStartOf="parent"
@@ -78,14 +79,15 @@
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent" />
+                            app:layout_constraintTop_toTopOf="parent"
+                            android:contentDescription="@string/contentDescription"/>
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="초급자"
+                        android:text="@string/home_low"
                         android:textColor="@color/text"
                         android:textSize="18sp"
                         android:textStyle="bold"
@@ -105,8 +107,8 @@
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:id="@+id/cl_Home2"
-                        android:layout_width="100dp"
-                        android:layout_height="100dp"
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
                         android:background="@drawable/item_edittext"
                         android:backgroundTint="@color/white"
                         app:layout_constraintStart_toStartOf="parent"
@@ -120,14 +122,15 @@
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent" />
+                            app:layout_constraintTop_toTopOf="parent"
+                            android:contentDescription="@string/contentDescription"/>
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="중급자"
+                        android:text="@string/home_middle"
                         android:textColor="@color/text"
                         android:textSize="18sp"
                         android:textStyle="bold"
@@ -147,8 +150,8 @@
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:id="@+id/cl_Home3"
-                        android:layout_width="100dp"
-                        android:layout_height="100dp"
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
                         android:background="@drawable/item_edittext"
                         android:backgroundTint="@color/white"
                         app:layout_constraintStart_toStartOf="parent"
@@ -162,14 +165,15 @@
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent" />
+                            app:layout_constraintTop_toTopOf="parent"
+                            android:contentDescription="@string/contentDescription"/>
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="상급자"
+                        android:text="@string/home_high"
                         android:textColor="@color/text"
                         android:textSize="18sp"
                         android:textStyle="bold"

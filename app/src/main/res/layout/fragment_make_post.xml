@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg"
+    tools:context=".profile.MakePostFragment">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/iv_Make_Back"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="25dp"
+                android:background="@drawable/item_btn_back"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:contentDescription="@string/contentDescription"/>
+
+            <ImageView
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:layout_marginEnd="3dp"
+                android:background="@drawable/ic_back"
+                app:layout_constraintBottom_toBottomOf="@+id/iv_Make_Back"
+                app:layout_constraintEnd_toEndOf="@+id/iv_Make_Back"
+                app:layout_constraintStart_toStartOf="@+id/iv_Make_Back"
+                app:layout_constraintTop_toTopOf="@+id/iv_Make_Back"
+                android:contentDescription="@string/contentDescription"/>
+
+            <TextView
+                android:id="@+id/tv_Make1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="25dp"
+                android:text="@string/post_add"
+                android:textColor="@color/text"
+                android:textSize="35sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@id/iv_Make_Back"
+                app:layout_constraintStart_toEndOf="@id/iv_Make_Back"
+                app:layout_constraintTop_toTopOf="@id/iv_Make_Back" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/cl_Make_Photo"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginHorizontal="30dp"
+                android:layout_marginTop="70dp"
+                android:background="@drawable/item_btn_point"
+                android:padding="140dp"
+                app:layout_constraintDimensionRatio="1:1"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tv_Make1">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/ic_photo"
+                    app:layout_constraintBottom_toBottomOf="@id/cl_Make_Photo"
+                    app:layout_constraintDimensionRatio="1:1"
+                    app:layout_constraintEnd_toEndOf="@id/cl_Make_Photo"
+                    app:layout_constraintStart_toStartOf="@id/cl_Make_Photo"
+                    app:layout_constraintTop_toTopOf="@+id/cl_Make_Photo"
+                    android:contentDescription="@string/contentDescription"/>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <TextView
+                android:id="@+id/tv_Make2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="20dp"
+                android:text="@string/post_add1"
+                android:textColor="@color/text"
+                android:textSize="17sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/cl_Make_Photo" />
+
+            <EditText
+                android:id="@+id/et_Make_Text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="10dp"
+                android:layout_marginTop="5dp"
+                android:background="@drawable/item_edittext"
+                android:hint="@string/post_add_text"
+                android:padding="20dp"
+                android:textColorHint="@color/hint"
+                android:textSize="16sp"
+                android:autofillHints="no"
+                android:inputType="text"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_Make2" />
+
+            <TextView
+                android:id="@+id/tv_Make3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="20dp"
+                android:text="@string/post_add_location"
+                android:textColor="@color/text"
+                android:textSize="17sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/et_Make_Text" />
+
+            <EditText
+                android:id="@+id/et_Make_Location"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="10dp"
+                android:layout_marginTop="5dp"
+                android:background="@drawable/item_edittext"
+                android:hint="@string/post_add_location_text"
+                android:padding="20dp"
+                android:textColorHint="@color/hint"
+                android:textSize="16sp"
+                android:autofillHints="no"
+                android:inputType="text"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_Make3" />
+
+            <androidx.fragment.app.FragmentContainerView
+                android:id="@+id/fc_Make_Map"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginTop="30dp"
+                android:layout_marginHorizontal="20dp"
+                app:layout_constraintDimensionRatio="1:1"
+                app:layout_constraintTop_toBottomOf="@id/et_Make_Location"/>
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_Make_Confirm"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginVertical="25dp"
+                android:background="@drawable/item_btn_ripple"
+                android:padding="12dp"
+                android:text="@string/post_add_confirm"
+                android:textColor="@color/text"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                app:layout_constraintTop_toBottomOf="@id/fc_Make_Map"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
