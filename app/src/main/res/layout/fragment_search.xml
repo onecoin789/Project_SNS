@@ -5,7 +5,7 @@
     android:background="@color/bg"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".main.SearchFragment">
+    tools:context=".ui.main.search.SearchFragment">
 
 
     <EditText

@@ -1,4 +1,4 @@
-package com.example.project_sns.main
+package com.example.project_sns.ui.main
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -6,13 +6,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.example.project_sns.R
-import com.example.project_sns.databinding.FragmentEditBinding
+import com.example.project_sns.databinding.FragmentRecommendBinding
 
-class EditFragment : Fragment() {
 
-    private var _binding : FragmentEditBinding? = null
+class RecommendFragment : Fragment() {
+
+    private var _binding : FragmentRecommendBinding? = null
     private val binding get() = _binding!!
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -22,7 +22,7 @@ class EditFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentEditBinding.inflate(inflater, container, false)
+        _binding = FragmentRecommendBinding.inflate(inflater, container, false)
 
         return binding.root
     }

@@ -1,17 +1,17 @@
-package com.example.project_sns.profile
+package com.example.project_sns.ui.main.profile
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.example.project_sns.R
-import com.example.project_sns.databinding.FragmentMakePostBinding
+import androidx.fragment.app.Fragment
+import com.example.project_sns.databinding.FragmentMyProfileFriendBinding
 
-class MakePostFragment : Fragment() {
+class MyProfileFriendFragment : Fragment() {
 
-    private var _binding : FragmentMakePostBinding? = null
+    private var _binding : FragmentMyProfileFriendBinding? = null
     private val binding get() = _binding!!
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -21,7 +21,7 @@ class MakePostFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentMakePostBinding.inflate(inflater, container, false)
+        _binding = FragmentMyProfileFriendBinding.inflate(inflater, container, false)
 
         return binding.root
     }

@@ -1,18 +1,20 @@
-package com.example.project_sns.login
+package com.example.project_sns.ui.login
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.project_sns.R
 import com.example.project_sns.databinding.FragmentLoginBinding
+import com.google.firebase.auth.FirebaseAuth
 
 
 class LoginFragment : Fragment() {
 
-    private var _binding : FragmentLoginBinding? = null
+    private var _binding: FragmentLoginBinding? = null
     private val binding get() = _binding!!
 
 
@@ -33,10 +35,28 @@ class LoginFragment : Fragment() {
         }
 
         binding.btnLogin.setOnClickListener {
-            findNavController().navigate(R.id.action_loginFragment_to_mainFragment)
+            initLogin()
         }
 
         return binding.root
+    }
+
+    private fun initLogin() {
+        val auth = FirebaseAuth.getInstance()
+        val email = binding.etLoginEmail.text.toString()
+        val password = binding.etLoginPassword.text.toString()
+        val user = auth.currentUser?.email
+
+        auth.signInWithEmailAndPassword(email, password)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    Toast.makeText(requireContext(), "환영합니다 ${user}님!", Toast.LENGTH_SHORT).show()
+                    findNavController().navigate(R.id.action_loginFragment_to_mainFragment)
+                } else {
+                    Toast.makeText(requireContext(), "로그인 실패", Toast.LENGTH_SHORT).show()
+
+                }
+            }
     }
 
     override fun onDestroyView() {
