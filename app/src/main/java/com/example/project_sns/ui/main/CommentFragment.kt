@@ -1,4 +1,4 @@
-package com.example.project_sns.chat
+package com.example.project_sns.ui.main
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -6,11 +6,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.example.project_sns.R
-import com.example.project_sns.databinding.FragmentChatRoomBinding
+import com.example.project_sns.databinding.FragmentCommentBinding
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
-class ChatRoomFragment : Fragment() {
+class CommentFragment : BottomSheetDialogFragment() {
 
-    private var _binding : FragmentChatRoomBinding? = null
+    private var _binding : FragmentCommentBinding? = null
     private val binding get() = _binding!!
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -22,7 +23,7 @@ class ChatRoomFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentChatRoomBinding.inflate(inflater, container, false)
+       _binding = FragmentCommentBinding.inflate(inflater, container, false)
 
         return binding.root
     }

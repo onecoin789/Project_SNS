@@ -1,4 +1,4 @@
-package com.example.project_sns.main
+package com.example.project_sns.ui.chat
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -6,12 +6,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.example.project_sns.R
-import com.example.project_sns.databinding.FragmentCommentBinding
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.example.project_sns.databinding.FragmentChatListBinding
 
-class CommentFragment : BottomSheetDialogFragment() {
 
-    private var _binding : FragmentCommentBinding? = null
+class ChatListFragment : Fragment() {
+
+    private var _binding : FragmentChatListBinding? = null
     private val binding get() = _binding!!
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -23,10 +23,11 @@ class CommentFragment : BottomSheetDialogFragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-       _binding = FragmentCommentBinding.inflate(inflater, container, false)
+        _binding = FragmentChatListBinding.inflate(inflater, container, false)
 
         return binding.root
     }
+
 
     override fun onDestroyView() {
         super.onDestroyView()

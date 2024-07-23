@@ -6,7 +6,7 @@
     android:background="@color/item"
     style="@style/BottomSheetStyle"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".main.CommentFragment">
+    tools:context=".ui.main.CommentFragment">
 
     <ImageView
         android:id="@+id/iv_Comment1"

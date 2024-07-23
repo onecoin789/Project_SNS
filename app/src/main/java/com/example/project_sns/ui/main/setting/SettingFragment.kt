@@ -1,4 +1,4 @@
-package com.example.project_sns.main
+package com.example.project_sns.ui.main.setting
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -6,13 +6,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.example.project_sns.R
-import com.example.project_sns.databinding.FragmentSearchBinding
+import com.example.project_sns.databinding.FragmentSettingBinding
 
+class SettingFragment : Fragment() {
 
-class SearchFragment : Fragment() {
-
-    private var _binding : FragmentSearchBinding? = null
+    private var _binding : FragmentSettingBinding? = null
     private val binding get() = _binding!!
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -22,9 +22,7 @@ class SearchFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
-        _binding = FragmentSearchBinding.inflate(inflater, container, false)
-
+        _binding = FragmentSettingBinding.inflate(inflater, container, false)
 
         return binding.root
     }

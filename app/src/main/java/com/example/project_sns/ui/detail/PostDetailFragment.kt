@@ -1,21 +1,17 @@
-package com.example.project_sns.signup
+package com.example.project_sns.ui.detail
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.navigation.fragment.findNavController
 import com.example.project_sns.R
-import com.example.project_sns.databinding.FragmentLoginBinding
-import com.example.project_sns.databinding.FragmentSignUpBinding
+import com.example.project_sns.databinding.FragmentPostDetailBinding
 
-class SignUpFragment : Fragment() {
+class PostDetailFragment : Fragment() {
 
-    private var _binding : FragmentSignUpBinding? = null
+    private var _binding: FragmentPostDetailBinding? = null
     private val binding get() = _binding!!
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -25,12 +21,7 @@ class SignUpFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
-        _binding = FragmentSignUpBinding.inflate(inflater, container, false)
-
-        binding.ivSignUpBack.setOnClickListener {
-            findNavController().navigate(R.id.action_signUpFragment_to_loginFragment)
-        }
+        _binding = FragmentPostDetailBinding.inflate(inflater, container, false)
 
         return binding.root
     }

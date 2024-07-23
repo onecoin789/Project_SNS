@@ -5,13 +5,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/bg"
-    tools:context=".signup.SignUpFragment">
+    tools:context=".ui.signup.SignUpFragment">
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginBottom="20dp"
-        app:layout_constraintBottom_toTopOf="@+id/cl_SignUp_B"
+        app:layout_constraintBottom_toTopOf="@+id/clSignUpBottom"
         app:layout_constraintTop_toTopOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -19,7 +19,7 @@
             android:layout_height="wrap_content">
 
             <ImageView
-                android:id="@+id/iv_SignUp_Back"
+                android:id="@+id/ivSignUpBack"
                 android:layout_width="45dp"
                 android:layout_height="45dp"
                 android:layout_marginStart="20dp"
@@ -34,14 +34,14 @@
                 android:layout_height="18dp"
                 android:layout_marginEnd="3dp"
                 android:background="@drawable/ic_back"
-                app:layout_constraintBottom_toBottomOf="@+id/iv_SignUp_Back"
-                app:layout_constraintEnd_toEndOf="@+id/iv_SignUp_Back"
-                app:layout_constraintStart_toStartOf="@+id/iv_SignUp_Back"
-                app:layout_constraintTop_toTopOf="@+id/iv_SignUp_Back"
+                app:layout_constraintBottom_toBottomOf="@+id/ivSignUpBack"
+                app:layout_constraintEnd_toEndOf="@+id/ivSignUpBack"
+                app:layout_constraintStart_toStartOf="@+id/ivSignUpBack"
+                app:layout_constraintTop_toTopOf="@+id/ivSignUpBack"
                 android:contentDescription="@string/contentDescription"/>
 
             <TextView
-                android:id="@+id/tv_SignUp1"
+                android:id="@+id/tvSignUpTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="25dp"
@@ -49,17 +49,17 @@
                 android:textColor="@color/text"
                 android:textSize="35sp"
                 android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="@id/iv_SignUp_Back"
-                app:layout_constraintStart_toEndOf="@id/iv_SignUp_Back"
-                app:layout_constraintTop_toTopOf="@id/iv_SignUp_Back" />
+                app:layout_constraintBottom_toBottomOf="@id/ivSignUpBack"
+                app:layout_constraintStart_toEndOf="@id/ivSignUpBack"
+                app:layout_constraintTop_toTopOf="@id/ivSignUpBack" />
 
             <ImageView
-                android:id="@+id/iv_SignUp_Photo"
+                android:id="@+id/ivSignUpPhoto"
                 android:layout_width="120dp"
                 android:layout_height="120dp"
                 android:background="@drawable/item_btn_point"
                 android:layout_marginTop="70dp"
-                app:layout_constraintTop_toBottomOf="@+id/tv_SignUp1"
+                app:layout_constraintTop_toBottomOf="@+id/tvSignUpTitle"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 android:contentDescription="@string/contentDescription"/>
@@ -69,20 +69,20 @@
                 android:layout_height="0dp"
                 android:layout_margin="35dp"
                 android:background="@drawable/ic_photo"
-                app:layout_constraintTop_toTopOf="@+id/iv_SignUp_Photo"
-                app:layout_constraintStart_toStartOf="@id/iv_SignUp_Photo"
-                app:layout_constraintEnd_toEndOf="@id/iv_SignUp_Photo"
-                app:layout_constraintBottom_toBottomOf="@id/iv_SignUp_Photo"
+                app:layout_constraintTop_toTopOf="@+id/ivSignUpPhoto"
+                app:layout_constraintStart_toStartOf="@id/ivSignUpPhoto"
+                app:layout_constraintEnd_toEndOf="@id/ivSignUpPhoto"
+                app:layout_constraintBottom_toBottomOf="@id/ivSignUpPhoto"
                 android:contentDescription="@string/contentDescription"/>
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="20dp"
-                app:layout_constraintTop_toBottomOf="@+id/iv_SignUp_Photo">
+                app:layout_constraintTop_toBottomOf="@+id/ivSignUpPhoto">
 
                 <TextView
-                    android:id="@+id/tv_SignUp2"
+                    android:id="@+id/tvSignUpName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/sign_name"
@@ -94,7 +94,7 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <EditText
-                    android:id="@+id/et_SignUp_Name"
+                    android:id="@+id/etSignUpName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
@@ -106,10 +106,10 @@
                     android:textSize="14sp"
                     android:autofillHints="no"
                     android:inputType="text"
-                    app:layout_constraintTop_toBottomOf="@id/tv_SignUp2" />
+                    app:layout_constraintTop_toBottomOf="@id/tvSignUpName" />
 
                 <TextView
-                    android:id="@+id/tv_SignUp3"
+                    android:id="@+id/tvSignUpEmail"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/sign_email"
@@ -119,10 +119,10 @@
                     android:layout_marginTop="20dp"
                     android:layout_marginStart="5dp"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/et_SignUp_Name" />
+                    app:layout_constraintTop_toBottomOf="@+id/etSignUpName" />
 
                 <EditText
-                    android:id="@+id/et_SignUp_Email"
+                    android:id="@+id/etSignUpEmail"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
@@ -134,10 +134,10 @@
                     android:textSize="14sp"
                     android:autofillHints="no"
                     android:inputType="textEmailAddress"
-                    app:layout_constraintTop_toBottomOf="@id/tv_SignUp3" />
+                    app:layout_constraintTop_toBottomOf="@id/tvSignUpEmail" />
 
                 <TextView
-                    android:id="@+id/tv_SignUp4"
+                    android:id="@+id/tvSignUpPassword"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/sign_password"
@@ -147,10 +147,10 @@
                     android:layout_marginStart="5dp"
                     android:layout_marginTop="20dp"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/et_SignUp_Email" />
+                    app:layout_constraintTop_toBottomOf="@+id/etSignUpEmail" />
 
                 <EditText
-                    android:id="@+id/et_SignUp_Password"
+                    android:id="@+id/etSignUpPassword"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
@@ -162,7 +162,35 @@
                     android:textSize="14sp"
                     android:autofillHints="no"
                     android:inputType="textPassword"
-                    app:layout_constraintTop_toBottomOf="@id/tv_SignUp4" />
+                    app:layout_constraintTop_toBottomOf="@id/tvSignUpPassword" />
+
+                <TextView
+                    android:id="@+id/tvSignUpPasswordConfirm"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/sign_password_confirm"
+                    android:textColor="@color/text"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginTop="20dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/etSignUpPassword" />
+
+                <EditText
+                    android:id="@+id/etSignUpPasswordConfirm"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:hint="@string/sign_password_confirm_text"
+                    android:padding="20dp"
+                    android:background="@drawable/item_edittext"
+                    android:textColor="@color/text"
+                    android:textColorHint="@color/hint"
+                    android:textSize="14sp"
+                    android:autofillHints="no"
+                    android:inputType="textPassword"
+                    app:layout_constraintTop_toBottomOf="@id/tvSignUpPasswordConfirm" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -170,12 +198,13 @@
     </ScrollView>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/cl_SignUp_B"
+        android:id="@+id/clSignUpBottom"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent">
 
         <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnSignUp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
