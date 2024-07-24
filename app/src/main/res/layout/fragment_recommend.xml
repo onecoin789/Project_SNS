@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/bg"
-    tools:context=".ui.main.RecommendFragment">
+    tools:context=".ui.main.recommend.RecommendFragment">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -18,7 +18,7 @@
             android:layout_height="wrap_content">
 
             <ImageView
-                android:id="@+id/iv_Recommend_Back"
+                android:id="@+id/ivRecommendBack"
                 android:layout_width="45dp"
                 android:layout_height="45dp"
                 android:layout_marginStart="20dp"
@@ -33,14 +33,14 @@
                 android:layout_height="18dp"
                 android:layout_marginEnd="3dp"
                 android:background="@drawable/ic_back"
-                app:layout_constraintBottom_toBottomOf="@+id/iv_Recommend_Back"
-                app:layout_constraintEnd_toEndOf="@+id/iv_Recommend_Back"
-                app:layout_constraintStart_toStartOf="@+id/iv_Recommend_Back"
-                app:layout_constraintTop_toTopOf="@+id/iv_Recommend_Back"
+                app:layout_constraintBottom_toBottomOf="@+id/ivRecommendBack"
+                app:layout_constraintEnd_toEndOf="@+id/ivRecommendBack"
+                app:layout_constraintStart_toStartOf="@+id/ivRecommendBack"
+                app:layout_constraintTop_toTopOf="@+id/ivRecommendBack"
                 android:contentDescription="@string/contentDescription"/>
 
             <TextView
-                android:id="@+id/tv_SignUp1"
+                android:id="@+id/tvSignUpTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="25dp"
@@ -48,12 +48,12 @@
                 android:textColor="@color/text"
                 android:textSize="35sp"
                 android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="@id/iv_Recommend_Back"
-                app:layout_constraintStart_toEndOf="@id/iv_Recommend_Back"
-                app:layout_constraintTop_toTopOf="@id/iv_Recommend_Back" />
+                app:layout_constraintBottom_toBottomOf="@id/ivRecommendBack"
+                app:layout_constraintStart_toEndOf="@id/ivRecommendBack"
+                app:layout_constraintTop_toTopOf="@id/ivRecommendBack" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/cl_Recommend1"
+                android:id="@+id/clRecommendTitle"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 android:layout_marginTop="50dp"
@@ -61,7 +61,7 @@
                 android:backgroundTint="@color/white"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tv_SignUp1">
+                app:layout_constraintTop_toBottomOf="@id/tvSignUpTitle">
 
                 <ImageView
                     android:layout_width="0dp"
@@ -77,35 +77,39 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <TextView
-                android:id="@+id/tv_Recommend_Class"
+                android:id="@+id/tvRecommendClass"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/text"
                 android:textSize="20sp"
                 android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="@+id/cl_Recommend1"
-                app:layout_constraintStart_toStartOf="@+id/cl_Recommend1"
-                app:layout_constraintTop_toBottomOf="@+id/cl_Recommend1" />
+                app:layout_constraintEnd_toEndOf="@+id/clRecommendTitle"
+                app:layout_constraintStart_toStartOf="@+id/clRecommendTitle"
+                app:layout_constraintTop_toBottomOf="@+id/clRecommendTitle" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/cl_Recommend2"
+                android:id="@+id/clRecommendMain"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_margin="20dp"
                 android:background="@color/white"
-                android:layout_marginTop="30dp"
-                app:layout_constraintTop_toBottomOf="@id/tv_Recommend_Class">
+                app:layout_constraintTop_toBottomOf="@id/tvRecommendClass">
 
                 <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    app:layout_constraintDimensionRatio="1:1"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     android:background="@drawable/ic_high"
-                    android:layout_margin="10dp"
                     android:contentDescription="@string/contentDescription"/>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <TextView
-                android:id="@+id/tv_Recommend_Main"
+                android:id="@+id/tvRecommendMain"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/text"
@@ -113,18 +117,18 @@
                 android:textStyle="bold"
                 android:layout_margin="10dp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/cl_Recommend2"/>
+                app:layout_constraintTop_toBottomOf="@id/clRecommendMain"/>
 
 
             <TextView
-                android:id="@+id/tv_Recommend_Text"
+                android:id="@+id/tvRecommendText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/text"
                 android:textSize="20sp"
                 android:layout_marginTop="5dp"
-                app:layout_constraintStart_toStartOf="@id/tv_Recommend_Main"
-                app:layout_constraintTop_toBottomOf="@id/tv_Recommend_Main"/>
+                app:layout_constraintStart_toStartOf="@id/tvRecommendMain"
+                app:layout_constraintTop_toBottomOf="@id/tvRecommendMain"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>

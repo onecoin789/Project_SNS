@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/bg"
-    tools:context=".ui.main.home.HomeFragment">
+    tools:context=".ui.main.home.MainHomeFragment">
 
 
     <ImageView
@@ -42,32 +42,35 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
 
-            <androidx.core.widget.NestedScrollView
-                android:id="@+id/ns_M"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/clRecommendFrame"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                app:layout_constraintTop_toBottomOf="@id/tv_Home1">
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:paddingHorizontal="20dp"
+                android:paddingTop="15dp"
+                android:paddingBottom="5dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginHorizontal="3dp"
+                android:background="@drawable/item_tab_background"
+                app:layout_constraintTop_toBottomOf="@+id/tv_Home1">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/cl_Home_Low"
+                    android:id="@+id/clHomeLow"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginTop="20dp"
+                    android:padding="10dp"
+                    app:layout_constraintEnd_toStartOf="@+id/clHomeMiddle"
+                    app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent">
 
                     <androidx.constraintlayout.widget.ConstraintLayout
-                        android:id="@+id/cl_Home1"
-                        android:layout_width="80dp"
-                        android:layout_height="80dp"
+                        android:id="@+id/clHomeLowFrame"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
                         android:background="@drawable/item_edittext"
                         android:backgroundTint="@color/white"
+                        app:layout_constraintDimensionRatio="1:1"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent">
 
@@ -76,11 +79,11 @@
                             android:layout_height="0dp"
                             android:layout_margin="10dp"
                             android:background="@drawable/ic_low"
+                            android:contentDescription="@string/contentDescription"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent"
-                            android:contentDescription="@string/contentDescription"/>
+                            app:layout_constraintTop_toTopOf="parent" />
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -90,27 +93,32 @@
                         android:text="@string/home_low"
                         android:textColor="@color/text"
                         android:textSize="18sp"
+                        android:padding="8dp"
                         android:textStyle="bold"
-                        app:layout_constraintEnd_toEndOf="@+id/cl_Home1"
-                        app:layout_constraintStart_toStartOf="@+id/cl_Home1"
-                        app:layout_constraintTop_toBottomOf="@+id/cl_Home1" />
+                        app:layout_constraintEnd_toEndOf="@+id/clHomeLowFrame"
+                        app:layout_constraintStart_toStartOf="@+id/clHomeLowFrame"
+                        app:layout_constraintTop_toBottomOf="@+id/clHomeLowFrame" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/cl_Home_Middle"
+                    android:id="@+id/clHomeMiddle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:layout_constraintBottom_toBottomOf="@+id/cl_Home_Low"
-                    app:layout_constraintEnd_toStartOf="@id/cl_Home_High"
-                    app:layout_constraintStart_toEndOf="@id/cl_Home_Low"
-                    app:layout_constraintTop_toTopOf="@+id/cl_Home_Low">
+                    android:layout_marginStart="30dp"
+                    android:padding="10dp"
+                    app:layout_constraintBottom_toBottomOf="@+id/clHomeLow"
+                    app:layout_constraintEnd_toStartOf="@+id/clHomeHigh"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toEndOf="@+id/clHomeLow"
+                    app:layout_constraintTop_toTopOf="@+id/clHomeLow">
 
                     <androidx.constraintlayout.widget.ConstraintLayout
-                        android:id="@+id/cl_Home2"
-                        android:layout_width="80dp"
-                        android:layout_height="80dp"
+                        android:id="@+id/clHomeMiddleFrame"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
                         android:background="@drawable/item_edittext"
                         android:backgroundTint="@color/white"
+                        app:layout_constraintDimensionRatio="1:1"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent">
 
@@ -119,11 +127,11 @@
                             android:layout_height="0dp"
                             android:layout_margin="10dp"
                             android:background="@drawable/ic_middle"
+                            android:contentDescription="@string/contentDescription"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent"
-                            android:contentDescription="@string/contentDescription"/>
+                            app:layout_constraintTop_toTopOf="parent" />
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -134,26 +142,31 @@
                         android:textColor="@color/text"
                         android:textSize="18sp"
                         android:textStyle="bold"
-                        app:layout_constraintEnd_toEndOf="@+id/cl_Home2"
-                        app:layout_constraintStart_toStartOf="@+id/cl_Home2"
-                        app:layout_constraintTop_toBottomOf="@+id/cl_Home2" />
+                        android:padding="8dp"
+                        app:layout_constraintEnd_toEndOf="@+id/clHomeMiddleFrame"
+                        app:layout_constraintStart_toStartOf="@+id/clHomeMiddleFrame"
+                        app:layout_constraintTop_toBottomOf="@+id/clHomeMiddleFrame" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/cl_Home_High"
+                    android:id="@+id/clHomeHigh"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="10dp"
-                    app:layout_constraintBottom_toBottomOf="@+id/cl_Home_Middle"
+                    android:layout_marginStart="30dp"
+                    android:padding="10dp"
+                    app:layout_constraintBottom_toBottomOf="@+id/clHomeMiddle"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/cl_Home_Middle">
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toEndOf="@+id/clHomeMiddle"
+                    app:layout_constraintTop_toTopOf="@+id/clHomeMiddle">
 
                     <androidx.constraintlayout.widget.ConstraintLayout
-                        android:id="@+id/cl_Home3"
-                        android:layout_width="80dp"
-                        android:layout_height="80dp"
+                        android:id="@+id/clHomeHighFrame"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
                         android:background="@drawable/item_edittext"
                         android:backgroundTint="@color/white"
+                        app:layout_constraintDimensionRatio="1:1"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent">
 
@@ -162,11 +175,11 @@
                             android:layout_height="0dp"
                             android:layout_margin="10dp"
                             android:background="@drawable/ic_high"
+                            android:contentDescription="@string/contentDescription"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent"
-                            android:contentDescription="@string/contentDescription"/>
+                            app:layout_constraintTop_toTopOf="parent" />
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -177,22 +190,22 @@
                         android:textColor="@color/text"
                         android:textSize="18sp"
                         android:textStyle="bold"
-                        app:layout_constraintEnd_toEndOf="@+id/cl_Home3"
-                        app:layout_constraintStart_toStartOf="@+id/cl_Home3"
-                        app:layout_constraintTop_toBottomOf="@+id/cl_Home3" />
+                        android:padding="8dp"
+                        app:layout_constraintEnd_toEndOf="@+id/clHomeHighFrame"
+                        app:layout_constraintStart_toStartOf="@+id/clHomeHighFrame"
+                        app:layout_constraintTop_toBottomOf="@+id/clHomeHighFrame" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
-            </androidx.core.widget.NestedScrollView>
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rv_Home"
+                android:id="@+id/rvHome"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="30dp"
                 android:nestedScrollingEnabled="false"
                 tools:listitem="@layout/rv_item_post_photo"
-                app:layout_constraintTop_toBottomOf="@+id/ns_M"
+                app:layout_constraintTop_toBottomOf="@+id/clRecommendFrame"
                 app:layout_constraintBottom_toBottomOf="parent"/>
 
 

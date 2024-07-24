@@ -5,13 +5,14 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.example.project_sns.R
+import androidx.core.view.isVisible
+import androidx.core.widget.doAfterTextChanged
 import com.example.project_sns.databinding.FragmentSearchBinding
 
 
-class SearchFragment : Fragment() {
+class MainSearchFragment : Fragment() {
 
-    private var _binding : FragmentSearchBinding? = null
+    private var _binding: FragmentSearchBinding? = null
     private val binding get() = _binding!!
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,6 +26,7 @@ class SearchFragment : Fragment() {
 
         _binding = FragmentSearchBinding.inflate(inflater, container, false)
 
+        initSearch()
 
         return binding.root
     }
@@ -32,5 +34,21 @@ class SearchFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun initSearch() {
+        val searchText = binding.etSearch
+        binding.ivSearchDelete.setOnClickListener {
+            searchText.text.clear()
+        }
+        searchText.doAfterTextChanged {
+            if (searchText.text.isNotEmpty()) {
+                binding.clSearchShow.visibility = View.VISIBLE
+                val keyword = searchText.text.toString()
+                binding.tvSearchWord.text = keyword
+            } else {
+                binding.clSearchShow.visibility = View.GONE
+            }
+        }
     }
 }
