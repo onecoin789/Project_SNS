@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.example.project_sns.databinding.FragmentMyProfileFriendBinding
 
 class MyProfileFriendFragment : Fragment() {
@@ -23,12 +24,20 @@ class MyProfileFriendFragment : Fragment() {
     ): View? {
         _binding = FragmentMyProfileFriendBinding.inflate(inflater, container, false)
 
+        initView()
+
         return binding.root
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun initView() {
+        binding.ivFriendBack.setOnClickListener {
+            findNavController().popBackStack()
+        }
     }
 
 }

@@ -5,11 +5,11 @@
     android:background="@color/bg"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.main.search.SearchFragment">
+    tools:context=".ui.main.search.MainSearchFragment">
 
 
     <EditText
-        android:id="@+id/et_Search"
+        android:id="@+id/etSearch"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
@@ -26,18 +26,18 @@
         app:layout_constraintTop_toTopOf="parent"/>
 
     <ImageView
-        android:id="@+id/iv_Search_Delete"
+        android:id="@+id/ivSearchDelete"
         android:layout_width="27dp"
         android:layout_height="27dp"
         android:layout_marginEnd="15dp"
         android:background="@drawable/ic_x_circle"
-        app:layout_constraintTop_toTopOf="@+id/et_Search"
-        app:layout_constraintBottom_toBottomOf="@+id/et_Search"
-        app:layout_constraintEnd_toEndOf="@+id/et_Search"
+        app:layout_constraintTop_toTopOf="@+id/etSearch"
+        app:layout_constraintBottom_toBottomOf="@+id/etSearch"
+        app:layout_constraintEnd_toEndOf="@+id/etSearch"
         android:contentDescription="@string/contentDescription"/>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/cl_Search_T"
+        android:id="@+id/clSearchShow"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="15dp"
@@ -45,10 +45,11 @@
         android:layout_marginStart="5dp"
         android:layout_marginEnd="5dp"
         android:background="@drawable/item_list"
-        app:layout_constraintTop_toBottomOf="@id/et_Search">
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/etSearch">
 
         <ImageView
-            android:id="@+id/iv_Search"
+            android:id="@+id/ivSearchFrame"
             android:layout_width="55dp"
             android:layout_height="55dp"
             android:background="@drawable/item_btn_back"
@@ -60,23 +61,23 @@
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:background="@drawable/ic_search"
-            app:layout_constraintBottom_toBottomOf="@+id/iv_Search"
-            app:layout_constraintEnd_toEndOf="@+id/iv_Search"
-            app:layout_constraintStart_toStartOf="@+id/iv_Search"
-            app:layout_constraintTop_toTopOf="@+id/iv_Search"
+            app:layout_constraintBottom_toBottomOf="@+id/ivSearchFrame"
+            app:layout_constraintEnd_toEndOf="@+id/ivSearchFrame"
+            app:layout_constraintStart_toStartOf="@+id/ivSearchFrame"
+            app:layout_constraintTop_toTopOf="@+id/ivSearchFrame"
             android:contentDescription="@string/contentDescription"/>
 
         <TextView
-            android:id="@+id/tv_Search_Word"
+            android:id="@+id/tvSearchWord"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/text"
             android:textSize="18sp"
             android:textStyle="bold"
             android:layout_marginStart="20dp"
-            app:layout_constraintStart_toEndOf="@id/iv_Search"
-            app:layout_constraintTop_toTopOf="@+id/iv_Search"
-            app:layout_constraintBottom_toBottomOf="@+id/iv_Search" />
+            app:layout_constraintStart_toEndOf="@id/ivSearchFrame"
+            app:layout_constraintTop_toTopOf="@+id/ivSearchFrame"
+            app:layout_constraintBottom_toBottomOf="@+id/ivSearchFrame" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -85,9 +86,9 @@
             android:textColor="@color/text"
             android:textSize="18sp"
             android:layout_marginStart="5dp"
-            app:layout_constraintStart_toEndOf="@+id/tv_Search_Word"
-            app:layout_constraintTop_toTopOf="@+id/tv_Search_Word"
-            app:layout_constraintBottom_toBottomOf="@+id/tv_Search_Word"/>
+            app:layout_constraintStart_toEndOf="@+id/tvSearchWord"
+            app:layout_constraintTop_toTopOf="@+id/tvSearchWord"
+            app:layout_constraintBottom_toBottomOf="@+id/tvSearchWord"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <FrameLayout
@@ -97,11 +98,11 @@
         android:layout_marginStart="5dp"
         android:layout_marginEnd="5dp"
         android:layout_marginBottom="5dp"
-        app:layout_constraintTop_toBottomOf="@+id/cl_Search_T"
+        app:layout_constraintTop_toBottomOf="@+id/clSearchShow"
         app:layout_constraintBottom_toBottomOf="parent">
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_Search"
+            android:id="@+id/rvSearch"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             tools:listitem="@layout/rv_item_friend"/>

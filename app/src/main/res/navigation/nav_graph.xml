@@ -30,9 +30,11 @@
 
     <fragment
         android:id="@+id/mainFragment"
-        android:name="com.example.project_sns.ui.main.MainFragment"
+        android:name="com.example.project_sns.ui.main.viewpager.MainFragment"
         android:label="fragment_main"
         tools:layout="@layout/fragment_main" >
+
+        <!-- Main -->
         <action
             android:id="@+id/action_mainFragment_to_searchFragment"
             app:destination="@id/searchFragment" />
@@ -42,70 +44,67 @@
         <action
             android:id="@+id/action_mainFragment_to_myProfileFragment"
             app:destination="@id/myProfileFragment" />
+
+        <!-- Home -->
+        <action
+            android:id="@+id/action_mainFragment_to_recommendFragment"
+            app:destination="@id/recommendFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_chatListFragment"
+            app:destination="@id/chatListFragment" />
+
+        <!-- Search -->
+
+        <!-- MyProfile -->
+        <action
+            android:id="@+id/action_mainFragment_to_editFragment"
+            app:destination="@id/editFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_makePostFragment"
+            app:destination="@id/makePostFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_friendFragment"
+            app:destination="@id/friendFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_settingFragment"
+            app:destination="@id/settingFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_postDetailFragment"
+            app:destination="@id/postDetailFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_dialogFragment"
+            app:destination="@id/dialogFragment" />
     </fragment>
 
     <fragment
         android:id="@+id/searchFragment"
-        android:name="com.example.project_sns.ui.main.search.SearchFragment"
+        android:name="com.example.project_sns.ui.main.search.MainSearchFragment"
         android:label="fragment_search"
         tools:layout="@layout/fragment_search" >
-        <action
-            android:id="@+id/action_searchFragment_to_friendDetailFragment"
-            app:destination="@id/friendDetailFragment" />
     </fragment>
     <fragment
         android:id="@+id/homeFragment"
-        android:name="com.example.project_sns.ui.main.home.HomeFragment"
+        android:name="com.example.project_sns.ui.main.home.MainHomeFragment"
         android:label="fragment_home"
         tools:layout="@layout/fragment_home" >
-        <action
-            android:id="@+id/action_homeFragment_to_chatListFragment"
-            app:destination="@id/chatListFragment" />
-        <action
-            android:id="@+id/action_homeFragment_to_commentFragment"
-            app:destination="@id/commentFragment" />
-        <action
-            android:id="@+id/action_homeFragment_to_recommendFragment"
-            app:destination="@id/recommendFragment" />
     </fragment>
     <fragment
         android:id="@+id/myProfileFragment"
-        android:name="com.example.project_sns.ui.main.profile.MyProfileFragment"
+        android:name="com.example.project_sns.ui.main.profile.MainMyProfileFragment"
         android:label="fragment_my_profile"
         tools:layout="@layout/fragment_my_profile" >
-        <action
-            android:id="@+id/action_myProfileFragment_to_editFragment"
-            app:destination="@id/editFragment" />
-        <action
-            android:id="@+id/action_myProfileFragment_to_friendFragment"
-            app:destination="@id/friendFragment" />
-        <action
-            android:id="@+id/action_myProfileFragment_to_settingFragment"
-            app:destination="@id/settingFragment" />
-        <action
-            android:id="@+id/action_myProfileFragment_to_postDetailFragment"
-            app:destination="@id/postDetailFragment" />
-        <action
-            android:id="@+id/action_myProfileFragment_to_makePostFragment"
-            app:destination="@id/makePostFragment" />
     </fragment>
     <fragment
         android:id="@+id/editFragment"
         android:name="com.example.project_sns.ui.main.profile.MyProfileEditFragment"
         android:label="fragment_edit"
         tools:layout="@layout/fragment_my_profile_edit" >
-        <action
-            android:id="@+id/action_editFragment_to_myProfileFragment"
-            app:destination="@id/myProfileFragment" />
     </fragment>
     <fragment
         android:id="@+id/friendFragment"
         android:name="com.example.project_sns.ui.main.profile.MyProfileFriendFragment"
         android:label="fragment_friend"
         tools:layout="@layout/fragment_my_profile_friend" >
-        <action
-            android:id="@+id/action_friendFragment_to_myProfileFragment"
-            app:destination="@id/myProfileFragment" />
     </fragment>
     <fragment
         android:id="@+id/chatListFragment"
@@ -115,69 +114,45 @@
         <action
             android:id="@+id/action_chatListFragment_to_chatRoomFragment"
             app:destination="@id/chatRoomFragment" />
-        <action
-            android:id="@+id/action_chatListFragment_to_homeFragment"
-            app:destination="@id/homeFragment" />
     </fragment>
     <fragment
         android:id="@+id/chatRoomFragment"
         android:name="com.example.project_sns.ui.chat.ChatRoomFragment"
         android:label="fragment_chat_room"
         tools:layout="@layout/fragment_chat_room" >
-        <action
-            android:id="@+id/action_chatRoomFragment_to_chatListFragment"
-            app:destination="@id/chatListFragment" />
     </fragment>
     <fragment
         android:id="@+id/settingFragment"
         android:name="com.example.project_sns.ui.main.setting.SettingFragment"
         android:label="fragment_setting"
         tools:layout="@layout/fragment_setting" >
-        <action
-            android:id="@+id/action_settingFragment_to_myProfileFragment"
-            app:destination="@id/myProfileFragment" />
-        <action
-            android:id="@+id/action_settingFragment_to_dialogFragment"
-            app:destination="@id/dialogFragment" />
     </fragment>
     <dialog
         android:id="@+id/commentFragment"
         android:name="com.example.project_sns.ui.main.CommentFragment"
         android:label="fragment_comment"
         tools:layout="@layout/fragment_comment" >
-        <action
-            android:id="@+id/action_commentFragment_to_postDetailFragment"
-            app:destination="@id/postDetailFragment" />
     </dialog>
     <fragment
         android:id="@+id/friendDetailFragment"
         android:name="com.example.project_sns.ui.detail.FriendDetailFragment"
         android:label="fragment_friend_detail"
         tools:layout="@layout/fragment_friend_detail" >
-        <action
-            android:id="@+id/action_friendDetailFragment_to_postDetailFragment2"
-            app:destination="@id/postDetailFragment" />
     </fragment>
     <fragment
         android:id="@+id/postDetailFragment"
         android:name="com.example.project_sns.ui.detail.PostDetailFragment"
         android:label="fragment_post_detail"
         tools:layout="@layout/fragment_post_detail" >
-        <action
-            android:id="@+id/action_postDetailFragment_to_friendDetailFragment"
-            app:destination="@id/friendDetailFragment" />
-        <action
-            android:id="@+id/action_postDetailFragment_to_myProfileFragment"
-            app:destination="@id/myProfileFragment" />
     </fragment>
     <fragment
         android:id="@+id/recommendFragment"
-        android:name="com.example.project_sns.ui.main.RecommendFragment"
+        android:name="com.example.project_sns.ui.main.recommend.RecommendFragment"
         android:label="fragment_recommend"
         tools:layout="@layout/fragment_recommend" />
     <dialog
         android:id="@+id/dialogFragment"
-        android:name="com.example.project_sns.ui.DialogFragment"
+        android:name="com.example.project_sns.ui.dialog.DialogFragment"
         android:label="fragment_dialog"
         tools:layout="@layout/fragment_dialog" />
     <fragment
@@ -185,9 +160,6 @@
         android:name="com.example.project_sns.ui.main.profile.MyProfileMakePostFragment"
         android:label="fragment_make_post"
         tools:layout="@layout/fragment_my_profile_make_post" >
-        <action
-            android:id="@+id/action_makePostFragment_to_myProfileFragment"
-            app:destination="@id/myProfileFragment" />
     </fragment>
 
 

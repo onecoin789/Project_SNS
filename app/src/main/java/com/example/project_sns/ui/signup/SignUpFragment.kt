@@ -65,13 +65,11 @@ class SignUpFragment : Fragment() {
     }
 
     private fun initView() {
-        val uid = auth.currentUser?.uid.toString()
         val name = binding.etSignUpName.text.toString()
         val email = binding.etSignUpEmail.text.toString()
         val password = binding.etSignUpPassword.text.toString()
         val passwordConfirm = binding.etSignUpPasswordConfirm.text.toString()
         val data = FirebaseUserData(
-            uid = uid,
             name = name,
             email = email,
             image = "",
@@ -108,7 +106,7 @@ class SignUpFragment : Fragment() {
 
     private fun setUserData(data: FirebaseUserData) {
         firestore.collection("user")
-            .document(data.uid)
+            .document(data.email)
             .set(data)
             .addOnSuccessListener {
                 Log.d("debug_signup", "success")

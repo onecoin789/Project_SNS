@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.navigation.fragment.findNavController
 import com.example.project_sns.R
 import com.example.project_sns.databinding.FragmentChatListBinding
 
@@ -25,6 +26,8 @@ class ChatListFragment : Fragment() {
     ): View? {
         _binding = FragmentChatListBinding.inflate(inflater, container, false)
 
+        initView()
+
         return binding.root
     }
 
@@ -32,5 +35,11 @@ class ChatListFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun initView() {
+        binding.ivChatListBack.setOnClickListener {
+            findNavController().popBackStack()
+        }
     }
 }
