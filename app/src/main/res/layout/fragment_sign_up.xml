@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/bg"
-    tools:context=".ui.signup.SignUpFragment">
+    tools:context=".ui.view.signup.SignUpFragment">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -109,6 +109,17 @@
                     app:layout_constraintTop_toBottomOf="@id/tvSignUpName" />
 
                 <TextView
+                    android:id="@+id/tvTextNameCheck"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/sign_name_check_text"
+                    android:textColor="@color/check_text"
+                    android:textSize="12sp"
+                    android:visibility="invisible"
+                    app:layout_constraintTop_toBottomOf="@+id/etSignUpName"
+                    app:layout_constraintStart_toStartOf="@+id/tvSignUpName"/>
+
+                <TextView
                     android:id="@+id/tvSignUpEmail"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -119,7 +130,7 @@
                     android:layout_marginTop="20dp"
                     android:layout_marginStart="5dp"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/etSignUpName" />
+                    app:layout_constraintTop_toBottomOf="@+id/tvTextNameCheck" />
 
                 <EditText
                     android:id="@+id/etSignUpEmail"
@@ -137,6 +148,17 @@
                     app:layout_constraintTop_toBottomOf="@id/tvSignUpEmail" />
 
                 <TextView
+                    android:id="@+id/tvTextEmailCheck"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/sign_email_check_text"
+                    android:textColor="@color/check_text"
+                    android:textSize="12sp"
+                    android:visibility="invisible"
+                    app:layout_constraintTop_toBottomOf="@+id/etSignUpEmail"
+                    app:layout_constraintStart_toStartOf="@+id/tvSignUpEmail"/>
+
+                <TextView
                     android:id="@+id/tvSignUpPassword"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -147,7 +169,7 @@
                     android:layout_marginStart="5dp"
                     android:layout_marginTop="20dp"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/etSignUpEmail" />
+                    app:layout_constraintTop_toBottomOf="@+id/tvTextEmailCheck" />
 
                 <EditText
                     android:id="@+id/etSignUpPassword"
@@ -165,6 +187,17 @@
                     app:layout_constraintTop_toBottomOf="@id/tvSignUpPassword" />
 
                 <TextView
+                    android:id="@+id/tvTextPasswordCheck"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/sign_password_check_text"
+                    android:textColor="@color/check_text"
+                    android:textSize="12sp"
+                    android:visibility="invisible"
+                    app:layout_constraintTop_toBottomOf="@+id/etSignUpPassword"
+                    app:layout_constraintStart_toStartOf="@+id/tvSignUpPassword"/>
+
+                <TextView
                     android:id="@+id/tvSignUpPasswordConfirm"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -175,7 +208,7 @@
                     android:layout_marginStart="5dp"
                     android:layout_marginTop="20dp"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/etSignUpPassword" />
+                    app:layout_constraintTop_toBottomOf="@+id/tvTextPasswordCheck" />
 
                 <EditText
                     android:id="@+id/etSignUpPasswordConfirm"
@@ -191,6 +224,17 @@
                     android:autofillHints="no"
                     android:inputType="textPassword"
                     app:layout_constraintTop_toBottomOf="@id/tvSignUpPasswordConfirm" />
+
+                <TextView
+                    android:id="@+id/tvTextPasswordConfirmCheck"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/sign_password_confirm_check_text"
+                    android:textColor="@color/check_text"
+                    android:textSize="12sp"
+                    android:visibility="invisible"
+                    app:layout_constraintTop_toBottomOf="@+id/etSignUpPasswordConfirm"
+                    app:layout_constraintStart_toStartOf="@+id/tvSignUpPasswordConfirm"/>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -85,6 +85,10 @@
     <string name="sign_email_text">이메일을 입력해주세요</string>
     <string name="sign_name">이름</string>
     <string name="sign_name_text">이름을 입력해주세요</string>
+    <string name="sign_name_check_text">이름을 확인해주세요</string>
+    <string name="sign_email_check_text">이메일을 확인해주세요</string>
+    <string name="sign_password_check_text">비밀번호를 확인해주세요</string>
+    <string name="sign_password_confirm_check_text">비밀번호를 확인해주세요</string>
 
     <!-- Item -->
     <string name="item_comment">댓글 남기기</string>

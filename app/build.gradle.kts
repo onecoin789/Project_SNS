@@ -45,6 +45,7 @@ android {
 
 dependencies {
 
+    implementation(libs.glide)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
@@ -69,4 +70,9 @@ dependencies {
     implementation(libs.firebase.firestore)
 //    implementation(libs.firebase.crashlytics)
 
+    // retrofit
+    implementation(libs.okhttp)
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
+    implementation(libs.logging.interceptor)
 }
