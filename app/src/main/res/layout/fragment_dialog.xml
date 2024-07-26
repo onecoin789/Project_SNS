@@ -4,7 +4,7 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".ui.dialog.DialogFragment">
+    tools:context=".ui.view.dialog.DialogFragment">
 
 
     <androidx.constraintlayout.widget.ConstraintLayout

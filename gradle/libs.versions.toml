@@ -19,6 +19,11 @@ navigationUiKtx = "2.8.0-beta05"
 googleServices = "4.4.2"
 firebaseAuth = "23.0.0"
 firebaseFirestore = "25.0.0"
+okhttp = "5.0.0-alpha.14"
+retrofit = "2.11.0"
+converterGson = "2.11.0"
+loggingInterceptor = "5.0.0-alpha.14"
+glide = "5.0.0-rc01"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -39,6 +44,11 @@ androidx-navigation-ui-ktx = { group = "androidx.navigation", name = "navigation
 google-services = { group = "com.google.gms", name = "google-services", version.ref = "googleServices" }
 firebase-auth = { group = "com.google.firebase", name = "firebase-auth", version.ref = "firebaseAuth" }
 firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore", version.ref = "firebaseFirestore" }
+okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }
+retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
+converter-gson = { group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "converterGson" }
+logging-interceptor = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "loggingInterceptor" }
+glide = { group = "com.github.bumptech.glide", name = "glide", version.ref = "glide" }
 
 
 [plugins]

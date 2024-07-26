@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/loginFragment"
-        android:name="com.example.project_sns.ui.login.LoginFragment"
+        android:name="com.example.project_sns.ui.view.login.LoginFragment"
         android:label="LoginFragment"
         tools:layout="@layout/fragment_login">
         <action
@@ -20,7 +20,7 @@
 
     <fragment
         android:id="@+id/signUpFragment"
-        android:name="com.example.project_sns.ui.signup.SignUpFragment"
+        android:name="com.example.project_sns.ui.view.signup.SignUpFragment"
         android:label="SignUpFragment"
         tools:layout="@layout/fragment_sign_up">
         <action
@@ -30,7 +30,7 @@
 
     <fragment
         android:id="@+id/mainFragment"
-        android:name="com.example.project_sns.ui.main.viewpager.MainFragment"
+        android:name="com.example.project_sns.ui.view.main.viewpager.MainFragment"
         android:label="fragment_main"
         tools:layout="@layout/fragment_main" >
 
@@ -78,37 +78,37 @@
 
     <fragment
         android:id="@+id/searchFragment"
-        android:name="com.example.project_sns.ui.main.search.MainSearchFragment"
+        android:name="com.example.project_sns.ui.view.main.search.MainSearchFragment"
         android:label="fragment_search"
         tools:layout="@layout/fragment_search" >
     </fragment>
     <fragment
         android:id="@+id/homeFragment"
-        android:name="com.example.project_sns.ui.main.home.MainHomeFragment"
+        android:name="com.example.project_sns.ui.view.main.home.MainHomeFragment"
         android:label="fragment_home"
         tools:layout="@layout/fragment_home" >
     </fragment>
     <fragment
         android:id="@+id/myProfileFragment"
-        android:name="com.example.project_sns.ui.main.profile.MainMyProfileFragment"
+        android:name="com.example.project_sns.ui.view.main.profile.MainMyProfileFragment"
         android:label="fragment_my_profile"
         tools:layout="@layout/fragment_my_profile" >
     </fragment>
     <fragment
         android:id="@+id/editFragment"
-        android:name="com.example.project_sns.ui.main.profile.MyProfileEditFragment"
+        android:name="com.example.project_sns.ui.view.main.profile.MyProfileEditFragment"
         android:label="fragment_edit"
         tools:layout="@layout/fragment_my_profile_edit" >
     </fragment>
     <fragment
         android:id="@+id/friendFragment"
-        android:name="com.example.project_sns.ui.main.profile.MyProfileFriendFragment"
+        android:name="com.example.project_sns.ui.view.main.profile.MyProfileFriendFragment"
         android:label="fragment_friend"
         tools:layout="@layout/fragment_my_profile_friend" >
     </fragment>
     <fragment
         android:id="@+id/chatListFragment"
-        android:name="com.example.project_sns.ui.chat.ChatListFragment"
+        android:name="com.example.project_sns.ui.view.chat.ChatListFragment"
         android:label="fragment_chat_list"
         tools:layout="@layout/fragment_chat_list" >
         <action
@@ -117,47 +117,47 @@
     </fragment>
     <fragment
         android:id="@+id/chatRoomFragment"
-        android:name="com.example.project_sns.ui.chat.ChatRoomFragment"
+        android:name="com.example.project_sns.ui.view.chat.ChatRoomFragment"
         android:label="fragment_chat_room"
         tools:layout="@layout/fragment_chat_room" >
     </fragment>
     <fragment
         android:id="@+id/settingFragment"
-        android:name="com.example.project_sns.ui.main.setting.SettingFragment"
+        android:name="com.example.project_sns.ui.view.main.setting.SettingFragment"
         android:label="fragment_setting"
         tools:layout="@layout/fragment_setting" >
     </fragment>
     <dialog
         android:id="@+id/commentFragment"
-        android:name="com.example.project_sns.ui.main.CommentFragment"
+        android:name="com.example.project_sns.ui.view.main.CommentFragment"
         android:label="fragment_comment"
         tools:layout="@layout/fragment_comment" >
     </dialog>
     <fragment
         android:id="@+id/friendDetailFragment"
-        android:name="com.example.project_sns.ui.detail.FriendDetailFragment"
+        android:name="com.example.project_sns.ui.view.detail.FriendDetailFragment"
         android:label="fragment_friend_detail"
         tools:layout="@layout/fragment_friend_detail" >
     </fragment>
     <fragment
         android:id="@+id/postDetailFragment"
-        android:name="com.example.project_sns.ui.detail.PostDetailFragment"
+        android:name="com.example.project_sns.ui.view.detail.PostDetailFragment"
         android:label="fragment_post_detail"
         tools:layout="@layout/fragment_post_detail" >
     </fragment>
     <fragment
         android:id="@+id/recommendFragment"
-        android:name="com.example.project_sns.ui.main.recommend.RecommendFragment"
+        android:name="com.example.project_sns.ui.view.main.recommend.RecommendFragment"
         android:label="fragment_recommend"
         tools:layout="@layout/fragment_recommend" />
     <dialog
         android:id="@+id/dialogFragment"
-        android:name="com.example.project_sns.ui.dialog.DialogFragment"
+        android:name="com.example.project_sns.ui.view.dialog.DialogFragment"
         android:label="fragment_dialog"
         tools:layout="@layout/fragment_dialog" />
     <fragment
         android:id="@+id/makePostFragment"
-        android:name="com.example.project_sns.ui.main.profile.MyProfileMakePostFragment"
+        android:name="com.example.project_sns.ui.view.main.profile.MyProfileMakePostFragment"
         android:label="fragment_make_post"
         tools:layout="@layout/fragment_my_profile_make_post" >
     </fragment>
