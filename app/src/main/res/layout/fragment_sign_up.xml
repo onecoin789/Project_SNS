@@ -186,6 +186,31 @@
                     android:inputType="textPassword"
                     app:layout_constraintTop_toBottomOf="@id/tvSignUpPassword" />
 
+                <ImageView
+                    android:id="@+id/ivSignUpHidePassword"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    app:layout_constraintDimensionRatio="1:1"
+                    android:background="@drawable/ic_hide"
+                    android:layout_marginVertical="17dp"
+                    android:layout_marginEnd="20dp"
+                    android:tag="0"
+                    app:layout_constraintEnd_toEndOf="@+id/etSignUpPassword"
+                    app:layout_constraintTop_toTopOf="@+id/etSignUpPassword"
+                    app:layout_constraintBottom_toBottomOf="@+id/etSignUpPassword"/>
+
+                <ImageView
+                    android:id="@+id/ivSignUpShowPassword"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    app:layout_constraintDimensionRatio="1:1"
+                    android:layout_marginVertical="17dp"
+                    android:layout_marginEnd="20dp"
+                    android:tag="0"
+                    app:layout_constraintEnd_toEndOf="@+id/etSignUpPassword"
+                    app:layout_constraintTop_toTopOf="@+id/etSignUpPassword"
+                    app:layout_constraintBottom_toBottomOf="@+id/etSignUpPassword"/>
+
                 <TextView
                     android:id="@+id/tvTextPasswordCheck"
                     android:layout_width="wrap_content"
