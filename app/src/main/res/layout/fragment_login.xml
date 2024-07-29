@@ -19,7 +19,7 @@
             android:layout_height="wrap_content">
 
             <TextView
-                android:id="@+id/tv_Login1"
+                android:id="@+id/tvLoginTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="25dp"
@@ -31,14 +31,16 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <ImageView
-                android:id="@+id/iv_Login1"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
+                android:id="@+id/ivLoginTitle"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
                 android:layout_marginTop="70dp"
                 android:background="@drawable/ic_main"
+                app:layout_constraintDimensionRatio="1:1"
+                android:layout_marginHorizontal="160dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tv_Login1"
+                app:layout_constraintTop_toBottomOf="@+id/tvLoginTitle"
                 android:contentDescription="@string/contentDescription"/>
 
 <!--            <ImageView-->
@@ -62,10 +64,10 @@
                 android:layout_marginBottom="100dp"
                 android:padding="20dp"
                 android:layout_marginTop="80dp"
-                app:layout_constraintTop_toBottomOf="@+id/iv_Login1">
+                app:layout_constraintTop_toBottomOf="@+id/ivLoginTitle">
 
                 <TextView
-                    android:id="@+id/tv_Login2"
+                    android:id="@+id/tvLoginEmail"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/login_email"
@@ -77,7 +79,7 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <EditText
-                    android:id="@+id/et_Login_Email"
+                    android:id="@+id/etLoginEmail"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
@@ -89,10 +91,10 @@
                     android:textSize="14sp"
                     android:autofillHints="no"
                     android:inputType="textEmailAddress"
-                    app:layout_constraintTop_toBottomOf="@id/tv_Login2" />
+                    app:layout_constraintTop_toBottomOf="@id/tvLoginEmail" />
 
                 <TextView
-                    android:id="@+id/tv_Login3"
+                    android:id="@+id/tvLoginPassword"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
@@ -100,11 +102,11 @@
                     android:textColor="@color/text"
                     android:textSize="16sp"
                     android:textStyle="bold"
-                    app:layout_constraintStart_toStartOf="@id/tv_Login2"
-                    app:layout_constraintTop_toBottomOf="@+id/et_Login_Email" />
+                    app:layout_constraintStart_toStartOf="@id/tvLoginEmail"
+                    app:layout_constraintTop_toBottomOf="@+id/etLoginEmail" />
 
                 <EditText
-                    android:id="@+id/et_Login_Password"
+                    android:id="@+id/etLoginPassword"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
@@ -116,7 +118,33 @@
                     android:textSize="14sp"
                     android:autofillHints="no"
                     android:inputType="textPassword"
-                    app:layout_constraintTop_toBottomOf="@id/tv_Login3" />
+                    android:maxLength="20"
+                    app:layout_constraintTop_toBottomOf="@id/tvLoginPassword" />
+
+                <ImageView
+                    android:id="@+id/ivLoginHidePassword"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    app:layout_constraintDimensionRatio="1:1"
+                    android:layout_marginVertical="17dp"
+                    android:layout_marginEnd="20dp"
+                    android:tag="0"
+                    android:background="@drawable/ic_hide"
+                    app:layout_constraintEnd_toEndOf="@+id/etLoginPassword"
+                    app:layout_constraintTop_toTopOf="@+id/etLoginPassword"
+                    app:layout_constraintBottom_toBottomOf="@+id/etLoginPassword"/>
+
+                <ImageView
+                    android:id="@+id/ivLoginShowPassword"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    app:layout_constraintDimensionRatio="1:1"
+                    android:layout_marginVertical="17dp"
+                    android:layout_marginEnd="20dp"
+                    android:tag="0"
+                    app:layout_constraintEnd_toEndOf="@+id/etLoginPassword"
+                    app:layout_constraintTop_toTopOf="@+id/etLoginPassword"
+                    app:layout_constraintBottom_toBottomOf="@+id/etLoginPassword"/>
 
 
             </androidx.constraintlayout.widget.ConstraintLayout>

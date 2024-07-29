@@ -1,19 +1,14 @@
 package com.example.project_sns.ui.view.signup
 
 import android.view.View
-import android.widget.EditText
 import android.widget.TextView
-import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.project_sns.domain.usecase.LogInUseCase
 import com.example.project_sns.domain.usecase.SignUpUseCase
 import com.example.project_sns.ui.util.CheckSignUp
 import com.example.project_sns.ui.view.signup.data.FirebaseUserData
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import java.util.regex.Pattern
@@ -31,9 +26,9 @@ class SignUpViewModel @Inject constructor(
         viewModelScope.launch {
             val userData = signUpUseCase(email = email, password = password, data = data)
             if (userData.isSuccess) {
-                _signUpEvent.send(CheckSignUp.SignUpSuccess("회원가입 성공"))
+                _signUpEvent.send(CheckSignUp.SignUpSuccess)
             } else {
-                _signUpEvent.send(CheckSignUp.SignUpFail("회원가입 실패"))
+                _signUpEvent.send(CheckSignUp.SignUpFail("이미 회원가입 되어있습니다."))
             }
         }
     }
@@ -93,46 +88,54 @@ class SignUpViewModel @Inject constructor(
         return text.isEmpty()
     }
 
-//    fun checkSignUp(
-//        name: String,
-//        email: String,
-//        password: String,
-//        confirmPw: String,
-//        nameCheck: TextView,
-//        emailCheck: TextView,
-//        passwordCheck: TextView,
-//        confirmCheck: TextView,
-//        data: FirebaseUserData
-//    ) {
-//        if (nullCheck(name) || nullCheck(email) || nullCheck(password) || nullCheck(confirmPw)) {
-//            viewModelScope.launch {
-//                _signUpEvent.send(CheckSignUp.SignUpFail("모든 필드를 입력하세요."))
-//            }
-//        }
-//        if (!checkName(name, nameCheck)) {
-//            viewModelScope.launch {
-//                _signUpEvent.send(CheckSignUp.SignUpFail("유효하지 않은 이름입니다."))
-//            }
-//        }
-//
-//        if (!checkEmail(email, emailCheck)) {
-//            viewModelScope.launch {
-//                _signUpEvent.send(CheckSignUp.SignUpFail("유효하지 않은 이메일입니다."))
-//            }
-//        }
-//
-//        if (!checkPw(password, passwordCheck)) {
-//            viewModelScope.launch {
-//                _signUpEvent.send(CheckSignUp.SignUpFail("비밀번호는 8~20자 영문과 숫자 조합이어야 합니다."))
-//            }
-//        }
-//
-//        if (!checkConfirmPw(password, confirmPw, confirmCheck)) {
-//            viewModelScope.launch {
-//                _signUpEvent.send(CheckSignUp.SignUpFail("비밀번호가 일치하지 않습니다."))
-//            }
-//        } else {
-//            signUp(email, password, data)
-//        }
-//    }
+    fun checkSignUp(
+        name: String,
+        email: String,
+        password: String,
+        confirmPw: String,
+        nameCheck: TextView,
+        emailCheck: TextView,
+        passwordCheck: TextView,
+        confirmCheck: TextView,
+        data: FirebaseUserData
+    ) {
+
+        if (nullCheck(name) || nullCheck(email) || nullCheck(password) || nullCheck(confirmPw)) {
+            viewModelScope.launch {
+                _signUpEvent.send(CheckSignUp.SignUpFail("모든 필드를 입력하세요."))
+            }
+            return
+        }
+
+        if (!checkName(name, nameCheck)) {
+            viewModelScope.launch {
+                _signUpEvent.send(CheckSignUp.SignUpFail("유효하지 않은 이름입니다."))
+            }
+            return
+        }
+
+        if (!checkEmail(email, emailCheck)) {
+            viewModelScope.launch {
+                _signUpEvent.send(CheckSignUp.SignUpFail("유효하지 않은 이메일입니다."))
+            }
+            return
+        }
+
+        if (!checkPw(password, passwordCheck)) {
+            viewModelScope.launch {
+                _signUpEvent.send(CheckSignUp.SignUpFail("비밀번호는 8~20자 영문과 숫자 조합이어야 합니다."))
+            }
+            return
+        }
+
+        if (!checkConfirmPw(password, confirmPw, confirmCheck)) {
+            viewModelScope.launch {
+                _signUpEvent.send(CheckSignUp.SignUpFail("비밀번호가 일치하지 않습니다."))
+            }
+            return
+        }
+        else {
+            signUp(email, password, data)
+        }
+    }
 }

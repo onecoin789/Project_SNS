@@ -7,5 +7,5 @@ interface AuthRepository {
 
     suspend fun signUp(email: String, password: String, data: FirebaseUserData) : Result<String>
 
-    suspend fun logIn(email: String, password: String)
+    suspend fun logIn(email: String, password: String) : Result<String>
 }
