@@ -8,7 +8,7 @@
     tools:context=".ui.view.main.profile.MainMyProfileFragment">
 
     <ImageView
-        android:id="@+id/iv_My_Setting"
+        android:id="@+id/ivMySetting"
         android:layout_width="45dp"
         android:layout_height="45dp"
         android:layout_margin="10dp"
@@ -21,14 +21,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        app:layout_constraintTop_toBottomOf="@id/iv_My_Setting">
+        app:layout_constraintTop_toBottomOf="@id/ivMySetting">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/cl_My_Profile"
+                android:id="@+id/clMyProfile"
                 android:layout_width="110dp"
                 android:layout_height="110dp"
                 android:layout_marginStart="30dp"
@@ -49,7 +49,7 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <TextView
-                android:id="@+id/tv_My_Name"
+                android:id="@+id/tvMyName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="25dp"
@@ -58,11 +58,11 @@
                 android:textColor="@color/text"
                 android:textSize="20sp"
                 android:textStyle="bold"
-                app:layout_constraintStart_toEndOf="@id/cl_My_Profile"
-                app:layout_constraintTop_toTopOf="@id/cl_My_Profile" />
+                app:layout_constraintStart_toEndOf="@id/clMyProfile"
+                app:layout_constraintTop_toTopOf="@id/clMyProfile" />
 
             <TextView
-                android:id="@+id/tv_My_Email"
+                android:id="@+id/tvMyEmail"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="email@email.com"
@@ -70,22 +70,22 @@
                 android:textSize="15sp"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="@+id/tv_My_Name"
-                app:layout_constraintTop_toBottomOf="@+id/tv_My_Name" />
+                app:layout_constraintStart_toStartOf="@+id/tvMyName"
+                app:layout_constraintTop_toBottomOf="@+id/tvMyName" />
 
             <TextView
-                android:id="@+id/tv_My_Intro"
+                android:id="@+id/tvMyIntro"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
                 android:text="한줄 소개"
                 android:textColor="@color/text"
                 android:textSize="15sp"
-                app:layout_constraintStart_toStartOf="@id/tv_My_Email"
-                app:layout_constraintTop_toBottomOf="@id/tv_My_Email" />
+                app:layout_constraintStart_toStartOf="@id/tvMyEmail"
+                app:layout_constraintTop_toBottomOf="@id/tvMyEmail" />
 
             <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/btn_My_Edit"
+                android:id="@+id/btnMyEdit"
                 android:layout_width="0dp"
                 android:layout_height="40dp"
                 android:layout_marginStart="15dp"
@@ -96,13 +96,13 @@
                 android:textColor="@color/text"
                 android:textSize="16sp"
                 android:textStyle="bold"
-                app:layout_constraintEnd_toStartOf="@+id/btn_My_Friend"
+                app:layout_constraintEnd_toStartOf="@+id/btnMyFriend"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/cl_My_Profile" />
+                app:layout_constraintTop_toBottomOf="@id/clMyProfile" />
 
             <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/btn_My_Friend"
+                android:id="@+id/btnMyFriend"
                 android:layout_width="0dp"
                 android:layout_height="40dp"
                 android:layout_marginStart="15dp"
@@ -115,11 +115,11 @@
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toEndOf="@+id/btn_My_Edit"
-                app:layout_constraintTop_toBottomOf="@id/cl_My_Profile" />
+                app:layout_constraintStart_toEndOf="@+id/btnMyEdit"
+                app:layout_constraintTop_toBottomOf="@id/clMyProfile" />
 
             <TextView
-                android:id="@+id/tv_My_Number"
+                android:id="@+id/tvMyNumber"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="9"
@@ -128,11 +128,11 @@
                 android:textStyle="bold"
                 android:layout_marginStart="20dp"
                 android:layout_marginTop="30dp"
-                app:layout_constraintTop_toBottomOf="@id/btn_My_Edit"
+                app:layout_constraintTop_toBottomOf="@id/btnMyEdit"
                 app:layout_constraintStart_toStartOf="parent" />
 
             <TextView
-                android:id="@+id/tv_My1"
+                android:id="@+id/tvMyTextNumber"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/my_number"
@@ -140,45 +140,45 @@
                 android:textSize="22sp"
                 android:textStyle="bold"
                 android:layout_marginStart="3dp"
-                app:layout_constraintTop_toTopOf="@id/tv_My_Number"
-                app:layout_constraintBottom_toBottomOf="@id/tv_My_Number"
-                app:layout_constraintStart_toEndOf="@id/tv_My_Number" />
+                app:layout_constraintTop_toTopOf="@id/tvMyNumber"
+                app:layout_constraintBottom_toBottomOf="@id/tvMyNumber"
+                app:layout_constraintStart_toEndOf="@id/tvMyNumber" />
 
             <TextView
-                android:id="@+id/tv_My2"
+                android:id="@+id/tvMyTextPost"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/my_post"
                 android:textColor="@color/hint"
                 android:textSize="22sp"
                 android:textStyle="bold"
-                app:layout_constraintTop_toBottomOf="@id/tv_My_Number"
-                app:layout_constraintStart_toStartOf="@id/tv_My_Number" />
+                app:layout_constraintTop_toBottomOf="@id/tvMyNumber"
+                app:layout_constraintStart_toStartOf="@id/tvMyNumber" />
 
             <ImageView
-                android:id="@+id/iv_My_Add"
+                android:id="@+id/ivMyAdd"
                 android:layout_width="43dp"
                 android:layout_height="43dp"
                 android:layout_marginEnd="10dp"
                 android:background="@drawable/ic_add"
-                app:layout_constraintEnd_toStartOf="@id/iv_My_Delete"
-                app:layout_constraintTop_toTopOf="@+id/tv_My1"
-                app:layout_constraintBottom_toBottomOf="@id/tv_My2"
+                app:layout_constraintEnd_toStartOf="@id/ivMyDelete"
+                app:layout_constraintTop_toTopOf="@+id/tvMyTextNumber"
+                app:layout_constraintBottom_toBottomOf="@id/tvMyTextPost"
                 android:contentDescription="@string/contentDescription"/>
 
             <ImageView
-                android:id="@+id/iv_My_Delete"
+                android:id="@+id/ivMyDelete"
                 android:layout_width="45dp"
                 android:layout_height="45dp"
                 android:layout_marginEnd="20dp"
                 android:background="@drawable/ic_delete"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/tv_My1"
-                app:layout_constraintBottom_toBottomOf="@id/tv_My2"
+                app:layout_constraintTop_toTopOf="@+id/tvMyTextNumber"
+                app:layout_constraintBottom_toBottomOf="@id/tvMyTextPost"
                 android:contentDescription="@string/contentDescription"/>
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rv_My"
+                android:id="@+id/rvMyProfile"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="5dp"
@@ -186,7 +186,7 @@
                 app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
                 tools:listitem="@layout/rv_item_my_post"
                 app:spanCount="3"
-                app:layout_constraintTop_toBottomOf="@id/tv_My2" />
+                app:layout_constraintTop_toBottomOf="@id/tvMyTextPost" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>

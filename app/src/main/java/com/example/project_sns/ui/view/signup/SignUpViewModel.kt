@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.project_sns.domain.usecase.SignUpUseCase
 import com.example.project_sns.ui.util.CheckSignUp
-import com.example.project_sns.ui.view.signup.data.FirebaseUserData
+import com.example.project_sns.ui.view.signup.model.FirebaseUserData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow

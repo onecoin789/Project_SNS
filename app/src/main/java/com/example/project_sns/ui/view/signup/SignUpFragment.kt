@@ -17,7 +17,7 @@ import androidx.navigation.fragment.findNavController
 import com.example.project_sns.R
 import com.example.project_sns.databinding.FragmentSignUpBinding
 import com.example.project_sns.ui.util.CheckSignUp
-import com.example.project_sns.ui.view.signup.data.FirebaseUserData
+import com.example.project_sns.ui.view.signup.model.FirebaseUserData
 import com.google.firebase.Timestamp
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -106,7 +106,7 @@ class SignUpFragment : Fragment() {
         val data = FirebaseUserData(
             name = name,
             email = email,
-            image = "",
+            profileImage = "",
             createdAt = Timestamp.now()
         )
 
