@@ -6,9 +6,11 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.net.toUri
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.bumptech.glide.Glide
 import com.example.project_sns.R
 import com.example.project_sns.databinding.FragmentMyProfileBinding
 import com.example.project_sns.ui.CurrentUser
@@ -59,6 +61,10 @@ class MainMyProfileFragment : Fragment() {
         if (userData != null) {
             binding.tvMyName.text = userData.name
             binding.tvMyEmail.text = userData.email
+            if (userData.profileImage != null) {
+                binding.ivMyProfile.clipToOutline = true
+                Glide.with(requireContext()).load(userData.profileImage).into(binding.ivMyProfile)
+            }
         }
     }
 

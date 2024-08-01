@@ -18,7 +18,7 @@
             android:layout_height="wrap_content">
 
             <ImageView
-                android:id="@+id/iv_Make_Back"
+                android:id="@+id/ivMakeBack"
                 android:layout_width="45dp"
                 android:layout_height="45dp"
                 android:layout_marginStart="20dp"
@@ -33,14 +33,14 @@
                 android:layout_height="18dp"
                 android:layout_marginEnd="3dp"
                 android:background="@drawable/ic_back"
-                app:layout_constraintBottom_toBottomOf="@+id/iv_Make_Back"
-                app:layout_constraintEnd_toEndOf="@+id/iv_Make_Back"
-                app:layout_constraintStart_toStartOf="@+id/iv_Make_Back"
-                app:layout_constraintTop_toTopOf="@+id/iv_Make_Back"
+                app:layout_constraintBottom_toBottomOf="@+id/ivMakeBack"
+                app:layout_constraintEnd_toEndOf="@+id/ivMakeBack"
+                app:layout_constraintStart_toStartOf="@+id/ivMakeBack"
+                app:layout_constraintTop_toTopOf="@+id/ivMakeBack"
                 android:contentDescription="@string/contentDescription"/>
 
             <TextView
-                android:id="@+id/tv_Make1"
+                android:id="@+id/tvMakeTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="25dp"
@@ -48,37 +48,47 @@
                 android:textColor="@color/text"
                 android:textSize="35sp"
                 android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="@id/iv_Make_Back"
-                app:layout_constraintStart_toEndOf="@id/iv_Make_Back"
-                app:layout_constraintTop_toTopOf="@id/iv_Make_Back" />
+                app:layout_constraintBottom_toBottomOf="@id/ivMakeBack"
+                app:layout_constraintStart_toEndOf="@id/ivMakeBack"
+                app:layout_constraintTop_toTopOf="@id/ivMakeBack" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/cl_Make_Photo"
+                android:id="@+id/clMakePhotoFrame"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_marginHorizontal="30dp"
                 android:layout_marginTop="70dp"
                 android:background="@drawable/item_btn_point"
-                android:padding="140dp"
                 app:layout_constraintDimensionRatio="1:1"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tv_Make1">
+                app:layout_constraintTop_toBottomOf="@+id/tvMakeTitle">
 
                 <ImageView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="@drawable/ic_photo"
-                    app:layout_constraintBottom_toBottomOf="@id/cl_Make_Photo"
+                    android:layout_margin="140dp"
                     app:layout_constraintDimensionRatio="1:1"
-                    app:layout_constraintEnd_toEndOf="@id/cl_Make_Photo"
-                    app:layout_constraintStart_toStartOf="@id/cl_Make_Photo"
-                    app:layout_constraintTop_toTopOf="@+id/cl_Make_Photo"
+                    app:layout_constraintBottom_toBottomOf="@id/clMakePhotoFrame"
+                    app:layout_constraintEnd_toEndOf="@id/clMakePhotoFrame"
+                    app:layout_constraintStart_toStartOf="@id/clMakePhotoFrame"
+                    app:layout_constraintTop_toTopOf="@+id/clMakePhotoFrame"
                     android:contentDescription="@string/contentDescription"/>
+
+                <ImageView
+                    android:id="@+id/ivMakePhoto"
+                    android:layout_margin="5dp"
+                    android:scaleType="centerCrop"
+                    android:background="@drawable/item_btn_point"
+                    android:backgroundTint="@android:color/transparent"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <TextView
-                android:id="@+id/tv_Make2"
+                android:id="@+id/tvMakeText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="20dp"
@@ -87,10 +97,10 @@
                 android:textSize="17sp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/cl_Make_Photo" />
+                app:layout_constraintTop_toBottomOf="@+id/clMakePhotoFrame" />
 
             <EditText
-                android:id="@+id/et_Make_Text"
+                android:id="@+id/etMakeText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="10dp"
@@ -103,10 +113,10 @@
                 android:autofillHints="no"
                 android:inputType="text"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tv_Make2" />
+                app:layout_constraintTop_toBottomOf="@id/tvMakeText" />
 
             <TextView
-                android:id="@+id/tv_Make3"
+                android:id="@+id/tvMakeLocation"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="20dp"
@@ -115,10 +125,10 @@
                 android:textSize="17sp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/et_Make_Text" />
+                app:layout_constraintTop_toBottomOf="@+id/etMakeText" />
 
             <EditText
-                android:id="@+id/et_Make_Location"
+                android:id="@+id/etMakeLocation"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="10dp"
@@ -131,16 +141,16 @@
                 android:autofillHints="no"
                 android:inputType="text"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tv_Make3" />
+                app:layout_constraintTop_toBottomOf="@id/tvMakeLocation" />
 
             <androidx.fragment.app.FragmentContainerView
-                android:id="@+id/fc_Make_Map"
+                android:id="@+id/fcMakeMap"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_marginTop="30dp"
                 android:layout_marginHorizontal="20dp"
                 app:layout_constraintDimensionRatio="1:1"
-                app:layout_constraintTop_toBottomOf="@id/et_Make_Location"/>
+                app:layout_constraintTop_toBottomOf="@id/etMakeLocation"/>
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btn_Make_Confirm"
@@ -154,7 +164,7 @@
                 android:textColor="@color/text"
                 android:textSize="20sp"
                 android:textStyle="bold"
-                app:layout_constraintTop_toBottomOf="@id/fc_Make_Map"
+                app:layout_constraintTop_toBottomOf="@id/fcMakeMap"
                 app:layout_constraintBottom_toBottomOf="parent"/>
 
 

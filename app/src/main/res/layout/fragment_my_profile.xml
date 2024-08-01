@@ -28,7 +28,7 @@
             android:layout_height="wrap_content">
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/clMyProfile"
+                android:id="@+id/clMyProfileFrame"
                 android:layout_width="110dp"
                 android:layout_height="110dp"
                 android:layout_marginStart="30dp"
@@ -46,6 +46,15 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     android:contentDescription="@string/contentDescription"/>
+
+                <ImageView
+                    android:id="@+id/ivMyProfile"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_margin="3dp"
+                    android:scaleType="centerCrop"
+                    android:background="@drawable/item_btn_point"
+                    android:backgroundTint="@android:color/transparent"/>
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <TextView
@@ -58,8 +67,8 @@
                 android:textColor="@color/text"
                 android:textSize="20sp"
                 android:textStyle="bold"
-                app:layout_constraintStart_toEndOf="@id/clMyProfile"
-                app:layout_constraintTop_toTopOf="@id/clMyProfile" />
+                app:layout_constraintStart_toEndOf="@id/clMyProfileFrame"
+                app:layout_constraintTop_toTopOf="@id/clMyProfileFrame" />
 
             <TextView
                 android:id="@+id/tvMyEmail"
@@ -99,7 +108,7 @@
                 app:layout_constraintEnd_toStartOf="@+id/btnMyFriend"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/clMyProfile" />
+                app:layout_constraintTop_toBottomOf="@id/clMyProfileFrame" />
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btnMyFriend"
@@ -116,7 +125,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toEndOf="@+id/btnMyEdit"
-                app:layout_constraintTop_toBottomOf="@id/clMyProfile" />
+                app:layout_constraintTop_toBottomOf="@id/clMyProfileFrame" />
 
             <TextView
                 android:id="@+id/tvMyNumber"
