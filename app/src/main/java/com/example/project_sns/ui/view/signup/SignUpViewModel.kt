@@ -1,5 +1,6 @@
 package com.example.project_sns.ui.view.signup
 
+import android.net.Uri
 import android.view.View
 import android.widget.TextView
 import androidx.lifecycle.ViewModel
@@ -22,9 +23,9 @@ class SignUpViewModel @Inject constructor(
     private val _signUpEvent = Channel<CheckSignUp> { }
     val signUpEvent = _signUpEvent.receiveAsFlow()
 
-    fun signUp(email: String, password: String, data: FirebaseUserData) {
+    fun signUp(name: String, email: String, password: String, imageUri: String) {
         viewModelScope.launch {
-            val userData = signUpUseCase(email = email, password = password, data = data)
+            val userData = signUpUseCase(name = name, email = email, password = password, imageUri = imageUri)
             if (userData.isSuccess) {
                 _signUpEvent.send(CheckSignUp.SignUpSuccess)
             } else {
@@ -92,12 +93,12 @@ class SignUpViewModel @Inject constructor(
         name: String,
         email: String,
         password: String,
+        imageUri: String,
         confirmPw: String,
         nameCheck: TextView,
         emailCheck: TextView,
         passwordCheck: TextView,
         confirmCheck: TextView,
-        data: FirebaseUserData
     ) {
 
         if (nullCheck(name) || nullCheck(email) || nullCheck(password) || nullCheck(confirmPw)) {
@@ -135,7 +136,7 @@ class SignUpViewModel @Inject constructor(
             return
         }
         else {
-            signUp(email, password, data)
+            signUp(name, email, password, imageUri)
         }
     }
 }

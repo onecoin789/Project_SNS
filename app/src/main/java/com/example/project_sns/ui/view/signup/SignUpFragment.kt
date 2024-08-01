@@ -1,12 +1,17 @@
 package com.example.project_sns.ui.view.signup
 
+import android.app.Activity
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
 import android.text.method.HideReturnsTransformationMethod
 import android.text.method.PasswordTransformationMethod
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -14,11 +19,13 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import com.bumptech.glide.Glide
 import com.example.project_sns.R
 import com.example.project_sns.databinding.FragmentSignUpBinding
 import com.example.project_sns.ui.util.CheckSignUp
 import com.example.project_sns.ui.view.signup.model.FirebaseUserData
 import com.google.firebase.Timestamp
+import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -29,6 +36,8 @@ class SignUpFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val signUpViewModel: SignUpViewModel by viewModels()
+
+    private lateinit var uri: Uri
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -73,6 +82,27 @@ class SignUpFragment : Fragment() {
         }
 
         editTextCheck()
+        getPhoto()
+    }
+
+    private fun getPhoto() {
+
+        val registerForActivityResult =
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+                when (result.resultCode) {
+                    Activity.RESULT_OK -> {
+                        uri = result.data?.data!!
+                        binding.ivSignUpPhoto.clipToOutline = true
+                        Glide.with(requireContext()).load(uri).into(binding.ivSignUpPhoto)
+                    }
+                }
+            }
+
+        binding.clSignUpPhotoFrame.setOnClickListener {
+            val intent =
+                Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI)
+            registerForActivityResult.launch(intent)
+        }
     }
 
     private fun collectFlow() {
@@ -84,15 +114,22 @@ class SignUpFragment : Fragment() {
                             Toast.makeText(requireContext(), "회원가입 성공!!", Toast.LENGTH_SHORT).show()
                             findNavController().popBackStack()
                         }
+
                         is CheckSignUp.SignUpFail -> {
-                            Toast.makeText(requireContext(), checkSignUp.message, Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                requireContext(),
+                                checkSignUp.message,
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
                     }
                 }
             }
         }
     }
+
     private fun initData() {
+
         val name = binding.etSignUpName.text.toString()
         val email = binding.etSignUpEmail.text.toString()
         val password = binding.etSignUpPassword.text.toString()
@@ -103,19 +140,12 @@ class SignUpFragment : Fragment() {
         val passwordCheck = binding.tvTextPasswordCheck
         val passwordConfirmCheck = binding.tvTextPasswordConfirmCheck
 
-        val data = FirebaseUserData(
-            name = name,
-            email = email,
-            profileImage = "",
-            createdAt = Timestamp.now()
-        )
-
         viewLifecycleOwner.lifecycleScope.launch {
             signUpViewModel.checkSignUp(
+                name = name,
                 email = email,
                 password = password,
-                data = data,
-                name = name,
+                imageUri = uri.toString(),
                 confirmPw = passwordConfirm,
                 nameCheck = nameCheck,
                 emailCheck = emailCheck,
@@ -124,7 +154,6 @@ class SignUpFragment : Fragment() {
             )
 
         }
-
     }
 
     private fun editTextCheck() {
