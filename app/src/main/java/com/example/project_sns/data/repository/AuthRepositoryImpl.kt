@@ -1,14 +1,12 @@
 package com.example.project_sns.data.repository
 
-import android.net.Uri
 import android.util.Log
-import android.util.LogPrinter
 import androidx.core.net.toUri
 import com.example.project_sns.data.mapper.toEntity
 import com.example.project_sns.data.response.CurrentUserResponse
 import com.example.project_sns.domain.model.CurrentUserEntity
 import com.example.project_sns.domain.repository.AuthRepository
-import com.example.project_sns.ui.view.signup.model.FirebaseUserData
+import com.example.project_sns.ui.util.dateFormat
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthException
@@ -19,6 +17,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
+import java.time.LocalDateTime
 import javax.inject.Inject
 
 class AuthRepositoryImpl @Inject constructor(
@@ -35,16 +34,25 @@ class AuthRepositoryImpl @Inject constructor(
         return try {
             val result = auth.createUserWithEmailAndPassword(email, password).await()
             val user = result.user
+            val storageRef = storage.getReference("image").child("${user?.uid}/profileImage")
 
             if (user != null) {
-                setData(uid = user.uid, name = name,email = email, imageUri = imageUri)
-//                db.collection("user").document(user.uid).set(data)
-//                    .addOnSuccessListener {
-//                        Log.d("debug_signup", "success")
-//                    }
-//                    .addOnFailureListener {
-//                        Log.d("debug_signup", "fail")
-//                    }
+                storageRef.putFile(imageUri.toUri()).addOnSuccessListener {
+                    storageRef.downloadUrl.addOnSuccessListener {
+                        val downloadUri = it.toString()
+                        val time = LocalDateTime.now()
+                        val data = hashMapOf(
+                            "uid" to user.uid,
+                            "name" to name,
+                            "email" to email,
+                            "profileImage" to downloadUri,
+                            "createdAt" to dateFormat(time)
+                        )
+                        db.collection("user").document(user.uid).set(data)
+                    }
+                }.addOnFailureListener {
+                    Log.d("debug_signup", "fail")
+                }
                 Result.success("Success")
             } else {
                 Result.failure(Exception("Fail"))
@@ -93,27 +101,5 @@ class AuthRepositoryImpl @Inject constructor(
         }.catch { exception ->
             throw exception
         }
-    }
-
-    private fun setData(uid: String, name: String, email: String, imageUri: String) {
-
-        val storageRef = storage.getReference(uid).child("${uid}.profileImage")
-        val data = FirebaseUserData(uid = uid, name = name, email = email, profileImage = imageUri, createdAt = Timestamp.now())
-
-        db.collection("user").document(uid).set(data)
-            .addOnSuccessListener {
-                Log.d("debug_signup", "success")
-            }
-            .addOnFailureListener {
-                Log.d("debug_signup", "fail")
-            }
-
-        storageRef.putFile(imageUri.toUri())
-            .addOnSuccessListener {
-                Log.d("debug_signup", "success")
-            }.addOnFailureListener {
-                Log.d("debug_signup", "fail")
-            }
-
     }
 }

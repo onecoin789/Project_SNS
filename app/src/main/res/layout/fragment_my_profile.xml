@@ -63,7 +63,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="25dp"
                 android:layout_marginTop="10dp"
-                android:text="name"
                 android:textColor="@color/text"
                 android:textSize="20sp"
                 android:textStyle="bold"
@@ -74,7 +73,6 @@
                 android:id="@+id/tvMyEmail"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="email@email.com"
                 android:textColor="@color/text"
                 android:textSize="15sp"
                 android:textStyle="bold"
@@ -131,14 +129,13 @@
                 android:id="@+id/tvMyNumber"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="9"
                 android:textColor="@color/text"
                 android:textSize="25sp"
                 android:textStyle="bold"
-                android:layout_marginStart="20dp"
-                android:layout_marginTop="30dp"
-                app:layout_constraintTop_toBottomOf="@id/btnMyEdit"
-                app:layout_constraintStart_toStartOf="parent" />
+                android:visibility="invisible"
+                android:layout_marginStart="3dp"
+                app:layout_constraintTop_toBottomOf="@id/tvMyTextPost"
+                app:layout_constraintStart_toStartOf="@id/tvMyTextPost"  />
 
             <TextView
                 android:id="@+id/tvMyTextNumber"
@@ -149,9 +146,10 @@
                 android:textSize="22sp"
                 android:textStyle="bold"
                 android:layout_marginStart="3dp"
+                android:visibility="invisible"
                 app:layout_constraintTop_toTopOf="@id/tvMyNumber"
-                app:layout_constraintBottom_toBottomOf="@id/tvMyNumber"
-                app:layout_constraintStart_toEndOf="@id/tvMyNumber" />
+                app:layout_constraintBottom_toBottomOf="@+id/tvMyNumber"
+                app:layout_constraintStart_toEndOf="@id/tvMyNumber"  />
 
             <TextView
                 android:id="@+id/tvMyTextPost"
@@ -161,8 +159,11 @@
                 android:textColor="@color/hint"
                 android:textSize="22sp"
                 android:textStyle="bold"
-                app:layout_constraintTop_toBottomOf="@id/tvMyNumber"
-                app:layout_constraintStart_toStartOf="@id/tvMyNumber" />
+                android:visibility="invisible"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="30dp"
+                app:layout_constraintTop_toBottomOf="@id/btnMyEdit"
+                app:layout_constraintStart_toStartOf="parent" />
 
             <ImageView
                 android:id="@+id/ivMyAdd"
@@ -171,8 +172,8 @@
                 android:layout_marginEnd="10dp"
                 android:background="@drawable/ic_add"
                 app:layout_constraintEnd_toStartOf="@id/ivMyDelete"
-                app:layout_constraintTop_toTopOf="@+id/tvMyTextNumber"
-                app:layout_constraintBottom_toBottomOf="@id/tvMyTextPost"
+                app:layout_constraintTop_toTopOf="@+id/tvMyTextPost"
+                app:layout_constraintBottom_toBottomOf="@id/tvMyTextNumber"
                 android:contentDescription="@string/contentDescription"/>
 
             <ImageView
@@ -182,9 +183,31 @@
                 android:layout_marginEnd="20dp"
                 android:background="@drawable/ic_delete"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/tvMyTextNumber"
-                app:layout_constraintBottom_toBottomOf="@id/tvMyTextPost"
+                app:layout_constraintTop_toTopOf="@+id/tvMyTextPost"
+                app:layout_constraintBottom_toBottomOf="@id/tvMyTextNumber"
                 android:contentDescription="@string/contentDescription"/>
+
+            <TextView
+                android:id="@+id/tvMyNullPost"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/my_null_post"
+                android:textSize="23sp"
+                android:textColor="@color/hint"
+                android:layout_marginTop="100dp"
+                android:visibility="visible"
+                app:layout_constraintTop_toBottomOf="@+id/tvMyTextPost"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"/>
+
+            <ImageView
+                android:id="@+id/ivMyLine"
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:layout_marginHorizontal="1dp"
+                android:visibility="invisible"
+                app:layout_constraintBottom_toTopOf="@+id/rvMyProfile"
+                android:background="@color/point"/>
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvMyProfile"
@@ -192,10 +215,11 @@
                 android:layout_height="wrap_content"
                 android:padding="5dp"
                 android:layout_marginTop="30dp"
+                android:visibility="invisible"
                 app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
                 tools:listitem="@layout/rv_item_my_post"
                 app:spanCount="3"
-                app:layout_constraintTop_toBottomOf="@id/tvMyTextPost" />
+                app:layout_constraintTop_toBottomOf="@id/tvMyTextNumber" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
