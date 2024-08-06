@@ -1,4 +1,4 @@
-package com.example.project_sns.ui.view.data
+package com.example.project_sns.ui.view.model
 
 data class FriendData(
     val name: String,

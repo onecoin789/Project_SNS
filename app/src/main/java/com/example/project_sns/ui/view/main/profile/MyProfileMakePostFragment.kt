@@ -11,20 +11,28 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.bumptech.glide.Glide
 import com.example.project_sns.databinding.FragmentMyProfileMakePostBinding
-import com.google.firebase.Firebase
-import com.google.firebase.Timestamp
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.storage.storage
+import com.example.project_sns.ui.CurrentUser
+import com.example.project_sns.ui.util.dateFormat
+import com.example.project_sns.ui.view.model.PostDataModel
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
+import java.time.LocalDateTime
+import java.util.UUID
 
+@AndroidEntryPoint
 class MyProfileMakePostFragment : Fragment() {
 
     private var _binding: FragmentMyProfileMakePostBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var uri: Uri
+    private var uri: Uri? = null
+
+    private val myProfileViewModel: MyProfileViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -38,9 +46,7 @@ class MyProfileMakePostFragment : Fragment() {
 
         initView()
         getPhoto()
-//        binding.btnMakeConfirm.setOnClickListener {
-//            uploadPhoto(uri)
-//        }
+
         return binding.root
     }
 
@@ -53,6 +59,11 @@ class MyProfileMakePostFragment : Fragment() {
         binding.ivMakeBack.setOnClickListener {
             findNavController().popBackStack()
         }
+
+        binding.btnMakeConfirm.setOnClickListener {
+            collectFlow()
+            initData()
+        }
     }
 
     private fun getPhoto() {
@@ -63,7 +74,7 @@ class MyProfileMakePostFragment : Fragment() {
                     RESULT_OK -> {
                         uri = result.data?.data!!
                         binding.ivMakePhoto.clipToOutline = true
-                        binding.ivMakePhoto.setImageURI(uri)
+                        Glide.with(requireContext()).load(uri).into(binding.ivMakePhoto)
                     }
                 }
             }
@@ -75,23 +86,45 @@ class MyProfileMakePostFragment : Fragment() {
         }
     }
 
-//    private fun uploadPhoto(uri: Uri?) {
-//
-//        if (uri != null) {
-//            val storage = Firebase.storage
-//            val storageRef = storage.getReference("${auth.currentUser?.uid}")
-//            val fileName = Timestamp.now()
-//            val mountainsRef = storageRef.child("${fileName}.png")
-//            val downloadUri = storageRef.downloadUrl
-//
-//
-//
-//            val uploadTask = mountainsRef.putFile(uri)
-//            uploadTask.addOnSuccessListener { _ ->
-//                Toast.makeText(requireContext(), "성공", Toast.LENGTH_SHORT).show()
-//            }.addOnFailureListener {
-//                Toast.makeText(requireContext(), "실패", Toast.LENGTH_SHORT).show()
-//            }
-//        }
+    private fun collectFlow() {
 
+        viewLifecycleOwner.lifecycleScope.launch {
+            myProfileViewModel.postUpLoadResult.collect {
+                if (it == true) {
+                    Toast.makeText(requireActivity(), "게시물을 생성 완료.", Toast.LENGTH_SHORT).show()
+                    findNavController().popBackStack()
+                } else if (it == false) {
+                    Toast.makeText(requireActivity(), "게시물을 생성하지 못했습니다.", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+
+    private fun initData() {
+        val auth = CurrentUser.userData
+        val profileImage = auth?.profileImage.toString()
+        val name = auth?.name.toString()
+        val email = auth?.email.toString()
+        val postText = binding.etMakeText.text.toString()
+        val time = LocalDateTime.now()
+        val data = PostDataModel(
+            postId = UUID.randomUUID().toString(),
+            profileImage = profileImage,
+            name = name,
+            email = email,
+            image = uri.toString(),
+            postText = postText,
+            lat = 0.0,
+            lng = 0.0,
+            createdAt = dateFormat(time)
+        )
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            if (uri != null) {
+                myProfileViewModel.upLoadPost(data)
+            } else {
+                Toast.makeText(requireActivity(), "사진 선택 필요", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
 }

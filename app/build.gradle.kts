@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.googleDaggerHiltAndroid)
     id("com.google.gms.google-services")
+    id("kotlin-parcelize")
 //    id("com.google.firebase.crashlytics")
 }
 
@@ -13,7 +14,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.project_sns"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"

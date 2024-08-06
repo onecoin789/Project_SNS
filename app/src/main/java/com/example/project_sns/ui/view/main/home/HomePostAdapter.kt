@@ -6,12 +6,12 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.project_sns.databinding.RvItemPostPhotoBinding
-import com.example.project_sns.ui.view.data.PostData
+import com.example.project_sns.ui.view.model.PostDataModel
 
-class HomePostAdapter : ListAdapter<PostData, HomePostAdapter.HomePostViewHolder>(diffUtil) {
+class HomePostAdapter : ListAdapter<PostDataModel, HomePostAdapter.HomePostViewHolder>(diffUtil) {
 
     class HomePostViewHolder(private val binding: RvItemPostPhotoBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(item: PostData) {
+        fun bind(item: PostDataModel) {
 
         }
     }
@@ -25,12 +25,12 @@ class HomePostAdapter : ListAdapter<PostData, HomePostAdapter.HomePostViewHolder
     }
 
     companion object {
-        val diffUtil = object : DiffUtil.ItemCallback<PostData>() {
-            override fun areItemsTheSame(oldItem: PostData, newItem: PostData): Boolean {
+        val diffUtil = object : DiffUtil.ItemCallback<PostDataModel>() {
+            override fun areItemsTheSame(oldItem: PostDataModel, newItem: PostDataModel): Boolean {
                 return oldItem == newItem
             }
 
-            override fun areContentsTheSame(oldItem: PostData, newItem: PostData): Boolean {
+            override fun areContentsTheSame(oldItem: PostDataModel, newItem: PostDataModel): Boolean {
                 return oldItem == newItem
             }
 

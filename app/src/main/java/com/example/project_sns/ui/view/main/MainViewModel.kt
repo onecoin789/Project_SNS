@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.project_sns.domain.usecase.GetCurrentUserDataUseCase
 import com.example.project_sns.ui.CurrentUser
 import com.example.project_sns.ui.mapper.toModel
-import com.example.project_sns.ui.model.CurrentUserModel
+import com.example.project_sns.ui.CurrentUserModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
