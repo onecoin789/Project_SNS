@@ -37,6 +37,7 @@ class DataRepositoryImpl @Inject constructor(
                             val downloadUri = it.toString()
                             val data = hashMapOf(
                                 "uid" to currentUser,
+                                "profileImage" to postData.profileImage,
                                 "name" to postData.name,
                                 "email" to postData.email,
                                 "image" to downloadUri,
@@ -45,8 +46,7 @@ class DataRepositoryImpl @Inject constructor(
                                 "lng" to postData.lng,
                                 "createdAt" to postData.createdAt
                             )
-                            db.collection("user").document(currentUser).collection("post")
-                                .document(postData.postId).set(data)
+                            db.collection("post").document(postData.postId).set(data)
                         }
                     }
                     emit(true)
@@ -62,7 +62,7 @@ class DataRepositoryImpl @Inject constructor(
         return callbackFlow {
             val mAuth = auth.currentUser?.uid
             if (mAuth != null) {
-                val postData = db.collection("user").document(uid).collection("post").whereEqualTo("uid", uid)
+                val postData = db.collection("post").whereEqualTo("uid", uid)
                 val snapShotListener = postData.addSnapshotListener { snapshot, error ->
                     if (error != null) {
                         trySend(emptyList()).isSuccess

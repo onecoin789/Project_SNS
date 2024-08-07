@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.text.method.HideReturnsTransformationMethod
 import android.text.method.PasswordTransformationMethod
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -37,13 +38,8 @@ class SignUpFragment : Fragment() {
 
     private val signUpViewModel: SignUpViewModel by viewModels()
 
-    private lateinit var uri: Uri
+    private var uri: Uri? = null
 
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -141,18 +137,33 @@ class SignUpFragment : Fragment() {
         val passwordConfirmCheck = binding.tvTextPasswordConfirmCheck
 
         viewLifecycleOwner.lifecycleScope.launch {
-            signUpViewModel.checkSignUp(
-                name = name,
-                email = email,
-                password = password,
-                imageUri = uri.toString(),
-                confirmPw = passwordConfirm,
-                nameCheck = nameCheck,
-                emailCheck = emailCheck,
-                passwordCheck = passwordCheck,
-                confirmCheck = passwordConfirmCheck
-            )
-
+            if (uri != null) {
+                signUpViewModel.checkSignUp(
+                    name = name,
+                    email = email,
+                    password = password,
+                    imageUri = uri.toString(),
+                    confirmPw = passwordConfirm,
+                    nameCheck = nameCheck,
+                    emailCheck = emailCheck,
+                    passwordCheck = passwordCheck,
+                    confirmCheck = passwordConfirmCheck
+                )
+                Log.d("data1", "${uri}")
+            } else {
+                signUpViewModel.checkSignUp(
+                    name = name,
+                    email = email,
+                    password = password,
+                    imageUri = null,
+                    confirmPw = passwordConfirm,
+                    nameCheck = nameCheck,
+                    emailCheck = emailCheck,
+                    passwordCheck = passwordCheck,
+                    confirmCheck = passwordConfirmCheck
+                )
+                Log.d("data2", "${uri}")
+            }
         }
     }
 

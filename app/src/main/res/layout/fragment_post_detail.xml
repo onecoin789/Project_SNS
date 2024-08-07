@@ -5,10 +5,10 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/bg"
-    tools:context=".ui.view.detail.PostDetailFragment">
+    tools:context=".ui.view.main.profile.detail.PostDetailFragment">
 
     <ImageView
-        android:id="@+id/iv_PD_Back"
+        android:id="@+id/ivPDBack"
         android:layout_width="45dp"
         android:layout_height="45dp"
         android:layout_marginStart="20dp"
@@ -23,120 +23,123 @@
         android:layout_height="18dp"
         android:layout_marginEnd="3dp"
         android:background="@drawable/ic_back"
-        app:layout_constraintBottom_toBottomOf="@+id/iv_PD_Back"
-        app:layout_constraintEnd_toEndOf="@+id/iv_PD_Back"
-        app:layout_constraintStart_toStartOf="@+id/iv_PD_Back"
-        app:layout_constraintTop_toTopOf="@+id/iv_PD_Back"
+        app:layout_constraintBottom_toBottomOf="@+id/ivPDBack"
+        app:layout_constraintEnd_toEndOf="@+id/ivPDBack"
+        app:layout_constraintStart_toStartOf="@+id/ivPDBack"
+        app:layout_constraintTop_toTopOf="@+id/ivPDBack"
         android:contentDescription="@string/contentDescription"/>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/cl_PD_T"
+        android:id="@+id/clPDTop"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
         android:background="@color/bg"
-        android:padding="10dp"
-        app:layout_constraintTop_toBottomOf="@id/iv_PD_Back">
+        app:layout_constraintTop_toBottomOf="@id/ivPDBack">
 
         <ImageView
-            android:id="@+id/iv_PD_User"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:background="@drawable/ic_user_fill"
+            android:id="@+id/ivPDUser"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_margin="10dp"
+            android:background="@drawable/item_profile"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_user_fill"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             android:contentDescription="@string/contentDescription"/>
 
         <TextView
-            android:id="@+id/tv_PD_Name"
+            android:id="@+id/tvPDName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
+            android:layout_marginStart="10dp"
             android:textColor="@color/text"
             android:textSize="20sp"
             android:textStyle="bold"
-            app:layout_constraintBottom_toTopOf="@+id/tv_PD_Email"
-            app:layout_constraintStart_toEndOf="@id/iv_PD_User"
-            app:layout_constraintTop_toTopOf="@id/iv_PD_User"
+            app:layout_constraintBottom_toTopOf="@+id/tvPDEmail"
+            app:layout_constraintStart_toEndOf="@id/ivPDUser"
+            app:layout_constraintTop_toTopOf="@id/ivPDUser"
             app:layout_constraintVertical_chainStyle="packed" />
 
         <TextView
-            android:id="@+id/tv_PD_Email"
+            android:id="@+id/tvPDEmail"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/hint"
             android:textSize="18sp"
-            app:layout_constraintBottom_toBottomOf="@id/iv_PD_User"
-            app:layout_constraintStart_toStartOf="@+id/tv_PD_Name"
-            app:layout_constraintTop_toBottomOf="@+id/tv_PD_Name" />
+            app:layout_constraintBottom_toBottomOf="@id/ivPDUser"
+            app:layout_constraintStart_toStartOf="@+id/tvPDName"
+            app:layout_constraintTop_toBottomOf="@+id/tvPDName" />
 
         <ImageView
-            android:id="@+id/iv_PD_More"
+            android:id="@+id/ivPDMore"
             android:layout_width="40dp"
             android:layout_height="40dp"
+            android:layout_margin="10dp"
             android:background="@drawable/ic_more"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/tv_PD_Name"
-            app:layout_constraintBottom_toBottomOf="@id/tv_PD_Email"
+            app:layout_constraintTop_toTopOf="@id/tvPDName"
+            app:layout_constraintBottom_toBottomOf="@id/tvPDEmail"
             android:contentDescription="@string/contentDescription"/>
 
         <ImageView
-            android:id="@+id/iv_PD_Home"
+            android:id="@+id/ivPDPostImage"
             android:layout_width="match_parent"
-            android:layout_height="350dp"
+            android:layout_height="0dp"
+            app:layout_constraintDimensionRatio="1:1"
             android:layout_marginTop="10dp"
             android:scaleType="centerCrop"
             android:background="@color/hint"
-            app:layout_constraintTop_toBottomOf="@+id/iv_PD_User"
+            app:layout_constraintTop_toBottomOf="@+id/ivPDUser"
             android:contentDescription="@string/contentDescription"/>
 
         <ImageView
-            android:id="@+id/iv_PD_Heart"
+            android:id="@+id/ivPDHeart"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_marginTop="10dp"
-            android:layout_marginStart="5dp"
+            android:layout_marginStart="10dp"
             android:background="@drawable/ic_heart"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/iv_PD_Home"
+            app:layout_constraintTop_toBottomOf="@id/ivPDPostImage"
             android:contentDescription="@string/contentDescription"/>
 
         <ImageView
-            android:id="@+id/iv_PD_Share"
+            android:id="@+id/ivPDShare"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_marginStart="10dp"
             android:background="@drawable/ic_share"
-            app:layout_constraintStart_toEndOf="@id/iv_PD_Heart"
-            app:layout_constraintTop_toTopOf="@id/iv_PD_Heart"
-            app:layout_constraintBottom_toBottomOf="@+id/iv_PD_Heart"
+            app:layout_constraintStart_toEndOf="@id/ivPDHeart"
+            app:layout_constraintTop_toTopOf="@id/ivPDHeart"
+            app:layout_constraintBottom_toBottomOf="@+id/ivPDHeart"
             android:contentDescription="@string/contentDescription"/>
 
         <TextView
-            android:id="@+id/tv_PD_Post"
+            android:id="@+id/tvPDPostText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="@color/text"
             android:textSize="17sp"
             android:layout_marginTop="10dp"
-            android:layout_marginStart="5dp"
+            android:layout_marginStart="10dp"
             android:layout_marginEnd="5dp"
             android:maxLines="2"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/iv_PD_Heart"
+            app:layout_constraintTop_toBottomOf="@+id/ivPDHeart"
             app:layout_constraintStart_toStartOf="parent"/>
 
         <TextView
-            android:id="@+id/tv_PD_Comment"
+            android:id="@+id/tvPDComment"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/hint"
             android:textSize="16sp"
             android:layout_marginTop="5dp"
-            android:layout_marginStart="1dp"
             android:text="@string/post_comment"
-            app:layout_constraintTop_toBottomOf="@+id/tv_PD_Post"
-            app:layout_constraintStart_toStartOf="@+id/tv_PD_Post"/>
+            app:layout_constraintTop_toBottomOf="@+id/tvPDPostText"
+            app:layout_constraintStart_toStartOf="@+id/tvPDPostText"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 

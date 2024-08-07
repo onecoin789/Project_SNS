@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.googleDaggerHiltAndroid)
     id("com.google.gms.google-services")
     id("kotlin-parcelize")
+    id("androidx.navigation.safeargs.kotlin")
 //    id("com.google.firebase.crashlytics")
 }
 

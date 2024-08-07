@@ -102,7 +102,7 @@ class MyProfileMakePostFragment : Fragment() {
 
     private fun initData() {
         val auth = CurrentUser.userData
-        val profileImage = auth?.profileImage.toString()
+        val profileImage = auth?.profileImage
         val name = auth?.name.toString()
         val email = auth?.email.toString()
         val postText = binding.etMakeText.text.toString()
