@@ -29,29 +29,38 @@ class AuthRepositoryImpl @Inject constructor(
         name: String,
         email: String,
         password: String,
-        imageUri: String
+        imageUri: String?
     ): Result<String> {
         return try {
             val result = auth.createUserWithEmailAndPassword(email, password).await()
             val user = result.user
             val storageRef = storage.getReference("image").child("${user?.uid}/profileImage")
+            val time = LocalDateTime.now()
 
             if (user != null) {
-                storageRef.putFile(imageUri.toUri()).addOnSuccessListener {
-                    storageRef.downloadUrl.addOnSuccessListener {
-                        val downloadUri = it.toString()
-                        val time = LocalDateTime.now()
-                        val data = hashMapOf(
-                            "uid" to user.uid,
-                            "name" to name,
-                            "email" to email,
-                            "profileImage" to downloadUri,
-                            "createdAt" to dateFormat(time)
-                        )
-                        db.collection("user").document(user.uid).set(data)
+                if (imageUri != null) {
+                    storageRef.putFile(imageUri.toUri()).addOnSuccessListener {
+                        storageRef.downloadUrl.addOnSuccessListener {
+                            val downloadUri = it.toString()
+                            val data = hashMapOf(
+                                "uid" to user.uid,
+                                "name" to name,
+                                "email" to email,
+                                "profileImage" to downloadUri,
+                                "createdAt" to dateFormat(time)
+                            )
+                            db.collection("user").document(user.uid).set(data)
+                        }
                     }
-                }.addOnFailureListener {
-                    Log.d("debug_signup", "fail")
+                } else {
+                    val data = hashMapOf(
+                        "uid" to user.uid,
+                        "name" to name,
+                        "email" to email,
+                        "profileImage" to null,
+                        "createdAt" to dateFormat(time)
+                    )
+                    db.collection("user").document(user.uid).set(data)
                 }
                 Result.success("Success")
             } else {
@@ -100,6 +109,12 @@ class AuthRepositoryImpl @Inject constructor(
             }
         }.catch { exception ->
             throw exception
+        }
+    }
+
+    override suspend fun editProfile(): Flow<Boolean> {
+        return flow {
+
         }
     }
 }

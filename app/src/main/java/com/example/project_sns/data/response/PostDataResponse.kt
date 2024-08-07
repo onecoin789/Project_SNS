@@ -2,7 +2,7 @@ package com.example.project_sns.data.response
 
 data class PostDataResponse(
     val postId: String = "",
-    val profileImage: String = "",
+    val profileImage: String? = null,
     val name: String = "",
     val email: String = "",
     val image: String = "",

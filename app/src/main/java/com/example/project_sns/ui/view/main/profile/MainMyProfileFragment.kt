@@ -6,7 +6,6 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.net.toUri
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -15,12 +14,10 @@ import com.bumptech.glide.Glide
 import com.example.project_sns.R
 import com.example.project_sns.databinding.FragmentMyProfileBinding
 import com.example.project_sns.ui.CurrentUser
-import com.example.project_sns.ui.view.detail.PostDetailFragment
 import com.example.project_sns.ui.view.main.MainViewModel
+import com.example.project_sns.ui.view.main.viewpager.MainFragmentDirections
 import com.example.project_sns.ui.view.model.PostDataModel
-import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 
@@ -81,12 +78,12 @@ class MainMyProfileFragment : Fragment() {
             sendData(data)
         }
         viewLifecycleOwner.lifecycleScope.launch {
-            myProfileViewModel.postInformation.collect {
-                val postNumber = it.size
+            myProfileViewModel.postInformation.collect { data ->
+                val postNumber = data.size
                 binding.tvMyNumber.text = postNumber.toString()
                 myProfileViewModel.getPost(uid)
-                listAdapter.submitList(it)
-                if (it.isEmpty()) {
+                listAdapter.submitList(data.sortedByDescending { it.createdAt })
+                if (data.isEmpty()) {
                     binding.tvMyNullPost.visibility = View.VISIBLE
                     binding.rvMyProfile.visibility = View.GONE
                     binding.ivMyLine.visibility = View.GONE
@@ -110,10 +107,8 @@ class MainMyProfileFragment : Fragment() {
     }
 
     private fun sendData(postData: PostDataModel) {
-        val fragment = PostDetailFragment()
-        val bundle = Bundle()
-        bundle.putParcelable("postData", postData)
-        fragment.arguments = bundle
+        val action = MainFragmentDirections.actionMainFragmentToPostDetailFragment(postData)
+        findNavController().navigate(action)
     }
 
     private fun navigateView() {

@@ -23,7 +23,7 @@ class SignUpViewModel @Inject constructor(
     private val _signUpEvent = Channel<CheckSignUp> { }
     val signUpEvent = _signUpEvent.receiveAsFlow()
 
-    fun signUp(name: String, email: String, password: String, imageUri: String) {
+    fun signUp(name: String, email: String, password: String, imageUri: String?) {
         viewModelScope.launch {
             val userData = signUpUseCase(name = name, email = email, password = password, imageUri = imageUri)
             if (userData.isSuccess) {
@@ -93,7 +93,7 @@ class SignUpViewModel @Inject constructor(
         name: String,
         email: String,
         password: String,
-        imageUri: String,
+        imageUri: String?,
         confirmPw: String,
         nameCheck: TextView,
         emailCheck: TextView,

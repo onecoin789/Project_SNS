@@ -4,7 +4,7 @@ import java.text.SimpleDateFormat
 
 data class PostDataEntity(
     val postId: String,
-    val profileImage: String,
+    val profileImage: String?,
     val name: String,
     val email: String,
     val image: String,
