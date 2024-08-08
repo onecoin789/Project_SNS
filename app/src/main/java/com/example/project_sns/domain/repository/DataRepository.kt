@@ -10,4 +10,6 @@ interface DataRepository {
 
     suspend fun getCurrentUserPost(uid: String): Flow<List<PostDataEntity>>
 
+    suspend fun getAllPost(): Flow<List<PostDataEntity>>
+
 }

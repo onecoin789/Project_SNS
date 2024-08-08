@@ -39,12 +39,11 @@
 
         <ImageView
             android:id="@+id/ivPDUser"
-            android:layout_width="70dp"
-            android:layout_height="70dp"
+            android:layout_width="65dp"
+            android:layout_height="65dp"
             android:layout_margin="10dp"
             android:background="@drawable/item_profile"
             android:scaleType="centerCrop"
-            android:src="@drawable/ic_user_fill"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             android:contentDescription="@string/contentDescription"/>
@@ -54,6 +53,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
+            android:layout_marginTop="5dp"
             android:textColor="@color/text"
             android:textSize="20sp"
             android:textStyle="bold"

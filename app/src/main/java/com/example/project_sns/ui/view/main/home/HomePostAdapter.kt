@@ -5,23 +5,44 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.example.project_sns.R
 import com.example.project_sns.databinding.RvItemPostPhotoBinding
 import com.example.project_sns.ui.view.model.PostDataModel
 
-class HomePostAdapter : ListAdapter<PostDataModel, HomePostAdapter.HomePostViewHolder>(diffUtil) {
+class HomePostAdapter(private val onItemClick: (PostDataModel) -> Unit) :
+    ListAdapter<PostDataModel, HomePostAdapter.HomePostViewHolder>(diffUtil) {
 
-    class HomePostViewHolder(private val binding: RvItemPostPhotoBinding) : RecyclerView.ViewHolder(binding.root) {
+    class HomePostViewHolder(
+        private val binding: RvItemPostPhotoBinding,
+        private val onItemClick: (PostDataModel) -> Unit
+        ) :
+        RecyclerView.ViewHolder(binding.root) {
         fun bind(item: PostDataModel) {
-
+            if (item.profileImage != null) {
+                binding.ivItemHomeUser.clipToOutline = true
+                Glide.with(binding.root).load(item.profileImage).into(binding.ivItemHomeUser)
+            } else {
+                Glide.with(binding.root).load(R.drawable.ic_user_fill).into(binding.ivItemHomeUser)
+            }
+            Glide.with(binding.root).load(item.image).into(binding.ivItemTitle)
+            binding.tvItemHomeEmail.text = item.email
+            binding.tvItemHomeName.text = item.name
+            binding.tvItemHomePost.text = item.postText
+            binding.tvItemHomeComment.setOnClickListener {
+                onItemClick(item)
+            }
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HomePostViewHolder {
-        return HomePostViewHolder(RvItemPostPhotoBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+        val binding  = RvItemPostPhotoBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return HomePostViewHolder(binding, onItemClick)
     }
 
     override fun onBindViewHolder(holder: HomePostViewHolder, position: Int) {
-        holder.bind(currentList[position])
+        val postList = getItem(position)
+        holder.bind(postList)
     }
 
     companion object {
@@ -30,7 +51,10 @@ class HomePostAdapter : ListAdapter<PostDataModel, HomePostAdapter.HomePostViewH
                 return oldItem == newItem
             }
 
-            override fun areContentsTheSame(oldItem: PostDataModel, newItem: PostDataModel): Boolean {
+            override fun areContentsTheSame(
+                oldItem: PostDataModel,
+                newItem: PostDataModel
+            ): Boolean {
                 return oldItem == newItem
             }
 

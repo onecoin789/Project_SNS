@@ -5,5 +5,6 @@ data class CurrentUserModel(
     val name: String,
     val email: String,
     val profileImage: String?,
-    val createdAt : String
+    val createdAt : String,
+    val intro: String?
 )

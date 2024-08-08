@@ -1,13 +1,11 @@
 package com.example.project_sns.ui.view.signup
 
-import android.net.Uri
 import android.view.View
 import android.widget.TextView
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.project_sns.domain.usecase.SignUpUseCase
 import com.example.project_sns.ui.util.CheckSignUp
-import com.example.project_sns.ui.view.signup.model.FirebaseUserData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -23,9 +21,9 @@ class SignUpViewModel @Inject constructor(
     private val _signUpEvent = Channel<CheckSignUp> { }
     val signUpEvent = _signUpEvent.receiveAsFlow()
 
-    fun signUp(name: String, email: String, password: String, imageUri: String?) {
+    fun signUp(name: String, email: String, password: String, profileImage: String?, createdAt: String) {
         viewModelScope.launch {
-            val userData = signUpUseCase(name = name, email = email, password = password, imageUri = imageUri)
+            val userData = signUpUseCase(name = name, email = email, password = password, profileImage = profileImage, createdAt = createdAt)
             if (userData.isSuccess) {
                 _signUpEvent.send(CheckSignUp.SignUpSuccess)
             } else {
@@ -93,8 +91,9 @@ class SignUpViewModel @Inject constructor(
         name: String,
         email: String,
         password: String,
-        imageUri: String?,
+        profileImage: String?,
         confirmPw: String,
+        createdAt: String,
         nameCheck: TextView,
         emailCheck: TextView,
         passwordCheck: TextView,
@@ -136,7 +135,7 @@ class SignUpViewModel @Inject constructor(
             return
         }
         else {
-            signUp(name, email, password, imageUri)
+            signUp(name, email, password, profileImage, createdAt)
         }
     }
 }
