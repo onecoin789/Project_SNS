@@ -1,30 +1,25 @@
 package com.example.project_sns.ui.view.main.search
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
-import com.example.project_sns.databinding.FragmentSearchBinding
+import androidx.fragment.app.Fragment
+import com.example.project_sns.databinding.FragmentMainSearchBinding
 
 
 class MainSearchFragment : Fragment() {
 
-    private var _binding: FragmentSearchBinding? = null
+    private var _binding: FragmentMainSearchBinding? = null
     private val binding get() = _binding!!
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
 
-        _binding = FragmentSearchBinding.inflate(inflater, container, false)
+        _binding = FragmentMainSearchBinding.inflate(inflater, container, false)
 
         initSearch()
 

@@ -2,29 +2,32 @@ package com.example.project_sns.ui.view.main.profile
 
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.bumptech.glide.Glide
 import com.example.project_sns.R
-import com.example.project_sns.databinding.FragmentMyProfileBinding
+import com.example.project_sns.databinding.FragmentMainMyProfileBinding
 import com.example.project_sns.ui.CurrentUser
+import com.example.project_sns.ui.util.refreshFragment
 import com.example.project_sns.ui.view.main.MainViewModel
+import com.example.project_sns.ui.view.main.viewpager.MainFragment
 import com.example.project_sns.ui.view.main.viewpager.MainFragmentDirections
 import com.example.project_sns.ui.view.model.PostDataModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 
 @AndroidEntryPoint
 class MainMyProfileFragment : Fragment() {
 
-    private var _binding: FragmentMyProfileBinding? = null
+    private var _binding: FragmentMainMyProfileBinding? = null
     private val binding get() = _binding!!
 
     private val mainViewModel: MainViewModel by viewModels()
@@ -40,11 +43,11 @@ class MainMyProfileFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentMyProfileBinding.inflate(inflater, container, false)
+        _binding = FragmentMainMyProfileBinding.inflate(inflater, container, false)
 
         initView()
         navigateView()
-        initRV()
+        initRv()
 
         return binding.root
     }
@@ -58,21 +61,27 @@ class MainMyProfileFragment : Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             mainViewModel.getCurrentUserData()
-        }
-        val userData = CurrentUser.userData
-        Log.d("userdata", "${userData?.name}")
-
-        if (userData != null) {
-            binding.tvMyName.text = userData.name
-            binding.tvMyEmail.text = userData.email
-            if (userData.profileImage != null) {
-                binding.ivMyProfile.clipToOutline = true
-                Glide.with(requireContext()).load(userData.profileImage).into(binding.ivMyProfile)
+            mainViewModel.currentUserData.collect { userData ->
+                if (userData != null) {
+                    binding.tvMyName.text = userData.name
+                    binding.tvMyEmail.text = userData.email
+                    if (userData.profileImage != null) {
+                        binding.ivMyProfile.clipToOutline = true
+                        Glide.with(requireContext()).load(userData.profileImage)
+                            .into(binding.ivMyProfile)
+                    }
+                    if (userData.intro == "") {
+                        binding.tvMyIntro.text = "한줄 소개"
+                    } else {
+                        binding.tvMyIntro.text = userData.intro
+                    }
+                }
             }
         }
     }
 
-    private fun initRV() {
+
+    private fun initRv() {
         val uid = CurrentUser.userData?.uid.toString()
         val listAdapter = MyProfilePostAdapter { data ->
             sendData(data)
@@ -81,7 +90,7 @@ class MainMyProfileFragment : Fragment() {
             myProfileViewModel.postInformation.collect { data ->
                 val postNumber = data.size
                 binding.tvMyNumber.text = postNumber.toString()
-                myProfileViewModel.getPost(uid)
+                myProfileViewModel.getCurrentUserPost(uid)
                 listAdapter.submitList(data.sortedByDescending { it.createdAt })
                 if (data.isEmpty()) {
                     binding.tvMyNullPost.visibility = View.VISIBLE

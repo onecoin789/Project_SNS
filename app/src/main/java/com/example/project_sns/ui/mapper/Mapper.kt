@@ -10,7 +10,8 @@ fun CurrentUserEntity.toModel() = CurrentUserModel(
     name = name,
     email = email,
     profileImage = profileImage,
-    createdAt = createdAt
+    createdAt = createdAt,
+    intro = intro
 )
 
 fun PostDataEntity.toModel() = PostDataModel(

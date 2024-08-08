@@ -81,4 +81,24 @@ class DataRepositoryImpl @Inject constructor(
             }
         }
     }
+
+    override suspend fun getAllPost(): Flow<List<PostDataEntity>> {
+        return callbackFlow {
+            val snapshotListener = db.collection("post").addSnapshotListener { snapshot, error ->
+                if (error != null) {
+                    trySend(emptyList()).isSuccess
+                    return@addSnapshotListener
+                }
+                if (snapshot != null && !snapshot.isEmpty) {
+                    val postResponse = snapshot.toObjects(PostDataResponse::class.java)
+                    trySend(postResponse.toListEntity()).isSuccess
+                } else {
+                    trySend(emptyList()).isSuccess
+                }
+            }
+            awaitClose {
+                snapshotListener.remove()
+            }
+        }
+    }
 }

@@ -16,3 +16,11 @@ sealed interface CheckLogin {
         val message: String
     ): CheckLogin
 }
+
+sealed interface CheckEditProfile {
+    data object EditSuccess: CheckEditProfile
+    data class EditFail(
+        val message: String
+    ): CheckEditProfile
+
+}

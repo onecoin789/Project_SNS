@@ -1,7 +1,8 @@
 package com.example.project_sns.ui.view.main
 
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,7 +17,7 @@ class CommentFragment : BottomSheetDialogFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        setStyle(STYLE_NORMAL, R.style.DialogTheme)
     }
 
     override fun onCreateView(
@@ -24,6 +25,7 @@ class CommentFragment : BottomSheetDialogFragment() {
         savedInstanceState: Bundle?
     ): View? {
        _binding = FragmentCommentBinding.inflate(inflater, container, false)
+
 
         return binding.root
     }

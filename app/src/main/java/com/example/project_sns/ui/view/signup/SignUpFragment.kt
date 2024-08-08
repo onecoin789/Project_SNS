@@ -24,11 +24,13 @@ import com.bumptech.glide.Glide
 import com.example.project_sns.R
 import com.example.project_sns.databinding.FragmentSignUpBinding
 import com.example.project_sns.ui.util.CheckSignUp
+import com.example.project_sns.ui.util.dateFormat
 import com.example.project_sns.ui.view.signup.model.FirebaseUserData
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import java.time.LocalDateTime
 
 @AndroidEntryPoint
 class SignUpFragment : Fragment() {
@@ -126,6 +128,8 @@ class SignUpFragment : Fragment() {
 
     private fun initData() {
 
+        val time = LocalDateTime.now()
+
         val name = binding.etSignUpName.text.toString()
         val email = binding.etSignUpEmail.text.toString()
         val password = binding.etSignUpPassword.text.toString()
@@ -142,27 +146,27 @@ class SignUpFragment : Fragment() {
                     name = name,
                     email = email,
                     password = password,
-                    imageUri = uri.toString(),
+                    profileImage = uri.toString(),
                     confirmPw = passwordConfirm,
+                    createdAt = dateFormat(time),
                     nameCheck = nameCheck,
                     emailCheck = emailCheck,
                     passwordCheck = passwordCheck,
                     confirmCheck = passwordConfirmCheck
                 )
-                Log.d("data1", "${uri}")
             } else {
                 signUpViewModel.checkSignUp(
                     name = name,
                     email = email,
                     password = password,
-                    imageUri = null,
+                    profileImage = null,
                     confirmPw = passwordConfirm,
+                    createdAt = dateFormat(time),
                     nameCheck = nameCheck,
                     emailCheck = emailCheck,
                     passwordCheck = passwordCheck,
                     confirmCheck = passwordConfirmCheck
                 )
-                Log.d("data2", "${uri}")
             }
         }
     }

@@ -6,18 +6,15 @@ import com.example.project_sns.data.mapper.toEntity
 import com.example.project_sns.data.response.CurrentUserResponse
 import com.example.project_sns.domain.model.CurrentUserEntity
 import com.example.project_sns.domain.repository.AuthRepository
-import com.example.project_sns.ui.util.dateFormat
-import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.storage.FirebaseStorage
+import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
-import java.time.LocalDateTime
 import javax.inject.Inject
 
 class AuthRepositoryImpl @Inject constructor(
@@ -29,25 +26,25 @@ class AuthRepositoryImpl @Inject constructor(
         name: String,
         email: String,
         password: String,
-        imageUri: String?
+        profileImage: String?,
+        createdAt: String
     ): Result<String> {
         return try {
             val result = auth.createUserWithEmailAndPassword(email, password).await()
             val user = result.user
             val storageRef = storage.getReference("image").child("${user?.uid}/profileImage")
-            val time = LocalDateTime.now()
 
             if (user != null) {
-                if (imageUri != null) {
-                    storageRef.putFile(imageUri.toUri()).addOnSuccessListener {
-                        storageRef.downloadUrl.addOnSuccessListener {
-                            val downloadUri = it.toString()
+                if (profileImage != null) {
+                    storageRef.putFile(profileImage.toUri()).addOnSuccessListener {
+                        storageRef.downloadUrl.addOnSuccessListener { uri ->
+                            val downloadUri = uri.toString()
                             val data = hashMapOf(
                                 "uid" to user.uid,
                                 "name" to name,
                                 "email" to email,
                                 "profileImage" to downloadUri,
-                                "createdAt" to dateFormat(time)
+                                "createdAt" to createdAt
                             )
                             db.collection("user").document(user.uid).set(data)
                         }
@@ -58,7 +55,7 @@ class AuthRepositoryImpl @Inject constructor(
                         "name" to name,
                         "email" to email,
                         "profileImage" to null,
-                        "createdAt" to dateFormat(time)
+                        "createdAt" to createdAt
                     )
                     db.collection("user").document(user.uid).set(data)
                 }
@@ -95,26 +92,70 @@ class AuthRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getCurrentUserData(): Flow<CurrentUserEntity?> {
-        return flow {
+        return callbackFlow {
             val mAuth = auth.currentUser?.uid
             if (mAuth != null) {
-                val docRef = db.collection("user").document(mAuth).get().await()
-                val userResponse = docRef.toObject(CurrentUserResponse::class.java)
-                Log.d("userdata_impl", "${docRef}, ${userResponse}")
-                if (userResponse != null) {
-                    emit(userResponse.toEntity())
-                } else {
-                    throw NullPointerException("Userdata is Null")
+                val docRef = db.collection("user").document(mAuth)
+                val snapshotListener = docRef.addSnapshotListener { snapshot, error ->
+                    if (error != null) {
+                        trySend(null).isSuccess
+                        return@addSnapshotListener
+                    }
+                    if (snapshot != null) {
+                        val userResponse = snapshot.toObject(CurrentUserResponse::class.java)
+                        trySend(userResponse?.toEntity()).isSuccess
+                        } else {
+                            trySend(null).isSuccess
+                        }
+                    }
+                awaitClose {
+                    snapshotListener.remove()
                 }
             }
-        }.catch { exception ->
-            throw exception
         }
     }
 
-    override suspend fun editProfile(): Flow<Boolean> {
-        return flow {
-
+    override suspend fun editProfile(
+        uid: String,
+        name: String,
+        email: String,
+        newProfile: String?,
+        beforeProfile: String?,
+        intro: String?,
+        createdAt: String
+    ): Result<String> {
+        return try {
+            val storageRef = storage.getReference("image").child("${uid}/profileImage")
+            if (newProfile != null) {
+                storageRef.putFile(newProfile.toUri()).addOnSuccessListener {
+                    storageRef.downloadUrl.addOnSuccessListener { uri ->
+                        val downloadUri = uri.toString()
+                        val data = hashMapOf(
+                            "uid" to uid,
+                            "name" to name,
+                            "email" to email,
+                            "intro" to intro,
+                            "profileImage" to downloadUri,
+                            "createdAt" to createdAt
+                        )
+                        Log.d("data123", "${name},${email},${intro},${createdAt}")
+                        db.collection("user").document(uid).set(data)
+                    }
+                }
+            } else {
+                val data = hashMapOf(
+                    "uid" to uid,
+                    "name" to name,
+                    "email" to email,
+                    "intro" to intro,
+                    "profileImage" to beforeProfile,
+                    "createdAt" to createdAt
+                )
+                db.collection("user").document(uid).set(data)
+            }
+            Result.success("success")
+        } catch (e: Exception) {
+            Result.failure(Exception("Exception: ${e.message}"))
         }
     }
 }

@@ -1,7 +1,5 @@
 package com.example.project_sns.domain.model
 
-import java.text.SimpleDateFormat
-
 data class PostDataEntity(
     val postId: String,
     val profileImage: String?,
