@@ -1,3 +1,6 @@
+import java.io.FileInputStream
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
@@ -13,6 +16,9 @@ android {
     namespace = "com.example.project_sns"
     compileSdk = 34
 
+    val properties = Properties()
+    properties.load(FileInputStream(rootProject.file("local.properties")))
+
     defaultConfig {
         applicationId = "com.example.project_sns"
         minSdk = 26
@@ -21,9 +27,14 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        buildConfigField("String", "API_KEY", properties.getProperty("API_KEY"))
+        buildConfigField("String", "NATIVE_KEY", properties.getProperty("NATIVE_KEY"))
+        resValue("string", "NATIVE_KEY", properties.getProperty("NATIVE_KEY"))
+
     }
 
     buildTypes {
+
         release {
             isMinifyEnabled = false
             proguardFiles(
@@ -42,6 +53,7 @@ android {
 
     buildFeatures {
         viewBinding = true
+        buildConfig = true
     }
 }
 
@@ -78,4 +90,9 @@ dependencies {
     implementation(libs.retrofit)
     implementation(libs.converter.gson)
     implementation(libs.logging.interceptor)
+
+    implementation("com.kakao.maps.open:android:2.11.9")
+    implementation("com.google.android.gms:play-services-location:16.0.0")
+
+
 }

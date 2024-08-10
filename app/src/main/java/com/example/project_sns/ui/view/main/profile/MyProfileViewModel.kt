@@ -1,15 +1,24 @@
 package com.example.project_sns.ui.view.main.profile
 
+import android.util.Log
 import android.view.View
 import android.widget.TextView
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.project_sns.data.response.KakaoMapResponse
 import com.example.project_sns.domain.usecase.GetCurrentUserPostDataUseCase
 import com.example.project_sns.domain.usecase.PostUploadUseCase
 import com.example.project_sns.domain.usecase.ProfileEditUseCase
+import com.example.project_sns.domain.usecase.SearchKakaoMapUseCase
 import com.example.project_sns.ui.mapper.toEntity
+import com.example.project_sns.ui.mapper.toKakaoListEntity
 import com.example.project_sns.ui.mapper.toListModel
+import com.example.project_sns.ui.mapper.toModel
 import com.example.project_sns.ui.util.CheckEditProfile
+import com.example.project_sns.ui.view.model.KakaoDocumentsModel
+import com.example.project_sns.ui.view.model.KakaoMapModel
 import com.example.project_sns.ui.view.model.PostDataModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -24,7 +33,8 @@ import javax.inject.Inject
 class MyProfileViewModel @Inject constructor(
     private val postUpLoadUseCase: PostUploadUseCase,
     private val getCurrentUserPostDataUseCase: GetCurrentUserPostDataUseCase,
-    private val profileEditUseCase: ProfileEditUseCase
+    private val profileEditUseCase: ProfileEditUseCase,
+    private val searchKakaoMapUseCase: SearchKakaoMapUseCase
 ) : ViewModel() {
 
     private val _postUpLoadResult = MutableStateFlow<Boolean?>(null)
@@ -33,8 +43,14 @@ class MyProfileViewModel @Inject constructor(
     private val _postInformation = MutableStateFlow<List<PostDataModel>>(emptyList())
     val postInformation: StateFlow<List<PostDataModel>> get() = _postInformation
 
+    private val _selectMapData = MutableStateFlow<KakaoDocumentsModel?>(null)
+    val selectMapData : StateFlow<KakaoDocumentsModel?> get() = _selectMapData
+
     private val _editEvent = Channel<CheckEditProfile?> { }
     val editEvent = _editEvent.receiveAsFlow()
+
+    private val _mapList = MutableStateFlow<List<KakaoDocumentsModel>>(emptyList())
+    val mapList: StateFlow<List<KakaoDocumentsModel>> get() = _mapList
 
     fun upLoadPost(postData: PostDataModel) {
         viewModelScope.launch {
@@ -69,7 +85,7 @@ class MyProfileViewModel @Inject constructor(
         return text.isEmpty()
     }
 
-    fun editProfile(
+    private fun editProfile(
         uid: String,
         name: String,
         email: String,
@@ -116,6 +132,23 @@ class MyProfileViewModel @Inject constructor(
             }
         } else {
             editProfile(uid, name, email, newProfile, beforeProfile, intro, createdAt)
+        }
+    }
+
+    fun searchMapList(query: String, size: Int, page: Int) {
+        viewModelScope.launch {
+            searchKakaoMapUseCase(query = query, size = size, page = page).collect { data ->
+                if (data != null) {
+                    _mapList.value = data.documents.toKakaoListEntity()
+                }
+            }
+        }
+    }
+
+    fun getSelectMapData(data: KakaoDocumentsModel) {
+        viewModelScope.launch {
+            _selectMapData.value = data
+            Log.d("data123", "${selectMapData.value}")
         }
     }
 }

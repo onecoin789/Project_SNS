@@ -1,7 +1,5 @@
 package com.example.project_sns.ui.view.main
 
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,7 +7,9 @@ import android.view.ViewGroup
 import com.example.project_sns.R
 import com.example.project_sns.databinding.FragmentCommentBinding
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class CommentFragment : BottomSheetDialogFragment() {
 
     private var _binding : FragmentCommentBinding? = null

@@ -70,7 +70,6 @@ class MainHomeFragment : Fragment() {
             mainViewModel.allPostData.collect { list ->
                 mainViewModel.getAllPost()
                 postAdapter.submitList(list.sortedByDescending { it.createdAt })
-                Log.d("listdata", "${list}")
             }
         }
     }
