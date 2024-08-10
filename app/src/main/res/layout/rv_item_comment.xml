@@ -5,7 +5,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/cl_Comment_T"
+        android:id="@+id/clComment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
@@ -14,7 +14,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
-            android:id="@+id/iv_Comment"
+            android:id="@+id/ivComment"
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:background="@drawable/ic_user_fill"
@@ -23,61 +23,74 @@
             android:contentDescription="@string/contentDescription"/>
 
         <TextView
-            android:id="@+id/tv_Item_Comment_Name"
+            android:id="@+id/tvItemCommentName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
             android:textColor="@color/text"
+            android:layout_marginTop="5dp"
             android:textSize="18sp"
             android:textStyle="bold"
-            app:layout_constraintBottom_toTopOf="@+id/tv_Item_Comment_Email"
-            app:layout_constraintStart_toEndOf="@id/iv_Comment"
+            app:layout_constraintBottom_toTopOf="@+id/tvItemComment"
+            app:layout_constraintStart_toEndOf="@id/ivComment"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_chainStyle="packed" />
 
         <TextView
-            android:id="@+id/tv_Item_Comment_Email"
+            android:id="@+id/tvItemCommentEmail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/hint"
+            android:textSize="16sp"
+            android:layout_marginStart="5dp"
+            app:layout_constraintStart_toEndOf="@id/tvItemCommentName"
+            app:layout_constraintTop_toTopOf="@+id/tvItemCommentName"
+            app:layout_constraintBottom_toBottomOf="@id/tvItemCommentName"/>
+
+        <TextView
+            android:id="@+id/tvItemComment"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/text"
             android:textSize="18sp"
-            app:layout_constraintBottom_toTopOf="@+id/tv_Item_Comment_Re"
-            app:layout_constraintStart_toStartOf="@+id/tv_Item_Comment_Name"
-            app:layout_constraintTop_toBottomOf="@+id/tv_Item_Comment_Name" />
+            app:layout_constraintBottom_toTopOf="@+id/tvItemCommentRe"
+            app:layout_constraintStart_toStartOf="@+id/tvItemCommentName"
+            app:layout_constraintTop_toBottomOf="@+id/tvItemCommentName" />
 
         <TextView
-            android:id="@+id/tv_Item_Comment_Re"
+            android:id="@+id/tvItemCommentRe"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/item_comment"
             android:textColor="@color/hint"
             android:textSize="14sp"
+            android:layout_marginTop="8dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="@id/tv_Item_Comment_Email"
-            app:layout_constraintTop_toBottomOf="@+id/tv_Item_Comment_Email" />
+            app:layout_constraintStart_toStartOf="@id/tvItemComment"
+            app:layout_constraintTop_toBottomOf="@+id/tvItemComment" />
 
         <TextView
-            android:id="@+id/tv_Item_Comment_Delete"
+            android:id="@+id/tvItemCommentDelete"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/item_delete"
             android:textColor="@color/hint"
             android:textSize="14sp"
             android:layout_marginStart="15dp"
-            app:layout_constraintStart_toEndOf="@id/tv_Item_Comment_Re"
-            app:layout_constraintTop_toTopOf="@id/tv_Item_Comment_Re"
-            app:layout_constraintBottom_toBottomOf="@id/tv_Item_Comment_Re"/>
+            app:layout_constraintStart_toEndOf="@id/tvItemCommentRe"
+            app:layout_constraintTop_toTopOf="@id/tvItemCommentRe"
+            app:layout_constraintBottom_toBottomOf="@id/tvItemCommentRe"/>
 
 
         <ImageView
-            android:id="@+id/iv_Item_Comment_Heart"
+            android:id="@+id/ivItemCommentHeart"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_marginEnd="10dp"
             android:background="@drawable/ic_heart"
-            app:layout_constraintBottom_toBottomOf="@id/tv_Item_Comment_Re"
+            app:layout_constraintBottom_toBottomOf="@id/tvItemCommentRe"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/tv_Item_Comment_Name"
+            app:layout_constraintTop_toTopOf="@+id/tvItemCommentName"
             android:contentDescription="@string/contentDescription"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>

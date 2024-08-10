@@ -43,9 +43,6 @@ class MyProfileViewModel @Inject constructor(
     private val _postInformation = MutableStateFlow<List<PostDataModel>>(emptyList())
     val postInformation: StateFlow<List<PostDataModel>> get() = _postInformation
 
-    private val _selectMapData = MutableStateFlow<KakaoDocumentsModel?>(null)
-    val selectMapData : StateFlow<KakaoDocumentsModel?> get() = _selectMapData
-
     private val _editEvent = Channel<CheckEditProfile?> { }
     val editEvent = _editEvent.receiveAsFlow()
 
@@ -142,13 +139,6 @@ class MyProfileViewModel @Inject constructor(
                     _mapList.value = data.documents.toKakaoListEntity()
                 }
             }
-        }
-    }
-
-    fun getSelectMapData(data: KakaoDocumentsModel) {
-        viewModelScope.launch {
-            _selectMapData.value = data
-            Log.d("data123", "${selectMapData.value}")
         }
     }
 }

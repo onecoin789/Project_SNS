@@ -1,5 +1,6 @@
 package com.example.project_sns.domain.repository
 
+import com.example.project_sns.domain.model.CommentDataEntity
 import com.example.project_sns.domain.model.PostDataEntity
 import kotlinx.coroutines.flow.Flow
 
@@ -11,5 +12,7 @@ interface DataRepository {
     suspend fun getCurrentUserPost(uid: String): Flow<List<PostDataEntity>>
 
     suspend fun getAllPost(): Flow<List<PostDataEntity>>
+
+    suspend fun uploadComment(): Flow<CommentDataEntity?>
 
 }
