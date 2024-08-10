@@ -24,6 +24,7 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
+
         window.apply {
             WindowInsetsControllerCompat(this, this.decorView).isAppearanceLightStatusBars = false
         }

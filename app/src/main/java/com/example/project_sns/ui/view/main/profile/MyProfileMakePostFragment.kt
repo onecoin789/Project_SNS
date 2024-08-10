@@ -15,11 +15,16 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
+import com.example.project_sns.R
 import com.example.project_sns.databinding.FragmentMyProfileMakePostBinding
 import com.example.project_sns.ui.CurrentUser
 import com.example.project_sns.ui.util.dateFormat
 import com.example.project_sns.ui.view.model.PostDataModel
+import com.kakao.vectormap.MapView
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import java.util.UUID
@@ -63,6 +68,10 @@ class MyProfileMakePostFragment : Fragment() {
         binding.btnMakeConfirm.setOnClickListener {
             collectFlow()
             initData()
+        }
+
+        binding.tvMakeLocation.setOnClickListener {
+            findNavController().navigate(R.id.action_makePostFragment_to_myProfileSearchMapFragment)
         }
     }
 

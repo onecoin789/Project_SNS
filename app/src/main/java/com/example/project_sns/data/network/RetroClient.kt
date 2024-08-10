@@ -13,7 +13,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 @InstallIn(SingletonComponent::class)
 object RetroClient {
 
-    const val BASE_URL = ""
+    const val BASE_URL = "https://dapi.kakao.com/v2/local/search/"
 
     @Provides
     fun provideOkHttpClient(): OkHttpClient {
@@ -34,5 +34,10 @@ object RetroClient {
             .client(client)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
+    }
+
+    @Provides
+    fun kakaoMapApiService(retrofit: Retrofit): KakaoMapApiService {
+        return retrofit.create(KakaoMapApiService::class.java)
     }
 }

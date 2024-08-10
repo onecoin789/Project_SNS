@@ -96,6 +96,8 @@
         android:name="com.example.project_sns.ui.view.main.profile.MainMyProfileFragment"
         android:label="fragment_my_profile"
         tools:layout="@layout/fragment_main_my_profile" >
+        <argument android:name="mapData"
+            app:argType="com.example.project_sns.ui.view.model.KakaoDocumentsModel" />
     </fragment>
     <fragment
         android:id="@+id/editFragment"
@@ -172,8 +174,15 @@
         android:name="com.example.project_sns.ui.view.main.profile.MyProfileMakePostFragment"
         android:label="fragment_make_post"
         tools:layout="@layout/fragment_my_profile_make_post" >
+        <action
+            android:id="@+id/action_makePostFragment_to_myProfileSearchMapFragment"
+            app:destination="@id/myProfileSearchMapFragment" />
     </fragment>
-
+    <dialog
+        android:id="@+id/myProfileSearchMapFragment"
+        android:name="com.example.project_sns.ui.view.main.profile.MyProfileSearchMapFragment"
+        android:label="fragment_my_profile_search_map"
+        tools:layout="@layout/fragment_my_profile_search_map" />
 
 
 </navigation>

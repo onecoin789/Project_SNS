@@ -1,24 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    tools:context=".ui.view.main.CommentFragment">
+    tools:context=".ui.view.main.profile.MyProfileSearchMapFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintDimensionRatio="1:1.3"
         android:background="@drawable/item_bottomsheet"
         android:backgroundTint="@color/chat"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintDimensionRatio="1:1.5"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
-            android:id="@+id/ivCommentLine"
+            android:id="@+id/ivMapLine"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginHorizontal="170dp"
@@ -31,57 +30,27 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvComment"
-            android:layout_width="0dp"
+            android:id="@+id/rvMap"
+            android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:layout_marginHorizontal="3dp"
             android:layout_marginTop="20dp"
-            android:visibility="invisible"
-            app:layout_constraintBottom_toTopOf="@id/etComment"
-            app:layout_constraintTop_toBottomOf="@+id/ivCommentLine"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            tools:listitem="@layout/rv_item_comment" />
-
-        <TextView
-            android:id="@+id/tvCommentNone"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="@string/home_comment_none"
-            android:textColor="@color/hint"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toTopOf="@+id/etComment"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/ivCommentLine" />
-
-        <TextView
-            android:id="@+id/tvCommentSuggest"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:layout_marginTop="5dp"
-            android:text="@string/home_comment_suggest"
-            android:textColor="@color/text"
-            android:textSize="19sp"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="@+id/tvCommentNone"
-            app:layout_constraintStart_toStartOf="@+id/tvCommentNone"
-            app:layout_constraintTop_toBottomOf="@id/tvCommentNone" />
-
-
+            app:layout_constraintTop_toBottomOf="@id/ivMapLine"
+            app:layout_constraintBottom_toTopOf="@+id/etMap"
+            tools:listitem="@layout/rv_item_map_list"/>
 
         <EditText
-            android:id="@+id/etComment"
+            android:id="@+id/etMap"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="5dp"
             android:autofillHints="no"
             android:background="@drawable/item_edittext"
-            android:hint="@string/home_comment"
+            android:hint="@string/my_map"
             android:inputType="text"
             android:maxLength="30"
             android:paddingVertical="15dp"
@@ -89,27 +58,27 @@
             android:paddingEnd="0dp"
             android:textColor="@color/text"
             android:textColorHint="@color/hint"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent" />
+            app:layout_constraintStart_toStartOf="parent" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/btnCommentUp"
+            android:id="@+id/btnMap"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginVertical="5dp"
             android:layout_marginEnd="5dp"
             android:background="@drawable/item_btn_send"
-            android:padding="5dp"
-            app:layout_constraintBottom_toBottomOf="@id/etComment"
+            android:padding="10dp"
+            app:layout_constraintBottom_toBottomOf="@id/etMap"
             app:layout_constraintDimensionRatio="1:1"
-            app:layout_constraintEnd_toEndOf="@id/etComment"
-            app:layout_constraintTop_toTopOf="@id/etComment">
+            app:layout_constraintEnd_toEndOf="@id/etMap"
+            app:layout_constraintTop_toTopOf="@id/etMap">
 
             <ImageView
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:background="@drawable/ic_up"
+                android:background="@drawable/ic_search"
                 android:contentDescription="@string/contentDescription"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -117,7 +86,7 @@
                 app:layout_constraintTop_toTopOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
 
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
