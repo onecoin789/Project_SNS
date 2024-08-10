@@ -5,12 +5,14 @@ import com.example.project_sns.data.mapper.toListEntity
 import com.example.project_sns.data.response.KakaoDocumentsResponse
 import com.example.project_sns.data.response.KakaoMapResponse
 import com.example.project_sns.data.response.KakaoMetaResponse
+import com.example.project_sns.domain.model.CommentDataEntity
 import com.example.project_sns.domain.model.CurrentUserEntity
 import com.example.project_sns.domain.model.KakaoDocumentsEntity
 import com.example.project_sns.domain.model.KakaoMapEntity
 import com.example.project_sns.domain.model.KakaoMetaEntity
 import com.example.project_sns.domain.model.PostDataEntity
 import com.example.project_sns.ui.CurrentUserModel
+import com.example.project_sns.ui.view.model.CommentDataModel
 import com.example.project_sns.ui.view.model.KakaoDocumentsModel
 import com.example.project_sns.ui.view.model.KakaoMapModel
 import com.example.project_sns.ui.view.model.KakaoMetaModel
@@ -36,7 +38,9 @@ fun PostDataEntity.toModel() = PostDataModel(
     postText = postText,
     lat = lat,
     lng = lng,
-    createdAt = createdAt
+    placeName = placeName,
+    createdAt = createdAt,
+    commentData = commentData?.toModel()
 )
 
 fun PostDataModel.toEntity() = PostDataEntity(
@@ -48,12 +52,30 @@ fun PostDataModel.toEntity() = PostDataEntity(
     postText = postText,
     lat = lat,
     lng = lng,
-    createdAt = createdAt
+    placeName = placeName,
+    createdAt = createdAt,
+    commentData = commentData?.toEntity()
+)
+
+fun CommentDataEntity.toModel() = CommentDataModel(
+    commenterProfile = commenterProfile,
+    commenterEmail = commenterEmail,
+    commenterName = commenterName,
+    comment = comment
+)
+
+fun CommentDataModel.toEntity() = CommentDataEntity(
+    commenterProfile = commenterProfile,
+    commenterEmail = commenterEmail,
+    commenterName = commenterName,
+    comment = comment
 )
 
 fun List<PostDataEntity>.toListModel() : List<PostDataModel> {
     return this.map { it.toModel() }
 }
+
+
 
 
 // <!---------- KakaoMap ---------->

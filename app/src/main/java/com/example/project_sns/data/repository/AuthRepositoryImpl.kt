@@ -104,10 +104,10 @@ class AuthRepositoryImpl @Inject constructor(
                     if (snapshot != null) {
                         val userResponse = snapshot.toObject(CurrentUserResponse::class.java)
                         trySend(userResponse?.toEntity()).isSuccess
-                        } else {
-                            trySend(null).isSuccess
-                        }
+                    } else {
+                        trySend(null).isSuccess
                     }
+                }
                 awaitClose {
                     snapshotListener.remove()
                 }
@@ -126,6 +126,7 @@ class AuthRepositoryImpl @Inject constructor(
     ): Result<String> {
         return try {
             val storageRef = storage.getReference("image").child("${uid}/profileImage")
+            val batch = db.batch()
             if (newProfile != null) {
                 storageRef.putFile(newProfile.toUri()).addOnSuccessListener {
                     storageRef.downloadUrl.addOnSuccessListener { uri ->
@@ -138,8 +139,15 @@ class AuthRepositoryImpl @Inject constructor(
                             "profileImage" to downloadUri,
                             "createdAt" to createdAt
                         )
-                        Log.d("data123", "${name},${email},${intro},${createdAt}")
                         db.collection("user").document(uid).set(data)
+                        db.collection("post").whereEqualTo("uid", uid).get()
+                            .addOnSuccessListener {
+                                it.documents.forEach { document ->
+                                    batch.update(document.reference, "profileImage", downloadUri)
+                                    batch.update(document.reference, "name", name)
+                                    batch.commit()
+                                }
+                            }
                     }
                 }
             } else {
@@ -152,6 +160,13 @@ class AuthRepositoryImpl @Inject constructor(
                     "createdAt" to createdAt
                 )
                 db.collection("user").document(uid).set(data)
+                db.collection("post").whereEqualTo("uid", uid).get()
+                    .addOnSuccessListener {
+                        it.documents.forEach { document ->
+                            batch.update(document.reference, "name", name)
+                            batch.commit()
+                        }
+                    }
             }
             Result.success("success")
         } catch (e: Exception) {

@@ -7,7 +7,16 @@ data class PostDataEntity(
     val email: String,
     val image: String,
     val postText: String,
-    val lat: Double,
-    val lng: Double,
-    val createdAt: String
+    val lat: Double?,
+    val lng: Double?,
+    val placeName: String?,
+    val createdAt: String,
+    val commentData: CommentDataEntity?
+)
+
+data class CommentDataEntity(
+    val commenterProfile: String?,
+    val commenterEmail: String,
+    val commenterName: String,
+    val comment: String
 )

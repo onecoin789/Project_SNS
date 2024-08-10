@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -19,12 +20,9 @@ import com.example.project_sns.R
 import com.example.project_sns.databinding.FragmentMyProfileMakePostBinding
 import com.example.project_sns.ui.CurrentUser
 import com.example.project_sns.ui.util.dateFormat
+import com.example.project_sns.ui.view.model.CommentDataModel
 import com.example.project_sns.ui.view.model.PostDataModel
-import com.kakao.vectormap.MapView
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import java.util.UUID
@@ -37,7 +35,12 @@ class MyProfileMakePostFragment : Fragment() {
 
     private var uri: Uri? = null
 
+    private var placeName: String? = null
+    private var lat: String? = null
+    private var lng: String? = null
+
     private val myProfileViewModel: MyProfileViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -51,9 +54,11 @@ class MyProfileMakePostFragment : Fragment() {
 
         initView()
         getPhoto()
+        getMapData()
 
         return binding.root
     }
+
 
     override fun onDestroyView() {
         super.onDestroyView()
@@ -95,6 +100,30 @@ class MyProfileMakePostFragment : Fragment() {
         }
     }
 
+    private fun getMapData() {
+
+        setFragmentResultListener("data") { data, bundle ->
+            val mapData = bundle.getBundle("mapData")
+            if (mapData != null) {
+                binding.clMakeLocationText.visibility = View.VISIBLE
+                binding.tvMakeLocationName.text = mapData.getString("placeName")
+                binding.tvMakeLocationInfo.text = mapData.getString("addressName")
+
+                placeName = mapData.getString("placeName")
+                lat = mapData.getString("lat")
+                lng = mapData.getString("lng")
+
+            } else {
+                binding.clMakeLocationText.visibility = View.GONE
+            }
+
+            binding.ivMakeMapDelete.setOnClickListener {
+                mapData?.clear()
+                binding.clMakeLocationText.visibility = View.GONE
+            }
+        }
+    }
+
     private fun collectFlow() {
 
         viewLifecycleOwner.lifecycleScope.launch {
@@ -103,11 +132,13 @@ class MyProfileMakePostFragment : Fragment() {
                     Toast.makeText(requireActivity(), "게시물을 생성 완료.", Toast.LENGTH_SHORT).show()
                     findNavController().popBackStack()
                 } else if (it == false) {
-                    Toast.makeText(requireActivity(), "게시물을 생성하지 못했습니다.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireActivity(), "게시물을 생성하지 못했습니다.", Toast.LENGTH_SHORT)
+                        .show()
                 }
             }
         }
     }
+
 
     private fun initData() {
         val auth = CurrentUser.userData
@@ -123,10 +154,13 @@ class MyProfileMakePostFragment : Fragment() {
             email = email,
             image = uri.toString(),
             postText = postText,
-            lat = 0.0,
-            lng = 0.0,
-            createdAt = dateFormat(time)
+            lat = lat?.toDouble(),
+            lng = lng?.toDouble(),
+            placeName = placeName,
+            createdAt = dateFormat(time),
+            commentData = CommentDataModel("", "", "", "")
         )
+
 
         viewLifecycleOwner.lifecycleScope.launch {
             if (uri != null) {

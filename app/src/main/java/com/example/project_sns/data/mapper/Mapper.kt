@@ -1,10 +1,12 @@
 package com.example.project_sns.data.mapper
 
+import com.example.project_sns.data.response.CommentDataResponse
 import com.example.project_sns.data.response.CurrentUserResponse
 import com.example.project_sns.data.response.KakaoDocumentsResponse
 import com.example.project_sns.data.response.KakaoMapResponse
 import com.example.project_sns.data.response.KakaoMetaResponse
 import com.example.project_sns.data.response.PostDataResponse
+import com.example.project_sns.domain.model.CommentDataEntity
 import com.example.project_sns.domain.model.CurrentUserEntity
 import com.example.project_sns.domain.model.KakaoDocumentsEntity
 import com.example.project_sns.domain.model.KakaoMapEntity
@@ -31,12 +33,23 @@ fun PostDataResponse.toEntity() = PostDataEntity(
     postText = postText,
     lat = lat,
     lng = lng,
-    createdAt = createdAt
+    placeName = placeName,
+    createdAt = createdAt,
+    commentData = commentData?.toEntity()
+)
+
+fun CommentDataResponse.toEntity() = CommentDataEntity(
+    commenterProfile = commenterProfile,
+    commenterEmail = commenterEmail,
+    commenterName = commenterName,
+    comment = comment
 )
 
 fun List<PostDataResponse>.toListEntity(): List<PostDataEntity> {
     return this.map { it.toEntity() }
 }
+
+
 
 
 // <!---------- KakaoMap ---------->

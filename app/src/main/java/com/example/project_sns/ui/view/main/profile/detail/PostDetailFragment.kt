@@ -40,6 +40,10 @@ class PostDetailFragment : BaseFragment<FragmentPostDetailBinding>() {
             Glide.with(requireContext()).load(R.drawable.ic_user_fill).into(profile)
         }
 
+        if (postData.placeName != null) {
+            binding.tvPDLocation.text = postData.placeName
+        }
+
         Glide.with(requireContext()).load(postData.image).into(binding.ivPDPostImage)
         binding.tvPDName.text = postData.name
         binding.tvPDEmail.text = postData.email

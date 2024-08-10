@@ -12,35 +12,22 @@ data class KakaoMapModel(
 data class KakaoDocumentsModel(
 
     val addressName: String,
-
     val categoryGroupCode: String,
-
     val categoryGroupName: String,
-
     val categoryName: String,
-
     val distance: String,
-
     val id: String,
-
     val phone: String,
-
     val placeName: String,
-
     val placeUrl: String,
-
     val roadAddressName: String,
-
     val lng: String,
-
     val lat: String,
 ): Parcelable
 
 data class KakaoMetaModel(
 
     val isEnd: Boolean,
-
     val pageableCount: Int,
-
     val totalCount: Int,
 )

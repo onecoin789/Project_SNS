@@ -1,10 +1,14 @@
 package com.example.project_sns.ui.view.main.profile
 
+import android.content.DialogInterface
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.core.os.bundleOf
+import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -30,7 +34,6 @@ class MyProfileSearchMapFragment : BottomSheetDialogFragment() {
     private val binding get() = _binding!!
 
     private val myProfileViewModel: MyProfileViewModel by viewModels()
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,23 +71,30 @@ class MyProfileSearchMapFragment : BottomSheetDialogFragment() {
             LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
             adapter = mapAdapter
         }
-
-        viewLifecycleOwner.lifecycleScope.launch {
-            myProfileViewModel.searchMapList(query = query, size = 5, page = 10)
-            myProfileViewModel.mapList.collect { list ->
-                Log.d("data12", "${list}")
-                mapAdapter.submitList(list)
+        if (query.isEmpty()) {
+            Toast.makeText(requireContext(), "검색어를 입력해주세요!", Toast.LENGTH_SHORT).show()
+        } else {
+            viewLifecycleOwner.lifecycleScope.launch {
+                myProfileViewModel.searchMapList(query = query, size = 5, page = 10)
+                myProfileViewModel.mapList.collect { list ->
+                    mapAdapter.submitList(list)
+                }
             }
         }
+
     }
 
     private fun sendMapData(mapData: KakaoDocumentsModel) {
-        myProfileViewModel.getSelectMapData(mapData)
+        val bundle = Bundle()
+        bundle.putString("placeName", mapData.placeName)
+        bundle.putString("addressName", mapData.addressName)
+        bundle.putString("lat", mapData.lat)
+        bundle.putString("lng", mapData.lng)
+        setFragmentResult("data", bundleOf("mapData" to bundle))
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
-
 }

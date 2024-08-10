@@ -7,7 +7,16 @@ data class PostDataResponse(
     val email: String = "",
     val image: String = "",
     val postText: String = "",
-    val lat: Double = 0.0,
-    val lng: Double = 0.0,
-    val createdAt: String = ""
+    val lat: Double? = null,
+    val lng: Double? = null,
+    val placeName: String? = null,
+    val createdAt: String = "",
+    val commentData: CommentDataResponse? = null
+)
+
+data class CommentDataResponse(
+    val commenterProfile: String?,
+    val commenterEmail: String,
+    val commenterName: String,
+    val comment: String
 )

@@ -3,6 +3,7 @@ package com.example.project_sns.data.repository
 import androidx.core.net.toUri
 import com.example.project_sns.data.mapper.toListEntity
 import com.example.project_sns.data.response.PostDataResponse
+import com.example.project_sns.domain.model.CommentDataEntity
 import com.example.project_sns.domain.model.PostDataEntity
 import com.example.project_sns.domain.repository.DataRepository
 import com.google.firebase.auth.FirebaseAuth
@@ -38,6 +39,7 @@ class DataRepositoryImpl @Inject constructor(
                                 "postText" to postData.postText,
                                 "lat" to postData.lat,
                                 "lng" to postData.lng,
+                                "placeName" to postData.placeName,
                                 "createdAt" to postData.createdAt
                             )
                             db.collection("post").document(postData.postId).set(data)
@@ -94,5 +96,15 @@ class DataRepositoryImpl @Inject constructor(
                 snapshotListener.remove()
             }
         }
+    }
+
+    override suspend fun uploadComment(): Flow<CommentDataEntity?> {
+        TODO()
+//        return flow {
+//            try {
+//                val currentUser = auth.currentUser?.uid
+//                val storage = storage.getReference("image").child()
+//            }
+//        }
     }
 }
