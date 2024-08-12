@@ -1,11 +1,13 @@
 package com.example.project_sns.data.response
 
+import android.net.Uri
+
 data class PostDataResponse(
     val postId: String = "",
     val profileImage: String? = null,
     val name: String = "",
     val email: String = "",
-    val image: String = "",
+    val image: List<Uri>? = emptyList(),
     val postText: String = "",
     val lat: Double? = null,
     val lng: Double? = null,

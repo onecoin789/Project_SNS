@@ -1,11 +1,13 @@
 package com.example.project_sns.domain.model
 
+import android.net.Uri
+
 data class PostDataEntity(
     val postId: String,
     val profileImage: String?,
     val name: String,
     val email: String,
-    val image: String,
+    val image: List<Uri>?,
     val postText: String,
     val lat: Double?,
     val lng: Double?,

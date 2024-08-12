@@ -1,6 +1,5 @@
 package com.example.project_sns.data.repository
 
-import android.util.Log
 import androidx.core.net.toUri
 import com.example.project_sns.data.mapper.toEntity
 import com.example.project_sns.data.response.CurrentUserResponse
@@ -126,7 +125,6 @@ class AuthRepositoryImpl @Inject constructor(
     ): Result<String> {
         return try {
             val storageRef = storage.getReference("image").child("${uid}/profileImage")
-            val batch = db.batch()
             if (newProfile != null) {
                 storageRef.putFile(newProfile.toUri()).addOnSuccessListener {
                     storageRef.downloadUrl.addOnSuccessListener { uri ->
@@ -143,9 +141,10 @@ class AuthRepositoryImpl @Inject constructor(
                         db.collection("post").whereEqualTo("uid", uid).get()
                             .addOnSuccessListener {
                                 it.documents.forEach { document ->
-                                    batch.update(document.reference, "profileImage", downloadUri)
-                                    batch.update(document.reference, "name", name)
-                                    batch.commit()
+                                    db.runTransaction { trans ->
+                                        trans.update(document.reference, "profileImage", downloadUri)
+                                        trans.update(document.reference, "name", name)
+                                    }
                                 }
                             }
                     }
@@ -163,8 +162,9 @@ class AuthRepositoryImpl @Inject constructor(
                 db.collection("post").whereEqualTo("uid", uid).get()
                     .addOnSuccessListener {
                         it.documents.forEach { document ->
-                            batch.update(document.reference, "name", name)
-                            batch.commit()
+                            db.runTransaction { trans ->
+                                trans.update(document.reference, "name", name)
+                            }
                         }
                     }
             }

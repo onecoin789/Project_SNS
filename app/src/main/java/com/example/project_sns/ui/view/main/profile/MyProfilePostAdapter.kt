@@ -18,7 +18,6 @@ class MyProfilePostAdapter(private val onItemClick: (PostDataModel) -> Unit) :
         private val onItemClick: (PostDataModel) -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(item: PostDataModel) {
-            Glide.with(binding.root).load(item.image).into(binding.ivItemMyPost)
             binding.ivItemMyPost.setOnClickListener {
                 onItemClick(item)
             }

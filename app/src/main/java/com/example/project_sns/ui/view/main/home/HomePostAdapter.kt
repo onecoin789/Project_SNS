@@ -25,7 +25,6 @@ class HomePostAdapter(private val onItemClick: (PostDataModel) -> Unit) :
             } else {
                 Glide.with(binding.root).load(R.drawable.ic_user_fill).into(binding.ivItemHomeUser)
             }
-            Glide.with(binding.root).load(item.image).into(binding.ivItemTitle)
             binding.tvItemHomeEmail.text = item.email
             binding.tvItemHomeName.text = item.name
             binding.tvItemHomePost.text = item.postText
