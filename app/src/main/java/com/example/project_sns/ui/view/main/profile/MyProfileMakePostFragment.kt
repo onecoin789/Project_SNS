@@ -33,7 +33,8 @@ class MyProfileMakePostFragment : Fragment() {
     private var _binding: FragmentMyProfileMakePostBinding? = null
     private val binding get() = _binding!!
 
-    private var uri: Uri? = null
+    private var uriList : ArrayList<Uri>? = arrayListOf()
+    private val maxNumber = 10
 
     private var placeName: String? = null
     private var lat: String? = null
@@ -86,16 +87,35 @@ class MyProfileMakePostFragment : Fragment() {
             registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
                 when (result.resultCode) {
                     RESULT_OK -> {
-                        uri = result.data?.data!!
-                        binding.ivMakePhoto.clipToOutline = true
-                        Glide.with(requireContext()).load(uri).into(binding.ivMakePhoto)
+                        val clipData = result.data?.clipData
+                        if (clipData != null) {
+                            val clipDataSize = clipData.itemCount
+                            val selectableCount = maxNumber - uriList!!.count()
+                            if (clipDataSize > selectableCount) {
+                                Toast.makeText(requireActivity(), "이미지는 최대 ${maxNumber}장까지 첨부할 수 있습니다.", Toast.LENGTH_SHORT).show()
+                            } else {
+                                for (i in 0 until clipDataSize) {
+                                    uriList?.add(clipData.getItemAt(i).uri)
+                                }
+                            }
+                        } else {
+                            val uri = result?.data?.data
+                            if (uri != null) {
+                                uriList?.add(uri)
+                            }
+                        }
+                        // adapter 설정
                     }
                 }
             }
 
         binding.clMakePhotoFrame.setOnClickListener {
-            val intent =
-                Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI)
+            if (uriList?.count() == maxNumber) {
+                Toast.makeText(requireActivity(), "이미지는 최대 ${maxNumber}장까지 첨부할 수 있습니다.", Toast.LENGTH_SHORT).show()
+            }
+            val intent = Intent(Intent.ACTION_PICK)
+            intent.type = "image/*"
+            intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
             registerForActivityResult.launch(intent)
         }
     }
@@ -152,7 +172,7 @@ class MyProfileMakePostFragment : Fragment() {
             profileImage = profileImage,
             name = name,
             email = email,
-            image = uri.toString(),
+            image = uriList,
             postText = postText,
             lat = lat?.toDouble(),
             lng = lng?.toDouble(),
@@ -161,9 +181,8 @@ class MyProfileMakePostFragment : Fragment() {
             commentData = CommentDataModel("", "", "", "")
         )
 
-
         viewLifecycleOwner.lifecycleScope.launch {
-            if (uri != null) {
+            if (uriList != null) {
                 myProfileViewModel.upLoadPost(data)
             } else {
                 Toast.makeText(requireActivity(), "사진 선택 필요", Toast.LENGTH_SHORT).show()

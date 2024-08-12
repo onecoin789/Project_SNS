@@ -44,7 +44,6 @@ class PostDetailFragment : BaseFragment<FragmentPostDetailBinding>() {
             binding.tvPDLocation.text = postData.placeName
         }
 
-        Glide.with(requireContext()).load(postData.image).into(binding.ivPDPostImage)
         binding.tvPDName.text = postData.name
         binding.tvPDEmail.text = postData.email
         binding.tvPDPostText.text = postData.postText
@@ -57,5 +56,4 @@ class PostDetailFragment : BaseFragment<FragmentPostDetailBinding>() {
     private fun initBottomFragment() {
 
     }
-
 }

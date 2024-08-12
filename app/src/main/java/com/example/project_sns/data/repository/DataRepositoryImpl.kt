@@ -1,5 +1,7 @@
 package com.example.project_sns.data.repository
 
+import android.net.Uri
+import android.util.Log
 import androidx.core.net.toUri
 import com.example.project_sns.data.mapper.toListEntity
 import com.example.project_sns.data.response.PostDataResponse
@@ -8,6 +10,7 @@ import com.example.project_sns.domain.model.PostDataEntity
 import com.example.project_sns.domain.repository.DataRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.SetOptions
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -24,26 +27,37 @@ class DataRepositoryImpl @Inject constructor(
         return flow {
             try {
                 val currentUser = auth.currentUser?.uid
-                val storageRef =
-                    storage.getReference("image").child("${currentUser}/${postData.postId}")
+                val imageList = arrayListOf<String>()
                 if (currentUser != null) {
-                    storageRef.putFile(postData.image.toUri()).addOnSuccessListener {
-                        storageRef.downloadUrl.addOnSuccessListener {
-                            val downloadUri = it.toString()
-                            val data = hashMapOf(
-                                "uid" to currentUser,
-                                "profileImage" to postData.profileImage,
-                                "name" to postData.name,
-                                "email" to postData.email,
-                                "image" to downloadUri,
-                                "postText" to postData.postText,
-                                "lat" to postData.lat,
-                                "lng" to postData.lng,
-                                "placeName" to postData.placeName,
-                                "createdAt" to postData.createdAt
-                            )
-                            db.collection("post").document(postData.postId).set(data)
+                    val data = hashMapOf(
+                        "postId" to postData.postId,
+                        "uid" to currentUser,
+                        "profileImage" to postData.profileImage,
+                        "name" to postData.name,
+                        "email" to postData.email,
+                        "postText" to postData.postText,
+                        "lat" to postData.lat,
+                        "lng" to postData.lng,
+                        "placeName" to postData.placeName,
+                        "createdAt" to postData.createdAt
+                    )
+                    db.collection("post").document(postData.postId).set(data)
+
+                    if (postData.image != null) {
+                        for (i in 0 until postData.image.count()) {
+                            val storageRef =
+                                storage.getReference("image")
+                                    .child("${currentUser}/${postData.postId}/${postData.createdAt}_${i}")
+                            storageRef.putFile(postData.image[i]).addOnSuccessListener {
+                                storageRef.downloadUrl.addOnSuccessListener { downloadUrl ->
+                                    imageList.add(downloadUrl.toString())
+                                    val imageData = hashMapOf("imageList" to imageList)
+                                    db.collection("post").document(postData.postId)
+                                        .set(imageData, SetOptions.merge())
+                                }
+                            }
                         }
+
                     }
                     emit(true)
                 }
