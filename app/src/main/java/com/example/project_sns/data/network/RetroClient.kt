@@ -8,12 +8,14 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import javax.inject.Qualifier
+import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 object RetroClient {
 
-    const val BASE_URL = "https://dapi.kakao.com/v2/local/search/"
+    const val KAKAO_MAP_URL = "https://dapi.kakao.com/v2/local/search/"
 
     @Provides
     fun provideOkHttpClient(): OkHttpClient {
@@ -27,10 +29,11 @@ object RetroClient {
             .build()
     }
 
+    @Singleton
     @Provides
     fun provideRetrofit(client: OkHttpClient): Retrofit {
         return Retrofit.Builder()
-            .baseUrl(BASE_URL)
+            .baseUrl(KAKAO_MAP_URL)
             .client(client)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
@@ -40,4 +43,6 @@ object RetroClient {
     fun kakaoMapApiService(retrofit: Retrofit): KakaoMapApiService {
         return retrofit.create(KakaoMapApiService::class.java)
     }
+
+
 }

@@ -7,27 +7,20 @@ import android.view.View
 import android.view.ViewGroup
 import com.example.project_sns.R
 import com.example.project_sns.databinding.FragmentFriendDetailBinding
+import com.example.project_sns.ui.BaseFragment
 
-class FriendDetailFragment : Fragment() {
+class FriendDetailFragment : BaseFragment<FragmentFriendDetailBinding>() {
 
-    private var _binding : FragmentFriendDetailBinding? = null
-    private val binding get() = _binding!!
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
 
+    override fun getFragmentBinding(
+        inflater: LayoutInflater,
+        container: ViewGroup?
+    ): FragmentFriendDetailBinding {
+        return FragmentFriendDetailBinding.inflate(inflater, container, false)
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        _binding = FragmentFriendDetailBinding.inflate(inflater, container, false)
-
-        return binding.root
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
 }

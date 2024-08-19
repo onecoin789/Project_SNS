@@ -20,6 +20,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.example.project_sns.databinding.FragmentMyProfileEditBinding
+import com.example.project_sns.ui.BaseFragment
 import com.example.project_sns.ui.CurrentUser
 import com.example.project_sns.ui.util.CheckEditProfile
 import com.example.project_sns.ui.util.dateFormat
@@ -30,22 +31,18 @@ import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 
 @AndroidEntryPoint
-class MyProfileEditFragment : Fragment() {
-
-    private var _binding: FragmentMyProfileEditBinding? = null
-    private val binding get() = _binding!!
+class MyProfileEditFragment : BaseFragment<FragmentMyProfileEditBinding>() {
 
     private val myProfileViewModel: MyProfileViewModel by viewModels()
 
     private var uri: Uri? = null
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        _binding = FragmentMyProfileEditBinding.inflate(inflater, container, false)
 
-        return binding.root
+    override fun getFragmentBinding(
+        inflater: LayoutInflater,
+        container: ViewGroup?
+    ): FragmentMyProfileEditBinding {
+        return FragmentMyProfileEditBinding.inflate(inflater, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -168,10 +165,5 @@ class MyProfileEditFragment : Fragment() {
         binding.etEditName.doAfterTextChanged {
             myProfileViewModel.checkName(binding.etEditName.text.toString(), binding.tvEditNameCheck)
         }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 }

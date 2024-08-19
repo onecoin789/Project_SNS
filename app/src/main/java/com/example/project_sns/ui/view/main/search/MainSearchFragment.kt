@@ -7,28 +7,22 @@ import android.view.ViewGroup
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import com.example.project_sns.databinding.FragmentMainSearchBinding
+import com.example.project_sns.ui.BaseFragment
 
 
-class MainSearchFragment : Fragment() {
+class MainSearchFragment : BaseFragment<FragmentMainSearchBinding>() {
 
-    private var _binding: FragmentMainSearchBinding? = null
-    private val binding get() = _binding!!
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-
-        _binding = FragmentMainSearchBinding.inflate(inflater, container, false)
-
-        initSearch()
-
-        return binding.root
+    override fun getFragmentBinding(
+        inflater: LayoutInflater,
+        container: ViewGroup?
+    ): FragmentMainSearchBinding {
+        return FragmentMainSearchBinding.inflate(inflater, container, false)
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        initSearch()
     }
 
     private fun initSearch() {

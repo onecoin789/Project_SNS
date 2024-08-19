@@ -38,31 +38,57 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="12dp"
             android:textColor="@color/text"
-            android:textSize="20sp"
+            android:textSize="18sp"
             android:textStyle="bold"
+            android:layout_marginBottom="2dp"
             app:layout_constraintBottom_toBottomOf="@+id/ivItemHomeUser"
             app:layout_constraintStart_toEndOf="@id/ivItemHomeUser"
             app:layout_constraintTop_toTopOf="@id/ivItemHomeUser" />
 
-        <ImageView
-            android:id="@+id/ivItemTitle"
+        <TextView
+            android:id="@+id/tvItemHomeLocation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/hint"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="@id/tvItemHomeName"
+            app:layout_constraintTop_toBottomOf="@+id/tvItemHomeName" />
+
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/vpItemTitle"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            app:layout_constraintDimensionRatio="1:1"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="15dp"
             android:scaleType="centerCrop"
-            app:layout_constraintTop_toBottomOf="@+id/ivItemHomeUser"
-            android:contentDescription="@string/contentDescription"/>
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintTop_toBottomOf="@+id/ivItemHomeUser" />
+
+        <com.tbuonomo.viewpagerdotsindicator.WormDotsIndicator
+            android:id="@+id/idcItem"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:dotsColor="@color/point"
+            app:dotsStrokeColor="@color/stroke"
+            app:dotsCornerRadius="8dp"
+            app:dotsSize="16dp"
+            app:dotsSpacing="4dp"
+            app:dotsStrokeWidth="2dp"
+            android:layout_marginTop="10dp"
+            app:layout_constraintTop_toBottomOf="@id/vpItemTitle"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
 
         <ImageView
             android:id="@+id/ivItemHomeHeart"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="20dp"
             android:layout_marginStart="10dp"
             android:background="@drawable/ic_heart"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/ivItemTitle"
+            app:layout_constraintTop_toBottomOf="@id/idcItem"
             android:contentDescription="@string/contentDescription"/>
 
         <ImageView

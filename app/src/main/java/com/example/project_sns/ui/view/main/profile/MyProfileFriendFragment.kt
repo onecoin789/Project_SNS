@@ -7,31 +7,22 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.project_sns.databinding.FragmentMyProfileFriendBinding
+import com.example.project_sns.ui.BaseFragment
 
-class MyProfileFriendFragment : Fragment() {
+class MyProfileFriendFragment : BaseFragment<FragmentMyProfileFriendBinding>() {
 
-    private var _binding : FragmentMyProfileFriendBinding? = null
-    private val binding get() = _binding!!
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
+    override fun getFragmentBinding(
+        inflater: LayoutInflater,
+        container: ViewGroup?
+    ): FragmentMyProfileFriendBinding {
+        return FragmentMyProfileFriendBinding.inflate(inflater, container, false)
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        _binding = FragmentMyProfileFriendBinding.inflate(inflater, container, false)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         initView()
-
-        return binding.root
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 
     private fun initView() {

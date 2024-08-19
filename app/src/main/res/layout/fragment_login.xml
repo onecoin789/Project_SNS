@@ -42,19 +42,6 @@
                 app:layout_constraintTop_toBottomOf="@+id/tvLoginTitle"
                 android:contentDescription="@string/contentDescription"/>
 
-<!--            <ImageView-->
-<!--                android:id="@+id/iv_Login1"-->
-<!--                android:layout_width="0dp"-->
-<!--                android:layout_height="0dp"-->
-<!--                android:layout_marginStart="155dp"-->
-<!--                android:layout_marginTop="45dp"-->
-<!--                android:layout_marginEnd="155dp"-->
-<!--                android:layout_marginBottom="55dp"-->
-<!--                android:background="@drawable/ic_main"-->
-<!--                app:layout_constraintBottom_toTopOf="@+id/cl_Login_M"-->
-<!--                app:layout_constraintEnd_toEndOf="parent"-->
-<!--                app:layout_constraintStart_toStartOf="parent"-->
-<!--                app:layout_constraintTop_toBottomOf="@+id/tv_Login1" />-->
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/clLoginMiddle"
@@ -144,6 +131,16 @@
                     app:layout_constraintEnd_toEndOf="@+id/etLoginPassword"
                     app:layout_constraintTop_toTopOf="@+id/etLoginPassword"
                     app:layout_constraintBottom_toBottomOf="@+id/etLoginPassword"/>
+
+                <ImageView
+                    android:id="@+id/ivLoginKakao"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:background="@drawable/kakao_login_medium_narrow"
+                    app:layout_constraintTop_toBottomOf="@+id/etLoginPassword"
+                    app:layout_constraintStart_toStartOf="@+id/etLoginPassword"
+                    app:layout_constraintEnd_toEndOf="@id/etLoginPassword"/>
 
 
             </androidx.constraintlayout.widget.ConstraintLayout>

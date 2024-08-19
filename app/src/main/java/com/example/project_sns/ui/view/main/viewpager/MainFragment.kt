@@ -10,15 +10,13 @@ import androidx.fragment.app.viewModels
 import androidx.viewpager2.widget.ViewPager2
 import com.example.project_sns.R
 import com.example.project_sns.databinding.FragmentMainBinding
+import com.example.project_sns.ui.BaseFragment
 import com.example.project_sns.ui.view.main.MainViewModel
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class MainFragment : Fragment() {
-
-    private var _binding: FragmentMainBinding? = null
-    private val binding get() = _binding!!
+class MainFragment : BaseFragment<FragmentMainBinding>() {
 
     private val mainViewModel : MainViewModel by viewModels()
 
@@ -29,21 +27,18 @@ class MainFragment : Fragment() {
 
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        _binding = FragmentMainBinding.inflate(inflater, container, false)
+    override fun getFragmentBinding(
+        inflater: LayoutInflater,
+        container: ViewGroup?
+    ): FragmentMainBinding {
+        return FragmentMainBinding.inflate(inflater, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         initViewPager()
         initBottomBar()
-
-        return binding.root
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 
     private fun initViewPager() {

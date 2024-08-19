@@ -1,12 +1,9 @@
 package com.example.project_sns.ui.view.main.profile.detail
 
 import android.os.Bundle
-import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.net.toUri
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
@@ -48,9 +45,28 @@ class PostDetailFragment : BaseFragment<FragmentPostDetailBinding>() {
         binding.tvPDEmail.text = postData.email
         binding.tvPDPostText.text = postData.postText
 
+        initRv(postData.image)
+
+        if (postData.image?.size == 1) {
+            binding.idcPD.visibility = View.INVISIBLE
+        } else {
+            binding.idcPD.visibility = View.VISIBLE
+        }
+
         binding.ivPDBack.setOnClickListener {
             findNavController().popBackStack()
         }
+
+    }
+
+    private fun initRv(uriList : List<String>?) {
+        val imageAdapter = PostImageAdapter()
+        val indicator = binding.idcPD
+        imageAdapter.submitList(uriList)
+        with(binding.vpPDPostImage) {
+            adapter = imageAdapter
+        }
+        indicator.attachTo(binding.vpPDPostImage)
     }
 
     private fun initBottomFragment() {

@@ -13,6 +13,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.project_sns.R
 import com.example.project_sns.databinding.FragmentMainHomeBinding
+import com.example.project_sns.ui.BaseFragment
 import com.example.project_sns.ui.view.main.CommentFragment
 import com.example.project_sns.ui.view.main.MainViewModel
 import com.example.project_sns.ui.view.main.viewpager.MainFragmentDirections
@@ -22,26 +23,21 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class MainHomeFragment : Fragment() {
-
-    private var _binding: FragmentMainHomeBinding? = null
-    private val binding get() = _binding!!
+class MainHomeFragment : BaseFragment<FragmentMainHomeBinding>() {
 
     private lateinit var auth: FirebaseAuth
 
     private val mainViewModel : MainViewModel by viewModels()
 
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-
-        _binding = FragmentMainHomeBinding.inflate(inflater, container, false)
+    override fun getFragmentBinding(
+        inflater: LayoutInflater,
+        container: ViewGroup?
+    ): FragmentMainHomeBinding {
 
         auth = FirebaseAuth.getInstance()
 
-        return binding.root
+        return FragmentMainHomeBinding.inflate(inflater, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -50,11 +46,6 @@ class MainHomeFragment : Fragment() {
         navigateView()
         initRv()
 
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 
 

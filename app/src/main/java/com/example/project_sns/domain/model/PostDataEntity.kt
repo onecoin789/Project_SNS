@@ -7,7 +7,7 @@ data class PostDataEntity(
     val profileImage: String?,
     val name: String,
     val email: String,
-    val image: List<Uri>?,
+    val image: List<String>?,
     val postText: String,
     val lat: Double?,
     val lng: Double?,

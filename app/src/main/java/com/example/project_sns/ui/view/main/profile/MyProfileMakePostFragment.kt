@@ -4,7 +4,6 @@ import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,11 +14,13 @@ import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import com.bumptech.glide.Glide
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.project_sns.R
 import com.example.project_sns.databinding.FragmentMyProfileMakePostBinding
+import com.example.project_sns.ui.BaseFragment
 import com.example.project_sns.ui.CurrentUser
 import com.example.project_sns.ui.util.dateFormat
+import com.example.project_sns.ui.view.main.profile.detail.PostImageAdapter
 import com.example.project_sns.ui.view.model.CommentDataModel
 import com.example.project_sns.ui.view.model.PostDataModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -28,12 +29,9 @@ import java.time.LocalDateTime
 import java.util.UUID
 
 @AndroidEntryPoint
-class MyProfileMakePostFragment : Fragment() {
+class MyProfileMakePostFragment : BaseFragment<FragmentMyProfileMakePostBinding>() {
 
-    private var _binding: FragmentMyProfileMakePostBinding? = null
-    private val binding get() = _binding!!
-
-    private var uriList : ArrayList<Uri>? = arrayListOf()
+    private var uriList : ArrayList<String>? = arrayListOf()
     private val maxNumber = 10
 
     private var placeName: String? = null
@@ -42,28 +40,21 @@ class MyProfileMakePostFragment : Fragment() {
 
     private val myProfileViewModel: MyProfileViewModel by viewModels()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
 
+    override fun getFragmentBinding(
+        inflater: LayoutInflater,
+        container: ViewGroup?
+    ): FragmentMyProfileMakePostBinding {
+        return FragmentMyProfileMakePostBinding.inflate(inflater, container, false)
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        _binding = FragmentMyProfileMakePostBinding.inflate(inflater, container, false)
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         initView()
         getPhoto()
         getMapData()
-
-        return binding.root
-    }
-
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 
     private fun initView() {
@@ -81,6 +72,23 @@ class MyProfileMakePostFragment : Fragment() {
         }
     }
 
+    private fun initRv() {
+        val imageAdapter = PostImageAdapter()
+        imageAdapter.submitList(uriList)
+        with(binding.rvMakeImageList) {
+            adapter = imageAdapter
+        }
+        if (uriList != null) {
+            binding.rvMakeImageList.visibility = View.VISIBLE
+            binding.ivMakePlusPhoto.visibility = View.VISIBLE
+            binding.ivMakePhoto.visibility = View.INVISIBLE
+        } else {
+            binding.rvMakeImageList.visibility = View.GONE
+            binding.ivMakePhoto.visibility = View.GONE
+            binding.ivMakePhoto.visibility = View.VISIBLE
+        }
+    }
+
     private fun getPhoto() {
 
         val registerForActivityResult =
@@ -95,16 +103,14 @@ class MyProfileMakePostFragment : Fragment() {
                                 Toast.makeText(requireActivity(), "이미지는 최대 ${maxNumber}장까지 첨부할 수 있습니다.", Toast.LENGTH_SHORT).show()
                             } else {
                                 for (i in 0 until clipDataSize) {
-                                    uriList?.add(clipData.getItemAt(i).uri)
+                                    uriList?.add(clipData.getItemAt(i).uri.toString())
                                 }
                             }
                         } else {
-                            val uri = result?.data?.data
-                            if (uri != null) {
-                                uriList?.add(uri)
-                            }
+                            val uri = result?.data?.data.toString()
+                            uriList?.add(uri)
                         }
-                        // adapter 설정
+                        initRv()
                     }
                 }
             }
@@ -112,6 +118,20 @@ class MyProfileMakePostFragment : Fragment() {
         binding.clMakePhotoFrame.setOnClickListener {
             if (uriList?.count() == maxNumber) {
                 Toast.makeText(requireActivity(), "이미지는 최대 ${maxNumber}장까지 첨부할 수 있습니다.", Toast.LENGTH_SHORT).show()
+            }
+            val intent = Intent(Intent.ACTION_PICK)
+            intent.type = "image/*"
+            intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
+            registerForActivityResult.launch(intent)
+        }
+
+        binding.ivMakePlusPhoto.setOnClickListener {
+            if (uriList?.count() == maxNumber) {
+                Toast.makeText(
+                    requireActivity(),
+                    "이미지는 최대 ${maxNumber}장까지 첨부할 수 있습니다.",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
             val intent = Intent(Intent.ACTION_PICK)
             intent.type = "image/*"

@@ -48,10 +48,10 @@ class DataRepositoryImpl @Inject constructor(
                             val storageRef =
                                 storage.getReference("image")
                                     .child("${currentUser}/${postData.postId}/${postData.createdAt}_${i}")
-                            storageRef.putFile(postData.image[i]).addOnSuccessListener {
+                            storageRef.putFile(postData.image[i].toUri()).addOnSuccessListener {
                                 storageRef.downloadUrl.addOnSuccessListener { downloadUrl ->
                                     imageList.add(downloadUrl.toString())
-                                    val imageData = hashMapOf("imageList" to imageList)
+                                    val imageData = hashMapOf("image" to imageList)
                                     db.collection("post").document(postData.postId)
                                         .set(imageData, SetOptions.merge())
                                 }

@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.bumptech.glide.Glide
 import com.example.project_sns.R
 import com.example.project_sns.databinding.FragmentMainMyProfileBinding
+import com.example.project_sns.ui.BaseFragment
 import com.example.project_sns.ui.CurrentUser
 import com.example.project_sns.ui.util.refreshFragment
 import com.example.project_sns.ui.view.main.MainViewModel
@@ -25,36 +26,26 @@ import kotlinx.coroutines.launch
 
 
 @AndroidEntryPoint
-class MainMyProfileFragment : Fragment() {
-
-    private var _binding: FragmentMainMyProfileBinding? = null
-    private val binding get() = _binding!!
+class MainMyProfileFragment : BaseFragment<FragmentMainMyProfileBinding>() {
 
     private val mainViewModel: MainViewModel by viewModels()
 
     private val myProfileViewModel: MyProfileViewModel by viewModels()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
+    override fun getFragmentBinding(
+        inflater: LayoutInflater,
+        container: ViewGroup?
+    ): FragmentMainMyProfileBinding {
+       return FragmentMainMyProfileBinding.inflate(inflater, container, false)
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        _binding = FragmentMainMyProfileBinding.inflate(inflater, container, false)
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         initView()
         navigateView()
         initRv()
-
-        return binding.root
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 
     private fun initView() {
@@ -85,6 +76,7 @@ class MainMyProfileFragment : Fragment() {
         val uid = CurrentUser.userData?.uid.toString()
         val listAdapter = MyProfilePostAdapter { data ->
             sendData(data)
+            Log.d("data_model", "${data}")
         }
         viewLifecycleOwner.lifecycleScope.launch {
             myProfileViewModel.postInformation.collect { data ->
