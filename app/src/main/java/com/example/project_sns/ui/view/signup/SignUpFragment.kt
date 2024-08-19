@@ -7,14 +7,12 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.text.method.HideReturnsTransformationMethod
 import android.text.method.PasswordTransformationMethod
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.widget.doAfterTextChanged
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -23,43 +21,30 @@ import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.example.project_sns.R
 import com.example.project_sns.databinding.FragmentSignUpBinding
+import com.example.project_sns.ui.BaseFragment
 import com.example.project_sns.ui.util.CheckSignUp
 import com.example.project_sns.ui.util.dateFormat
-import com.example.project_sns.ui.view.signup.model.FirebaseUserData
-import com.google.firebase.Timestamp
-import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 
 @AndroidEntryPoint
-class SignUpFragment : Fragment() {
-
-    private var _binding: FragmentSignUpBinding? = null
-    private val binding get() = _binding!!
+class SignUpFragment : BaseFragment<FragmentSignUpBinding>() {
 
     private val signUpViewModel: SignUpViewModel by viewModels()
 
     private var uri: Uri? = null
 
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-
-        _binding = FragmentSignUpBinding.inflate(inflater, container, false)
-
-        initView()
-
-
-        return binding.root
+    override fun getFragmentBinding(
+        inflater: LayoutInflater,
+        container: ViewGroup?
+    ): FragmentSignUpBinding {
+        return FragmentSignUpBinding.inflate(inflater, container, false)
     }
 
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        initView()
     }
 
 

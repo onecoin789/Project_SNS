@@ -29,7 +29,9 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField("String", "API_KEY", properties.getProperty("API_KEY"))
         buildConfigField("String", "NATIVE_KEY", properties.getProperty("NATIVE_KEY"))
+        buildConfigField("String", "KAKAO_NATIVE_KEY", properties.getProperty("KAKAO_NATIVE_KEY"))
         resValue("string", "NATIVE_KEY", properties.getProperty("NATIVE_KEY"))
+        resValue("string", "KAKAO_NATIVE_KEY", properties.getProperty("KAKAO_NATIVE_KEY"))
 
     }
 
@@ -69,6 +71,10 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
+    //viewpager2
+    implementation(libs.androidx.viewpager2)
+    implementation(libs.dotsindicator)
+
     // navigation fragment
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
@@ -83,6 +89,7 @@ dependencies {
     implementation(libs.firebase.auth)
     implementation(libs.firebase.firestore)
     implementation(libs.firebase.storage)
+    implementation(libs.firebase.functions)
 //    implementation(libs.firebase.crashlytics)
 
     // retrofit
@@ -93,6 +100,7 @@ dependencies {
 
     implementation("com.kakao.maps.open:android:2.11.9")
     implementation("com.google.android.gms:play-services-location:16.0.0")
+    implementation("com.kakao.sdk:v2-all:2.20.3")
 
 
 }

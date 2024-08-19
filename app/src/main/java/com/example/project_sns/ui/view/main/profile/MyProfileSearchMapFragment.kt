@@ -75,7 +75,7 @@ class MyProfileSearchMapFragment : BottomSheetDialogFragment() {
             Toast.makeText(requireContext(), "검색어를 입력해주세요!", Toast.LENGTH_SHORT).show()
         } else {
             viewLifecycleOwner.lifecycleScope.launch {
-                myProfileViewModel.searchMapList(query = query, size = 5, page = 10)
+                myProfileViewModel.searchMapList(query = query, size = 10, page = 10)
                 myProfileViewModel.mapList.collect { list ->
                     mapAdapter.submitList(list)
                 }

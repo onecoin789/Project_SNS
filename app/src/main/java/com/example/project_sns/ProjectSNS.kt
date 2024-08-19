@@ -1,6 +1,7 @@
 package com.example.project_sns
 
 import android.app.Application
+import com.kakao.sdk.common.KakaoSdk
 import dagger.hilt.android.HiltAndroidApp
 
 
@@ -15,6 +16,7 @@ class ProjectSNS : Application() {
         super.onCreate()
         application = this
 
+        KakaoSdk.init(this, BuildConfig.NATIVE_KEY)
     }
 
 //    private fun getHashKey() {

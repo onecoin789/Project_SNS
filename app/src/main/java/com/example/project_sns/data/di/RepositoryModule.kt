@@ -6,10 +6,8 @@ import com.example.project_sns.data.repository.KakaoMapRepositoryImpl
 import com.example.project_sns.domain.repository.AuthRepository
 import com.example.project_sns.domain.repository.DataRepository
 import com.example.project_sns.domain.repository.KakaoMapRepository
-import com.google.firebase.auth.FirebaseAuth
 import dagger.Binds
 import dagger.Module
-import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton

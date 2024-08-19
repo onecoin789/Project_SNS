@@ -1,13 +1,16 @@
 package com.example.project_sns.ui.view.main.home
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.project_sns.R
 import com.example.project_sns.databinding.RvItemPostPhotoBinding
+import com.example.project_sns.ui.view.main.profile.detail.PostImageAdapter
 import com.example.project_sns.ui.view.model.PostDataModel
 
 class HomePostAdapter(private val onItemClick: (PostDataModel) -> Unit) :
@@ -31,6 +34,28 @@ class HomePostAdapter(private val onItemClick: (PostDataModel) -> Unit) :
             binding.tvItemHomeComment.setOnClickListener {
                 onItemClick(item)
             }
+
+            if (item.placeName != null) {
+                binding.tvItemHomeLocation.text = item.placeName
+            }
+            initRv(item.image)
+
+            if (item.image?.size == 1) {
+                binding.idcItem.visibility = View.INVISIBLE
+            } else {
+                binding.idcItem.visibility = View.VISIBLE
+            }
+        }
+
+        private fun initRv(uriList : List<String>?) {
+            val imageAdapter = PostImageAdapter()
+            val indicator = binding.idcItem
+            imageAdapter.submitList(uriList)
+            with(binding.vpItemTitle) {
+                adapter = imageAdapter
+            }
+            indicator.attachTo(binding.vpItemTitle)
+
         }
     }
 

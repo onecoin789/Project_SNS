@@ -8,33 +8,21 @@ import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
 import com.example.project_sns.R
 import com.example.project_sns.databinding.FragmentChatListBinding
+import com.example.project_sns.ui.BaseFragment
 
 
-class ChatListFragment : Fragment() {
+class ChatListFragment : BaseFragment<FragmentChatListBinding>() {
 
-    private var _binding : FragmentChatListBinding? = null
-    private val binding get() = _binding!!
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
+    override fun getFragmentBinding(
+        inflater: LayoutInflater,
+        container: ViewGroup?
+    ): FragmentChatListBinding {
+        return FragmentChatListBinding.inflate(inflater, container, false)
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        _binding = FragmentChatListBinding.inflate(inflater, container, false)
-
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         initView()
-
-        return binding.root
-    }
-
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 
     private fun initView() {

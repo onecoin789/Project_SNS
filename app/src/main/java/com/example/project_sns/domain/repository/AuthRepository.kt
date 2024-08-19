@@ -15,4 +15,6 @@ interface AuthRepository {
     suspend fun getCurrentUserData() : Flow<CurrentUserEntity?>
 
     suspend fun editProfile(uid: String, name: String, email: String, newProfile: String?, beforeProfile: String?, intro: String?, createdAt: String): Result<String>
+
+    suspend fun kakaoLogin(accessToken: String): Result<String>
 }
