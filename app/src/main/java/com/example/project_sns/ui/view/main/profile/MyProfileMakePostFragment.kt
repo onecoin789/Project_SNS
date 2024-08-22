@@ -4,11 +4,13 @@ import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
@@ -22,8 +24,10 @@ import com.example.project_sns.ui.CurrentUser
 import com.example.project_sns.ui.util.dateFormat
 import com.example.project_sns.ui.view.main.profile.detail.PostImageAdapter
 import com.example.project_sns.ui.view.model.CommentDataModel
+import com.example.project_sns.ui.view.model.MapDataModel
 import com.example.project_sns.ui.view.model.PostDataModel
 import dagger.hilt.android.AndroidEntryPoint
+import gun0912.tedimagepicker.builder.TedImagePicker
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import java.util.UUID
@@ -31,10 +35,10 @@ import java.util.UUID
 @AndroidEntryPoint
 class MyProfileMakePostFragment : BaseFragment<FragmentMyProfileMakePostBinding>() {
 
-    private var uriList : ArrayList<String>? = arrayListOf()
-    private val maxNumber = 10
+    private var uriList: List<String>? = listOf()
 
     private var placeName: String? = null
+    private var addressName: String? = null
     private var lat: String? = null
     private var lng: String? = null
 
@@ -53,13 +57,12 @@ class MyProfileMakePostFragment : BaseFragment<FragmentMyProfileMakePostBinding>
         super.onViewCreated(view, savedInstanceState)
 
         initView()
-        getPhoto()
         getMapData()
     }
 
     private fun initView() {
         binding.ivMakeBack.setOnClickListener {
-            findNavController().popBackStack()
+            backButton()
         }
 
         binding.btnMakeConfirm.setOnClickListener {
@@ -70,75 +73,42 @@ class MyProfileMakePostFragment : BaseFragment<FragmentMyProfileMakePostBinding>
         binding.tvMakeLocation.setOnClickListener {
             findNavController().navigate(R.id.action_makePostFragment_to_myProfileSearchMapFragment)
         }
+
+        binding.clMakePhotoFrame.setOnClickListener {
+            getPhoto()
+        }
+
+        binding.ivMakePlusPhoto.setOnClickListener {
+
+            getPhoto()
+        }
     }
 
-    private fun initRv() {
+    private fun initViewPager() {
         val imageAdapter = PostImageAdapter()
         imageAdapter.submitList(uriList)
-        with(binding.rvMakeImageList) {
+        with(binding.vpMakeImageList) {
             adapter = imageAdapter
         }
         if (uriList != null) {
-            binding.rvMakeImageList.visibility = View.VISIBLE
+            binding.vpMakeImageList.visibility = View.VISIBLE
             binding.ivMakePlusPhoto.visibility = View.VISIBLE
             binding.ivMakePhoto.visibility = View.INVISIBLE
         } else {
-            binding.rvMakeImageList.visibility = View.GONE
+            binding.vpMakeImageList.visibility = View.GONE
             binding.ivMakePhoto.visibility = View.GONE
-            binding.ivMakePhoto.visibility = View.VISIBLE
         }
     }
 
     private fun getPhoto() {
-
-        val registerForActivityResult =
-            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-                when (result.resultCode) {
-                    RESULT_OK -> {
-                        val clipData = result.data?.clipData
-                        if (clipData != null) {
-                            val clipDataSize = clipData.itemCount
-                            val selectableCount = maxNumber - uriList!!.count()
-                            if (clipDataSize > selectableCount) {
-                                Toast.makeText(requireActivity(), "이미지는 최대 ${maxNumber}장까지 첨부할 수 있습니다.", Toast.LENGTH_SHORT).show()
-                            } else {
-                                for (i in 0 until clipDataSize) {
-                                    uriList?.add(clipData.getItemAt(i).uri.toString())
-                                }
-                            }
-                        } else {
-                            val uri = result?.data?.data.toString()
-                            uriList?.add(uri)
-                        }
-                        initRv()
-                    }
-                }
+        TedImagePicker.with(requireContext()).max(10, "이미지는 최대 10장까지 첨부할 수 있습니다")
+            .selectedUri(uriList?.map { it.toUri() }).startMultiImage { uri ->
+                val getUriList = uri.map { it.toString() }
+                uriList = getUriList
+                initViewPager()
             }
-
-        binding.clMakePhotoFrame.setOnClickListener {
-            if (uriList?.count() == maxNumber) {
-                Toast.makeText(requireActivity(), "이미지는 최대 ${maxNumber}장까지 첨부할 수 있습니다.", Toast.LENGTH_SHORT).show()
-            }
-            val intent = Intent(Intent.ACTION_PICK)
-            intent.type = "image/*"
-            intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
-            registerForActivityResult.launch(intent)
-        }
-
-        binding.ivMakePlusPhoto.setOnClickListener {
-            if (uriList?.count() == maxNumber) {
-                Toast.makeText(
-                    requireActivity(),
-                    "이미지는 최대 ${maxNumber}장까지 첨부할 수 있습니다.",
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-            val intent = Intent(Intent.ACTION_PICK)
-            intent.type = "image/*"
-            intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
-            registerForActivityResult.launch(intent)
-        }
     }
+
 
     private fun getMapData() {
 
@@ -150,6 +120,7 @@ class MyProfileMakePostFragment : BaseFragment<FragmentMyProfileMakePostBinding>
                 binding.tvMakeLocationInfo.text = mapData.getString("addressName")
 
                 placeName = mapData.getString("placeName")
+                addressName = mapData.getString("addressName")
                 lat = mapData.getString("lat")
                 lng = mapData.getString("lng")
 
@@ -182,21 +153,21 @@ class MyProfileMakePostFragment : BaseFragment<FragmentMyProfileMakePostBinding>
 
     private fun initData() {
         val auth = CurrentUser.userData
+        val uid = auth?.uid.toString()
         val profileImage = auth?.profileImage
         val name = auth?.name.toString()
         val email = auth?.email.toString()
         val postText = binding.etMakeText.text.toString()
         val time = LocalDateTime.now()
         val data = PostDataModel(
+            uid = uid,
             postId = UUID.randomUUID().toString(),
             profileImage = profileImage,
             name = name,
             email = email,
             image = uriList,
             postText = postText,
-            lat = lat?.toDouble(),
-            lng = lng?.toDouble(),
-            placeName = placeName,
+            mapData = MapDataModel(placeName, addressName, lat?.toDouble(), lng?.toDouble()),
             createdAt = dateFormat(time),
             commentData = CommentDataModel("", "", "", "")
         )

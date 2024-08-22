@@ -65,7 +65,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/tvMakeTitle">
 
                 <androidx.viewpager2.widget.ViewPager2
-                    android:id="@+id/rvMakeImageList"
+                    android:id="@+id/vpMakeImageList"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_margin="5dp"
@@ -89,7 +89,7 @@
 
                 <ImageView
                     android:id="@+id/ivMakePlusPhoto"
-                    android:layout_width="35dp"
+                    android:layout_width="40dp"
                     android:layout_height="0dp"
                     android:layout_margin="12dp"
                     android:background="@drawable/ic_plus_image"

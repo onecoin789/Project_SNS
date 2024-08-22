@@ -74,9 +74,7 @@
         <action
             android:id="@+id/action_mainFragment_to_postDetailFragment"
             app:destination="@id/postDetailFragment" />
-        <action
-            android:id="@+id/action_mainFragment_to_dialogFragment"
-            app:destination="@id/dialogFragment" />
+
     </fragment>
 
     <fragment
@@ -158,6 +156,9 @@
         <argument
             android:name="postData"
             app:argType="com.example.project_sns.ui.view.model.PostDataModel" />
+        <action
+            android:id="@+id/action_postDetailFragment_to_postDetailSelectBottomFragment"
+            app:destination="@id/postDetailSelectBottomFragment" />
     </fragment>
     <fragment
         android:id="@+id/recommendFragment"
@@ -165,10 +166,14 @@
         android:label="fragment_recommend"
         tools:layout="@layout/fragment_recommend" />
     <dialog
-        android:id="@+id/dialogFragment"
-        android:name="com.example.project_sns.ui.view.dialog.DialogFragment"
+        android:id="@+id/deleteDialogFragment"
+        android:name="com.example.project_sns.ui.view.main.profile.dialog.DeleteDialogFragment"
         android:label="fragment_dialog"
-        tools:layout="@layout/fragment_dialog" />
+        tools:layout="@layout/fragment_dialog" >
+        <action
+            android:id="@+id/action_dialogFragment_to_mainFragment2"
+            app:destination="@id/mainFragment" />
+    </dialog>
     <fragment
         android:id="@+id/makePostFragment"
         android:name="com.example.project_sns.ui.view.main.profile.MyProfileMakePostFragment"
@@ -178,11 +183,28 @@
             android:id="@+id/action_makePostFragment_to_myProfileSearchMapFragment"
             app:destination="@id/myProfileSearchMapFragment" />
     </fragment>
+
     <dialog
         android:id="@+id/myProfileSearchMapFragment"
         android:name="com.example.project_sns.ui.view.main.profile.MyProfileSearchMapFragment"
         android:label="fragment_my_profile_search_map"
         tools:layout="@layout/fragment_my_profile_search_map" />
+    <dialog
+        android:id="@+id/postDetailSelectBottomFragment"
+        android:name="com.example.project_sns.ui.view.main.profile.detail.PostDetailSelectBottomFragment"
+        android:label="fragment_post_detail_select_bottom"
+        tools:layout="@layout/fragment_post_detail_select_bottom" >
+        <argument
+            android:name="postData"
+            app:argType="com.example.project_sns.ui.view.model.PostDataModel" />
+        <action
+            android:id="@+id/action_postDetailSelectBottomFragment_to_myPostEditFragment"
+            app:destination="@id/myPostEditFragment" />
+    </dialog>
+    <fragment
+        android:id="@+id/myPostEditFragment"
+        android:name="com.example.project_sns.ui.view.main.profile.MyPostEditFragment"
+        android:label="MyPostEditFragment" />
 
 
 </navigation>

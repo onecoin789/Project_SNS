@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".ui.view.main.profile.detail.PostDetailSelectBottomFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintDimensionRatio="1:0.8"
+        android:background="@drawable/item_bottomsheet"
+        android:backgroundTint="@color/item"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <ImageView
+            android:id="@+id/ivMoreLine"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginHorizontal="180dp"
+            android:layout_marginTop="15dp"
+            android:background="@drawable/item_edittext_radius"
+            android:backgroundTint="@color/text"
+            android:contentDescription="@string/contentDescription"
+            android:paddingTop="5dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="20dp"
+            app:layout_constraintTop_toBottomOf="@+id/ivMoreLine"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="7dp">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/clMoreEdit"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/item_bottomsheet"
+                    android:backgroundTint="@color/stroke"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                <ImageView
+                    android:id="@+id/ivMoreEdit"
+                    android:layout_width="35dp"
+                    android:layout_height="0dp"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginVertical="15dp"
+                    app:layout_constraintDimensionRatio="1:1"
+                    android:background="@drawable/ic_edit"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:contentDescription="@string/contentDescription"/>
+                <TextView
+                    android:id="@+id/tvMoreEdit"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/bottom_edit"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/text"
+                    android:layout_marginHorizontal="17dp"
+                    app:layout_constraintStart_toEndOf="@+id/ivMoreEdit"
+                    app:layout_constraintTop_toTopOf="@+id/ivMoreEdit"
+                    app:layout_constraintBottom_toBottomOf="@+id/ivMoreEdit"
+                    app:layout_constraintEnd_toEndOf="parent"/>
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/clMoreSave"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/stroke"
+                    app:layout_constraintTop_toBottomOf="@+id/clMoreEdit">
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="2dp"
+                        android:background="@color/chat"
+                        app:layout_constraintTop_toTopOf="parent"/>
+
+                    <ImageView
+                        android:id="@+id/ivMoreSave"
+                        android:layout_width="35dp"
+                        android:layout_height="0dp"
+                        android:layout_marginStart="15dp"
+                        android:layout_marginVertical="15dp"
+                        app:layout_constraintDimensionRatio="1:1"
+                        android:background="@drawable/ic_save"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        android:contentDescription="@string/contentDescription"/>
+                    <TextView
+                        android:id="@+id/tvItemSave"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="@string/bottom_save"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/text"
+                        android:layout_marginHorizontal="17dp"
+                        app:layout_constraintStart_toEndOf="@+id/ivMoreSave"
+                        app:layout_constraintTop_toTopOf="@+id/ivMoreSave"
+                        app:layout_constraintBottom_toBottomOf="@+id/ivMoreSave"
+                        app:layout_constraintEnd_toEndOf="parent"/>
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/clMoreLocation"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/stroke"
+                    app:layout_constraintTop_toBottomOf="@+id/clMoreSave">
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="2dp"
+                        android:background="@color/chat"
+                        app:layout_constraintTop_toTopOf="parent"/>
+
+                    <ImageView
+                        android:id="@+id/ivMoreLocation"
+                        android:layout_width="35dp"
+                        android:layout_height="0dp"
+                        android:layout_marginStart="15dp"
+                        android:layout_marginVertical="15dp"
+                        app:layout_constraintDimensionRatio="1:1"
+                        android:background="@drawable/ic_location"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        android:contentDescription="@string/contentDescription"/>
+                    <TextView
+                        android:id="@+id/tvItemLocation"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="@string/bottom_location"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/text"
+                        android:layout_marginHorizontal="17dp"
+                        app:layout_constraintStart_toEndOf="@+id/ivMoreLocation"
+                        app:layout_constraintTop_toTopOf="@+id/ivMoreLocation"
+                        app:layout_constraintBottom_toBottomOf="@+id/ivMoreLocation"
+                        app:layout_constraintEnd_toEndOf="parent"/>
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/clMoreDelete"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/item_select_box_bottom"
+                    android:backgroundTint="@color/stroke"
+                    app:layout_constraintTop_toBottomOf="@+id/clMoreLocation">
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="2dp"
+                        android:background="@color/chat"
+                        app:layout_constraintTop_toTopOf="parent"/>
+
+                    <ImageView
+                        android:id="@+id/ivMoreDelete"
+                        android:layout_width="35dp"
+                        android:layout_height="0dp"
+                        android:layout_marginStart="15dp"
+                        android:layout_marginVertical="15dp"
+                        app:layout_constraintDimensionRatio="1:1"
+                        android:background="@drawable/ic_delete"
+                        android:backgroundTint="@color/check_text"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        android:contentDescription="@string/contentDescription"/>
+                    <TextView
+                        android:id="@+id/tvItemDelete"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="@string/bottom_delete"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/check_text"
+                        android:layout_marginHorizontal="17dp"
+                        app:layout_constraintStart_toEndOf="@+id/ivMoreDelete"
+                        app:layout_constraintTop_toTopOf="@+id/ivMoreDelete"
+                        app:layout_constraintBottom_toBottomOf="@+id/ivMoreDelete"
+                        app:layout_constraintEnd_toEndOf="parent"/>
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+
+
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </ScrollView>
+
+
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

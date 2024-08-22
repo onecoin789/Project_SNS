@@ -1,8 +1,6 @@
 package com.example.project_sns.ui.view.main.profile
 
-import android.content.DialogInterface
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,18 +12,11 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.project_sns.R
-import com.example.project_sns.databinding.FragmentCommentBinding
 import com.example.project_sns.databinding.FragmentMyProfileSearchMapBinding
-import com.example.project_sns.ui.view.main.viewpager.MainFragmentDirections
 import com.example.project_sns.ui.view.model.KakaoDocumentsModel
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlin.concurrent.thread
 
 @AndroidEntryPoint
 class MyProfileSearchMapFragment : BottomSheetDialogFragment() {

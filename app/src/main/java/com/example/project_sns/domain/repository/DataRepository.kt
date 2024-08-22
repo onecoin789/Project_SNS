@@ -13,6 +13,10 @@ interface DataRepository {
 
     suspend fun getAllPost(): Flow<List<PostDataEntity>>
 
+    suspend fun deletePost(postData: PostDataEntity?): Result<String>
+
+    suspend fun editPost(postData: PostDataEntity?): Flow<Boolean>
+
     suspend fun uploadComment(): Flow<CommentDataEntity?>
 
 }

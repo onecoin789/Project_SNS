@@ -22,5 +22,5 @@ sealed interface CheckEditProfile {
     data class EditFail(
         val message: String
     ): CheckEditProfile
-
 }
+

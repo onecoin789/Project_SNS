@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -30,7 +31,7 @@ class MainMyProfileFragment : BaseFragment<FragmentMainMyProfileBinding>() {
 
     private val mainViewModel: MainViewModel by viewModels()
 
-    private val myProfileViewModel: MyProfileViewModel by viewModels()
+    private val myProfileViewModel: MyProfileViewModel by activityViewModels()
 
     override fun getFragmentBinding(
         inflater: LayoutInflater,
@@ -76,7 +77,6 @@ class MainMyProfileFragment : BaseFragment<FragmentMainMyProfileBinding>() {
         val uid = CurrentUser.userData?.uid.toString()
         val listAdapter = MyProfilePostAdapter { data ->
             sendData(data)
-            Log.d("data_model", "${data}")
         }
         viewLifecycleOwner.lifecycleScope.launch {
             myProfileViewModel.postInformation.collect { data ->
@@ -108,8 +108,10 @@ class MainMyProfileFragment : BaseFragment<FragmentMainMyProfileBinding>() {
     }
 
     private fun sendData(postData: PostDataModel) {
-        val action = MainFragmentDirections.actionMainFragmentToPostDetailFragment(postData)
-        findNavController().navigate(action)
+        viewLifecycleOwner.lifecycleScope.launch {
+            myProfileViewModel.getPostData(postData)
+        }
+        findNavController().navigate(R.id.action_mainFragment_to_postDetailFragment)
     }
 
     private fun navigateView() {
@@ -127,10 +129,6 @@ class MainMyProfileFragment : BaseFragment<FragmentMainMyProfileBinding>() {
 
         binding.ivMyAdd.setOnClickListener {
             findNavController().navigate(R.id.action_mainFragment_to_makePostFragment)
-        }
-
-        binding.ivMyDelete.setOnClickListener {
-            findNavController().navigate(R.id.action_mainFragment_to_dialogFragment)
         }
 
     }

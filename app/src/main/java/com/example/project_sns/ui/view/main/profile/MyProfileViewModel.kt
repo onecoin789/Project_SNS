@@ -1,24 +1,22 @@
 package com.example.project_sns.ui.view.main.profile
 
-import android.util.Log
 import android.view.View
 import android.widget.TextView
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.project_sns.data.response.KakaoMapResponse
+import com.example.project_sns.domain.usecase.DeletePostUseCase
+import com.example.project_sns.domain.usecase.EditPostUseCase
+import com.example.project_sns.domain.usecase.EditProfileUseCase
 import com.example.project_sns.domain.usecase.GetCurrentUserPostDataUseCase
 import com.example.project_sns.domain.usecase.PostUploadUseCase
-import com.example.project_sns.domain.usecase.ProfileEditUseCase
 import com.example.project_sns.domain.usecase.SearchKakaoMapUseCase
 import com.example.project_sns.ui.mapper.toEntity
 import com.example.project_sns.ui.mapper.toKakaoListEntity
 import com.example.project_sns.ui.mapper.toListModel
-import com.example.project_sns.ui.mapper.toModel
 import com.example.project_sns.ui.util.CheckEditProfile
 import com.example.project_sns.ui.view.model.KakaoDocumentsModel
-import com.example.project_sns.ui.view.model.KakaoMapModel
 import com.example.project_sns.ui.view.model.PostDataModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -33,8 +31,10 @@ import javax.inject.Inject
 class MyProfileViewModel @Inject constructor(
     private val postUpLoadUseCase: PostUploadUseCase,
     private val getCurrentUserPostDataUseCase: GetCurrentUserPostDataUseCase,
-    private val profileEditUseCase: ProfileEditUseCase,
-    private val searchKakaoMapUseCase: SearchKakaoMapUseCase
+    private val editProfileUseCase: EditProfileUseCase,
+    private val searchKakaoMapUseCase: SearchKakaoMapUseCase,
+    private val deletePostUseCase: DeletePostUseCase,
+    private val editPostUseCase: EditPostUseCase
 ) : ViewModel() {
 
     private val _postUpLoadResult = MutableStateFlow<Boolean?>(null)
@@ -48,6 +48,13 @@ class MyProfileViewModel @Inject constructor(
 
     private val _mapList = MutableStateFlow<List<KakaoDocumentsModel>>(emptyList())
     val mapList: StateFlow<List<KakaoDocumentsModel>> get() = _mapList
+
+    private val _postData = MutableLiveData<PostDataModel?>()
+    val postData: LiveData<PostDataModel?> get() = _postData
+
+    private val _postEditResult = MutableStateFlow<Boolean?>(null)
+    val postEditResult: StateFlow<Boolean?> get() = _postEditResult
+
 
     fun upLoadPost(postData: PostDataModel) {
         viewModelScope.launch {
@@ -92,7 +99,7 @@ class MyProfileViewModel @Inject constructor(
         createdAt: String
     ) {
         viewModelScope.launch {
-            val editData = profileEditUseCase(
+            val editData = editProfileUseCase(
                 uid = uid, name = name, email = email,
                 newProfile = newProfile,
                 beforeProfile = beforeProfile,
@@ -141,4 +148,27 @@ class MyProfileViewModel @Inject constructor(
             }
         }
     }
+
+    fun getPostData(data: PostDataModel?) {
+        viewModelScope.launch {
+            if (data != null) {
+                _postData.value = data
+            }
+        }
+    }
+
+    fun deletePost(postData: PostDataModel?) {
+        viewModelScope.launch {
+            deletePostUseCase(postData?.toEntity())
+        }
+    }
+
+    fun editPost(postData: PostDataModel?) {
+        viewModelScope.launch {
+            editPostUseCase(postData?.toEntity()).collect { result ->
+                _postEditResult.value = result
+            }
+        }
+    }
+
 }

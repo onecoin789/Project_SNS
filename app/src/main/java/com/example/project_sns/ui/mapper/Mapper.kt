@@ -1,21 +1,18 @@
 package com.example.project_sns.ui.mapper
 
-import com.example.project_sns.data.mapper.toEntity
-import com.example.project_sns.data.mapper.toListEntity
-import com.example.project_sns.data.response.KakaoDocumentsResponse
-import com.example.project_sns.data.response.KakaoMapResponse
-import com.example.project_sns.data.response.KakaoMetaResponse
 import com.example.project_sns.domain.model.CommentDataEntity
 import com.example.project_sns.domain.model.CurrentUserEntity
 import com.example.project_sns.domain.model.KakaoDocumentsEntity
 import com.example.project_sns.domain.model.KakaoMapEntity
 import com.example.project_sns.domain.model.KakaoMetaEntity
+import com.example.project_sns.domain.model.MapDataEntity
 import com.example.project_sns.domain.model.PostDataEntity
 import com.example.project_sns.ui.CurrentUserModel
 import com.example.project_sns.ui.view.model.CommentDataModel
 import com.example.project_sns.ui.view.model.KakaoDocumentsModel
 import com.example.project_sns.ui.view.model.KakaoMapModel
 import com.example.project_sns.ui.view.model.KakaoMetaModel
+import com.example.project_sns.ui.view.model.MapDataModel
 import com.example.project_sns.ui.view.model.PostDataModel
 
 // <!---------- Firebase ---------->
@@ -30,38 +27,46 @@ fun CurrentUserEntity.toModel() = CurrentUserModel(
 )
 
 fun PostDataEntity.toModel() = PostDataModel(
+    uid = uid,
     postId = postId,
     profileImage = profileImage,
     name = name,
     email = email,
     image = image,
     postText = postText,
-    lat = lat,
-    lng = lng,
-    placeName = placeName,
     createdAt = createdAt,
+    mapData = mapData?.toModel(),
     commentData = commentData?.toModel()
 )
 
-fun PostDataModel.toEntity() = PostDataEntity(
-    postId = postId,
-    profileImage = profileImage,
-    name = name,
-    email = email,
-    image = image,
-    postText = postText,
-    lat = lat,
-    lng = lng,
-    placeName = placeName,
-    createdAt = createdAt,
-    commentData = commentData?.toEntity()
+fun MapDataEntity.toModel() = MapDataModel(
+    placeName = placeName, addressName = addressName, lat = lat, lng = lng
 )
+
+
 
 fun CommentDataEntity.toModel() = CommentDataModel(
     commenterProfile = commenterProfile,
     commenterEmail = commenterEmail,
     commenterName = commenterName,
     comment = comment
+)
+
+fun PostDataModel.toEntity() = PostDataEntity(
+    uid = uid,
+    postId = postId,
+    profileImage = profileImage,
+    name = name,
+    email = email,
+    image = image,
+    postText = postText,
+    createdAt = createdAt,
+    mapData = mapData?.toEntity(),
+    commentData = commentData?.toEntity()
+)
+
+fun MapDataModel.toEntity() = MapDataEntity(
+    placeName = placeName, addressName = addressName, lat = lat, lng = lng
 )
 
 fun CommentDataModel.toEntity() = CommentDataEntity(
@@ -71,11 +76,9 @@ fun CommentDataModel.toEntity() = CommentDataEntity(
     comment = comment
 )
 
-fun List<PostDataEntity>.toListModel() : List<PostDataModel> {
+fun List<PostDataEntity>.toListModel(): List<PostDataModel> {
     return this.map { it.toModel() }
 }
-
-
 
 
 // <!---------- KakaoMap ---------->

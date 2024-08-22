@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.text.method.HideReturnsTransformationMethod
 import android.text.method.PasswordTransformationMethod
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -25,6 +26,7 @@ import com.example.project_sns.ui.BaseFragment
 import com.example.project_sns.ui.util.CheckSignUp
 import com.example.project_sns.ui.util.dateFormat
 import dagger.hilt.android.AndroidEntryPoint
+import gun0912.tedimagepicker.builder.TedImagePicker
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 
@@ -56,7 +58,7 @@ class SignUpFragment : BaseFragment<FragmentSignUpBinding>() {
         }
 
         binding.ivSignUpBack.setOnClickListener {
-            findNavController().popBackStack()
+            backButton()
         }
 
         binding.ivSignUpShowPassword.setOnClickListener {
@@ -64,29 +66,22 @@ class SignUpFragment : BaseFragment<FragmentSignUpBinding>() {
             showPassword()
         }
 
+        binding.clSignUpPhotoFrame.setOnClickListener {
+            getPhoto()
+        }
+
         editTextCheck()
-        getPhoto()
+
     }
 
     private fun getPhoto() {
-
-        val registerForActivityResult =
-            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-                when (result.resultCode) {
-                    Activity.RESULT_OK -> {
-                        uri = result.data?.data!!
-                        binding.ivSignUpPhoto.clipToOutline = true
-                        Glide.with(requireContext()).load(uri).into(binding.ivSignUpPhoto)
-                    }
-                }
-            }
-
-        binding.clSignUpPhotoFrame.setOnClickListener {
-            val intent =
-                Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI)
-            registerForActivityResult.launch(intent)
+        TedImagePicker.with(requireContext()).start {
+            uri = it
+            binding.ivSignUpPhoto.clipToOutline = true
+            Glide.with(requireContext()).load(it).into(binding.ivSignUpPhoto)
         }
     }
+
 
     private fun collectFlow() {
         viewLifecycleOwner.lifecycleScope.launch {
