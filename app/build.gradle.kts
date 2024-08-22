@@ -53,6 +53,10 @@ android {
         jvmTarget = "1.8"
     }
 
+    dataBinding {
+        enable = true
+    }
+
     buildFeatures {
         viewBinding = true
         buildConfig = true
@@ -71,7 +75,7 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
-    //viewpager2
+    // view pager2
     implementation(libs.androidx.viewpager2)
     implementation(libs.dotsindicator)
 
@@ -98,9 +102,17 @@ dependencies {
     implementation(libs.converter.gson)
     implementation(libs.logging.interceptor)
 
-    implementation("com.kakao.maps.open:android:2.11.9")
-    implementation("com.google.android.gms:play-services-location:16.0.0")
-    implementation("com.kakao.sdk:v2-all:2.20.3")
+    // exoplayer
+    implementation(libs.exoplayer)
+
+    //image picker
+    implementation(libs.ted.image.picker)
+
+    // kakao
+    implementation(libs.kakao.maps)
+    implementation(libs.kakao.sdk)
+    implementation(libs.google.services.location)
+
 
 
 }

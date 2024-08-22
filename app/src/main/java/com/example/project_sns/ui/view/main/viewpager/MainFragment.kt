@@ -57,8 +57,8 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
 
         binding.tlMainBottom.tabTextColors =
             ContextCompat.getColorStateList(requireContext(), R.color.tab_selector)
-        binding.tlMainBottom.tabIconTint =
-            ContextCompat.getColorStateList(requireContext(), R.color.tab_selector)
+//        binding.tlMainBottom.tabIconTint =
+//            ContextCompat.getColorStateList(requireContext(), R.color.tab_selector)
     }
 
     private fun initBottomBar() {

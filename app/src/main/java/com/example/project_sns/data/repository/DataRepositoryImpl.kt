@@ -1,6 +1,5 @@
 package com.example.project_sns.data.repository
 
-import android.net.Uri
 import android.util.Log
 import androidx.core.net.toUri
 import com.example.project_sns.data.mapper.toListEntity
@@ -36,12 +35,17 @@ class DataRepositoryImpl @Inject constructor(
                         "name" to postData.name,
                         "email" to postData.email,
                         "postText" to postData.postText,
-                        "lat" to postData.lat,
-                        "lng" to postData.lng,
-                        "placeName" to postData.placeName,
+                        "mapData" to postData.mapData,
                         "createdAt" to postData.createdAt
                     )
                     db.collection("post").document(postData.postId).set(data)
+                        .addOnCompleteListener { task ->
+                            val success = task.isSuccessful
+                            Log.d("task_upload", "${success}")
+                            val fail = task.isCanceled
+                            Log.d("task_upload", "${fail}")
+
+                        }
 
                     if (postData.image != null) {
                         for (i in 0 until postData.image.count()) {
@@ -51,7 +55,8 @@ class DataRepositoryImpl @Inject constructor(
                             storageRef.putFile(postData.image[i].toUri()).addOnSuccessListener {
                                 storageRef.downloadUrl.addOnSuccessListener { downloadUrl ->
                                     imageList.add(downloadUrl.toString())
-                                    val imageData = hashMapOf("image" to imageList)
+                                    val imageData =
+                                        hashMapOf("image" to imageList.sorted())
                                     db.collection("post").document(postData.postId)
                                         .set(imageData, SetOptions.merge())
                                 }
@@ -111,6 +116,58 @@ class DataRepositoryImpl @Inject constructor(
             }
         }
     }
+
+    override suspend fun deletePost(postData: PostDataEntity?): Result<String> {
+        return try {
+            val uid = auth.currentUser?.uid
+            if (postData != null) {
+                val db = db.collection("post").document(postData.postId)
+
+                if (postData.image != null) {
+                    for (i in 0 until postData.image.count()) {
+                        val storage = storage.getReference("image")
+                            .child("${uid}/${postData.postId}/${postData.createdAt}_${i}")
+                        db.delete()
+                        storage.delete()
+                    }
+                }
+            }
+            Result.success("Success")
+        } catch (e: Exception) {
+            Result.failure(Exception("Exception: ${e.message}"))
+        }
+
+    }
+
+    override suspend fun editPost(postData: PostDataEntity?): Flow<Boolean> {
+        return flow {
+            try {
+                val uid = auth.currentUser?.uid
+                val imageList = arrayListOf<String>()
+
+                if (postData != null) {
+                    db.collection("post").document(postData.postId).set(postData)
+                    if (postData.image != null)
+                        for (i in 0 until postData.image.count()) {
+                            val storageRef = storage.getReference("image")
+                                .child("${uid}/${postData.postId}/${postData.createdAt}_${i}")
+                            storageRef.putFile(postData.image[i].toUri()).addOnSuccessListener {
+                                storageRef.downloadUrl.addOnSuccessListener { downloadUri ->
+                                    imageList.add(downloadUri.toString())
+                                    val imageData = mapOf("image" to imageList.sorted())
+                                    db.collection("post").document(postData.postId)
+                                        .update(imageData)
+                                }
+                            }
+                        }
+                }
+                emit(true)
+            } catch (e: Exception) {
+                emit(false)
+            }
+        }
+    }
+
 
     override suspend fun uploadComment(): Flow<CommentDataEntity?> {
         TODO()

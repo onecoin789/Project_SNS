@@ -35,8 +35,8 @@ class HomePostAdapter(private val onItemClick: (PostDataModel) -> Unit) :
                 onItemClick(item)
             }
 
-            if (item.placeName != null) {
-                binding.tvItemHomeLocation.text = item.placeName
+            if (item.mapData?.placeName != null) {
+                binding.tvItemHomeLocation.text = item.mapData.placeName
             }
             initRv(item.image)
 

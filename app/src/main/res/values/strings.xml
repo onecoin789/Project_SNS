@@ -101,4 +101,14 @@
     <string name="item_delete">삭제하기</string>
     <string name="item_time">마지막으로 전송한 시각</string>
 
+    <!-- BottomSheet -->
+    <string name="bottom_edit">게시물 수정하기</string>
+    <string name="bottom_save">오프라인 저장하기</string>
+    <string name="bottom_location">위치정보 보기</string>
+    <string name="bottom_delete">삭제하기</string>
+
+    <!-- PostEdit -->
+    <string name="post_edit">게시물 수정</string>
+    <string name="post_edit_btn">수정하기</string>
+
 </resources>
