@@ -1,6 +1,7 @@
 package com.example.project_sns.ui.view.main.profile
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -18,10 +19,14 @@ class MyProfilePostAdapter(private val onItemClick: (PostDataModel) -> Unit) :
         private val onItemClick: (PostDataModel) -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(item: PostDataModel) {
-            if (item.image.isNullOrEmpty()) {
-                Glide.with(binding.root).load(item.image).into(binding.ivItemMyPost)
+            if (item.imageList.isNullOrEmpty()) {
+                Glide.with(binding.root).load(item.imageList?.map { it.imageUri }).into(binding.ivItemMyPost)
             } else {
-                Glide.with(binding.root).load(item.image[0]).into(binding.ivItemMyPost)
+                Glide.with(binding.root).load(item.imageList[0].imageUri).into(binding.ivItemMyPost)
+            }
+
+            if (item.imageList?.size != 1) {
+                binding.ivItemMyPostMultiple.visibility = View.VISIBLE
             }
             binding.ivItemMyPost.setOnClickListener {
                 onItemClick(item)

@@ -3,14 +3,16 @@ package com.example.project_sns.ui.view.main.home
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.net.toUri
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.project_sns.R
 import com.example.project_sns.databinding.RvItemPostPhotoBinding
+import com.example.project_sns.ui.mapper.toViewType
 import com.example.project_sns.ui.view.main.profile.detail.PostImageAdapter
+import com.example.project_sns.ui.view.model.ImageDataModel
 import com.example.project_sns.ui.view.model.PostDataModel
 
 class HomePostAdapter(private val onItemClick: (PostDataModel) -> Unit) :
@@ -38,19 +40,20 @@ class HomePostAdapter(private val onItemClick: (PostDataModel) -> Unit) :
             if (item.mapData?.placeName != null) {
                 binding.tvItemHomeLocation.text = item.mapData.placeName
             }
-            initRv(item.image)
+            initRv(item.imageList)
 
-            if (item.image?.size == 1) {
+            if (item.imageList?.size == 1) {
                 binding.idcItem.visibility = View.INVISIBLE
             } else {
                 binding.idcItem.visibility = View.VISIBLE
             }
         }
 
-        private fun initRv(uriList : List<String>?) {
+        private fun initRv(imageData : List<ImageDataModel>?) {
             val imageAdapter = PostImageAdapter()
             val indicator = binding.idcItem
-            imageAdapter.submitList(uriList)
+            val listViewType = imageData?.map { it.toViewType("video") }
+            imageAdapter.submitList(listViewType)
             with(binding.vpItemTitle) {
                 adapter = imageAdapter
             }

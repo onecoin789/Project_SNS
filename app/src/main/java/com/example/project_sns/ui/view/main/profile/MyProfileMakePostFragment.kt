@@ -1,29 +1,25 @@
 package com.example.project_sns.ui.view.main.profile
 
-import android.app.Activity.RESULT_OK
-import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.net.toUri
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.project_sns.R
 import com.example.project_sns.databinding.FragmentMyProfileMakePostBinding
 import com.example.project_sns.ui.BaseFragment
 import com.example.project_sns.ui.CurrentUser
+import com.example.project_sns.ui.mapper.toViewType
 import com.example.project_sns.ui.util.dateFormat
 import com.example.project_sns.ui.view.main.profile.detail.PostImageAdapter
 import com.example.project_sns.ui.view.model.CommentDataModel
+import com.example.project_sns.ui.view.model.ImageDataModel
 import com.example.project_sns.ui.view.model.MapDataModel
 import com.example.project_sns.ui.view.model.PostDataModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -36,6 +32,8 @@ import java.util.UUID
 class MyProfileMakePostFragment : BaseFragment<FragmentMyProfileMakePostBinding>() {
 
     private var uriList: List<String>? = listOf()
+
+    private var imageList: ArrayList<ImageDataModel> = arrayListOf()
 
     private var placeName: String? = null
     private var addressName: String? = null
@@ -79,14 +77,15 @@ class MyProfileMakePostFragment : BaseFragment<FragmentMyProfileMakePostBinding>
         }
 
         binding.ivMakePlusPhoto.setOnClickListener {
-
+            imageList.clear()
             getPhoto()
         }
     }
 
     private fun initViewPager() {
         val imageAdapter = PostImageAdapter()
-        imageAdapter.submitList(uriList)
+        val listViewType = imageList.map { it.toViewType("video") }
+        imageAdapter.submitList(listViewType)
         with(binding.vpMakeImageList) {
             adapter = imageAdapter
         }
@@ -101,10 +100,21 @@ class MyProfileMakePostFragment : BaseFragment<FragmentMyProfileMakePostBinding>
     }
 
     private fun getPhoto() {
-        TedImagePicker.with(requireContext()).max(10, "이미지는 최대 10장까지 첨부할 수 있습니다")
-            .selectedUri(uriList?.map { it.toUri() }).startMultiImage { uri ->
+        val selectedList = imageList.map { it.imageUri.toUri() }
+        TedImagePicker.with(requireContext())
+            .max(10, "이미지는 최대 10장까지 첨부할 수 있습니다")
+            .imageAndVideo()
+            .selectedUri(selectedList)
+            .startMultiImage { uri ->
                 val getUriList = uri.map { it.toString() }
-                uriList = getUriList
+                for (i in 0 until getUriList.count()) {
+                    val imageToUri = getUriList[i].toUri()
+                    if (imageToUri.pathSegments.contains("video")) {
+                        imageList.add(ImageDataModel(imageToUri.toString(), "video"))
+                    } else {
+                        imageList.add(ImageDataModel(imageToUri.toString(), "image"))
+                    }
+                }
                 initViewPager()
             }
     }
@@ -159,13 +169,15 @@ class MyProfileMakePostFragment : BaseFragment<FragmentMyProfileMakePostBinding>
         val email = auth?.email.toString()
         val postText = binding.etMakeText.text.toString()
         val time = LocalDateTime.now()
+
+
         val data = PostDataModel(
             uid = uid,
             postId = UUID.randomUUID().toString(),
             profileImage = profileImage,
             name = name,
             email = email,
-            image = uriList,
+            imageList = imageList,
             postText = postText,
             mapData = MapDataModel(placeName, addressName, lat?.toDouble(), lng?.toDouble()),
             createdAt = dateFormat(time),

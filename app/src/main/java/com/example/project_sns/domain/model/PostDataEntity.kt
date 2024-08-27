@@ -6,11 +6,16 @@ data class PostDataEntity(
     val profileImage: String?,
     val name: String,
     val email: String,
-    val image: List<String>?,
+    val imageList: List<ImageDataEntity>?,
     val postText: String?,
     val createdAt: String,
     val mapData: MapDataEntity?,
-    val commentData: CommentDataEntity?
+    val commentData: CommentDataEntity?,
+)
+
+data class ImageDataEntity(
+    val imageUri: String,
+    val imageType: String
 )
 
 data class MapDataEntity(

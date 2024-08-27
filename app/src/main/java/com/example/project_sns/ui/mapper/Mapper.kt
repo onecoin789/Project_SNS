@@ -2,13 +2,16 @@ package com.example.project_sns.ui.mapper
 
 import com.example.project_sns.domain.model.CommentDataEntity
 import com.example.project_sns.domain.model.CurrentUserEntity
+import com.example.project_sns.domain.model.ImageDataEntity
 import com.example.project_sns.domain.model.KakaoDocumentsEntity
 import com.example.project_sns.domain.model.KakaoMapEntity
 import com.example.project_sns.domain.model.KakaoMetaEntity
 import com.example.project_sns.domain.model.MapDataEntity
 import com.example.project_sns.domain.model.PostDataEntity
 import com.example.project_sns.ui.CurrentUserModel
+import com.example.project_sns.ui.view.main.profile.PostImageType
 import com.example.project_sns.ui.view.model.CommentDataModel
+import com.example.project_sns.ui.view.model.ImageDataModel
 import com.example.project_sns.ui.view.model.KakaoDocumentsModel
 import com.example.project_sns.ui.view.model.KakaoMapModel
 import com.example.project_sns.ui.view.model.KakaoMetaModel
@@ -32,17 +35,28 @@ fun PostDataEntity.toModel() = PostDataModel(
     profileImage = profileImage,
     name = name,
     email = email,
-    image = image,
+    imageList = imageList?.map { it.toModel() },
     postText = postText,
     createdAt = createdAt,
     mapData = mapData?.toModel(),
     commentData = commentData?.toModel()
 )
 
+fun ImageDataEntity.toModel() = ImageDataModel(
+    imageUri = imageUri, imageType = imageType
+)
+
+fun ImageDataModel.toViewType(type: String): PostImageType {
+    return if (this.imageType == type) {
+        PostImageType.PostVideo(this)
+    } else {
+        PostImageType.PostImage(this)
+    }
+}
+
 fun MapDataEntity.toModel() = MapDataModel(
     placeName = placeName, addressName = addressName, lat = lat, lng = lng
 )
-
 
 
 fun CommentDataEntity.toModel() = CommentDataModel(
@@ -58,11 +72,15 @@ fun PostDataModel.toEntity() = PostDataEntity(
     profileImage = profileImage,
     name = name,
     email = email,
-    image = image,
+    imageList = imageList?.map { it.toEntity() },
     postText = postText,
     createdAt = createdAt,
     mapData = mapData?.toEntity(),
     commentData = commentData?.toEntity()
+)
+
+fun ImageDataModel.toEntity() = ImageDataEntity(
+    imageUri = imageUri, imageType = imageType
 )
 
 fun MapDataModel.toEntity() = MapDataEntity(

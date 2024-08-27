@@ -5,16 +5,17 @@ import androidx.core.net.toUri
 import com.example.project_sns.data.mapper.toListEntity
 import com.example.project_sns.data.response.PostDataResponse
 import com.example.project_sns.domain.model.CommentDataEntity
+import com.example.project_sns.domain.model.ImageDataEntity
 import com.example.project_sns.domain.model.PostDataEntity
 import com.example.project_sns.domain.repository.DataRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.SetOptions
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 class DataRepositoryImpl @Inject constructor(
@@ -26,7 +27,7 @@ class DataRepositoryImpl @Inject constructor(
         return flow {
             try {
                 val currentUser = auth.currentUser?.uid
-                val imageList = arrayListOf<String>()
+                val imageList = arrayListOf<ImageDataEntity>()
                 if (currentUser != null) {
                     val data = hashMapOf(
                         "postId" to postData.postId,
@@ -44,25 +45,45 @@ class DataRepositoryImpl @Inject constructor(
                             Log.d("task_upload", "${success}")
                             val fail = task.isCanceled
                             Log.d("task_upload", "${fail}")
-
                         }
-
-                    if (postData.image != null) {
-                        for (i in 0 until postData.image.count()) {
+                    if (postData.imageList != null) {
+                        for (i in 0 until postData.imageList.count()) {
+                            val imageToUri = postData.imageList[i].imageUri.toUri()
                             val storageRef =
                                 storage.getReference("image")
                                     .child("${currentUser}/${postData.postId}/${postData.createdAt}_${i}")
-                            storageRef.putFile(postData.image[i].toUri()).addOnSuccessListener {
-                                storageRef.downloadUrl.addOnSuccessListener { downloadUrl ->
-                                    imageList.add(downloadUrl.toString())
-                                    val imageData =
-                                        hashMapOf("image" to imageList.sorted())
-                                    db.collection("post").document(postData.postId)
-                                        .set(imageData, SetOptions.merge())
+                            if (imageToUri.pathSegments?.contains("video") == true) {
+                                storageRef.putFile(imageToUri).addOnSuccessListener {
+                                    storageRef.downloadUrl.addOnSuccessListener { downloadUri ->
+                                        imageList.add(
+                                            ImageDataEntity(
+                                                downloadUri.toString(),
+                                                "video"
+                                            )
+                                        )
+                                        val imageData =
+                                            mapOf("imageList" to imageList.sortedBy { it.imageUri })
+                                        db.collection("post").document(postData.postId)
+                                            .update(imageData)
+                                    }
+                                }
+                            } else {
+                                storageRef.putFile(imageToUri).addOnSuccessListener {
+                                    storageRef.downloadUrl.addOnSuccessListener { downloadUri ->
+                                        imageList.add(
+                                            ImageDataEntity(
+                                                downloadUri.toString(),
+                                                "image"
+                                            )
+                                        )
+                                        val imageData =
+                                            mapOf("imageList" to imageList.sortedBy { it.imageUri })
+                                        db.collection("post").document(postData.postId)
+                                            .update(imageData)
+                                    }
                                 }
                             }
                         }
-
                     }
                     emit(true)
                 }
@@ -123,14 +144,13 @@ class DataRepositoryImpl @Inject constructor(
             if (postData != null) {
                 val db = db.collection("post").document(postData.postId)
 
-                if (postData.image != null) {
-                    for (i in 0 until postData.image.count()) {
-                        val storage = storage.getReference("image")
-                            .child("${uid}/${postData.postId}/${postData.createdAt}_${i}")
-                        db.delete()
-                        storage.delete()
-                    }
+                for (i in 0 until 9) {
+                    val storage = storage.getReference("image")
+                        .child("${uid}/${postData.postId}/${postData.createdAt}_${i}")
+                    db.delete()
+                    storage.delete()
                 }
+
             }
             Result.success("Success")
         } catch (e: Exception) {
@@ -143,20 +163,46 @@ class DataRepositoryImpl @Inject constructor(
         return flow {
             try {
                 val uid = auth.currentUser?.uid
-                val imageList = arrayListOf<String>()
+                val imageList = arrayListOf<ImageDataEntity>()
 
                 if (postData != null) {
-                    db.collection("post").document(postData.postId).set(postData)
-                    if (postData.image != null)
-                        for (i in 0 until postData.image.count()) {
+                    Log.d("data_test", "$postData")
+                    db.collection("post").document(postData.postId).set(postData).await()
+
+                    if (postData.imageList != null)
+                        for (i in 0 until postData.imageList.count()) {
+                            val imageToUri = postData.imageList[i].imageUri.toUri()
                             val storageRef = storage.getReference("image")
                                 .child("${uid}/${postData.postId}/${postData.createdAt}_${i}")
-                            storageRef.putFile(postData.image[i].toUri()).addOnSuccessListener {
-                                storageRef.downloadUrl.addOnSuccessListener { downloadUri ->
-                                    imageList.add(downloadUri.toString())
-                                    val imageData = mapOf("image" to imageList.sorted())
-                                    db.collection("post").document(postData.postId)
-                                        .update(imageData)
+                            if (imageToUri.pathSegments?.contains("video") == true) {
+                                storageRef.putFile(imageToUri).addOnSuccessListener {
+                                    storageRef.downloadUrl.addOnSuccessListener { downloadUri ->
+                                        imageList.add(
+                                            ImageDataEntity(
+                                                downloadUri.toString(),
+                                                "video"
+                                            )
+                                        )
+                                        val imageData =
+                                            mapOf("imageList" to imageList.sortedBy { it.imageUri })
+                                        db.collection("post").document(postData.postId)
+                                            .update(imageData)
+                                    }
+                                }
+                            } else {
+                                storageRef.putFile(imageToUri).addOnSuccessListener {
+                                    storageRef.downloadUrl.addOnSuccessListener { downloadUri ->
+                                        imageList.add(
+                                            ImageDataEntity(
+                                                downloadUri.toString(),
+                                                "image"
+                                            )
+                                        )
+                                        val imageData =
+                                            mapOf("imageList" to imageList.sortedBy { it.imageUri })
+                                        db.collection("post").document(postData.postId)
+                                            .update(imageData)
+                                    }
                                 }
                             }
                         }
