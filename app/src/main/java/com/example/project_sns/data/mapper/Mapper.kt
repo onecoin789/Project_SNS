@@ -2,6 +2,7 @@ package com.example.project_sns.data.mapper
 
 import com.example.project_sns.data.response.CommentDataResponse
 import com.example.project_sns.data.response.CurrentUserResponse
+import com.example.project_sns.data.response.ImageDataResponse
 import com.example.project_sns.data.response.KakaoDocumentsResponse
 import com.example.project_sns.data.response.KakaoMapResponse
 import com.example.project_sns.data.response.KakaoMetaResponse
@@ -9,11 +10,13 @@ import com.example.project_sns.data.response.MapDataResponse
 import com.example.project_sns.data.response.PostDataResponse
 import com.example.project_sns.domain.model.CommentDataEntity
 import com.example.project_sns.domain.model.CurrentUserEntity
+import com.example.project_sns.domain.model.ImageDataEntity
 import com.example.project_sns.domain.model.KakaoDocumentsEntity
 import com.example.project_sns.domain.model.KakaoMapEntity
 import com.example.project_sns.domain.model.KakaoMetaEntity
 import com.example.project_sns.domain.model.MapDataEntity
 import com.example.project_sns.domain.model.PostDataEntity
+import com.example.project_sns.ui.mapper.toModel
 
 // <!---------- Firebase ---------->
 
@@ -32,11 +35,16 @@ fun PostDataResponse.toEntity() = PostDataEntity(
     profileImage = profileImage,
     name = name,
     email = email,
-    image = image,
+    imageList = imageList?.map { it.toEntity() },
     postText = postText,
     createdAt = createdAt,
     mapData = mapData?.toEntity(),
     commentData = commentData?.toEntity()
+)
+
+fun ImageDataResponse.toEntity() = ImageDataEntity(
+    imageUri = imageUri,
+    imageType = imageType
 )
 
 fun MapDataResponse.toEntity() = MapDataEntity(

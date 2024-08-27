@@ -55,6 +55,14 @@ class MyProfileViewModel @Inject constructor(
     private val _postEditResult = MutableStateFlow<Boolean?>(null)
     val postEditResult: StateFlow<Boolean?> get() = _postEditResult
 
+    private val _postType = MutableStateFlow<List<PostImageType>>(listOf())
+    val postType: StateFlow<List<PostImageType>> get() = _postType
+
+
+    fun getPostImageType() {
+        _postType.value
+    }
+
 
     fun upLoadPost(postData: PostDataModel) {
         viewModelScope.launch {

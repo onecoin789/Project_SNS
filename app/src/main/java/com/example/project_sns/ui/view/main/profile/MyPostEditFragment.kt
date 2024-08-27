@@ -1,26 +1,19 @@
 package com.example.project_sns.ui.view.main.profile
 
 import android.os.Bundle
-import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.net.toUri
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
-import com.bumptech.glide.Glide
 import com.example.project_sns.R
 import com.example.project_sns.databinding.FragmentMyProfileMakePostBinding
 import com.example.project_sns.ui.BaseFragment
-import com.example.project_sns.ui.CurrentUser
-import com.example.project_sns.ui.util.dateFormat
+import com.example.project_sns.ui.mapper.toViewType
 import com.example.project_sns.ui.view.main.profile.detail.PostImageAdapter
-import com.example.project_sns.ui.view.model.CommentDataModel
-import com.example.project_sns.ui.view.model.MapDataModel
+import com.example.project_sns.ui.view.model.ImageDataModel
 import com.example.project_sns.ui.view.model.PostDataModel
 import dagger.hilt.android.AndroidEntryPoint
 import gun0912.tedimagepicker.builder.TedImagePicker
@@ -32,6 +25,8 @@ class MyPostEditFragment : BaseFragment<FragmentMyProfileMakePostBinding>() {
     private var uriList: List<String>? = listOf()
     private var beForeUriList: List<String>? = listOf()
     private var postData: PostDataModel? = null
+
+    private var imageList: ArrayList<ImageDataModel> = arrayListOf()
 
     private val myProfileViewModel: MyProfileViewModel by activityViewModels()
 
@@ -57,7 +52,7 @@ class MyPostEditFragment : BaseFragment<FragmentMyProfileMakePostBinding>() {
 
         myProfileViewModel.postData.observe(viewLifecycleOwner) { data ->
             if (data != null) {
-                beForeUriList = data.image
+                beForeUriList = data.imageList?.map { it.imageUri }
                 if (data.postText != null) {
                     binding.etMakeText.setText(data.postText)
                 }
@@ -79,8 +74,8 @@ class MyPostEditFragment : BaseFragment<FragmentMyProfileMakePostBinding>() {
                 }
             }
             postData = data
-            uriList = postData?.image
-            uriList?.let { initViewPager(it) }
+            imageList = data?.imageList as ArrayList<ImageDataModel>
+            initViewPager(imageList)
         }
 
         binding.ivMakeBack.setOnClickListener {
@@ -93,6 +88,7 @@ class MyPostEditFragment : BaseFragment<FragmentMyProfileMakePostBinding>() {
         }
 
         binding.ivMakePlusPhoto.setOnClickListener {
+            imageList.clear()
             getPhoto()
         }
     }
@@ -112,17 +108,29 @@ class MyPostEditFragment : BaseFragment<FragmentMyProfileMakePostBinding>() {
     }
 
     private fun getPhoto() {
-        TedImagePicker.with(requireContext()).max(10, "이미지는 최대 10장까지 첨부할 수 있습니다")
-            .selectedUri(uriList?.map { it.toUri() }).startMultiImage { uri ->
+        val selectImage = imageList.map { it.imageUri.toUri() }
+        TedImagePicker.with(requireContext())
+            .max(10, "이미지는 최대 10장까지 첨부할 수 있습니다")
+            .imageAndVideo()
+            .selectedUri(selectImage)
+            .startMultiImage { uri ->
                 val getUriList = uri.map { it.toString() }
-                initViewPager(getUriList)
-                uriList = getUriList
+                for (i in 0 until getUriList.count()) {
+                    val imageToUri = getUriList[i].toUri()
+                    if (imageToUri.pathSegments.contains("video")) {
+                        imageList.add(ImageDataModel(imageToUri.toString(), "video"))
+                    } else {
+                        imageList.add(ImageDataModel(imageToUri.toString(), "image"))
+                    }
+                }
+                initViewPager(imageList)
             }
     }
 
-    private fun initViewPager(image: List<String>) {
+    private fun initViewPager(imageList: List<ImageDataModel>?) {
         val imageAdapter = PostImageAdapter()
-        imageAdapter.submitList(image)
+        val listViewType = imageList?.map { it.toViewType("video") }
+        imageAdapter.submitList(listViewType)
         binding.vpMakeImageList.adapter = imageAdapter
 
         if (uriList != null) {
@@ -153,7 +161,7 @@ class MyPostEditFragment : BaseFragment<FragmentMyProfileMakePostBinding>() {
                 profileImage = profileImage,
                 name = name,
                 email = email,
-                image = uriList,
+                imageList = imageList,
                 postText = postText,
                 createdAt = time,
                 mapData = mapData,

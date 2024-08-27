@@ -92,11 +92,11 @@
                     android:layout_width="40dp"
                     android:layout_height="0dp"
                     android:layout_margin="12dp"
-                    android:background="@drawable/ic_plus_image"
+                    android:background="@drawable/ic_image_edit"
                     android:contentDescription="@string/contentDescription"
                     app:layout_constraintDimensionRatio="1:1"
                     android:visibility="gone"
-                    app:layout_constraintStart_toStartOf="@id/clMakePhotoFrame"
+                    app:layout_constraintEnd_toEndOf="@id/clMakePhotoFrame"
                     app:layout_constraintTop_toTopOf="@+id/clMakePhotoFrame" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>

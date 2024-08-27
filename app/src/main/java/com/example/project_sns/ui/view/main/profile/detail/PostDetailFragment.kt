@@ -7,12 +7,13 @@ import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
 import com.example.project_sns.R
 import com.example.project_sns.databinding.FragmentPostDetailBinding
 import com.example.project_sns.ui.BaseFragment
+import com.example.project_sns.ui.mapper.toViewType
 import com.example.project_sns.ui.view.main.profile.MyProfileViewModel
+import com.example.project_sns.ui.view.model.PostDataModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -20,6 +21,7 @@ import kotlinx.coroutines.launch
 class PostDetailFragment : BaseFragment<FragmentPostDetailBinding>() {
 
     private val myProfileViewModel: MyProfileViewModel by activityViewModels()
+
 
     override fun getFragmentBinding(
         inflater: LayoutInflater,
@@ -56,9 +58,9 @@ class PostDetailFragment : BaseFragment<FragmentPostDetailBinding>() {
                     binding.tvPDEmail.text = postData.email
                     binding.tvPDPostText.text = postData.postText
 
-                    initRv(postData.image)
+                    initRv(postData)
 
-                    if (postData.image?.size == 1) {
+                    if (postData.imageList?.size == 1) {
                         binding.idcPD.visibility = View.INVISIBLE
                     } else {
                         binding.idcPD.visibility = View.VISIBLE
@@ -80,13 +82,16 @@ class PostDetailFragment : BaseFragment<FragmentPostDetailBinding>() {
         }
     }
 
-    private fun initRv(uriList: List<String>?) {
+
+    private fun initRv(postData: PostDataModel?) {
         val imageAdapter = PostImageAdapter()
         val indicator = binding.idcPD
-        imageAdapter.submitList(uriList)
         with(binding.vpPDPostImage) {
             adapter = imageAdapter
         }
         indicator.attachTo(binding.vpPDPostImage)
+        val listViewType = postData?.imageList?.map { it.toViewType("video") }
+        imageAdapter.submitList(listViewType)
     }
 }
+
