@@ -30,11 +30,12 @@ dotsindicator = "5.0"
 viewpager2 = "1.1.0"
 googleGmsGoogleServices = "4.4.2"
 firebaseFunctions = "21.0.0"
-exoplayer = "2.17.0"
 kakaoMaps = "2.11.9"
 kakaoSDK = "2.20.3"
 googleServicesLocation = "16.0.0"
 tedImagePicker = "1.6.1"
+exoplayerCore = "2.17.0"
+exoplayerUi = "2.17.0"
 
 
 
@@ -67,11 +68,12 @@ androidx-navigation-safe-args = { group = "androidx.navigation", name = "navigat
 dotsindicator = { module = "com.tbuonomo:dotsindicator", version.ref = "dotsindicator" }
 androidx-viewpager2 = { group = "androidx.viewpager2", name = "viewpager2", version.ref = "viewpager2" }
 firebase-functions = { group = "com.google.firebase", name = "firebase-functions", version.ref = "firebaseFunctions" }
-exoplayer = { group = "com.google.android.exoplayer", name = "exoplayer", version.ref = "exoplayer" }
 kakao-maps = { group = "com.kakao.maps.open", name = "android", version.ref = "kakaoMaps" }
 kakao-sdk = { group = "com.kakao.sdk", name = "v2-all", version.ref = "kakaoSDK" }
 google-services-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "googleServicesLocation" }
 ted-image-picker = { group = "io.github.ParkSangGwon", name = "tedimagepicker", version.ref = "tedImagePicker" }
+exoplayer-core = { group = "com.google.android.exoplayer", name = "exoplayer-core", version.ref = "exoplayerCore" }
+exoplayer-ui = { group = "com.google.android.exoplayer", name = "exoplayer-ui", version.ref = "exoplayerUi" }
 
 
 [plugins]

@@ -5,7 +5,7 @@ import com.example.project_sns.domain.repository.DataRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-class PostUploadUseCase @Inject constructor(private val dataRepository: DataRepository) {
+class UploadPostUseCase @Inject constructor(private val dataRepository: DataRepository) {
     suspend operator fun invoke(postData: PostDataEntity) : Flow<Boolean> {
         return dataRepository.uploadPost(postData)
     }

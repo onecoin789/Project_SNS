@@ -68,7 +68,7 @@
                     android:id="@+id/vpMakeImageList"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_margin="5dp"
+                    android:layout_margin="3dp"
                     android:background="@drawable/item_btn_point"
                     android:backgroundTint="@android:color/transparent"
                     android:visibility="gone"

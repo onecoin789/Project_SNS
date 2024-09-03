@@ -9,11 +9,12 @@ data class PostDataResponse(
     val imageList: List<ImageDataResponse>? = emptyList(),
     val postText: String? = null,
     val createdAt: String = "",
-    val mapData: MapDataResponse? = null,
-    val commentData: CommentDataResponse? = null
+    val editedAt: String? = null,
+    val mapData: MapDataResponse? = null
 )
 
 data class ImageDataResponse(
+    val downloadUrl: String = "",
     val imageUri: String = "",
     val imageType: String = ""
 )
@@ -26,8 +27,21 @@ data class MapDataResponse(
 )
 
 data class CommentDataResponse(
-    val commenterProfile: String?,
-    val commenterEmail: String,
-    val commenterName: String,
-    val comment: String
+    val commentId: String = "",
+    val comment: String = "",
+    val commentAt: String = "",
+    val uid: String = "",
+    val name: String = "",
+    val email: String = "",
+    val profileImage: String? = null,
+)
+
+data class ReCommentDataResponse(
+    val commentId: String = "",
+    val comment: String = "",
+    val commentAt: String = "",
+    val uid: String = "",
+    val name: String = "",
+    val email: String = "",
+    val profileImage: String? = null
 )

@@ -12,7 +12,7 @@ import com.example.project_sns.R
 import com.example.project_sns.databinding.FragmentPostDetailBinding
 import com.example.project_sns.ui.BaseFragment
 import com.example.project_sns.ui.mapper.toViewType
-import com.example.project_sns.ui.view.main.profile.MyProfileViewModel
+import com.example.project_sns.ui.view.main.MainSharedViewModel
 import com.example.project_sns.ui.view.model.PostDataModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -20,7 +20,8 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class PostDetailFragment : BaseFragment<FragmentPostDetailBinding>() {
 
-    private val myProfileViewModel: MyProfileViewModel by activityViewModels()
+    private val myProfileViewModel: MainSharedViewModel by activityViewModels()
+
 
 
     override fun getFragmentBinding(
@@ -76,6 +77,10 @@ class PostDetailFragment : BaseFragment<FragmentPostDetailBinding>() {
 
                     binding.ivPDHeart.setOnClickListener {
 
+                    }
+
+                    binding.tvPDComment.setOnClickListener {
+                        findNavController().navigate(R.id.commentFragment)
                     }
                 }
             }

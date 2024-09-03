@@ -15,6 +15,12 @@ abstract class BaseBottomSheet<T : ViewBinding>:BottomSheetDialogFragment() {
     private var _binding: T? = null
     val binding get() = _binding!!
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setStyle(STYLE_NORMAL, R.style.DialogTheme)
+
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -31,6 +37,13 @@ abstract class BaseBottomSheet<T : ViewBinding>:BottomSheetDialogFragment() {
         bundle.putString("mainText", mainText)
         bundle.putString("subText", subText)
         findNavController().navigate(R.id.deleteDialogFragment, bundle)
+    }
+
+    fun inflateCommentDialog(mainText: String, subText: String) {
+        val bundle = Bundle()
+        bundle.putString("mainText", mainText)
+        bundle.putString("subText", subText)
+        findNavController().navigate(R.id.deleteCommentDialogFragment, bundle)
     }
 
     override fun onDestroyView() {

@@ -2,24 +2,26 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/clComment"
+        android:id="@+id/clItemComment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
         android:background="@drawable/item_list"
         android:padding="10dp"
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
             android:id="@+id/ivComment"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:background="@drawable/ic_user_fill"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:scaleType="centerCrop"
+            android:background="@drawable/item_profile"
+            android:layout_marginTop="5dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/tvItemCommentName"
             android:contentDescription="@string/contentDescription"/>
 
         <TextView
@@ -42,7 +44,7 @@
             android:layout_height="wrap_content"
             android:textColor="@color/hint"
             android:textSize="16sp"
-            android:layout_marginStart="5dp"
+            android:layout_marginStart="10dp"
             app:layout_constraintStart_toEndOf="@id/tvItemCommentName"
             app:layout_constraintTop_toTopOf="@+id/tvItemCommentName"
             app:layout_constraintBottom_toBottomOf="@id/tvItemCommentName"/>
@@ -94,5 +96,23 @@
             android:contentDescription="@string/contentDescription"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvReComment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/clItemComment"
+        android:layout_marginStart="20dp"
+        android:visibility="gone"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
+
+    <ImageView
+        android:id="@+id/ivItemCommentTopLine"
+        android:layout_width="match_parent"
+        android:layout_height="1.5dp"
+        app:layout_constraintTop_toTopOf="@+id/clItemComment"
+        android:background="@color/chat"
+        android:contentDescription="@string/contentDescription"/>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

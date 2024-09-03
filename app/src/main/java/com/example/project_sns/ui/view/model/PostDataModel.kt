@@ -14,12 +14,13 @@ data class PostDataModel(
     val imageList: List<ImageDataModel>?,
     val postText: String?,
     val createdAt: String,
-    val mapData: MapDataModel?,
-    val commentData: CommentDataModel?
+    val editedAt: String?,
+    val mapData: MapDataModel?
 ) : Parcelable
 
 @Parcelize
 data class ImageDataModel(
+    val downloadUrl: String,
     val imageUri: String,
     val imageType: String
 ): Parcelable
@@ -34,8 +35,22 @@ data class MapDataModel(
 
 @Parcelize
 data class CommentDataModel(
-    val commenterProfile: String?,
-    val commenterEmail: String,
-    val commenterName: String,
-    val comment: String
+    val commentId: String,
+    val comment: String,
+    val commentAt: String,
+    val uid: String,
+    val name: String,
+    val email: String,
+    val profileImage: String?,
+): Parcelable
+
+@Parcelize
+data class ReCommentDataModel(
+    val commentId: String,
+    val comment: String,
+    val commentAt: String,
+    val uid: String,
+    val name: String,
+    val email: String,
+    val profileImage: String?
 ): Parcelable

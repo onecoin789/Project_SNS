@@ -2,11 +2,16 @@ package com.example.project_sns.data.repository
 
 import android.util.Log
 import androidx.core.net.toUri
-import com.example.project_sns.data.mapper.toListEntity
+import com.example.project_sns.data.mapper.toCommentListEntity
+import com.example.project_sns.data.mapper.toPostListEntity
+import com.example.project_sns.data.mapper.toReCommentListEntity
+import com.example.project_sns.data.response.CommentDataResponse
 import com.example.project_sns.data.response.PostDataResponse
+import com.example.project_sns.data.response.ReCommentDataResponse
 import com.example.project_sns.domain.model.CommentDataEntity
 import com.example.project_sns.domain.model.ImageDataEntity
 import com.example.project_sns.domain.model.PostDataEntity
+import com.example.project_sns.domain.model.ReCommentDataEntity
 import com.example.project_sns.domain.repository.DataRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -19,15 +24,15 @@ import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 class DataRepositoryImpl @Inject constructor(
-    private val db: FirebaseFirestore,
     private val auth: FirebaseAuth,
+    private val db: FirebaseFirestore,
     private val storage: FirebaseStorage
 ) : DataRepository {
     override suspend fun uploadPost(postData: PostDataEntity): Flow<Boolean> {
         return flow {
             try {
                 val currentUser = auth.currentUser?.uid
-                val imageList = arrayListOf<ImageDataEntity>()
+                val imageList: ArrayList<ImageDataEntity> = arrayListOf()
                 if (currentUser != null) {
                     val data = hashMapOf(
                         "postId" to postData.postId,
@@ -37,15 +42,10 @@ class DataRepositoryImpl @Inject constructor(
                         "email" to postData.email,
                         "postText" to postData.postText,
                         "mapData" to postData.mapData,
-                        "createdAt" to postData.createdAt
+                        "createdAt" to postData.createdAt,
+                        "editedAt" to postData.editedAt
                     )
-                    db.collection("post").document(postData.postId).set(data)
-                        .addOnCompleteListener { task ->
-                            val success = task.isSuccessful
-                            Log.d("task_upload", "${success}")
-                            val fail = task.isCanceled
-                            Log.d("task_upload", "${fail}")
-                        }
+                    db.collection("post").document(postData.postId).set(data).await()
                     if (postData.imageList != null) {
                         for (i in 0 until postData.imageList.count()) {
                             val imageToUri = postData.imageList[i].imageUri.toUri()
@@ -58,11 +58,12 @@ class DataRepositoryImpl @Inject constructor(
                                         imageList.add(
                                             ImageDataEntity(
                                                 downloadUri.toString(),
+                                                imageToUri.toString(),
                                                 "video"
                                             )
                                         )
                                         val imageData =
-                                            mapOf("imageList" to imageList.sortedBy { it.imageUri })
+                                            mapOf("imageList" to imageList.sortedBy { it.downloadUrl })
                                         db.collection("post").document(postData.postId)
                                             .update(imageData)
                                     }
@@ -73,11 +74,12 @@ class DataRepositoryImpl @Inject constructor(
                                         imageList.add(
                                             ImageDataEntity(
                                                 downloadUri.toString(),
+                                                imageToUri.toString(),
                                                 "image"
                                             )
                                         )
                                         val imageData =
-                                            mapOf("imageList" to imageList.sortedBy { it.imageUri })
+                                            mapOf("imageList" to imageList.sortedBy { it.downloadUrl })
                                         db.collection("post").document(postData.postId)
                                             .update(imageData)
                                     }
@@ -85,6 +87,7 @@ class DataRepositoryImpl @Inject constructor(
                             }
                         }
                     }
+                    Log.d("test_data", "$imageList")
                     emit(true)
                 }
 
@@ -106,7 +109,7 @@ class DataRepositoryImpl @Inject constructor(
                     }
                     if (snapshot != null && !snapshot.isEmpty) {
                         val postResponse = snapshot.toObjects(PostDataResponse::class.java)
-                        trySend(postResponse.toListEntity()).isSuccess
+                        trySend(postResponse.toPostListEntity()).isSuccess
                     } else {
                         trySend(emptyList()).isSuccess
                     }
@@ -127,7 +130,7 @@ class DataRepositoryImpl @Inject constructor(
                 }
                 if (snapshot != null && !snapshot.isEmpty) {
                     val postResponse = snapshot.toObjects(PostDataResponse::class.java)
-                    trySend(postResponse.toListEntity()).isSuccess
+                    trySend(postResponse.toPostListEntity()).isSuccess
                 } else {
                     trySend(emptyList()).isSuccess
                 }
@@ -138,19 +141,29 @@ class DataRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun deletePost(postData: PostDataEntity?): Result<String> {
+    override suspend fun deletePost(
+        postData: PostDataEntity?,
+        commentList: List<CommentDataEntity>?
+    ): Result<String> {
         return try {
             val uid = auth.currentUser?.uid
             if (postData != null) {
-                val db = db.collection("post").document(postData.postId)
+                val postDB = db.collection("post").document(postData.postId)
+                if (commentList != null) {
+                    for (element in commentList) {
+                        val commentDB = postDB.collection("comment").document(element.commentId)
+                        commentDB.delete().await()
+                    }
+                }
+
+                val reCommentDB = postDB.collection("comment").document()
 
                 for (i in 0 until 9) {
                     val storage = storage.getReference("image")
                         .child("${uid}/${postData.postId}/${postData.createdAt}_${i}")
-                    db.delete()
+                    postDB.delete()
                     storage.delete()
                 }
-
             }
             Result.success("Success")
         } catch (e: Exception) {
@@ -163,28 +176,30 @@ class DataRepositoryImpl @Inject constructor(
         return flow {
             try {
                 val uid = auth.currentUser?.uid
-                val imageList = arrayListOf<ImageDataEntity>()
+                val imageList: ArrayList<ImageDataEntity> = arrayListOf()
 
                 if (postData != null) {
-                    Log.d("data_test", "$postData")
                     db.collection("post").document(postData.postId).set(postData).await()
 
-                    if (postData.imageList != null)
+
+                    if (postData.imageList != null) {
                         for (i in 0 until postData.imageList.count()) {
                             val imageToUri = postData.imageList[i].imageUri.toUri()
                             val storageRef = storage.getReference("image")
                                 .child("${uid}/${postData.postId}/${postData.createdAt}_${i}")
+
                             if (imageToUri.pathSegments?.contains("video") == true) {
                                 storageRef.putFile(imageToUri).addOnSuccessListener {
                                     storageRef.downloadUrl.addOnSuccessListener { downloadUri ->
                                         imageList.add(
                                             ImageDataEntity(
                                                 downloadUri.toString(),
+                                                postData.imageList[i].imageUri,
                                                 "video"
                                             )
                                         )
                                         val imageData =
-                                            mapOf("imageList" to imageList.sortedBy { it.imageUri })
+                                            mapOf("imageList" to imageList.sortedBy { it.downloadUrl })
                                         db.collection("post").document(postData.postId)
                                             .update(imageData)
                                     }
@@ -195,17 +210,19 @@ class DataRepositoryImpl @Inject constructor(
                                         imageList.add(
                                             ImageDataEntity(
                                                 downloadUri.toString(),
+                                                postData.imageList[i].imageUri,
                                                 "image"
                                             )
                                         )
                                         val imageData =
-                                            mapOf("imageList" to imageList.sortedBy { it.imageUri })
+                                            mapOf("imageList" to imageList.sortedBy { it.downloadUrl })
                                         db.collection("post").document(postData.postId)
                                             .update(imageData)
                                     }
                                 }
                             }
                         }
+                    }
                 }
                 emit(true)
             } catch (e: Exception) {
@@ -215,13 +232,116 @@ class DataRepositoryImpl @Inject constructor(
     }
 
 
-    override suspend fun uploadComment(): Flow<CommentDataEntity?> {
-        TODO()
-//        return flow {
-//            try {
-//                val currentUser = auth.currentUser?.uid
-//                val storage = storage.getReference("image").child()
-//            }
-//        }
+    override suspend fun uploadComment(
+        postId: String,
+        commentData: CommentDataEntity?
+    ): Flow<Boolean> {
+
+        return flow {
+            try {
+                if (commentData != null) {
+                    db.collection("post").document(postId)
+                        .collection("comment")
+                        .document(commentData.commentId)
+                        .set(commentData)
+                }
+                emit(true)
+            } catch (e: Exception) {
+                emit(false)
+            }
+        }
+    }
+
+    override suspend fun getComment(postId: String): Flow<List<CommentDataEntity>> {
+        return callbackFlow {
+            val commentData = db.collection("post").document(postId).collection("comment")
+            val snapShotListener = commentData.addSnapshotListener { snapshot, error ->
+                if (error != null) {
+                    trySend(emptyList()).isSuccess
+                    return@addSnapshotListener
+                }
+                if (snapshot != null && !snapshot.isEmpty) {
+                    val commentResponse = snapshot.toObjects(CommentDataResponse::class.java)
+                    trySend(commentResponse.toCommentListEntity()).isSuccess
+                } else {
+                    trySend(emptyList()).isSuccess
+                }
+            }
+            awaitClose {
+                snapShotListener.remove()
+            }
+        }
+    }
+
+    override suspend fun deleteComment(
+        postId: String,
+        commentId: String,
+        reCommentList: List<ReCommentDataEntity>?
+    ): Result<String> {
+        return try {
+            val postDB = db.collection("post").document(postId)
+            val commentDB = postDB.collection("comment").document(commentId)
+            Log.d("test_impl", "$postId, $commentId")
+
+            if (reCommentList.isNullOrEmpty()) {
+                commentDB.delete()
+            } else {
+                for (element in reCommentList) {
+                    val reCommentDB = commentDB.collection("reComment").document(element.commentId)
+                    reCommentDB.delete().await()
+                    commentDB.delete()
+                }
+            }
+            Result.success("success")
+        } catch (e: Exception) {
+            Result.failure(Exception("exception: $e"))
+        }
+    }
+
+    override suspend fun uploadReComment(
+        postId: String,
+        commentId: String,
+        reCommentData: ReCommentDataEntity?
+    ): Flow<Boolean> {
+        return flow {
+            try {
+                if (reCommentData != null) {
+                    db.collection("post").document(postId).collection("comment").document(commentId)
+                        .collection("reComment").document(reCommentData.commentId)
+                        .set(reCommentData)
+                }
+                emit(true)
+            } catch (e: Exception) {
+                emit(false)
+            }
+        }
+    }
+
+    override suspend fun getReComment(
+        postId: String,
+        commentId: String
+    ): Flow<List<ReCommentDataEntity>> {
+        return callbackFlow {
+            val reCommentData =
+                db.collection("post").document(postId).collection("comment").document(commentId)
+                    .collection("reComment")
+
+            val snapShotListener = reCommentData.addSnapshotListener { snapshot, error ->
+                if (error != null) {
+                    trySend(emptyList()).isSuccess
+                    return@addSnapshotListener
+                }
+                if (snapshot != null && !snapshot.isEmpty) {
+                    val reCommentResponse = snapshot.toObjects(ReCommentDataResponse::class.java)
+                    trySend(reCommentResponse.toReCommentListEntity()).isSuccess
+                } else {
+                    trySend(emptyList()).isSuccess
+                }
+            }
+            awaitClose {
+                snapShotListener.remove()
+            }
+
+        }
     }
 }

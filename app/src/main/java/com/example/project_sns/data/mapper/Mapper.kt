@@ -8,6 +8,7 @@ import com.example.project_sns.data.response.KakaoMapResponse
 import com.example.project_sns.data.response.KakaoMetaResponse
 import com.example.project_sns.data.response.MapDataResponse
 import com.example.project_sns.data.response.PostDataResponse
+import com.example.project_sns.data.response.ReCommentDataResponse
 import com.example.project_sns.domain.model.CommentDataEntity
 import com.example.project_sns.domain.model.CurrentUserEntity
 import com.example.project_sns.domain.model.ImageDataEntity
@@ -16,7 +17,7 @@ import com.example.project_sns.domain.model.KakaoMapEntity
 import com.example.project_sns.domain.model.KakaoMetaEntity
 import com.example.project_sns.domain.model.MapDataEntity
 import com.example.project_sns.domain.model.PostDataEntity
-import com.example.project_sns.ui.mapper.toModel
+import com.example.project_sns.domain.model.ReCommentDataEntity
 
 // <!---------- Firebase ---------->
 
@@ -38,12 +39,13 @@ fun PostDataResponse.toEntity() = PostDataEntity(
     imageList = imageList?.map { it.toEntity() },
     postText = postText,
     createdAt = createdAt,
-    mapData = mapData?.toEntity(),
-    commentData = commentData?.toEntity()
+    editedAt = editedAt,
+    mapData = mapData?.toEntity()
 )
 
 fun ImageDataResponse.toEntity() = ImageDataEntity(
     imageUri = imageUri,
+    downloadUrl = downloadUrl,
     imageType = imageType
 )
 
@@ -52,13 +54,34 @@ fun MapDataResponse.toEntity() = MapDataEntity(
 )
 
 fun CommentDataResponse.toEntity() = CommentDataEntity(
-    commenterProfile = commenterProfile,
-    commenterEmail = commenterEmail,
-    commenterName = commenterName,
-    comment = comment
+    commentId = commentId,
+    comment = comment,
+    commentAt = commentAt,
+    uid = uid,
+    name = name,
+    email = email,
+    profileImage = profileImage
 )
 
-fun List<PostDataResponse>.toListEntity(): List<PostDataEntity> {
+fun ReCommentDataResponse.toEntity() = ReCommentDataEntity(
+    commentId = commentId,
+    comment = comment,
+    commentAt = commentAt,
+    uid = uid,
+    name = name,
+    email = email,
+    profileImage = profileImage
+)
+
+fun List<PostDataResponse>.toPostListEntity(): List<PostDataEntity> {
+    return this.map { it.toEntity() }
+}
+
+fun List<CommentDataResponse>.toCommentListEntity(): List<CommentDataEntity> {
+    return this.map { it.toEntity() }
+}
+
+fun List<ReCommentDataResponse>.toReCommentListEntity(): List<ReCommentDataEntity> {
     return this.map { it.toEntity() }
 }
 

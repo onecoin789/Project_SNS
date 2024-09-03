@@ -1,4 +1,4 @@
-package com.example.project_sns.ui.view.main.profile
+package com.example.project_sns.ui.view.main
 
 import android.view.View
 import android.widget.TextView
@@ -6,18 +6,30 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.project_sns.domain.usecase.DeleteCommentUseCase
 import com.example.project_sns.domain.usecase.DeletePostUseCase
 import com.example.project_sns.domain.usecase.EditPostUseCase
 import com.example.project_sns.domain.usecase.EditProfileUseCase
+import com.example.project_sns.domain.usecase.GetCommentUseCase
 import com.example.project_sns.domain.usecase.GetCurrentUserPostDataUseCase
-import com.example.project_sns.domain.usecase.PostUploadUseCase
+import com.example.project_sns.domain.usecase.GetReCommentDataUseCase
 import com.example.project_sns.domain.usecase.SearchKakaoMapUseCase
+import com.example.project_sns.domain.usecase.UploadCommentUseCase
+import com.example.project_sns.domain.usecase.UploadPostUseCase
+import com.example.project_sns.domain.usecase.UploadReCommentUseCase
+import com.example.project_sns.ui.CurrentPost
+import com.example.project_sns.ui.mapper.toCommentListEntity
+import com.example.project_sns.ui.mapper.toCommentListModel
 import com.example.project_sns.ui.mapper.toEntity
 import com.example.project_sns.ui.mapper.toKakaoListEntity
-import com.example.project_sns.ui.mapper.toListModel
+import com.example.project_sns.ui.mapper.toPostListModel
+import com.example.project_sns.ui.mapper.toReCommentListEntity
+import com.example.project_sns.ui.mapper.toReCommentListModel
 import com.example.project_sns.ui.util.CheckEditProfile
+import com.example.project_sns.ui.view.model.CommentDataModel
 import com.example.project_sns.ui.view.model.KakaoDocumentsModel
 import com.example.project_sns.ui.view.model.PostDataModel
+import com.example.project_sns.ui.view.model.ReCommentDataModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -28,13 +40,18 @@ import java.util.regex.Pattern
 import javax.inject.Inject
 
 @HiltViewModel
-class MyProfileViewModel @Inject constructor(
-    private val postUpLoadUseCase: PostUploadUseCase,
+class MainSharedViewModel @Inject constructor(
+    private val uploadPostUseCase: UploadPostUseCase,
     private val getCurrentUserPostDataUseCase: GetCurrentUserPostDataUseCase,
     private val editProfileUseCase: EditProfileUseCase,
     private val searchKakaoMapUseCase: SearchKakaoMapUseCase,
     private val deletePostUseCase: DeletePostUseCase,
-    private val editPostUseCase: EditPostUseCase
+    private val editPostUseCase: EditPostUseCase,
+    private val uploadCommentUseCase: UploadCommentUseCase,
+    private val getCommentUseCase: GetCommentUseCase,
+    private val uploadReCommentUseCase: UploadReCommentUseCase,
+    private val deleteCommentUseCase: DeleteCommentUseCase,
+    private val getReCommentDataUseCase: GetReCommentDataUseCase
 ) : ViewModel() {
 
     private val _postUpLoadResult = MutableStateFlow<Boolean?>(null)
@@ -52,21 +69,40 @@ class MyProfileViewModel @Inject constructor(
     private val _postData = MutableLiveData<PostDataModel?>()
     val postData: LiveData<PostDataModel?> get() = _postData
 
+    private val _selectedCommentData = MutableLiveData<CommentDataModel?>()
+    val selectedCommentData: LiveData<CommentDataModel?> get() = _selectedCommentData
+
     private val _postEditResult = MutableStateFlow<Boolean?>(null)
     val postEditResult: StateFlow<Boolean?> get() = _postEditResult
 
-    private val _postType = MutableStateFlow<List<PostImageType>>(listOf())
-    val postType: StateFlow<List<PostImageType>> get() = _postType
+    private val _commentData = MutableStateFlow<Boolean?>(null)
+    val commentData: StateFlow<Boolean?> get() = _commentData
+
+    private val _commentListData = MutableStateFlow<List<CommentDataModel>>(emptyList())
+    val commentListData: StateFlow<List<CommentDataModel>> get() = _commentListData
+
+    private val _reCommentData = MutableStateFlow<Boolean?>(null)
+    val reCommentData: StateFlow<Boolean?> get() = _reCommentData
+
+    private val _reCommentListData = MutableStateFlow<List<ReCommentDataModel>>(emptyList())
+    val reCommentListData: StateFlow<List<ReCommentDataModel>> get() = _reCommentListData
 
 
-    fun getPostImageType() {
-        _postType.value
+
+    fun uploadReComment(postId: String, commentId: String, reCommentData: ReCommentDataModel?) {
+        viewModelScope.launch {
+            if (reCommentData != null) {
+                uploadReCommentUseCase(postId, commentId, reCommentData.toEntity()).collect { result ->
+                    _reCommentData.value = result
+                }
+            }
+        }
     }
 
 
-    fun upLoadPost(postData: PostDataModel) {
+    fun uploadPostData(postData: PostDataModel) {
         viewModelScope.launch {
-            postUpLoadUseCase(postData.toEntity()).collect { result ->
+            uploadPostUseCase(postData.toEntity()).collect { result ->
                 _postUpLoadResult.value = result
             }
         }
@@ -75,8 +111,34 @@ class MyProfileViewModel @Inject constructor(
     fun getCurrentUserPost(uid: String) {
         viewModelScope.launch {
             getCurrentUserPostDataUseCase(uid).collect {
-                val postList = it.toListModel()
+                val postList = it.toPostListModel()
                 _postInformation.value = postList
+            }
+        }
+    }
+
+    fun uploadComment(postId: String, commentData: CommentDataModel?) {
+        viewModelScope.launch {
+            uploadCommentUseCase(postId, commentData?.toEntity()).collect { result ->
+                _commentData.value = result
+            }
+        }
+    }
+
+    fun getComment(postId: String) {
+        viewModelScope.launch {
+            getCommentUseCase(postId).collect {
+                val commentList = it.toCommentListModel()
+                _commentListData.value = commentList
+            }
+        }
+    }
+
+    fun getReComment(postId: String, commentId: String) {
+        viewModelScope.launch {
+            getReCommentDataUseCase(postId, commentId).collect {
+                val reCommentList = it.toReCommentListModel()
+                _reCommentListData.value = reCommentList
             }
         }
     }
@@ -161,13 +223,29 @@ class MyProfileViewModel @Inject constructor(
         viewModelScope.launch {
             if (data != null) {
                 _postData.value = data
+                CurrentPost.postData = data
             }
         }
     }
 
-    fun deletePost(postData: PostDataModel?) {
+    fun getCommentData(data: CommentDataModel?) {
         viewModelScope.launch {
-            deletePostUseCase(postData?.toEntity())
+            if (data != null) {
+                _selectedCommentData.value = data
+            }
+        }
+    }
+
+
+    fun deletePost(postData: PostDataModel?, commentList: List<CommentDataModel>?) {
+        viewModelScope.launch {
+            deletePostUseCase(postData?.toEntity(), commentList?.toCommentListEntity())
+        }
+    }
+
+    fun deleteComment(postId: String, commentId: String, reCommentData: List<ReCommentDataModel>?) {
+        viewModelScope.launch {
+            deleteCommentUseCase(postId, commentId, reCommentData?.toReCommentListEntity())
         }
     }
 
