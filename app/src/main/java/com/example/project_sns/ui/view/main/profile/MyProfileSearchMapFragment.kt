@@ -13,6 +13,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.project_sns.R
 import com.example.project_sns.databinding.FragmentMyProfileSearchMapBinding
+import com.example.project_sns.ui.view.main.MainSharedViewModel
 import com.example.project_sns.ui.view.model.KakaoDocumentsModel
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
@@ -24,7 +25,7 @@ class MyProfileSearchMapFragment : BottomSheetDialogFragment() {
     private var _binding: FragmentMyProfileSearchMapBinding? = null
     private val binding get() = _binding!!
 
-    private val myProfileViewModel: MyProfileViewModel by viewModels()
+    private val myProfileViewModel: MainSharedViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

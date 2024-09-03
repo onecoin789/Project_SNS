@@ -1,12 +1,10 @@
 package com.example.project_sns.ui.view.main.home
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.DialogFragment
-import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -14,10 +12,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.project_sns.R
 import com.example.project_sns.databinding.FragmentMainHomeBinding
 import com.example.project_sns.ui.BaseFragment
-import com.example.project_sns.ui.view.main.CommentFragment
+import com.example.project_sns.ui.view.main.MainSharedViewModel
 import com.example.project_sns.ui.view.main.MainViewModel
-import com.example.project_sns.ui.view.main.viewpager.MainFragmentDirections
-import com.example.project_sns.ui.view.model.PostDataModel
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -27,7 +23,9 @@ class MainHomeFragment : BaseFragment<FragmentMainHomeBinding>() {
 
     private lateinit var auth: FirebaseAuth
 
-    private val mainViewModel : MainViewModel by viewModels()
+    private val mainViewModel: MainViewModel by viewModels()
+
+    private val myProfileViewModel: MainSharedViewModel by activityViewModels()
 
 
     override fun getFragmentBinding(
@@ -51,10 +49,21 @@ class MainHomeFragment : BaseFragment<FragmentMainHomeBinding>() {
 
     private fun initRv() {
         val postAdapter = HomePostAdapter { data ->
-            sendCommentData(data)
+            viewLifecycleOwner.lifecycleScope.launch {
+                myProfileViewModel.getPostData(data)
+                myProfileViewModel.postData.observe(viewLifecycleOwner) { postData ->
+                    if (postData != null) {
+                        myProfileViewModel.getComment(postData.postId)
+                    }
+                }
+            }
+
+
+            findNavController().navigate(R.id.commentFragment)
         }
         with(binding.rvHome) {
-            layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+            layoutManager =
+                LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
             adapter = postAdapter
         }
         viewLifecycleOwner.lifecycleScope.launch {
@@ -63,11 +72,6 @@ class MainHomeFragment : BaseFragment<FragmentMainHomeBinding>() {
                 postAdapter.submitList(list.sortedByDescending { it.createdAt })
             }
         }
-    }
-
-    private fun sendCommentData(postData: PostDataModel) {
-        val action = MainFragmentDirections.actionMainFragmentToCommentFragment(postData)
-        findNavController().navigate(action)
 
     }
 

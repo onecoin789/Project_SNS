@@ -10,22 +10,23 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:background="@drawable/item_bottomsheet"
-        android:backgroundTint="@color/chat"
+        android:backgroundTint="@color/item"
         app:layout_constraintDimensionRatio="1:1.5"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
+
         <ImageView
             android:id="@+id/ivMapLine"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_marginHorizontal="170dp"
+            android:layout_marginHorizontal="175dp"
             android:layout_marginTop="15dp"
             android:background="@drawable/item_edittext_radius"
-            android:backgroundTint="@color/hint"
+            android:backgroundTint="@color/text"
             android:contentDescription="@string/contentDescription"
-            android:paddingTop="8dp"
+            android:paddingTop="5dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

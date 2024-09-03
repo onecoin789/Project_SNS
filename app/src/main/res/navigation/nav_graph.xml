@@ -135,7 +135,7 @@
     </fragment>
     <dialog
         android:id="@+id/commentFragment"
-        android:name="com.example.project_sns.ui.view.main.CommentFragment"
+        android:name="com.example.project_sns.ui.view.main.comment.CommentFragment"
         android:label="fragment_comment"
         tools:layout="@layout/fragment_comment" >
         <argument
@@ -205,6 +205,10 @@
         android:id="@+id/myPostEditFragment"
         android:name="com.example.project_sns.ui.view.main.profile.MyPostEditFragment"
         android:label="MyPostEditFragment" />
+    <dialog
+        android:id="@+id/deleteCommentDialogFragment"
+        android:name="com.example.project_sns.ui.view.main.profile.dialog.DeleteCommentDialogFragment"
+        android:label="DeleteCommentDialogFragment" />
 
 
 </navigation>

@@ -1,18 +1,13 @@
 package com.example.project_sns.ui.view.main.profile
 
-import android.app.Activity
-import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.provider.MediaStore
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.widget.doAfterTextChanged
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -23,17 +18,15 @@ import com.example.project_sns.databinding.FragmentMyProfileEditBinding
 import com.example.project_sns.ui.BaseFragment
 import com.example.project_sns.ui.CurrentUser
 import com.example.project_sns.ui.util.CheckEditProfile
-import com.example.project_sns.ui.util.dateFormat
-import com.example.project_sns.ui.util.refreshFragment
+import com.example.project_sns.ui.view.main.MainSharedViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
+import gun0912.tedimagepicker.builder.TedImagePicker
 import kotlinx.coroutines.launch
-import java.time.LocalDateTime
 
 @AndroidEntryPoint
 class MyProfileEditFragment : BaseFragment<FragmentMyProfileEditBinding>() {
 
-    private val myProfileViewModel: MyProfileViewModel by viewModels()
+    private val myProfileViewModel: MainSharedViewModel by viewModels()
 
     private var uri: Uri? = null
 
@@ -58,12 +51,15 @@ class MyProfileEditFragment : BaseFragment<FragmentMyProfileEditBinding>() {
         binding.ivEditBack.setOnClickListener {
             findNavController().popBackStack()
         }
-        getPhoto()
         editTextCheck()
 
         binding.btnEditConfirm.setOnClickListener {
             initData()
             collectFlow()
+        }
+
+        binding.clEditPhotoFrame.setOnClickListener {
+            getPhoto()
         }
 
         if (userData != null) {
@@ -76,21 +72,10 @@ class MyProfileEditFragment : BaseFragment<FragmentMyProfileEditBinding>() {
 
     private fun getPhoto() {
 
-        val registerForActivityResult =
-            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-                when (result.resultCode) {
-                    Activity.RESULT_OK -> {
-                        uri = result.data?.data!!
-                        binding.ivEditPhoto.clipToOutline = true
-                        Glide.with(requireContext()).load(uri).into(binding.ivEditPhoto)
-                    }
-                }
-            }
-
-        binding.clEditPhotoFrame.setOnClickListener {
-            val intent =
-                Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI)
-            registerForActivityResult.launch(intent)
+        TedImagePicker.with(requireContext()).start {
+            uri = it
+            binding.ivEditPhoto.clipToOutline = true
+            Glide.with(requireContext()).load(it).into(binding.ivEditPhoto)
         }
     }
 

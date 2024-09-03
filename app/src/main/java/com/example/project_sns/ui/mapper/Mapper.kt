@@ -8,6 +8,7 @@ import com.example.project_sns.domain.model.KakaoMapEntity
 import com.example.project_sns.domain.model.KakaoMetaEntity
 import com.example.project_sns.domain.model.MapDataEntity
 import com.example.project_sns.domain.model.PostDataEntity
+import com.example.project_sns.domain.model.ReCommentDataEntity
 import com.example.project_sns.ui.CurrentUserModel
 import com.example.project_sns.ui.view.main.profile.PostImageType
 import com.example.project_sns.ui.view.model.CommentDataModel
@@ -17,6 +18,7 @@ import com.example.project_sns.ui.view.model.KakaoMapModel
 import com.example.project_sns.ui.view.model.KakaoMetaModel
 import com.example.project_sns.ui.view.model.MapDataModel
 import com.example.project_sns.ui.view.model.PostDataModel
+import com.example.project_sns.ui.view.model.ReCommentDataModel
 
 // <!---------- Firebase ---------->
 
@@ -38,12 +40,14 @@ fun PostDataEntity.toModel() = PostDataModel(
     imageList = imageList?.map { it.toModel() },
     postText = postText,
     createdAt = createdAt,
-    mapData = mapData?.toModel(),
-    commentData = commentData?.toModel()
+    editedAt = editedAt,
+    mapData = mapData?.toModel()
 )
 
 fun ImageDataEntity.toModel() = ImageDataModel(
-    imageUri = imageUri, imageType = imageType
+    imageUri = imageUri,
+    downloadUrl = downloadUrl,
+    imageType = imageType
 )
 
 fun ImageDataModel.toViewType(type: String): PostImageType {
@@ -60,10 +64,23 @@ fun MapDataEntity.toModel() = MapDataModel(
 
 
 fun CommentDataEntity.toModel() = CommentDataModel(
-    commenterProfile = commenterProfile,
-    commenterEmail = commenterEmail,
-    commenterName = commenterName,
-    comment = comment
+    commentId = commentId,
+    comment = comment,
+    commentAt = commentAt,
+    uid = uid,
+    name = name,
+    email = email,
+    profileImage = profileImage
+)
+
+fun ReCommentDataEntity.toModel() = ReCommentDataModel(
+    commentId = commentId,
+    comment = comment,
+    commentAt = commentAt,
+    uid = uid,
+    name = name,
+    email = email,
+    profileImage = profileImage
 )
 
 fun PostDataModel.toEntity() = PostDataEntity(
@@ -75,12 +92,12 @@ fun PostDataModel.toEntity() = PostDataEntity(
     imageList = imageList?.map { it.toEntity() },
     postText = postText,
     createdAt = createdAt,
-    mapData = mapData?.toEntity(),
-    commentData = commentData?.toEntity()
+    editedAt = editedAt,
+    mapData = mapData?.toEntity()
 )
 
 fun ImageDataModel.toEntity() = ImageDataEntity(
-    imageUri = imageUri, imageType = imageType
+    imageUri = imageUri, downloadUrl = downloadUrl, imageType = imageType
 )
 
 fun MapDataModel.toEntity() = MapDataEntity(
@@ -88,15 +105,45 @@ fun MapDataModel.toEntity() = MapDataEntity(
 )
 
 fun CommentDataModel.toEntity() = CommentDataEntity(
-    commenterProfile = commenterProfile,
-    commenterEmail = commenterEmail,
-    commenterName = commenterName,
-    comment = comment
+    commentId = commentId,
+    comment = comment,
+    commentAt = commentAt,
+    uid = uid,
+    name = name,
+    email = email,
+    profileImage = profileImage
 )
 
-fun List<PostDataEntity>.toListModel(): List<PostDataModel> {
+fun ReCommentDataModel.toEntity() = ReCommentDataEntity(
+    commentId = commentId,
+    comment = comment,
+    commentAt = commentAt,
+    uid = uid,
+    name = name,
+    email = email,
+    profileImage = profileImage
+)
+
+fun List<PostDataEntity>.toPostListModel(): List<PostDataModel> {
     return this.map { it.toModel() }
 }
+
+fun List<CommentDataEntity>.toCommentListModel(): List<CommentDataModel> {
+    return this.map { it.toModel() }
+}
+
+fun List<CommentDataModel>.toCommentListEntity(): List<CommentDataEntity> {
+    return this.map { it.toEntity() }
+}
+
+fun List<ReCommentDataModel>.toReCommentListEntity(): List<ReCommentDataEntity> {
+    return this.map { it.toEntity() }
+}
+
+fun List<ReCommentDataEntity>.toReCommentListModel(): List<ReCommentDataModel> {
+    return this.map { it.toModel() }
+}
+
 
 
 // <!---------- KakaoMap ---------->

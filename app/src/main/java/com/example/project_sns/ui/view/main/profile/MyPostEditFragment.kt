@@ -1,34 +1,44 @@
 package com.example.project_sns.ui.view.main.profile
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.net.toUri
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import com.example.project_sns.R
 import com.example.project_sns.databinding.FragmentMyProfileMakePostBinding
 import com.example.project_sns.ui.BaseFragment
 import com.example.project_sns.ui.mapper.toViewType
-import com.example.project_sns.ui.view.main.profile.detail.PostImageAdapter
+import com.example.project_sns.ui.util.dateFormat
+import com.example.project_sns.ui.view.main.MainSharedViewModel
+import com.example.project_sns.ui.view.main.profile.detail.PostRadiusImageAdapter
 import com.example.project_sns.ui.view.model.ImageDataModel
+import com.example.project_sns.ui.view.model.MapDataModel
 import com.example.project_sns.ui.view.model.PostDataModel
 import dagger.hilt.android.AndroidEntryPoint
 import gun0912.tedimagepicker.builder.TedImagePicker
 import kotlinx.coroutines.launch
+import java.time.LocalDateTime
 
 @AndroidEntryPoint
 class MyPostEditFragment : BaseFragment<FragmentMyProfileMakePostBinding>() {
 
-    private var uriList: List<String>? = listOf()
-    private var beForeUriList: List<String>? = listOf()
     private var postData: PostDataModel? = null
+
+    private var beforeImageList: ArrayList<ImageDataModel> = arrayListOf()
 
     private var imageList: ArrayList<ImageDataModel> = arrayListOf()
 
-    private val myProfileViewModel: MyProfileViewModel by activityViewModels()
+    private var getMapData: MapDataModel? = null
+
+    private val myProfileViewModel: MainSharedViewModel by activityViewModels()
+
 
 
     override fun getFragmentBinding(
@@ -42,6 +52,7 @@ class MyPostEditFragment : BaseFragment<FragmentMyProfileMakePostBinding>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initView()
+        getMapData()
     }
 
     private fun initView() {
@@ -52,7 +63,6 @@ class MyPostEditFragment : BaseFragment<FragmentMyProfileMakePostBinding>() {
 
         myProfileViewModel.postData.observe(viewLifecycleOwner) { data ->
             if (data != null) {
-                beForeUriList = data.imageList?.map { it.imageUri }
                 if (data.postText != null) {
                     binding.etMakeText.setText(data.postText)
                 }
@@ -75,7 +85,13 @@ class MyPostEditFragment : BaseFragment<FragmentMyProfileMakePostBinding>() {
             }
             postData = data
             imageList = data?.imageList as ArrayList<ImageDataModel>
+            getMapData = postData?.mapData
+
             initViewPager(imageList)
+        }
+
+        binding.tvMakeLocation.setOnClickListener {
+            findNavController().navigate(R.id.myProfileSearchMapFragment)
         }
 
         binding.ivMakeBack.setOnClickListener {
@@ -88,7 +104,6 @@ class MyPostEditFragment : BaseFragment<FragmentMyProfileMakePostBinding>() {
         }
 
         binding.ivMakePlusPhoto.setOnClickListener {
-            imageList.clear()
             getPhoto()
         }
     }
@@ -114,32 +129,60 @@ class MyPostEditFragment : BaseFragment<FragmentMyProfileMakePostBinding>() {
             .imageAndVideo()
             .selectedUri(selectImage)
             .startMultiImage { uri ->
-                val getUriList = uri.map { it.toString() }
-                for (i in 0 until getUriList.count()) {
-                    val imageToUri = getUriList[i].toUri()
-                    if (imageToUri.pathSegments.contains("video")) {
-                        imageList.add(ImageDataModel(imageToUri.toString(), "video"))
+                imageList.clear()
+                for (i in 0 until uri.count()) {
+                    val imageToUri = uri[i]
+                    Log.d("fuck", "${imageToUri}")
+                    if (imageToUri.pathSegments.contains("video") || imageToUri.toString().contains("video", ignoreCase = true)) {
+                        imageList.add(ImageDataModel(imageToUri.toString(), imageToUri.toString(), "video"))
                     } else {
-                        imageList.add(ImageDataModel(imageToUri.toString(), "image"))
+                        imageList.add(ImageDataModel(imageToUri.toString(), imageToUri.toString(),"image"))
                     }
                 }
                 initViewPager(imageList)
+                Log.d("image_data", "$imageList")
+                Log.d("image_data_before2", "")
             }
     }
 
     private fun initViewPager(imageList: List<ImageDataModel>?) {
-        val imageAdapter = PostImageAdapter()
+        val imageAdapter = PostRadiusImageAdapter()
         val listViewType = imageList?.map { it.toViewType("video") }
         imageAdapter.submitList(listViewType)
         binding.vpMakeImageList.adapter = imageAdapter
 
-        if (uriList != null) {
+        if (imageList != null) {
             binding.vpMakeImageList.visibility = View.VISIBLE
             binding.ivMakePlusPhoto.visibility = View.VISIBLE
             binding.ivMakePhoto.visibility = View.INVISIBLE
         } else {
             binding.vpMakeImageList.visibility = View.GONE
             binding.ivMakePlusPhoto.visibility = View.GONE
+        }
+    }
+
+    private fun getMapData() {
+
+        setFragmentResultListener("data") { data, bundle ->
+            val mapData = bundle.getBundle("mapData")
+            if (mapData != null) {
+                binding.clMakeLocationText.visibility = View.VISIBLE
+                binding.tvMakeLocationName.text = mapData.getString("placeName")
+                binding.tvMakeLocationInfo.text = mapData.getString("addressName")
+
+                getMapData?.placeName = mapData.getString("placeName")
+                getMapData?.addressName = mapData.getString("addressName")
+                getMapData?.lat = mapData.getString("lat")?.toDouble()
+                getMapData?.lng = mapData.getString("lng")?.toDouble()
+
+            } else {
+                binding.clMakeLocationText.visibility = View.GONE
+            }
+
+            binding.ivMakeMapDelete.setOnClickListener {
+                mapData?.clear()
+                binding.clMakeLocationText.visibility = View.GONE
+            }
         }
     }
 
@@ -153,7 +196,8 @@ class MyPostEditFragment : BaseFragment<FragmentMyProfileMakePostBinding>() {
             val postText = binding.etMakeText.text.toString()
             val time = postData?.createdAt.toString()
             val mapData = postData?.mapData
-            val commentData = postData?.commentData
+            val editTime = dateFormat(LocalDateTime.now())
+
 
             val data = PostDataModel(
                 uid = uid,
@@ -164,8 +208,8 @@ class MyPostEditFragment : BaseFragment<FragmentMyProfileMakePostBinding>() {
                 imageList = imageList,
                 postText = postText,
                 createdAt = time,
-                mapData = mapData,
-                commentData = commentData
+                editedAt = editTime,
+                mapData = mapData
             )
 
             viewLifecycleOwner.lifecycleScope.launch {

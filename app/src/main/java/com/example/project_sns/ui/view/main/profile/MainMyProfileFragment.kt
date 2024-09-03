@@ -1,11 +1,9 @@
 package com.example.project_sns.ui.view.main.profile
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -16,13 +14,10 @@ import com.example.project_sns.R
 import com.example.project_sns.databinding.FragmentMainMyProfileBinding
 import com.example.project_sns.ui.BaseFragment
 import com.example.project_sns.ui.CurrentUser
-import com.example.project_sns.ui.util.refreshFragment
+import com.example.project_sns.ui.view.main.MainSharedViewModel
 import com.example.project_sns.ui.view.main.MainViewModel
-import com.example.project_sns.ui.view.main.viewpager.MainFragment
-import com.example.project_sns.ui.view.main.viewpager.MainFragmentDirections
 import com.example.project_sns.ui.view.model.PostDataModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 
@@ -31,7 +26,7 @@ class MainMyProfileFragment : BaseFragment<FragmentMainMyProfileBinding>() {
 
     private val mainViewModel: MainViewModel by viewModels()
 
-    private val myProfileViewModel: MyProfileViewModel by activityViewModels()
+    private val myProfileViewModel: MainSharedViewModel by activityViewModels()
 
     override fun getFragmentBinding(
         inflater: LayoutInflater,

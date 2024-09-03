@@ -9,11 +9,12 @@ data class PostDataEntity(
     val imageList: List<ImageDataEntity>?,
     val postText: String?,
     val createdAt: String,
-    val mapData: MapDataEntity?,
-    val commentData: CommentDataEntity?,
+    val editedAt: String?,
+    val mapData: MapDataEntity?
 )
 
 data class ImageDataEntity(
+    val downloadUrl: String,
     val imageUri: String,
     val imageType: String
 )
@@ -26,8 +27,21 @@ data class MapDataEntity(
 )
 
 data class CommentDataEntity(
-    val commenterProfile: String?,
-    val commenterEmail: String,
-    val commenterName: String,
-    val comment: String
+    val commentId: String,
+    val comment: String,
+    val commentAt: String,
+    val uid: String,
+    val name: String,
+    val email: String,
+    val profileImage: String?,
+)
+
+data class ReCommentDataEntity(
+    val commentId: String,
+    val comment: String,
+    val commentAt: String,
+    val uid: String,
+    val name: String,
+    val email: String,
+    val profileImage: String?
 )

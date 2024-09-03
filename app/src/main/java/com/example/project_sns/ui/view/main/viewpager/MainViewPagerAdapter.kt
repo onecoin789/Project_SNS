@@ -8,18 +8,18 @@ import com.example.project_sns.ui.view.main.search.MainSearchFragment
 
 class MainViewPagerAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) {
 
-    val fgList = listOf(
+    val fragmentList = listOf(
         MainHomeFragment(),
         MainSearchFragment(),
         MainMyProfileFragment()
     )
 
     override fun getItemCount(): Int {
-        return fgList.size
+        return fragmentList.size
     }
 
     override fun createFragment(position: Int): Fragment {
-        return fgList[position]
+        return fragmentList[position]
     }
 
 

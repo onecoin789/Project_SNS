@@ -5,9 +5,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <com.google.android.exoplayer2.ui.PlayerView
-        android:id="@+id/epItemVideoList"
+        android:id="@+id/epItemVideoRadius"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        app:show_timeout="3000"
+        app:use_controller="true"
+        android:background="@drawable/item_btn_point"
+        android:backgroundTint="@color/black"
+        app:controller_layout_id="@layout/controller_custom_player"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintTop_toTopOf="parent"/>
 

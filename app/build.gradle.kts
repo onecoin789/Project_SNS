@@ -103,7 +103,8 @@ dependencies {
     implementation(libs.logging.interceptor)
 
     // exoplayer
-    implementation(libs.exoplayer)
+    implementation(libs.exoplayer.core)
+    implementation(libs.exoplayer.ui)
 
     //image picker
     implementation(libs.ted.image.picker)

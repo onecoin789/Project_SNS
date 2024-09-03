@@ -3,6 +3,7 @@ package com.example.project_sns.ui.view.main.profile.dialog
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,13 +14,14 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.project_sns.R
 import com.example.project_sns.databinding.FragmentDialogBinding
+import com.example.project_sns.ui.CurrentPost
 import com.example.project_sns.ui.view.main.MainSharedViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 
 @AndroidEntryPoint
-class DeleteDialogFragment : DialogFragment() {
+class DeleteCommentDialogFragment : DialogFragment() {
 
     private var _binding: FragmentDialogBinding? = null
     private val binding get() = _binding!!
@@ -57,16 +59,24 @@ class DeleteDialogFragment : DialogFragment() {
         binding.tvDlSub.text = subText
 
         binding.btnDlConfirm.setOnClickListener {
-            viewLifecycleOwner.lifecycleScope.launch {
-                myProfileViewModel.commentListData.collect { data ->
-                    myProfileViewModel.postData.observe(viewLifecycleOwner) {
-                        myProfileViewModel.deletePost(it, data)
-
+            val currentPostData = CurrentPost.postData
+            if (currentPostData != null) {
+                viewLifecycleOwner.lifecycleScope.launch {
+                    myProfileViewModel.reCommentListData.collect { reComment ->
+                        Log.d("test_delete", "${reComment}")
+                        myProfileViewModel.selectedCommentData.observe(viewLifecycleOwner) { item ->
+                            if (item != null) {
+                                myProfileViewModel.deleteComment(
+                                    currentPostData.postId,
+                                    item.commentId,
+                                    reComment
+                                )
+                            }
+                        }
                     }
                 }
             }
             dismiss()
-            findNavController().popBackStack(R.id.mainFragment, false)
         }
 
         binding.btnDlCancel.setOnClickListener {
@@ -79,8 +89,4 @@ class DeleteDialogFragment : DialogFragment() {
         super.onDestroyView()
         _binding = null
     }
-
 }
-
-
-

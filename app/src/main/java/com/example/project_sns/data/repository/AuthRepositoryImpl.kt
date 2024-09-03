@@ -149,16 +149,21 @@ class AuthRepositoryImpl @Inject constructor(
                         )
                         db.collection("user").document(uid).set(data)
                         db.collection("post").whereEqualTo("uid", uid).get()
-                            .addOnSuccessListener {
-                                it.documents.forEach { document ->
+                            .addOnSuccessListener { post ->
+                                post.documents.forEach { document ->
                                     db.runTransaction { trans ->
-                                        trans.update(
-                                            document.reference,
-                                            "profileImage",
-                                            downloadUri
-                                        )
+                                        trans.update(document.reference, "profileImage", downloadUri)
                                         trans.update(document.reference, "name", name)
                                     }
+                                    document.reference.collection("comment").whereEqualTo("uid", uid).get()
+                                        .addOnSuccessListener { comment ->
+                                            comment.documents.forEach { commentDocument ->
+                                                db.runTransaction { commentTrans ->
+                                                    commentTrans.update(commentDocument.reference, "profileImage", downloadUri)
+                                                    commentTrans.update(commentDocument.reference, "name", name)
+                                                }
+                                            }
+                                        }
                                 }
                             }
                     }
@@ -174,11 +179,19 @@ class AuthRepositoryImpl @Inject constructor(
                 )
                 db.collection("user").document(uid).set(data)
                 db.collection("post").whereEqualTo("uid", uid).get()
-                    .addOnSuccessListener {
-                        it.documents.forEach { document ->
+                    .addOnSuccessListener { post ->
+                        post.documents.forEach { document ->
                             db.runTransaction { trans ->
                                 trans.update(document.reference, "name", name)
                             }
+                            document.reference.collection("comment").whereEqualTo("uid", uid).get()
+                                .addOnSuccessListener { comment ->
+                                    comment.documents.forEach { commentDocument ->
+                                        db.runTransaction { commentTrans ->
+                                            commentTrans.update(commentDocument.reference, "name", name)
+                                        }
+                                    }
+                                }
                         }
                     }
             }

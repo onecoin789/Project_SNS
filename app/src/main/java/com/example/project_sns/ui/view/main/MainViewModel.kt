@@ -5,9 +5,9 @@ import androidx.lifecycle.viewModelScope
 import com.example.project_sns.domain.usecase.GetAllPostUseCase
 import com.example.project_sns.domain.usecase.GetCurrentUserDataUseCase
 import com.example.project_sns.ui.CurrentUser
-import com.example.project_sns.ui.mapper.toModel
 import com.example.project_sns.ui.CurrentUserModel
-import com.example.project_sns.ui.mapper.toListModel
+import com.example.project_sns.ui.mapper.toModel
+import com.example.project_sns.ui.mapper.toPostListModel
 import com.example.project_sns.ui.view.model.PostDataModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -47,7 +47,7 @@ class MainViewModel @Inject constructor(
     fun getAllPost() {
         viewModelScope.launch {
             getAllPostUseCase().collect {
-                val postList = it.toListModel()
+                val postList = it.toPostListModel()
                 _allPostData.value = postList
             }
         }
