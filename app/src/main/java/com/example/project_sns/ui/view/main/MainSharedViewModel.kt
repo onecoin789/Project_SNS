@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.project_sns.domain.usecase.DeleteCommentUseCase
 import com.example.project_sns.domain.usecase.DeletePostUseCase
+import com.example.project_sns.domain.usecase.DeleteReCommentUseCase
 import com.example.project_sns.domain.usecase.EditPostUseCase
 import com.example.project_sns.domain.usecase.EditProfileUseCase
 import com.example.project_sns.domain.usecase.GetCommentUseCase
@@ -51,7 +52,8 @@ class MainSharedViewModel @Inject constructor(
     private val getCommentUseCase: GetCommentUseCase,
     private val uploadReCommentUseCase: UploadReCommentUseCase,
     private val deleteCommentUseCase: DeleteCommentUseCase,
-    private val getReCommentDataUseCase: GetReCommentDataUseCase
+    private val getReCommentDataUseCase: GetReCommentDataUseCase,
+    private val deleteReCommentUseCase: DeleteReCommentUseCase
 ) : ViewModel() {
 
     private val _postUpLoadResult = MutableStateFlow<Boolean?>(null)
@@ -71,6 +73,9 @@ class MainSharedViewModel @Inject constructor(
 
     private val _selectedCommentData = MutableLiveData<CommentDataModel?>()
     val selectedCommentData: LiveData<CommentDataModel?> get() = _selectedCommentData
+
+    private val _selectedReCommentData = MutableLiveData<ReCommentDataModel?>()
+    val selectedReCommentData: LiveData<ReCommentDataModel?> get() = _selectedReCommentData
 
     private val _postEditResult = MutableStateFlow<Boolean?>(null)
     val postEditResult: StateFlow<Boolean?> get() = _postEditResult
@@ -236,6 +241,14 @@ class MainSharedViewModel @Inject constructor(
         }
     }
 
+    fun getReCommentData(data: ReCommentDataModel?) {
+        viewModelScope.launch {
+            if (data != null) {
+                _selectedReCommentData.value = data
+            }
+        }
+    }
+
 
     fun deletePost(postData: PostDataModel?, commentList: List<CommentDataModel>?) {
         viewModelScope.launch {
@@ -246,6 +259,12 @@ class MainSharedViewModel @Inject constructor(
     fun deleteComment(postId: String, commentId: String, reCommentData: List<ReCommentDataModel>?) {
         viewModelScope.launch {
             deleteCommentUseCase(postId, commentId, reCommentData?.toReCommentListEntity())
+        }
+    }
+
+    fun deleteReComment(postId: String, commentId: String, reCommentId: String) {
+        viewModelScope.launch {
+            deleteReCommentUseCase(postId, commentId, reCommentId)
         }
     }
 

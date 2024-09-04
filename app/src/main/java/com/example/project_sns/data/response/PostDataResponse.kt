@@ -34,6 +34,7 @@ data class CommentDataResponse(
     val name: String = "",
     val email: String = "",
     val profileImage: String? = null,
+    val reCommentData: List<ReCommentDataResponse>? = emptyList()
 )
 
 data class ReCommentDataResponse(

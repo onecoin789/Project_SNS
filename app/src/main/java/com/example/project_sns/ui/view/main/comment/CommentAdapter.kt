@@ -1,7 +1,6 @@
 package com.example.project_sns.ui.view.main.comment
 
 
-import android.content.ClipData.Item
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,24 +10,32 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.project_sns.R
 import com.example.project_sns.databinding.RvItemCommentBinding
+import com.example.project_sns.ui.CurrentPost
 import com.example.project_sns.ui.CurrentUser
+import com.example.project_sns.ui.view.main.MainSharedViewModel
 import com.example.project_sns.ui.view.model.CommentDataModel
 import com.example.project_sns.ui.view.model.ReCommentDataModel
 
-class CommentAdapter(private val onClick: ItemClick): ListAdapter<CommentDataModel, CommentAdapter.CommentViewHolder>(diffUtil) {
+class CommentAdapter(private val onClick: CommentItemClick) :
+    ListAdapter<CommentDataModel, CommentAdapter.CommentViewHolder>(diffUtil) {
 
-    interface ItemClick {
+    interface CommentItemClick {
         fun onClick(item: CommentDataModel)
         fun onClickDelete(item: CommentDataModel)
+        fun onClickList(item: CommentDataModel)
+        fun onClickReCommentDelete(item: ReCommentDataModel)
+
     }
 
 
     class CommentViewHolder(
         private val binding: RvItemCommentBinding,
-        private val onClick: ItemClick
-    ): RecyclerView.ViewHolder(binding.root) {
+        private val onClick: CommentItemClick
+    ) : RecyclerView.ViewHolder(binding.root) {
+
 
         fun bind(item: CommentDataModel) {
+
             if (item.profileImage != null) {
                 binding.ivComment.clipToOutline = true
                 Glide.with(binding.root).load(item.profileImage).into(binding.ivComment)
@@ -45,7 +52,6 @@ class CommentAdapter(private val onClick: ItemClick): ListAdapter<CommentDataMod
 
             binding.tvItemCommentRe.setOnClickListener {
                 onClick.onClick(item)
-                binding.rvReComment.visibility = View.VISIBLE
             }
 
 
@@ -54,17 +60,55 @@ class CommentAdapter(private val onClick: ItemClick): ListAdapter<CommentDataMod
             } else {
                 binding.tvItemCommentDelete.visibility = View.INVISIBLE
             }
+
+            if (item.reCommentData?.size == 0) {
+                binding.tvItemCommentReComment.visibility = View.GONE
+                binding.rvReComment.visibility = View.GONE
+            } else {
+                binding.tvItemCommentReComment.text = "댓글 ${item.reCommentData?.size}개"
+                binding.tvItemCommentReComment.visibility = View.VISIBLE
+                binding.rvReComment.visibility = View.GONE
+                binding.tvItemCommentReClose.visibility = View.GONE
+            }
+
+            initRv(item.reCommentData)
+
+            binding.tvItemCommentReComment.setOnClickListener {
+                onClick.onClickList(item)
+                binding.rvReComment.visibility = View.VISIBLE
+                binding.tvItemCommentReComment.visibility = View.GONE
+                binding.tvItemCommentReClose.visibility = View.VISIBLE
+            }
+
+            binding.tvItemCommentReClose.setOnClickListener {
+                binding.tvItemCommentReClose.visibility = View.GONE
+                binding.tvItemCommentReComment.visibility = View.VISIBLE
+                binding.rvReComment.visibility = View.GONE
+            }
         }
 
-        private fun initRv(commentData: List<ReCommentDataModel>?) {
+        private fun initRv(reCommentList: List<ReCommentDataModel>?) {
+            val reCommentAdapter = ReCommentAdapter(object : ReCommentAdapter.ReCommentItemClick {
+                override fun onClickEdit(item: ReCommentDataModel) {
 
-          binding.rvReComment
+                }
+
+                override fun onClickDelete(item: ReCommentDataModel) {
+                    onClick.onClickReCommentDelete(item)
+                    initRv(reCommentList)
+                }
+
+            })
+            with(binding.rvReComment) {
+                adapter = reCommentAdapter
+            }
+            reCommentAdapter.submitList(reCommentList)
         }
-
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CommentViewHolder {
-        val binding = RvItemCommentBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding =
+            RvItemCommentBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return CommentViewHolder(binding, onClick)
     }
 
@@ -91,5 +135,4 @@ class CommentAdapter(private val onClick: ItemClick): ListAdapter<CommentDataMod
 
         }
     }
-
 }

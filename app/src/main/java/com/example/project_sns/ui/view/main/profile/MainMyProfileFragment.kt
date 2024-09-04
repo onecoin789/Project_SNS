@@ -26,7 +26,7 @@ class MainMyProfileFragment : BaseFragment<FragmentMainMyProfileBinding>() {
 
     private val mainViewModel: MainViewModel by viewModels()
 
-    private val myProfileViewModel: MainSharedViewModel by activityViewModels()
+    private val mainSharedViewModel: MainSharedViewModel by activityViewModels()
 
     override fun getFragmentBinding(
         inflater: LayoutInflater,
@@ -74,10 +74,10 @@ class MainMyProfileFragment : BaseFragment<FragmentMainMyProfileBinding>() {
             sendData(data)
         }
         viewLifecycleOwner.lifecycleScope.launch {
-            myProfileViewModel.postInformation.collect { data ->
+            mainSharedViewModel.postInformation.collect { data ->
                 val postNumber = data.size
                 binding.tvMyNumber.text = postNumber.toString()
-                myProfileViewModel.getCurrentUserPost(uid)
+                mainSharedViewModel.getCurrentUserPost(uid)
                 listAdapter.submitList(data.sortedByDescending { it.createdAt })
                 if (data.isEmpty()) {
                     binding.tvMyNullPost.visibility = View.VISIBLE
@@ -104,7 +104,7 @@ class MainMyProfileFragment : BaseFragment<FragmentMainMyProfileBinding>() {
 
     private fun sendData(postData: PostDataModel) {
         viewLifecycleOwner.lifecycleScope.launch {
-            myProfileViewModel.getPostData(postData)
+            mainSharedViewModel.getPostData(postData)
         }
         findNavController().navigate(R.id.action_mainFragment_to_postDetailFragment)
     }

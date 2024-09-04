@@ -1,6 +1,7 @@
 package com.example.project_sns.ui.view.model
 
 import android.os.Parcelable
+import com.example.project_sns.data.response.ReCommentDataResponse
 import kotlinx.parcelize.Parcelize
 
 
@@ -42,6 +43,7 @@ data class CommentDataModel(
     val name: String,
     val email: String,
     val profileImage: String?,
+    var reCommentData: List<ReCommentDataModel>?
 ): Parcelable
 
 @Parcelize

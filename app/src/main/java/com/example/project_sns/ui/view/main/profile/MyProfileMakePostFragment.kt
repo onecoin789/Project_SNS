@@ -40,7 +40,7 @@ class MyProfileMakePostFragment : Fragment() {
     private var lat: String? = null
     private var lng: String? = null
 
-    private val myProfileViewModel: MainSharedViewModel by viewModels()
+    private val mainSharedViewModel: MainSharedViewModel by viewModels()
 
 
     override fun onCreateView(
@@ -149,7 +149,7 @@ class MyProfileMakePostFragment : Fragment() {
     private fun collectFlow() {
 
         viewLifecycleOwner.lifecycleScope.launch {
-            myProfileViewModel.postUpLoadResult.collect {
+            mainSharedViewModel.postUpLoadResult.collect {
                 if (it == true) {
                     Toast.makeText(requireActivity(), "게시물을 생성 완료.", Toast.LENGTH_SHORT).show()
                     findNavController().popBackStack()
@@ -187,7 +187,7 @@ class MyProfileMakePostFragment : Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             if (imageList != null) {
-                myProfileViewModel.uploadPostData(data)
+                mainSharedViewModel.uploadPostData(data)
             } else {
                 Toast.makeText(requireActivity(), "사진 선택 필요", Toast.LENGTH_SHORT).show()
             }

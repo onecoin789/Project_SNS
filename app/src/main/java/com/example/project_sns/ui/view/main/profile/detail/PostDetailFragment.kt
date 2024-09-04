@@ -20,7 +20,7 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class PostDetailFragment : BaseFragment<FragmentPostDetailBinding>() {
 
-    private val myProfileViewModel: MainSharedViewModel by activityViewModels()
+    private val mainSharedViewModel: MainSharedViewModel by activityViewModels()
 
 
 
@@ -41,7 +41,7 @@ class PostDetailFragment : BaseFragment<FragmentPostDetailBinding>() {
         val profile = binding.ivPDUser
 
         viewLifecycleOwner.lifecycleScope.launch {
-            myProfileViewModel.postData.observe(viewLifecycleOwner) { postData ->
+            mainSharedViewModel.postData.observe(viewLifecycleOwner) { postData ->
 
                 if (postData != null) {
                     if (postData.profileImage != null) {

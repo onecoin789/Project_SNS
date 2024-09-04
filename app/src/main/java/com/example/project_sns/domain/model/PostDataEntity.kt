@@ -1,5 +1,7 @@
 package com.example.project_sns.domain.model
 
+import com.example.project_sns.data.response.ReCommentDataResponse
+
 data class PostDataEntity(
     val uid: String,
     val postId: String,
@@ -34,6 +36,7 @@ data class CommentDataEntity(
     val name: String,
     val email: String,
     val profileImage: String?,
+    val reCommentData: List<ReCommentDataEntity>?
 )
 
 data class ReCommentDataEntity(

@@ -27,7 +27,7 @@ class DeleteDialogFragment : DialogFragment() {
     private var mainText: String? = null
     private var subText: String? = null
 
-    private val myProfileViewModel: MainSharedViewModel by activityViewModels()
+    private val mainSharedViewModel: MainSharedViewModel by activityViewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,9 +58,9 @@ class DeleteDialogFragment : DialogFragment() {
 
         binding.btnDlConfirm.setOnClickListener {
             viewLifecycleOwner.lifecycleScope.launch {
-                myProfileViewModel.commentListData.collect { data ->
-                    myProfileViewModel.postData.observe(viewLifecycleOwner) {
-                        myProfileViewModel.deletePost(it, data)
+                mainSharedViewModel.commentListData.collect { data ->
+                    mainSharedViewModel.postData.observe(viewLifecycleOwner) {
+                        mainSharedViewModel.deletePost(it, data)
 
                     }
                 }

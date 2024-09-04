@@ -19,7 +19,7 @@
             android:layout_height="50dp"
             android:scaleType="centerCrop"
             android:background="@drawable/item_profile"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="3dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/tvItemCommentName"
             android:contentDescription="@string/contentDescription"/>
@@ -30,13 +30,12 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
             android:textColor="@color/text"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="10dp"
             android:textSize="18sp"
+            android:text="@string/contentDescription"
             android:textStyle="bold"
-            app:layout_constraintBottom_toTopOf="@+id/tvItemComment"
             app:layout_constraintStart_toEndOf="@id/ivComment"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_chainStyle="packed" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/tvItemCommentEmail"
@@ -44,6 +43,7 @@
             android:layout_height="wrap_content"
             android:textColor="@color/hint"
             android:textSize="16sp"
+            android:text="@string/contentDescription"
             android:layout_marginStart="10dp"
             app:layout_constraintStart_toEndOf="@id/tvItemCommentName"
             app:layout_constraintTop_toTopOf="@+id/tvItemCommentName"
@@ -55,7 +55,8 @@
             android:layout_height="wrap_content"
             android:textColor="@color/text"
             android:textSize="18sp"
-            app:layout_constraintBottom_toTopOf="@+id/tvItemCommentRe"
+            android:layout_marginTop="2dp"
+            android:text="@string/contentDescription"
             app:layout_constraintStart_toStartOf="@+id/tvItemCommentName"
             app:layout_constraintTop_toBottomOf="@+id/tvItemCommentName" />
 
@@ -66,23 +67,60 @@
             android:text="@string/item_comment"
             android:textColor="@color/hint"
             android:textSize="14sp"
-            android:layout_marginTop="8dp"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginTop="7dp"
+            android:layout_marginStart="1dp"
             app:layout_constraintStart_toStartOf="@id/tvItemComment"
             app:layout_constraintTop_toBottomOf="@+id/tvItemComment" />
 
         <TextView
-            android:id="@+id/tvItemCommentDelete"
+            android:id="@+id/tvItemCommentEdit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/item_delete"
+            android:text="@string/item_comment_edit"
             android:textColor="@color/hint"
             android:textSize="14sp"
             android:layout_marginStart="15dp"
             app:layout_constraintStart_toEndOf="@id/tvItemCommentRe"
             app:layout_constraintTop_toTopOf="@id/tvItemCommentRe"
+            app:layout_constraintBottom_toBottomOf="@id/tvItemCommentRe" />
+
+        <TextView
+            android:id="@+id/tvItemCommentDelete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/item_comment_delete"
+            android:textColor="@color/hint"
+            android:textSize="14sp"
+            android:layout_marginStart="15dp"
+            app:layout_constraintStart_toEndOf="@id/tvItemCommentEdit"
+            app:layout_constraintTop_toTopOf="@id/tvItemCommentRe"
             app:layout_constraintBottom_toBottomOf="@id/tvItemCommentRe"/>
 
+        <TextView
+            android:id="@+id/tvItemCommentReComment"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/item_comment_more"
+            android:textColor="@color/hint"
+            android:textSize="14sp"
+            android:layout_marginTop="15dp"
+            android:layout_marginStart="3dp"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="@+id/tvItemCommentRe"
+            app:layout_constraintTop_toBottomOf="@+id/tvItemCommentRe"/>
+
+        <TextView
+            android:id="@+id/tvItemCommentReClose"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/item_comment_close"
+            android:textColor="@color/hint"
+            android:textSize="14sp"
+            android:layout_marginTop="15dp"
+            android:layout_marginStart="3dp"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="@+id/tvItemCommentRe"
+            app:layout_constraintTop_toBottomOf="@+id/tvItemCommentRe"/>
 
         <ImageView
             android:id="@+id/ivItemCommentHeart"
@@ -104,6 +142,7 @@
         app:layout_constraintTop_toBottomOf="@id/clItemComment"
         android:layout_marginStart="20dp"
         android:visibility="gone"
+        tools:listitem="@layout/rv_item_re_comment"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
 
     <ImageView

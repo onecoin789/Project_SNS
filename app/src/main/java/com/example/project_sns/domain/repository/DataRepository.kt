@@ -29,4 +29,6 @@ interface DataRepository {
 
     suspend fun getReComment(postId: String, commentId: String): Flow<List<ReCommentDataEntity>>
 
+    suspend fun deleteReComment(postId: String, commentId: String, reCommentId: String): Result<String>
+
 }

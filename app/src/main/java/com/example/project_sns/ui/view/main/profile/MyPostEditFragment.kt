@@ -37,7 +37,7 @@ class MyPostEditFragment : BaseFragment<FragmentMyProfileMakePostBinding>() {
 
     private var getMapData: MapDataModel? = null
 
-    private val myProfileViewModel: MainSharedViewModel by activityViewModels()
+    private val mainSharedViewModel: MainSharedViewModel by activityViewModels()
 
 
 
@@ -61,7 +61,7 @@ class MyPostEditFragment : BaseFragment<FragmentMyProfileMakePostBinding>() {
         binding.tvMakeTitle.setText(R.string.post_edit)
 
 
-        myProfileViewModel.postData.observe(viewLifecycleOwner) { data ->
+        mainSharedViewModel.postData.observe(viewLifecycleOwner) { data ->
             if (data != null) {
                 if (data.postText != null) {
                     binding.etMakeText.setText(data.postText)
@@ -111,7 +111,7 @@ class MyPostEditFragment : BaseFragment<FragmentMyProfileMakePostBinding>() {
 
     private fun collectFlow() {
         viewLifecycleOwner.lifecycleScope.launch {
-            myProfileViewModel.postEditResult.collect {
+            mainSharedViewModel.postEditResult.collect {
                 if (it == true) {
                     Toast.makeText(requireContext(), "게시물 수정 성공", Toast.LENGTH_SHORT).show()
                     backToMain()
@@ -213,7 +213,7 @@ class MyPostEditFragment : BaseFragment<FragmentMyProfileMakePostBinding>() {
             )
 
             viewLifecycleOwner.lifecycleScope.launch {
-                myProfileViewModel.editPost(data)
+                mainSharedViewModel.editPost(data)
             }
         }
     }

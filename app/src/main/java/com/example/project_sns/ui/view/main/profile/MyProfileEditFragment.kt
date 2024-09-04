@@ -26,7 +26,7 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class MyProfileEditFragment : BaseFragment<FragmentMyProfileEditBinding>() {
 
-    private val myProfileViewModel: MainSharedViewModel by viewModels()
+    private val mainSharedViewModel: MainSharedViewModel by viewModels()
 
     private var uri: Uri? = null
 
@@ -82,7 +82,7 @@ class MyProfileEditFragment : BaseFragment<FragmentMyProfileEditBinding>() {
     private fun collectFlow() {
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(state = Lifecycle.State.STARTED) {
-                myProfileViewModel.editEvent.collect { checkEdit ->
+                mainSharedViewModel.editEvent.collect { checkEdit ->
                     when (checkEdit) {
                         is CheckEditProfile.EditSuccess -> {
                             Toast.makeText(requireContext(), "프로필 수정이 완료되었습니다", Toast.LENGTH_SHORT)
@@ -120,7 +120,7 @@ class MyProfileEditFragment : BaseFragment<FragmentMyProfileEditBinding>() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             if (uri != null) {
-                myProfileViewModel.checkEdit(
+                mainSharedViewModel.checkEdit(
                     uid = uid,
                     name = name,
                     email = email,
@@ -131,7 +131,7 @@ class MyProfileEditFragment : BaseFragment<FragmentMyProfileEditBinding>() {
                     nameCheck = nameCheck
                 )
             } else {
-                myProfileViewModel.checkEdit(
+                mainSharedViewModel.checkEdit(
                     uid = uid,
                     name = name,
                     email = email,
@@ -148,7 +148,7 @@ class MyProfileEditFragment : BaseFragment<FragmentMyProfileEditBinding>() {
 
     private fun editTextCheck() {
         binding.etEditName.doAfterTextChanged {
-            myProfileViewModel.checkName(binding.etEditName.text.toString(), binding.tvEditNameCheck)
+            mainSharedViewModel.checkName(binding.etEditName.text.toString(), binding.tvEditNameCheck)
         }
     }
 }

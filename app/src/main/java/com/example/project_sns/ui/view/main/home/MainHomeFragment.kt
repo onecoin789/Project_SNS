@@ -25,7 +25,7 @@ class MainHomeFragment : BaseFragment<FragmentMainHomeBinding>() {
 
     private val mainViewModel: MainViewModel by viewModels()
 
-    private val myProfileViewModel: MainSharedViewModel by activityViewModels()
+    private val mainSharedViewModel: MainSharedViewModel by activityViewModels()
 
 
     override fun getFragmentBinding(
@@ -50,10 +50,10 @@ class MainHomeFragment : BaseFragment<FragmentMainHomeBinding>() {
     private fun initRv() {
         val postAdapter = HomePostAdapter { data ->
             viewLifecycleOwner.lifecycleScope.launch {
-                myProfileViewModel.getPostData(data)
-                myProfileViewModel.postData.observe(viewLifecycleOwner) { postData ->
+                mainSharedViewModel.getPostData(data)
+                mainSharedViewModel.postData.observe(viewLifecycleOwner) { postData ->
                     if (postData != null) {
-                        myProfileViewModel.getComment(postData.postId)
+                        mainSharedViewModel.getComment(postData.postId)
                     }
                 }
             }

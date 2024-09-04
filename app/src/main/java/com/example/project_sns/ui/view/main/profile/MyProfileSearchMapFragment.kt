@@ -25,7 +25,7 @@ class MyProfileSearchMapFragment : BottomSheetDialogFragment() {
     private var _binding: FragmentMyProfileSearchMapBinding? = null
     private val binding get() = _binding!!
 
-    private val myProfileViewModel: MainSharedViewModel by viewModels()
+    private val mainSharedViewModel: MainSharedViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,8 +67,8 @@ class MyProfileSearchMapFragment : BottomSheetDialogFragment() {
             Toast.makeText(requireContext(), "검색어를 입력해주세요!", Toast.LENGTH_SHORT).show()
         } else {
             viewLifecycleOwner.lifecycleScope.launch {
-                myProfileViewModel.searchMapList(query = query, size = 10, page = 10)
-                myProfileViewModel.mapList.collect { list ->
+                mainSharedViewModel.searchMapList(query = query, size = 10, page = 10)
+                mainSharedViewModel.mapList.collect { list ->
                     mapAdapter.submitList(list)
                 }
             }

@@ -14,6 +14,7 @@ import com.example.project_sns.domain.model.PostDataEntity
 import com.example.project_sns.domain.model.ReCommentDataEntity
 import com.example.project_sns.domain.repository.DataRepository
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.AggregateSource
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.channels.awaitClose
@@ -306,9 +307,25 @@ class DataRepositoryImpl @Inject constructor(
         return flow {
             try {
                 if (reCommentData != null) {
-                    db.collection("post").document(postId).collection("comment").document(commentId)
-                        .collection("reComment").document(reCommentData.commentId)
-                        .set(reCommentData)
+                    val reCommentDB = db.collection("post").document(postId).collection("comment")
+                        .document(commentId)
+                        .collection("reComment")
+                    reCommentDB.document(reCommentData.commentId).set(reCommentData).await()
+                    reCommentDB.get().addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            Log.d(
+                                "test_impl",
+                                "${task.result.toObjects(ReCommentDataResponse::class.java)}"
+                            )
+                            val data = mapOf(
+                                "reCommentData" to task.result.toObjects(ReCommentDataResponse::class.java)
+                                    .sortByDescending { it.commentAt })
+                            db.collection("post").document(postId).collection("comment")
+                                .document(commentId).update(data)
+                        } else {
+                            Log.d("test_impl", "${task.exception}")
+                        }
+                    }
                 }
                 emit(true)
             } catch (e: Exception) {
@@ -342,6 +359,31 @@ class DataRepositoryImpl @Inject constructor(
                 snapShotListener.remove()
             }
 
+        }
+    }
+
+    override suspend fun deleteReComment(
+        postId: String,
+        commentId: String,
+        reCommentId: String
+    ): Result<String> {
+        return try {
+            val reCommentDB =
+                db.collection("post").document(postId).collection("comment").document(commentId)
+                    .collection("reComment")
+            reCommentDB.document(reCommentId).delete().await()
+            reCommentDB.get().addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    val data = mapOf("reCommentData" to task.result.toObjects(ReCommentDataResponse::class.java).sortByDescending { it.commentAt })
+                    db.collection("post").document(postId).collection("comment").document(commentId).update(data)
+                } else {
+                    Log.d("test_impl", "${task.exception}")
+                }
+            }
+
+            Result.success("success")
+        } catch (e: Exception) {
+            Result.failure(Exception("failure: ${e.message}"))
         }
     }
 }

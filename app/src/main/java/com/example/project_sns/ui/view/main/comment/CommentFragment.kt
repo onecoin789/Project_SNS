@@ -23,13 +23,14 @@ import com.example.project_sns.ui.view.model.CommentDataModel
 import com.example.project_sns.ui.view.model.ReCommentDataModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import org.w3c.dom.Comment
 import java.time.LocalDateTime
 import java.util.UUID
 
 @AndroidEntryPoint
 class CommentFragment : BaseBottomSheet<FragmentCommentBinding>() {
 
-    private val myProfileViewModel: MainSharedViewModel by activityViewModels()
+    private val mainSharedViewModel: MainSharedViewModel by activityViewModels()
 
     private var tag: Boolean? = null
 
@@ -61,13 +62,14 @@ class CommentFragment : BaseBottomSheet<FragmentCommentBinding>() {
 
     private fun getCommentData() {
         viewLifecycleOwner.lifecycleScope.launch {
-            myProfileViewModel.postData.observe(viewLifecycleOwner) { postData ->
+            mainSharedViewModel.postData.observe(viewLifecycleOwner) { postData ->
                 if (postData != null) {
-                    myProfileViewModel.getComment(postData.postId)
+                    mainSharedViewModel.getComment(postData.postId)
                 }
             }
         }
     }
+
 
     private fun initReComment() {
         tag = binding.clCommentTag.isVisible
@@ -102,10 +104,10 @@ class CommentFragment : BaseBottomSheet<FragmentCommentBinding>() {
 
     private fun initRv() {
 
-        val listAdapter = CommentAdapter(object : CommentAdapter.ItemClick {
+        val listAdapter = CommentAdapter(object : CommentAdapter.CommentItemClick {
             override fun onClick(item: CommentDataModel) {
                 viewLifecycleOwner.lifecycleScope.launch {
-                    myProfileViewModel.getCommentData(item)
+                    mainSharedViewModel.getCommentData(item)
                 }
                 binding.tvCommentTag.text = item.name
                 binding.clCommentTag.visibility = View.VISIBLE
@@ -113,14 +115,37 @@ class CommentFragment : BaseBottomSheet<FragmentCommentBinding>() {
             }
 
             override fun onClickDelete(item: CommentDataModel) {
-                val currentPostData = CurrentPost.postData
-                if (currentPostData != null) {
-                    viewLifecycleOwner.lifecycleScope.launch {
-                        myProfileViewModel.getCommentData(item)
-                        myProfileViewModel.getReComment(currentPostData.postId, item.commentId)
-                        inflateCommentDialog("댓글 삭제", "댓글을 삭제할까요?")
+                viewLifecycleOwner.lifecycleScope.launch {
+                    mainSharedViewModel.postData.observe(viewLifecycleOwner) { currentPostData ->
+                        if (currentPostData != null) {
+                            mainSharedViewModel.getCommentData(item)
+                            mainSharedViewModel.getReComment(currentPostData.postId, item.commentId)
+                            inflateCommentDialog("댓글 삭제", "댓글을 삭제할까요?")
+                        }
                     }
                 }
+            }
+
+            override fun onClickList(item: CommentDataModel) {
+                viewLifecycleOwner.lifecycleScope.launch {
+                    mainSharedViewModel.postData.observe(viewLifecycleOwner) { currentPostData ->
+                        if (currentPostData != null) {
+                            mainSharedViewModel.getCommentData(item)
+                            mainSharedViewModel.getReComment(
+                                currentPostData.postId,
+                                item.commentId
+                            )
+                        }
+                    }
+                }
+            }
+
+            override fun onClickReCommentDelete(item: ReCommentDataModel) {
+                viewLifecycleOwner.lifecycleScope.launch {
+                    mainSharedViewModel.getReCommentData(item)
+                    inflateReCommentDialog("댓글 삭제", "댓글을 삭제할까요?")
+                }
+
             }
 
         })
@@ -130,8 +155,7 @@ class CommentFragment : BaseBottomSheet<FragmentCommentBinding>() {
             adapter = listAdapter
         }
         viewLifecycleOwner.lifecycleScope.launch {
-            myProfileViewModel.commentListData.collect { data ->
-                CurrentPost.commentData = data
+            mainSharedViewModel.commentListData.collect { data ->
                 val dataSet = data.sortedByDescending { it.commentAt }
                 listAdapter.submitList(dataSet)
                 if (data.isEmpty()) {
@@ -150,7 +174,7 @@ class CommentFragment : BaseBottomSheet<FragmentCommentBinding>() {
     private fun collectReCommentFlow() {
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(state = Lifecycle.State.STARTED) {
-                myProfileViewModel.reCommentData.collect {
+                mainSharedViewModel.reCommentData.collect {
                     if (it == true) {
                         binding.etComment.text.clear()
                     } else if (it == false) {
@@ -169,7 +193,7 @@ class CommentFragment : BaseBottomSheet<FragmentCommentBinding>() {
     private fun collectCommentFlow() {
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(state = Lifecycle.State.STARTED) {
-                myProfileViewModel.commentData.collect {
+                mainSharedViewModel.commentData.collect {
                     if (it == true) {
                         binding.etComment.text.clear()
                     } else if (it == false) {
@@ -200,12 +224,13 @@ class CommentFragment : BaseBottomSheet<FragmentCommentBinding>() {
                 uid = uid,
                 name = name,
                 email = email,
-                profileImage = profileImage
+                profileImage = profileImage,
+                reCommentData = null
             )
             viewLifecycleOwner.lifecycleScope.launch {
-                myProfileViewModel.postData.observe(viewLifecycleOwner) { postData ->
+                mainSharedViewModel.postData.observe(viewLifecycleOwner) { postData ->
                     if (postData != null) {
-                        myProfileViewModel.uploadComment(postData.postId, data)
+                        mainSharedViewModel.uploadComment(postData.postId, data)
                     }
                 }
             }
@@ -236,11 +261,11 @@ class CommentFragment : BaseBottomSheet<FragmentCommentBinding>() {
             )
 
             viewLifecycleOwner.lifecycleScope.launch {
-                myProfileViewModel.selectedCommentData.observe(viewLifecycleOwner) { commentData ->
+                mainSharedViewModel.selectedCommentData.observe(viewLifecycleOwner) { commentData ->
                     Log.d("test_viewModel", "${commentData?.commentId}")
                     if (commentData != null) {
                         CurrentPost.postData?.let {
-                            myProfileViewModel.uploadReComment(
+                            mainSharedViewModel.uploadReComment(
                                 it.postId,
                                 commentData.commentId,
                                 reCommentData

@@ -3,7 +3,6 @@ package com.example.project_sns.ui.view.main.profile.dialog
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,17 +10,14 @@ import android.view.Window
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
-import com.example.project_sns.R
 import com.example.project_sns.databinding.FragmentDialogBinding
 import com.example.project_sns.ui.CurrentPost
 import com.example.project_sns.ui.view.main.MainSharedViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
-
 @AndroidEntryPoint
-class DeleteCommentDialogFragment : DialogFragment() {
+class DeleteReCommentDialogFragment : DialogFragment() {
 
     private var _binding: FragmentDialogBinding? = null
     private val binding get() = _binding!!
@@ -59,16 +55,15 @@ class DeleteCommentDialogFragment : DialogFragment() {
         binding.tvDlSub.text = subText
 
         binding.btnDlConfirm.setOnClickListener {
-            val currentPostData = CurrentPost.postData
-            if (currentPostData != null) {
-                viewLifecycleOwner.lifecycleScope.launch {
-                    mainSharedViewModel.reCommentListData.collect { reComment ->
-                        mainSharedViewModel.selectedCommentData.observe(viewLifecycleOwner) { item ->
-                            if (item != null) {
-                                mainSharedViewModel.deleteComment(
+            viewLifecycleOwner.lifecycleScope.launch {
+                mainSharedViewModel.postData.observe(viewLifecycleOwner) { currentPostData ->
+                    mainSharedViewModel.selectedCommentData.observe(viewLifecycleOwner) { currentCommentData ->
+                        mainSharedViewModel.selectedReCommentData.observe(viewLifecycleOwner) { item ->
+                            if (currentPostData != null && currentCommentData != null && item != null) {
+                                mainSharedViewModel.deleteReComment(
                                     currentPostData.postId,
-                                    item.commentId,
-                                    reComment
+                                    currentCommentData.commentId,
+                                    item.commentId
                                 )
                             }
                         }
