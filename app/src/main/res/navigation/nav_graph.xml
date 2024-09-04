@@ -209,6 +209,10 @@
         android:id="@+id/deleteCommentDialogFragment"
         android:name="com.example.project_sns.ui.view.main.profile.dialog.DeleteCommentDialogFragment"
         android:label="DeleteCommentDialogFragment" />
+    <dialog
+        android:id="@+id/deleteReCommentDialogFragment"
+        android:name="com.example.project_sns.ui.view.main.profile.dialog.DeleteReCommentDialogFragment"
+        android:label="DeleteReCommentDialogFragment" />
 
 
 </navigation>

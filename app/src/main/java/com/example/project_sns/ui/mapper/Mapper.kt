@@ -70,7 +70,8 @@ fun CommentDataEntity.toModel() = CommentDataModel(
     uid = uid,
     name = name,
     email = email,
-    profileImage = profileImage
+    profileImage = profileImage,
+    reCommentData = reCommentData?.toReCommentListModel()
 )
 
 fun ReCommentDataEntity.toModel() = ReCommentDataModel(
@@ -111,7 +112,8 @@ fun CommentDataModel.toEntity() = CommentDataEntity(
     uid = uid,
     name = name,
     email = email,
-    profileImage = profileImage
+    profileImage = profileImage,
+    reCommentData = reCommentData?.toReCommentListEntity()
 )
 
 fun ReCommentDataModel.toEntity() = ReCommentDataEntity(

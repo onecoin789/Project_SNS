@@ -98,8 +98,11 @@
     <!-- Item -->
     <string name="item_comment">댓글 남기기</string>
     <string name="item_comment_check">댓글 보기</string>
-    <string name="item_delete">삭제하기</string>
+    <string name="item_comment_delete">삭제</string>
     <string name="item_time">마지막으로 전송한 시각</string>
+    <string name="item_comment_edit">수정</string>
+    <string name="item_comment_more">댓글 더 보기</string>
+    <string name="item_comment_close">댓글 닫기</string>
 
     <!-- BottomSheet -->
     <string name="bottom_edit">게시물 수정하기</string>

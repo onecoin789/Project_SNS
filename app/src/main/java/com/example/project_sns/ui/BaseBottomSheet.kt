@@ -46,6 +46,13 @@ abstract class BaseBottomSheet<T : ViewBinding>:BottomSheetDialogFragment() {
         findNavController().navigate(R.id.deleteCommentDialogFragment, bundle)
     }
 
+    fun inflateReCommentDialog(mainText: String, subText: String) {
+        val bundle = Bundle()
+        bundle.putString("mainText", mainText)
+        bundle.putString("subText", subText)
+        findNavController().navigate(R.id.deleteReCommentDialogFragment, bundle)
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null

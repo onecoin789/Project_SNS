@@ -60,7 +60,8 @@ fun CommentDataResponse.toEntity() = CommentDataEntity(
     uid = uid,
     name = name,
     email = email,
-    profileImage = profileImage
+    profileImage = profileImage,
+    reCommentData = reCommentData?.toReCommentListEntity()
 )
 
 fun ReCommentDataResponse.toEntity() = ReCommentDataEntity(

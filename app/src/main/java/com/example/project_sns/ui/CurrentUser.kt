@@ -2,6 +2,7 @@ package com.example.project_sns.ui
 
 import com.example.project_sns.ui.view.model.CommentDataModel
 import com.example.project_sns.ui.view.model.PostDataModel
+import com.example.project_sns.ui.view.model.ReCommentDataModel
 
 object CurrentUser {
     var userData: CurrentUserModel? = null
@@ -14,5 +15,4 @@ object CurrentUser {
 object CurrentPost {
     var postData: PostDataModel? = null
 
-    var commentData: List<CommentDataModel>? = null
 }

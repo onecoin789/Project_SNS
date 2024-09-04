@@ -152,16 +152,47 @@ class AuthRepositoryImpl @Inject constructor(
                             .addOnSuccessListener { post ->
                                 post.documents.forEach { document ->
                                     db.runTransaction { trans ->
-                                        trans.update(document.reference, "profileImage", downloadUri)
+                                        trans.update(
+                                            document.reference,
+                                            "profileImage",
+                                            downloadUri
+                                        )
                                         trans.update(document.reference, "name", name)
                                     }
-                                    document.reference.collection("comment").whereEqualTo("uid", uid).get()
+                                    document.reference.collection("comment")
+                                        .whereEqualTo("uid", uid).get()
                                         .addOnSuccessListener { comment ->
                                             comment.documents.forEach { commentDocument ->
                                                 db.runTransaction { commentTrans ->
-                                                    commentTrans.update(commentDocument.reference, "profileImage", downloadUri)
-                                                    commentTrans.update(commentDocument.reference, "name", name)
+                                                    commentTrans.update(
+                                                        commentDocument.reference,
+                                                        "profileImage",
+                                                        downloadUri
+                                                    )
+                                                    commentTrans.update(
+                                                        commentDocument.reference,
+                                                        "name",
+                                                        name
+                                                    )
                                                 }
+                                                commentDocument.reference.collection("reComment")
+                                                    .whereEqualTo("uid", uid).get()
+                                                    .addOnSuccessListener { reComment ->
+                                                        reComment.documents.forEach { reCommentDocument ->
+                                                            db.runTransaction { reCommentTrans ->
+                                                                reCommentTrans.update(
+                                                                    reCommentDocument.reference,
+                                                                    "profileImage",
+                                                                    downloadUri
+                                                                )
+                                                                reCommentTrans.update(
+                                                                    reCommentDocument.reference,
+                                                                    "name",
+                                                                    name
+                                                                )
+                                                            }
+                                                        }
+                                                    }
                                             }
                                         }
                                 }
@@ -188,8 +219,25 @@ class AuthRepositoryImpl @Inject constructor(
                                 .addOnSuccessListener { comment ->
                                     comment.documents.forEach { commentDocument ->
                                         db.runTransaction { commentTrans ->
-                                            commentTrans.update(commentDocument.reference, "name", name)
+                                            commentTrans.update(
+                                                commentDocument.reference,
+                                                "name",
+                                                name
+                                            )
                                         }
+                                        commentDocument.reference.collection("reComment")
+                                            .whereEqualTo("uid", uid).get()
+                                            .addOnSuccessListener { reComment ->
+                                                reComment.documents.forEach { reCommentDocument ->
+                                                    db.runTransaction { reCommentTrans ->
+                                                        reCommentTrans.update(
+                                                            reCommentDocument.reference,
+                                                            "name",
+                                                            name
+                                                        )
+                                                    }
+                                                }
+                                            }
                                     }
                                 }
                         }
@@ -230,19 +278,21 @@ class AuthRepositoryImpl @Inject constructor(
                                     val name = user.kakaoAccount?.profile?.nickname
                                     val email = "kakao${user.id}"
                                     if (uid != null) {
-                                        db.collection("user").document(uid).get().addOnSuccessListener { dataCheck ->
-                                            if (!dataCheck.exists()) {
-                                                val kakaoData = hashMapOf(
-                                                    "uid" to uid,
-                                                    "name" to name,
-                                                    "email" to email,
-                                                    "profileImage" to null,
-                                                    "intro" to "",
-                                                    "createdAt" to createdAt
-                                                )
-                                                db.collection("user").document(uid).set(kakaoData)
+                                        db.collection("user").document(uid).get()
+                                            .addOnSuccessListener { dataCheck ->
+                                                if (!dataCheck.exists()) {
+                                                    val kakaoData = hashMapOf(
+                                                        "uid" to uid,
+                                                        "name" to name,
+                                                        "email" to email,
+                                                        "profileImage" to null,
+                                                        "intro" to "",
+                                                        "createdAt" to createdAt
+                                                    )
+                                                    db.collection("user").document(uid)
+                                                        .set(kakaoData)
+                                                }
                                             }
-                                        }
                                     }
                                 }
                             }
