@@ -83,13 +83,28 @@
 
             <TextView
                 android:id="@+id/tvCommentTag"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
                 android:textColor="@color/text"
                 android:textSize="18sp"
-                android:textStyle="bold"
-                app:layout_constraintTop_toTopOf="parent" />
+                android:text="@string/contentDescription"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"/>
+
+            <TextView
+                android:id="@+id/tvCommentFor"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:textColor="@color/hint"
+                android:textSize="16sp"
+                android:text="@string/home_comment_for"
+                app:layout_constraintStart_toEndOf="@id/tvCommentTag"
+                app:layout_constraintTop_toTopOf="@+id/tvCommentTag"
+                app:layout_constraintBottom_toBottomOf="@+id/tvCommentTag"/>
+
 
             <ImageView
                 android:id="@+id/ivCommentInvisible"

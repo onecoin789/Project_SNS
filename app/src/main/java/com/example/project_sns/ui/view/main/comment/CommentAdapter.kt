@@ -20,10 +20,12 @@ class CommentAdapter(private val onClick: CommentItemClick) :
     ListAdapter<CommentDataModel, CommentAdapter.CommentViewHolder>(diffUtil) {
 
     interface CommentItemClick {
-        fun onClick(item: CommentDataModel)
-        fun onClickDelete(item: CommentDataModel)
-        fun onClickList(item: CommentDataModel)
+        fun onClickComment(item: CommentDataModel)
+        fun onClickCommentEdit(item: CommentDataModel)
+        fun onClickCommentDelete(item: CommentDataModel)
+        fun onClickCommentList(item: CommentDataModel)
         fun onClickReCommentDelete(item: ReCommentDataModel)
+        fun onClickReCommentEdit(item: ReCommentDataModel)
 
     }
 
@@ -46,13 +48,18 @@ class CommentAdapter(private val onClick: CommentItemClick) :
             binding.tvItemCommentEmail.text = item.email
             binding.tvItemComment.text = item.comment
 
-            binding.tvItemCommentDelete.setOnClickListener {
-                onClick.onClickDelete(item)
+            binding.tvItemCommentRe.setOnClickListener {
+                onClick.onClickComment(item)
             }
 
-            binding.tvItemCommentRe.setOnClickListener {
-                onClick.onClick(item)
+            binding.tvItemCommentEdit.setOnClickListener {
+                onClick.onClickCommentEdit(item)
             }
+
+            binding.tvItemCommentDelete.setOnClickListener {
+                onClick.onClickCommentDelete(item)
+            }
+
 
 
             if (item.uid == CurrentUser.userData?.uid) {
@@ -61,7 +68,7 @@ class CommentAdapter(private val onClick: CommentItemClick) :
                 binding.tvItemCommentDelete.visibility = View.INVISIBLE
             }
 
-            if (item.reCommentData?.size == 0) {
+            if (item.reCommentData?.size == 0 || item.reCommentData == null) {
                 binding.tvItemCommentReComment.visibility = View.GONE
                 binding.rvReComment.visibility = View.GONE
             } else {
@@ -71,10 +78,9 @@ class CommentAdapter(private val onClick: CommentItemClick) :
                 binding.tvItemCommentReClose.visibility = View.GONE
             }
 
-            initRv(item.reCommentData)
-
             binding.tvItemCommentReComment.setOnClickListener {
-                onClick.onClickList(item)
+                onClick.onClickCommentList(item)
+                initRv()
                 binding.rvReComment.visibility = View.VISIBLE
                 binding.tvItemCommentReComment.visibility = View.GONE
                 binding.tvItemCommentReClose.visibility = View.VISIBLE
@@ -86,25 +92,26 @@ class CommentAdapter(private val onClick: CommentItemClick) :
                 binding.rvReComment.visibility = View.GONE
             }
         }
-
-        private fun initRv(reCommentList: List<ReCommentDataModel>?) {
+        fun initRv() {
             val reCommentAdapter = ReCommentAdapter(object : ReCommentAdapter.ReCommentItemClick {
                 override fun onClickEdit(item: ReCommentDataModel) {
-
+                    onClick.onClickReCommentEdit(item)
                 }
 
                 override fun onClickDelete(item: ReCommentDataModel) {
                     onClick.onClickReCommentDelete(item)
-                    initRv(reCommentList)
+                    initRv()
                 }
 
             })
             with(binding.rvReComment) {
                 adapter = reCommentAdapter
             }
-            reCommentAdapter.submitList(reCommentList)
+            reCommentAdapter.submitList(CurrentPost.reCommentList)
         }
     }
+
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CommentViewHolder {
         val binding =

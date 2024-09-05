@@ -14,6 +14,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.project_sns.databinding.FragmentCommentBinding
+import com.example.project_sns.domain.model.CommentDataEntity
 import com.example.project_sns.ui.BaseBottomSheet
 import com.example.project_sns.ui.CurrentPost
 import com.example.project_sns.ui.CurrentUser
@@ -33,6 +34,8 @@ class CommentFragment : BaseBottomSheet<FragmentCommentBinding>() {
     private val mainSharedViewModel: MainSharedViewModel by activityViewModels()
 
     private var tag: Boolean? = null
+
+    private var commentData: CommentDataModel? = null
 
     private var reCommentData: ReCommentDataModel? = null
 
@@ -102,10 +105,41 @@ class CommentFragment : BaseBottomSheet<FragmentCommentBinding>() {
         }
     }
 
+    private fun editComment(item: CommentDataModel) {
+        tag = binding.clCommentTag.isInvisible
+        if (tag == false) {
+            binding.btnCommentUp.setOnClickListener {
+                if (binding.etComment.text.isEmpty()) {
+                    Toast.makeText(requireContext(), "댓글을 입력해주세요!", Toast.LENGTH_SHORT).show()
+                } else {
+                    initEditCommentData(item)
+                    collectEditCommentFlow()
+                }
+            }
+        }
+    }
+
+    private fun editReComment(item: ReCommentDataModel) {
+        tag = binding.clCommentTag.isVisible
+        if (tag == true) {
+            binding.btnCommentUp.setOnClickListener {
+                if (binding.etComment.text.isEmpty()) {
+                    Toast.makeText(requireContext(), "댓글을 입력해주세요!", Toast.LENGTH_SHORT).show()
+                } else {
+                    initEditReCommentData(item)
+                    collectEditReCommentFlow()
+                    binding.clCommentTag.visibility = View.GONE
+                    initComment()
+                    reCommentData = null
+                }
+            }
+        }
+    }
+
     private fun initRv() {
 
         val listAdapter = CommentAdapter(object : CommentAdapter.CommentItemClick {
-            override fun onClick(item: CommentDataModel) {
+            override fun onClickComment(item: CommentDataModel) {
                 viewLifecycleOwner.lifecycleScope.launch {
                     mainSharedViewModel.getCommentData(item)
                 }
@@ -114,7 +148,13 @@ class CommentFragment : BaseBottomSheet<FragmentCommentBinding>() {
                 initReComment()
             }
 
-            override fun onClickDelete(item: CommentDataModel) {
+            override fun onClickCommentEdit(item: CommentDataModel) {
+                val editComment = binding.etComment
+                editComment.setText(item.comment)
+                editComment(item)
+            }
+
+            override fun onClickCommentDelete(item: CommentDataModel) {
                 viewLifecycleOwner.lifecycleScope.launch {
                     mainSharedViewModel.postData.observe(viewLifecycleOwner) { currentPostData ->
                         if (currentPostData != null) {
@@ -126,11 +166,12 @@ class CommentFragment : BaseBottomSheet<FragmentCommentBinding>() {
                 }
             }
 
-            override fun onClickList(item: CommentDataModel) {
+            override fun onClickCommentList(item: CommentDataModel) {
                 viewLifecycleOwner.lifecycleScope.launch {
                     mainSharedViewModel.postData.observe(viewLifecycleOwner) { currentPostData ->
                         if (currentPostData != null) {
                             mainSharedViewModel.getCommentData(item)
+                            mainSharedViewModel.getReComment(currentPostData.postId, item.commentId)
                             mainSharedViewModel.getReComment(
                                 currentPostData.postId,
                                 item.commentId
@@ -146,6 +187,19 @@ class CommentFragment : BaseBottomSheet<FragmentCommentBinding>() {
                     inflateReCommentDialog("댓글 삭제", "댓글을 삭제할까요?")
                 }
 
+            }
+
+            override fun onClickReCommentEdit(item: ReCommentDataModel) {
+               viewLifecycleOwner.lifecycleScope.launch {
+                   mainSharedViewModel.selectedCommentData.observe(viewLifecycleOwner) { data ->
+                       binding.tvCommentTag.text = item.name
+                   }
+               }
+                binding.clCommentTag.visibility = View.VISIBLE
+                initReComment()
+                val editComment = binding.etComment
+                editComment.setText(item.comment)
+                editReComment(item)
             }
 
         })
@@ -205,6 +259,45 @@ class CommentFragment : BaseBottomSheet<FragmentCommentBinding>() {
         }
     }
 
+    private fun collectEditCommentFlow() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(state = Lifecycle.State.STARTED) {
+                mainSharedViewModel.commentData.collect {
+                    if (it == true) {
+                        binding.etComment.text.clear()
+                        Toast.makeText(requireContext(), "댓글이 수정되었습니다.", Toast.LENGTH_SHORT)
+                            .show()
+                    } else if (it == false) {
+                        Toast.makeText(requireContext(), "잠시 후 다시 시도해주세요", Toast.LENGTH_SHORT)
+                            .show()
+                    }
+                }
+            }
+        }
+    }
+
+    private fun collectEditReCommentFlow() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(state = Lifecycle.State.STARTED) {
+                mainSharedViewModel.reCommentData.collect {
+                    if (it == true) {
+                        binding.etComment.text.clear()
+                        Toast.makeText(requireContext(), "댓글이 수정되었습니다.", Toast.LENGTH_SHORT)
+                            .show()
+                    } else if (it == false) {
+                        Toast.makeText(
+                            requireContext(),
+                            "잠시 후 다시 시도해주세요",
+                            Toast.LENGTH_SHORT
+                        )
+                            .show()
+                    }
+                }
+            }
+        }
+    }
+
+
     private fun initData() {
         val currentUser = CurrentUser.userData
         if (currentUser != null) {
@@ -217,7 +310,7 @@ class CommentFragment : BaseBottomSheet<FragmentCommentBinding>() {
             val time = LocalDateTime.now()
             val commentAt = dateFormat(time)
 
-            val data = CommentDataModel(
+            commentData = CommentDataModel(
                 commentId = commentId,
                 comment = comment,
                 commentAt = commentAt,
@@ -230,7 +323,7 @@ class CommentFragment : BaseBottomSheet<FragmentCommentBinding>() {
             viewLifecycleOwner.lifecycleScope.launch {
                 mainSharedViewModel.postData.observe(viewLifecycleOwner) { postData ->
                     if (postData != null) {
-                        mainSharedViewModel.uploadComment(postData.postId, data)
+                        mainSharedViewModel.uploadComment(postData.postId, commentData)
                     }
                 }
             }
@@ -271,6 +364,57 @@ class CommentFragment : BaseBottomSheet<FragmentCommentBinding>() {
                                 reCommentData
                             )
                         }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun initEditCommentData(item: CommentDataModel) {
+        val editComment = binding.etComment.text.toString()
+
+        commentData = CommentDataModel(
+            commentId = item.commentId,
+            comment = editComment,
+            commentAt = item.commentAt,
+            uid = item.uid,
+            name = item.name,
+            email = item.email,
+            profileImage = item.profileImage,
+            reCommentData = item.reCommentData
+        )
+        viewLifecycleOwner.lifecycleScope.launch {
+            mainSharedViewModel.postData.observe(viewLifecycleOwner) { postData ->
+                if (postData != null) {
+                    mainSharedViewModel.uploadComment(postData.postId, commentData)
+                }
+            }
+        }
+    }
+
+    private fun initEditReCommentData(item: ReCommentDataModel) {
+        val editComment = binding.etComment.text.toString()
+
+        reCommentData = ReCommentDataModel(
+            commentId = item.commentId,
+            comment = editComment,
+            commentAt = item.commentAt,
+            uid = item.uid,
+            name = item.name,
+            email = item.email,
+            profileImage = item.profileImage
+        )
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            mainSharedViewModel.selectedCommentData.observe(viewLifecycleOwner) { commentData ->
+                Log.d("test_viewModel", "${commentData?.commentId}")
+                if (commentData != null) {
+                    CurrentPost.postData?.let {
+                        mainSharedViewModel.uploadReComment(
+                            it.postId,
+                            commentData.commentId,
+                            reCommentData
+                        )
                     }
                 }
             }

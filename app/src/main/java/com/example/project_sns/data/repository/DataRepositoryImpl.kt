@@ -14,7 +14,6 @@ import com.example.project_sns.domain.model.PostDataEntity
 import com.example.project_sns.domain.model.ReCommentDataEntity
 import com.example.project_sns.domain.repository.DataRepository
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.AggregateSource
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.channels.awaitClose
@@ -313,13 +312,8 @@ class DataRepositoryImpl @Inject constructor(
                     reCommentDB.document(reCommentData.commentId).set(reCommentData).await()
                     reCommentDB.get().addOnCompleteListener { task ->
                         if (task.isSuccessful) {
-                            Log.d(
-                                "test_impl",
-                                "${task.result.toObjects(ReCommentDataResponse::class.java)}"
-                            )
                             val data = mapOf(
-                                "reCommentData" to task.result.toObjects(ReCommentDataResponse::class.java)
-                                    .sortByDescending { it.commentAt })
+                                "reCommentData" to task.result.toObjects(ReCommentDataResponse::class.java))
                             db.collection("post").document(postId).collection("comment")
                                 .document(commentId).update(data)
                         } else {
@@ -374,7 +368,7 @@ class DataRepositoryImpl @Inject constructor(
             reCommentDB.document(reCommentId).delete().await()
             reCommentDB.get().addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    val data = mapOf("reCommentData" to task.result.toObjects(ReCommentDataResponse::class.java).sortByDescending { it.commentAt })
+                    val data = mapOf("reCommentData" to task.result.toObjects(ReCommentDataResponse::class.java))
                     db.collection("post").document(postId).collection("comment").document(commentId).update(data)
                 } else {
                     Log.d("test_impl", "${task.exception}")

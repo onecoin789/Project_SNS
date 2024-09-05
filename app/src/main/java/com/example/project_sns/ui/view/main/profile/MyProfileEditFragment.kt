@@ -16,6 +16,7 @@ import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.example.project_sns.databinding.FragmentMyProfileEditBinding
 import com.example.project_sns.ui.BaseFragment
+import com.example.project_sns.ui.CurrentPost
 import com.example.project_sns.ui.CurrentUser
 import com.example.project_sns.ui.util.CheckEditProfile
 import com.example.project_sns.ui.view.main.MainSharedViewModel
