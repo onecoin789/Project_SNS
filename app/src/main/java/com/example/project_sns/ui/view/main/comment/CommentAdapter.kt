@@ -78,10 +78,9 @@ class CommentAdapter(private val onClick: CommentItemClick) :
                 binding.tvItemCommentReClose.visibility = View.GONE
             }
 
-            initRv(item.reCommentData)
-
             binding.tvItemCommentReComment.setOnClickListener {
                 onClick.onClickCommentList(item)
+                initRv()
                 binding.rvReComment.visibility = View.VISIBLE
                 binding.tvItemCommentReComment.visibility = View.GONE
                 binding.tvItemCommentReClose.visibility = View.VISIBLE
@@ -93,8 +92,7 @@ class CommentAdapter(private val onClick: CommentItemClick) :
                 binding.rvReComment.visibility = View.GONE
             }
         }
-
-        private fun initRv(reCommentList: List<ReCommentDataModel>?) {
+        fun initRv() {
             val reCommentAdapter = ReCommentAdapter(object : ReCommentAdapter.ReCommentItemClick {
                 override fun onClickEdit(item: ReCommentDataModel) {
                     onClick.onClickReCommentEdit(item)
@@ -102,16 +100,18 @@ class CommentAdapter(private val onClick: CommentItemClick) :
 
                 override fun onClickDelete(item: ReCommentDataModel) {
                     onClick.onClickReCommentDelete(item)
-                    initRv(reCommentList)
+                    initRv()
                 }
 
             })
             with(binding.rvReComment) {
                 adapter = reCommentAdapter
             }
-            reCommentAdapter.submitList(reCommentList)
+            reCommentAdapter.submitList(CurrentPost.reCommentList)
         }
     }
+
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CommentViewHolder {
         val binding =

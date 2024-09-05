@@ -144,6 +144,7 @@ class MainSharedViewModel @Inject constructor(
             getReCommentDataUseCase(postId, commentId).collect {
                 val reCommentList = it.toReCommentListModel()
                 _reCommentListData.value = reCommentList
+                CurrentPost.reCommentList = reCommentList
             }
         }
     }

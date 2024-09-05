@@ -15,4 +15,5 @@ object CurrentUser {
 object CurrentPost {
     var postData: PostDataModel? = null
 
+    var reCommentList: List<ReCommentDataModel>? = null
 }

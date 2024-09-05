@@ -171,6 +171,7 @@ class CommentFragment : BaseBottomSheet<FragmentCommentBinding>() {
                     mainSharedViewModel.postData.observe(viewLifecycleOwner) { currentPostData ->
                         if (currentPostData != null) {
                             mainSharedViewModel.getCommentData(item)
+                            mainSharedViewModel.getReComment(currentPostData.postId, item.commentId)
                             mainSharedViewModel.getReComment(
                                 currentPostData.postId,
                                 item.commentId
