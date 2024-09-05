@@ -43,7 +43,7 @@ data class CommentDataModel(
     val name: String,
     val email: String,
     val profileImage: String?,
-    var reCommentData: List<ReCommentDataModel>?
+    val reCommentData: List<ReCommentDataModel>?
 ): Parcelable
 
 @Parcelize

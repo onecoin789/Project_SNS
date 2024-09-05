@@ -43,6 +43,7 @@
     <string name="home_comment">댓글을 남겨보세요</string>
     <string name="home_comment_none">아직 댓글이 없습니다</string>
     <string name="home_comment_suggest">댓글을 남겨보세요!</string>
+    <string name="home_comment_for">님 에게 댓글</string>
 
     <!-- Login -->
     <string name="login">로그인</string>

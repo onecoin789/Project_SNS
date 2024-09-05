@@ -10,6 +10,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.SetOptions
@@ -159,6 +160,7 @@ class AuthRepositoryImpl @Inject constructor(
                                         )
                                         trans.update(document.reference, "name", name)
                                     }
+
                                     document.reference.collection("comment")
                                         .whereEqualTo("uid", uid).get()
                                         .addOnSuccessListener { comment ->
