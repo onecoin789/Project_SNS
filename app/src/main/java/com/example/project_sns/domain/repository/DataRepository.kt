@@ -2,8 +2,8 @@ package com.example.project_sns.domain.repository
 
 import com.example.project_sns.domain.model.CommentDataEntity
 import com.example.project_sns.domain.model.PostDataEntity
+import com.example.project_sns.domain.model.PostEntity
 import com.example.project_sns.domain.model.ReCommentDataEntity
-import com.example.project_sns.ui.view.model.ReCommentDataModel
 import kotlinx.coroutines.flow.Flow
 
 
@@ -30,5 +30,7 @@ interface DataRepository {
     suspend fun getReComment(postId: String, commentId: String): Flow<List<ReCommentDataEntity>>
 
     suspend fun deleteReComment(postId: String, commentId: String, reCommentId: String): Result<String>
+
+    suspend fun getPagingPost(lastVisibleItem: Flow<Int>): Flow<List<PostEntity>?>
 
 }

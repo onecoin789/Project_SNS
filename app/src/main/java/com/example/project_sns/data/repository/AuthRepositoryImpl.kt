@@ -3,18 +3,13 @@ package com.example.project_sns.data.repository
 import android.util.Log
 import androidx.core.net.toUri
 import com.example.project_sns.data.mapper.toEntity
-import com.example.project_sns.data.response.CurrentUserResponse
-import com.example.project_sns.domain.model.CurrentUserEntity
+import com.example.project_sns.data.response.UserDataResponse
+import com.example.project_sns.domain.model.UserDataEntity
 import com.example.project_sns.domain.repository.AuthRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthException
-import com.google.firebase.firestore.DocumentReference
-import com.google.firebase.firestore.DocumentSnapshot
-import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreException
-import com.google.firebase.firestore.SetOptions
-import com.google.firebase.firestore.snapshots
 import com.google.firebase.functions.FirebaseFunctions
 import com.google.firebase.functions.FirebaseFunctionsException
 import com.google.firebase.storage.FirebaseStorage
@@ -101,7 +96,7 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getCurrentUserData(): Flow<CurrentUserEntity?> {
+    override suspend fun getCurrentUserData(): Flow<UserDataEntity?> {
         return callbackFlow {
             val mAuth = auth.currentUser?.uid
             if (mAuth != null) {
@@ -112,7 +107,7 @@ class AuthRepositoryImpl @Inject constructor(
                         return@addSnapshotListener
                     }
                     if (snapshot != null) {
-                        val userResponse = snapshot.toObject(CurrentUserResponse::class.java)
+                        val userResponse = snapshot.toObject(UserDataResponse::class.java)
                         trySend(userResponse?.toEntity()).isSuccess
                     } else {
                         trySend(null).isSuccess

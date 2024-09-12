@@ -1,8 +1,6 @@
 package com.example.project_sns.data.response
 
-import com.google.firebase.Timestamp
-
-data class CurrentUserResponse(
+data class UserDataResponse(
     val uid: String = "",
     val name: String = "",
     val email: String = "",

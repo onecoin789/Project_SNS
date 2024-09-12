@@ -30,5 +30,7 @@ object FirebaseModule {
 
     @Provides
     @Singleton
-    fun provideFirebaseFunction(): FirebaseFunctions = FirebaseFunctions.getInstance("asia-northeast3")
+    fun provideFirebaseFunction(): FirebaseFunctions =
+        FirebaseFunctions.getInstance("asia-northeast3")
+
 }

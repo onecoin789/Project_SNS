@@ -3,25 +3,40 @@ package com.example.project_sns.data.repository
 import android.util.Log
 import androidx.core.net.toUri
 import com.example.project_sns.data.mapper.toCommentListEntity
+import com.example.project_sns.data.mapper.toEntity
 import com.example.project_sns.data.mapper.toPostListEntity
 import com.example.project_sns.data.mapper.toReCommentListEntity
 import com.example.project_sns.data.response.CommentDataResponse
 import com.example.project_sns.data.response.PostDataResponse
 import com.example.project_sns.data.response.ReCommentDataResponse
+import com.example.project_sns.data.response.UserDataResponse
 import com.example.project_sns.domain.model.CommentDataEntity
 import com.example.project_sns.domain.model.ImageDataEntity
 import com.example.project_sns.domain.model.PostDataEntity
+import com.example.project_sns.domain.model.PostEntity
 import com.example.project_sns.domain.model.ReCommentDataEntity
+import com.example.project_sns.domain.model.UserDataEntity
 import com.example.project_sns.domain.repository.DataRepository
+import com.example.project_sns.ui.mapper.toPostDataListModel
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.count
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.last
+import kotlinx.coroutines.flow.transform
+import kotlinx.coroutines.flow.transformLatest
+import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 class DataRepositoryImpl @Inject constructor(
     private val auth: FirebaseAuth,
@@ -123,18 +138,21 @@ class DataRepositoryImpl @Inject constructor(
 
     override suspend fun getAllPost(): Flow<List<PostDataEntity>> {
         return callbackFlow {
-            val snapshotListener = db.collection("post").addSnapshotListener { snapshot, error ->
-                if (error != null) {
-                    trySend(emptyList()).isSuccess
-                    return@addSnapshotListener
-                }
-                if (snapshot != null && !snapshot.isEmpty) {
-                    val postResponse = snapshot.toObjects(PostDataResponse::class.java)
-                    trySend(postResponse.toPostListEntity()).isSuccess
-                } else {
-                    trySend(emptyList()).isSuccess
-                }
-            }
+            val snapshotListener =
+                db.collection("post").orderBy("createdAt", Query.Direction.DESCENDING)
+                    .addSnapshotListener { snapshot, error ->
+                        if (error != null) {
+                            trySend(emptyList()).isSuccess
+                            return@addSnapshotListener
+                        }
+                        if (snapshot != null && !snapshot.isEmpty) {
+                            val postResponse = snapshot.toObjects(PostDataResponse::class.java)
+                            trySend(postResponse.toPostListEntity()).isSuccess
+
+                        } else {
+                            trySend(emptyList()).isSuccess
+                        }
+                    }
             awaitClose {
                 snapshotListener.remove()
             }
@@ -313,7 +331,8 @@ class DataRepositoryImpl @Inject constructor(
                     reCommentDB.get().addOnCompleteListener { task ->
                         if (task.isSuccessful) {
                             val data = mapOf(
-                                "reCommentData" to task.result.toObjects(ReCommentDataResponse::class.java))
+                                "reCommentData" to task.result.toObjects(ReCommentDataResponse::class.java)
+                            )
                             db.collection("post").document(postId).collection("comment")
                                 .document(commentId).update(data)
                         } else {
@@ -368,8 +387,10 @@ class DataRepositoryImpl @Inject constructor(
             reCommentDB.document(reCommentId).delete().await()
             reCommentDB.get().addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    val data = mapOf("reCommentData" to task.result.toObjects(ReCommentDataResponse::class.java))
-                    db.collection("post").document(postId).collection("comment").document(commentId).update(data)
+                    val data =
+                        mapOf("reCommentData" to task.result.toObjects(ReCommentDataResponse::class.java))
+                    db.collection("post").document(postId).collection("comment").document(commentId)
+                        .update(data)
                 } else {
                     Log.d("test_impl", "${task.exception}")
                 }
@@ -380,4 +401,93 @@ class DataRepositoryImpl @Inject constructor(
             Result.failure(Exception("failure: ${e.message}"))
         }
     }
+
+    override suspend fun getPagingPost(lastVisibleItem: Flow<Int>): Flow<List<PostEntity>?> {
+        return callbackFlow {
+        val posts = mutableListOf<PostEntity>()
+        val postDetail = mutableListOf<DocumentSnapshot>()
+
+            lastVisibleItem.collect { lastVisibleItem ->
+                when (lastVisibleItem) {
+                    0 -> {
+                        db.collection("post").orderBy("createdAt", Query.Direction.DESCENDING)
+                            .limit(3).get().addOnSuccessListener { postData ->
+                                val document = postData.documents
+                                val postResponse = postData.toObjects(PostDataResponse::class.java)
+                                    .map { it.toEntity() }
+                                postResponse.map { postEntity ->
+                                    db.collection("user").document(postEntity.uid).get()
+                                        .addOnSuccessListener { userData ->
+                                            val userEntity =
+                                                userData.toObject(UserDataResponse::class.java)
+                                                    ?.toEntity()
+                                            if (userEntity != null) {
+                                                posts.addAll(listOf(PostEntity(userEntity, postEntity)))
+                                            }
+                                            postDetail.addAll(document)
+                                            trySend(posts)
+                                        }
+                                }
+                            }
+                        Log.d("test_impl", "$posts")
+
+                    }
+                    posts.size -> {
+                        db.collection("post")
+                            .orderBy("createdAt", Query.Direction.DESCENDING)
+                            .startAfter(postDetail.last()).limit(3)
+                            .get().addOnSuccessListener { postData ->
+                                val document = postData.documents
+                                val postResponse =
+                                    postData.toObjects(PostDataResponse::class.java)
+                                        .map { it.toEntity() }
+                                postResponse.map { postEntity ->
+                                    db.collection("user").document(postEntity.uid).get()
+                                        .addOnSuccessListener { userData ->
+                                            val userEntity =
+                                                userData.toObject(UserDataResponse::class.java)
+                                                    ?.toEntity()
+                                            if (userEntity != null) {
+                                                posts.addAll(listOf(PostEntity(userEntity, postEntity)))
+                                            }
+                                            postDetail.addAll(document)
+                                            trySend(posts)
+                                        }
+                                }
+                            }
+                    }
+                    else -> {
+                        trySend(null)
+                    }
+                }
+                Log.d("test_post", "$posts")
+            }
+            awaitClose()
+        }
+    }
 }
+
+
+//    override suspend fun getTestPost(): Flow<List<TestModel>> {
+//        return flow {
+//            val posts = mutableListOf<TestModel>()
+//            val postData =
+//                db.collection("post").orderBy("createdAt", Query.Direction.DESCENDING).get().await()
+//            val postDataResponse =
+//                postData.toObjects(PostDataResponse::class.java).map { it.toEntity() }
+//            postDataResponse.map {
+//                db.collection("user").document(it.uid).get()
+//                    .addOnSuccessListener { userData ->
+//                        val userDataResponse =
+//                            userData.toObject(UserDataResponse::class.java)?.toEntity()
+//                        if (userDataResponse != null) {
+//                            Log.d("test_impl", "$userDataResponse, $it")
+//                            posts.add(TestModel(userDataResponse, it))
+//                        }
+//                    }
+//
+//        }
+//        Log.d("test_impl", "$posts")
+//        emit(posts)
+//    }
+//}
