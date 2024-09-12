@@ -214,11 +214,13 @@
                 android:layout_height="wrap_content"
                 android:padding="5dp"
                 android:layout_marginTop="30dp"
-                android:visibility="invisible"
+                android:layout_marginBottom="125dp"
+                android:visibility="visible"
                 app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
                 tools:listitem="@layout/rv_item_my_post"
                 app:spanCount="3"
-                app:layout_constraintTop_toBottomOf="@id/tvMyTextNumber" />
+                app:layout_constraintTop_toBottomOf="@id/tvMyTextNumber"
+                app:layout_constraintBottom_toBottomOf="parent"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>

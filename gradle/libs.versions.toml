@@ -36,6 +36,8 @@ googleServicesLocation = "16.0.0"
 tedImagePicker = "1.6.1"
 exoplayerCore = "2.17.0"
 exoplayerUi = "2.17.0"
+pagingRuntimeKtx = "3.3.2"
+mediationTestSuite = "3.0.0"
 
 
 
@@ -74,6 +76,8 @@ google-services-location = { group = "com.google.android.gms", name = "play-serv
 ted-image-picker = { group = "io.github.ParkSangGwon", name = "tedimagepicker", version.ref = "tedImagePicker" }
 exoplayer-core = { group = "com.google.android.exoplayer", name = "exoplayer-core", version.ref = "exoplayerCore" }
 exoplayer-ui = { group = "com.google.android.exoplayer", name = "exoplayer-ui", version.ref = "exoplayerUi" }
+androidx-paging-runtime-ktx = { group = "androidx.paging", name = "paging-runtime-ktx", version.ref = "pagingRuntimeKtx" }
+mediation-test-suite = { group = "com.google.android.ads", name = "mediation-test-suite", version.ref = "mediationTestSuite" }
 
 
 [plugins]

@@ -1,6 +1,6 @@
 package com.example.project_sns.domain.repository
 
-import com.example.project_sns.domain.model.CurrentUserEntity
+import com.example.project_sns.domain.model.UserDataEntity
 import kotlinx.coroutines.flow.Flow
 
 
@@ -12,9 +12,10 @@ interface AuthRepository {
 
     suspend fun logout(): Result<String>
 
-    suspend fun getCurrentUserData() : Flow<CurrentUserEntity?>
+    suspend fun getCurrentUserData() : Flow<UserDataEntity?>
 
     suspend fun editProfile(uid: String, name: String, email: String, newProfile: String?, beforeProfile: String?, intro: String?, createdAt: String): Result<String>
 
     suspend fun kakaoLogin(accessToken: String): Result<String>
+
 }

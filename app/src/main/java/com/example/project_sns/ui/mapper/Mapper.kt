@@ -1,15 +1,15 @@
 package com.example.project_sns.ui.mapper
 
 import com.example.project_sns.domain.model.CommentDataEntity
-import com.example.project_sns.domain.model.CurrentUserEntity
 import com.example.project_sns.domain.model.ImageDataEntity
 import com.example.project_sns.domain.model.KakaoDocumentsEntity
 import com.example.project_sns.domain.model.KakaoMapEntity
 import com.example.project_sns.domain.model.KakaoMetaEntity
 import com.example.project_sns.domain.model.MapDataEntity
 import com.example.project_sns.domain.model.PostDataEntity
+import com.example.project_sns.domain.model.PostEntity
 import com.example.project_sns.domain.model.ReCommentDataEntity
-import com.example.project_sns.ui.CurrentUserModel
+import com.example.project_sns.domain.model.UserDataEntity
 import com.example.project_sns.ui.view.main.profile.PostImageType
 import com.example.project_sns.ui.view.model.CommentDataModel
 import com.example.project_sns.ui.view.model.ImageDataModel
@@ -18,11 +18,13 @@ import com.example.project_sns.ui.view.model.KakaoMapModel
 import com.example.project_sns.ui.view.model.KakaoMetaModel
 import com.example.project_sns.ui.view.model.MapDataModel
 import com.example.project_sns.ui.view.model.PostDataModel
+import com.example.project_sns.ui.view.model.PostModel
 import com.example.project_sns.ui.view.model.ReCommentDataModel
+import com.example.project_sns.ui.view.model.UserDataModel
 
 // <!---------- Firebase ---------->
 
-fun CurrentUserEntity.toModel() = CurrentUserModel(
+fun UserDataEntity.toModel() = UserDataModel(
     uid = uid,
     name = name,
     email = email,
@@ -84,6 +86,15 @@ fun ReCommentDataEntity.toModel() = ReCommentDataModel(
     profileImage = profileImage
 )
 
+fun UserDataModel.toEntity() = UserDataEntity(
+    uid = uid,
+    name = name,
+    email = email,
+    profileImage = profileImage,
+    createdAt = createdAt,
+    intro = intro
+)
+
 fun PostDataModel.toEntity() = PostDataEntity(
     uid = uid,
     postId = postId,
@@ -126,6 +137,16 @@ fun ReCommentDataModel.toEntity() = ReCommentDataEntity(
     profileImage = profileImage
 )
 
+fun PostEntity.toModel() = PostModel(
+    userData = userData.toModel(),
+    postData = postData.toModel()
+)
+
+fun PostModel.toEntity() = PostEntity(
+    userData = userData.toEntity(),
+    postData = postData.toEntity()
+)
+
 fun List<PostDataEntity>.toPostListModel(): List<PostDataModel> {
     return this.map { it.toModel() }
 }
@@ -145,6 +166,16 @@ fun List<ReCommentDataModel>.toReCommentListEntity(): List<ReCommentDataEntity> 
 fun List<ReCommentDataEntity>.toReCommentListModel(): List<ReCommentDataModel> {
     return this.map { it.toModel() }
 }
+
+fun List<PostEntity>.toPostDataListModel(): List<PostModel> {
+    return this.map { it.toModel() }
+}
+
+fun List<PostModel>.toPostDataListEntity(): List<PostEntity> {
+    return this.map { it.toEntity() }
+}
+
+
 
 
 
