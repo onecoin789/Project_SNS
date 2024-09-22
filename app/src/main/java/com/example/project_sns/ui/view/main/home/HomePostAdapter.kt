@@ -43,8 +43,13 @@ class HomePostAdapter(private val onItemClick: (PostModel) -> Unit) :
                 binding.idcItem.visibility = View.VISIBLE
             }
 
+            if (postData.editedAt != null) {
+                binding.tvItemHomeEdit.visibility = View.VISIBLE
+            } else {
+                binding.tvItemHomeEdit.visibility = View.GONE
+            }
 
-            Log.d("test_data", it.uid)
+
             if (it.profileImage != null) {
                 binding.ivItemHomeUser.clipToOutline = true
                 Glide.with(binding.root).load(it.profileImage)

@@ -5,7 +5,7 @@ import com.example.project_sns.domain.repository.DataRepository
 import javax.inject.Inject
 
 class DeleteCommentUseCase @Inject constructor(private val dataRepository: DataRepository) {
-    suspend operator fun invoke(postId: String, commentId: String, reCommentList: List<ReCommentDataEntity>?): Result<String> {
-        return dataRepository.deleteComment(postId, commentId, reCommentList)
+    suspend operator fun invoke(postId: String): Result<String> {
+        return dataRepository.deleteComment(postId)
     }
 }

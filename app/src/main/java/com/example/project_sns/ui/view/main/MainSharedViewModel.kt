@@ -1,5 +1,6 @@
 package com.example.project_sns.ui.view.main
 
+import android.util.Log
 import android.view.View
 import android.widget.TextView
 import androidx.lifecycle.LiveData
@@ -24,13 +25,15 @@ import com.example.project_sns.ui.mapper.toCommentListModel
 import com.example.project_sns.ui.mapper.toEntity
 import com.example.project_sns.ui.mapper.toKakaoListEntity
 import com.example.project_sns.ui.mapper.toPostListModel
-import com.example.project_sns.ui.mapper.toReCommentListEntity
+import com.example.project_sns.ui.mapper.toReCommentDataListEntity
 import com.example.project_sns.ui.mapper.toReCommentListModel
 import com.example.project_sns.ui.util.CheckEditProfile
 import com.example.project_sns.ui.view.model.CommentDataModel
+import com.example.project_sns.ui.view.model.CommentModel
 import com.example.project_sns.ui.view.model.KakaoDocumentsModel
 import com.example.project_sns.ui.view.model.PostDataModel
 import com.example.project_sns.ui.view.model.ReCommentDataModel
+import com.example.project_sns.ui.view.model.ReCommentModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -71,8 +74,8 @@ class MainSharedViewModel @Inject constructor(
     private val _postData = MutableLiveData<PostDataModel?>()
     val postData: LiveData<PostDataModel?> get() = _postData
 
-    private val _selectedCommentData = MutableLiveData<CommentDataModel?>()
-    val selectedCommentData: LiveData<CommentDataModel?> get() = _selectedCommentData
+    private val _selectedCommentData = MutableLiveData<CommentModel?>()
+    val selectedCommentData: LiveData<CommentModel?> get() = _selectedCommentData
 
     private val _selectedReCommentData = MutableLiveData<ReCommentDataModel?>()
     val selectedReCommentData: LiveData<ReCommentDataModel?> get() = _selectedReCommentData
@@ -83,21 +86,38 @@ class MainSharedViewModel @Inject constructor(
     private val _commentData = MutableStateFlow<Boolean?>(null)
     val commentData: StateFlow<Boolean?> get() = _commentData
 
-    private val _commentListData = MutableStateFlow<List<CommentDataModel>>(emptyList())
-    val commentListData: StateFlow<List<CommentDataModel>> get() = _commentListData
+    private val _commentListData = MutableStateFlow<List<CommentModel>>(emptyList())
+    val commentListData: StateFlow<List<CommentModel>> get() = _commentListData
 
     private val _reCommentData = MutableStateFlow<Boolean?>(null)
     val reCommentData: StateFlow<Boolean?> get() = _reCommentData
 
-    private val _reCommentListData = MutableStateFlow<List<ReCommentDataModel>>(emptyList())
-    val reCommentListData: StateFlow<List<ReCommentDataModel>> get() = _reCommentListData
+    private val _reCommentListData = MutableStateFlow<List<ReCommentModel>>(emptyList())
+    val reCommentListData: StateFlow<List<ReCommentModel>> get() = _reCommentListData
+
+    private val _currentPage = MutableLiveData<Int>(0)
+    val currentPage: LiveData<Int> get() = _currentPage
 
 
 
-    fun uploadReComment(postId: String, commentId: String, reCommentData: ReCommentDataModel?) {
+    fun startPage() {
+        if (_currentPage.value != 0) {
+            _currentPage.value = 0
+        }
+    }
+
+    fun nextPage() {
+        _currentPage.value = _currentPage.value?.plus(1)
+    }
+
+    fun prevPage() {
+        _currentPage.value = _currentPage.value?.minus(1)
+    }
+
+    fun uploadReComment(reCommentData: ReCommentDataModel?) {
         viewModelScope.launch {
             if (reCommentData != null) {
-                uploadReCommentUseCase(postId, commentId, reCommentData.toEntity()).collect { result ->
+                uploadReCommentUseCase(reCommentData.toEntity()).collect { result ->
                     _reCommentData.value = result
                 }
             }
@@ -122,9 +142,9 @@ class MainSharedViewModel @Inject constructor(
         }
     }
 
-    fun uploadComment(postId: String, commentData: CommentDataModel?) {
+    fun uploadComment(commentData: CommentDataModel?) {
         viewModelScope.launch {
-            uploadCommentUseCase(postId, commentData?.toEntity()).collect { result ->
+            uploadCommentUseCase(commentData?.toEntity()).collect { result ->
                 _commentData.value = result
             }
         }
@@ -135,16 +155,17 @@ class MainSharedViewModel @Inject constructor(
             getCommentUseCase(postId).collect {
                 val commentList = it.toCommentListModel()
                 _commentListData.value = commentList
+                Log.d("test_vm", "${_commentListData.value}")
             }
         }
     }
 
-    fun getReComment(postId: String, commentId: String) {
+    fun getReComment(commentId: String) {
         viewModelScope.launch {
-            getReCommentDataUseCase(postId, commentId).collect {
+            getReCommentDataUseCase(commentId).collect {
                 val reCommentList = it.toReCommentListModel()
                 _reCommentListData.value = reCommentList
-                CurrentPost.reCommentList = reCommentList
+                CurrentPost.reCommentList = it.toReCommentListModel()
             }
         }
     }
@@ -234,7 +255,7 @@ class MainSharedViewModel @Inject constructor(
         }
     }
 
-    fun getCommentData(data: CommentDataModel?) {
+    fun getCommentData(data: CommentModel?) {
         viewModelScope.launch {
             if (data != null) {
                 _selectedCommentData.value = data
@@ -257,15 +278,15 @@ class MainSharedViewModel @Inject constructor(
         }
     }
 
-    fun deleteComment(postId: String, commentId: String, reCommentData: List<ReCommentDataModel>?) {
+    fun deleteComment(postId: String) {
         viewModelScope.launch {
-            deleteCommentUseCase(postId, commentId, reCommentData?.toReCommentListEntity())
+            deleteCommentUseCase(postId)
         }
     }
 
-    fun deleteReComment(postId: String, commentId: String, reCommentId: String) {
+    fun deleteReComment(commentId: String, reCommentId: String) {
         viewModelScope.launch {
-            deleteReCommentUseCase(postId, commentId, reCommentId)
+            deleteReCommentUseCase(commentId, reCommentId)
         }
     }
 

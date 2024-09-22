@@ -62,14 +62,7 @@ class MainHomeFragment : BaseFragment<FragmentMainHomeBinding>() {
         val postAdapter = HomePostAdapter { data ->
             viewLifecycleOwner.lifecycleScope.launch {
                 mainSharedViewModel.getPostData(data.postData)
-                mainSharedViewModel.postData.observe(viewLifecycleOwner) { postData ->
-                    if (postData != null) {
-                        mainSharedViewModel.getComment(postData.postId)
-
-                    }
-                }
             }
-
             findNavController().navigate(R.id.commentFragment)
         }
         val linearLayoutManager = LinearLayoutManager(requireContext())
@@ -81,7 +74,7 @@ class MainHomeFragment : BaseFragment<FragmentMainHomeBinding>() {
                     super.onScrolled(recyclerView, dx, dy)
                     val lastVisible = linearLayoutManager.findLastVisibleItemPosition().plus(1)
                     if (!binding.rvHome.canScrollVertically(1)) {
-                        binding.pbHome.setOnClickListener {
+                        binding.clHomeItemMore.setOnClickListener {
                             lastVisibleItem.value = lastVisible
                         }
                     } else if (lastVisibleItem.value == lastVisible) {
@@ -97,7 +90,15 @@ class MainHomeFragment : BaseFragment<FragmentMainHomeBinding>() {
             mainViewModel.getPagingData(lastVisibleItem)
             delay(1000)
             mainViewModel.pagingData.collect { data ->
-                postAdapter.submitList(data)
+                val dataByCreatedAt = data?.sortedByDescending { it.postData.createdAt }
+                postAdapter.submitList(dataByCreatedAt)
+                if (data != null) {
+                    binding.clHomeItemMore.visibility = View.VISIBLE
+                    binding.pbHome.visibility = View.GONE
+                } else {
+                    binding.clHomeItemMore.visibility = View.GONE
+                    binding.pbHome.visibility = View.VISIBLE
+                }
                 Log.d("test_view", "$data")
             }
         }

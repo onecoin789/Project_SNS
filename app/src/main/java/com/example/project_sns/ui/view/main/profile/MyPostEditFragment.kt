@@ -190,9 +190,6 @@ class MyPostEditFragment : BaseFragment<FragmentMyProfileMakePostBinding>() {
         if (postData != null) {
             val uid = postData?.uid.toString()
             val postId = postData?.postId.toString()
-            val profileImage = postData?.profileImage
-            val name = postData?.name.toString()
-            val email = postData?.email.toString()
             val postText = binding.etMakeText.text.toString()
             val time = postData?.createdAt.toString()
             val mapData = postData?.mapData
@@ -202,9 +199,6 @@ class MyPostEditFragment : BaseFragment<FragmentMyProfileMakePostBinding>() {
             val data = PostDataModel(
                 uid = uid,
                 postId = postId,
-                profileImage = profileImage,
-                name = name,
-                email = email,
                 imageList = imageList,
                 postText = postText,
                 createdAt = time,

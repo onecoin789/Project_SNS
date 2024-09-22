@@ -1,9 +1,11 @@
 package com.example.project_sns.domain.repository
 
 import com.example.project_sns.domain.model.CommentDataEntity
+import com.example.project_sns.domain.model.CommentEntity
 import com.example.project_sns.domain.model.PostDataEntity
 import com.example.project_sns.domain.model.PostEntity
 import com.example.project_sns.domain.model.ReCommentDataEntity
+import com.example.project_sns.domain.model.ReCommentEntity
 import kotlinx.coroutines.flow.Flow
 
 
@@ -15,21 +17,21 @@ interface DataRepository {
 
     suspend fun getAllPost(): Flow<List<PostDataEntity>>
 
-    suspend fun deletePost(postData: PostDataEntity?, commentList: List<CommentDataEntity>?): Result<String>
-
     suspend fun editPost(postData: PostDataEntity?): Flow<Boolean>
 
-    suspend fun uploadComment(postId: String, commentData: CommentDataEntity?): Flow<Boolean>
+    suspend fun deletePost(postData: PostDataEntity?, commentList: List<CommentDataEntity>?): Result<String>
 
-    suspend fun getComment(postId: String): Flow<List<CommentDataEntity>>
+    suspend fun uploadComment(commentData: CommentDataEntity?): Flow<Boolean>
 
-    suspend fun deleteComment(postId: String, commentId: String, reCommentList: List<ReCommentDataEntity>?): Result<String>
+    suspend fun getComment(postId: String): Flow<List<CommentEntity>>
 
-    suspend fun uploadReComment(postId: String, commentId: String, reCommentData: ReCommentDataEntity?): Flow<Boolean>
+    suspend fun deleteComment(commentId: String): Result<String>
 
-    suspend fun getReComment(postId: String, commentId: String): Flow<List<ReCommentDataEntity>>
+    suspend fun uploadReComment(reCommentData: ReCommentDataEntity?): Flow<Boolean>
 
-    suspend fun deleteReComment(postId: String, commentId: String, reCommentId: String): Result<String>
+    suspend fun getReComment(commentId: String): Flow<List<ReCommentEntity>>
+
+    suspend fun deleteReComment(commentId: String, reCommentId: String): Result<String>
 
     suspend fun getPagingPost(lastVisibleItem: Flow<Int>): Flow<List<PostEntity>?>
 

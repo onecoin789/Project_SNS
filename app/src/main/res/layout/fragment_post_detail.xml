@@ -93,6 +93,18 @@
                     app:layout_constraintTop_toTopOf="@id/ivPDUser"
                     app:layout_constraintBottom_toBottomOf="@+id/ivPDUser"/>
 
+                <TextView
+                    android:id="@+id/tvPDEdit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/hint"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:text="@string/home_edit"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="@+id/ivPDMore"
+                    app:layout_constraintTop_toBottomOf="@+id/ivPDMore" />
+
                 <androidx.viewpager2.widget.ViewPager2
                     android:id="@+id/vpPDPostImage"
                     android:layout_width="match_parent"
