@@ -3,9 +3,6 @@ package com.example.project_sns.data.response
 data class PostDataResponse(
     val uid: String = "",
     val postId: String = "",
-    val profileImage: String? = null,
-    val name: String = "",
-    val email: String = "",
     val imageList: List<ImageDataResponse>? = emptyList(),
     val postText: String? = null,
     val createdAt: String = "",
@@ -26,23 +23,3 @@ data class MapDataResponse(
     var lng: Double? = null
 )
 
-data class CommentDataResponse(
-    val commentId: String = "",
-    val comment: String = "",
-    val commentAt: String = "",
-    val uid: String = "",
-    val name: String = "",
-    val email: String = "",
-    val profileImage: String? = null,
-    val reCommentData: List<ReCommentDataResponse>? = emptyList()
-)
-
-data class ReCommentDataResponse(
-    val commentId: String = "",
-    val comment: String = "",
-    val commentAt: String = "",
-    val uid: String = "",
-    val name: String = "",
-    val email: String = "",
-    val profileImage: String? = null
-)

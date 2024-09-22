@@ -12,21 +12,18 @@ import com.example.project_sns.R
 import com.example.project_sns.databinding.RvItemCommentBinding
 import com.example.project_sns.ui.CurrentPost
 import com.example.project_sns.ui.CurrentUser
-import com.example.project_sns.ui.view.main.MainSharedViewModel
-import com.example.project_sns.ui.view.model.CommentDataModel
+import com.example.project_sns.ui.mapper.toReCommentDataListEntity
+import com.example.project_sns.ui.view.model.CommentModel
 import com.example.project_sns.ui.view.model.ReCommentDataModel
+import com.example.project_sns.ui.view.model.ReCommentModel
 
 class CommentAdapter(private val onClick: CommentItemClick) :
-    ListAdapter<CommentDataModel, CommentAdapter.CommentViewHolder>(diffUtil) {
+    ListAdapter<CommentModel, CommentAdapter.CommentViewHolder>(diffUtil) {
 
     interface CommentItemClick {
-        fun onClickComment(item: CommentDataModel)
-        fun onClickCommentEdit(item: CommentDataModel)
-        fun onClickCommentDelete(item: CommentDataModel)
-        fun onClickCommentList(item: CommentDataModel)
-        fun onClickReCommentDelete(item: ReCommentDataModel)
-        fun onClickReCommentEdit(item: ReCommentDataModel)
-
+        fun onClickCommentEdit(item: CommentModel)
+        fun onClickCommentDelete(item: CommentModel)
+        fun onClickReCommentList(item: CommentModel)
     }
 
 
@@ -35,22 +32,21 @@ class CommentAdapter(private val onClick: CommentItemClick) :
         private val onClick: CommentItemClick
     ) : RecyclerView.ViewHolder(binding.root) {
 
+        fun bind(item: CommentModel) {
 
-        fun bind(item: CommentDataModel) {
+            val userData = item.userData
+            val commentData = item.commentData
 
-            if (item.profileImage != null) {
+            if (userData.profileImage != null) {
                 binding.ivComment.clipToOutline = true
-                Glide.with(binding.root).load(item.profileImage).into(binding.ivComment)
+                Glide.with(binding.root).load(userData.profileImage).into(binding.ivComment)
             } else {
                 Glide.with(binding.root).load(R.drawable.ic_user_fill).into(binding.ivComment)
             }
-            binding.tvItemCommentName.text = item.name
-            binding.tvItemCommentEmail.text = item.email
-            binding.tvItemComment.text = item.comment
+            binding.tvItemCommentName.text = userData.name
+            binding.tvItemCommentEmail.text = userData.email
+            binding.tvItemComment.text = commentData.comment
 
-            binding.tvItemCommentRe.setOnClickListener {
-                onClick.onClickComment(item)
-            }
 
             binding.tvItemCommentEdit.setOnClickListener {
                 onClick.onClickCommentEdit(item)
@@ -61,56 +57,24 @@ class CommentAdapter(private val onClick: CommentItemClick) :
             }
 
 
-
-            if (item.uid == CurrentUser.userData?.uid) {
+            if (userData.uid == CurrentUser.userData?.uid) {
                 binding.tvItemCommentDelete.visibility = View.VISIBLE
             } else {
                 binding.tvItemCommentDelete.visibility = View.INVISIBLE
             }
 
-            if (item.reCommentData?.size == 0 || item.reCommentData == null) {
-                binding.tvItemCommentReComment.visibility = View.GONE
-                binding.rvReComment.visibility = View.GONE
+            if (commentData.reCommentSize != 0) {
+                binding.tvItemCommentReComment.text = "댓글 ${commentData.reCommentSize}개"
             } else {
-                binding.tvItemCommentReComment.text = "댓글 ${item.reCommentData?.size}개"
-                binding.tvItemCommentReComment.visibility = View.VISIBLE
-                binding.rvReComment.visibility = View.GONE
-                binding.tvItemCommentReClose.visibility = View.GONE
+                binding.tvItemCommentReComment.text = "댓글 남기기"
             }
+
 
             binding.tvItemCommentReComment.setOnClickListener {
-                onClick.onClickCommentList(item)
-                initRv()
-                binding.rvReComment.visibility = View.VISIBLE
-                binding.tvItemCommentReComment.visibility = View.GONE
-                binding.tvItemCommentReClose.visibility = View.VISIBLE
+                onClick.onClickReCommentList(item)
             }
-
-            binding.tvItemCommentReClose.setOnClickListener {
-                binding.tvItemCommentReClose.visibility = View.GONE
-                binding.tvItemCommentReComment.visibility = View.VISIBLE
-                binding.rvReComment.visibility = View.GONE
-            }
-        }
-        fun initRv() {
-            val reCommentAdapter = ReCommentAdapter(object : ReCommentAdapter.ReCommentItemClick {
-                override fun onClickEdit(item: ReCommentDataModel) {
-                    onClick.onClickReCommentEdit(item)
-                }
-
-                override fun onClickDelete(item: ReCommentDataModel) {
-                    onClick.onClickReCommentDelete(item)
-                    initRv()
-                }
-
-            })
-            with(binding.rvReComment) {
-                adapter = reCommentAdapter
-            }
-            reCommentAdapter.submitList(CurrentPost.reCommentList)
         }
     }
-
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CommentViewHolder {
@@ -125,19 +89,19 @@ class CommentAdapter(private val onClick: CommentItemClick) :
     }
 
     companion object {
-        val diffUtil = object : DiffUtil.ItemCallback<CommentDataModel>() {
+        val diffUtil = object : DiffUtil.ItemCallback<CommentModel>() {
             override fun areItemsTheSame(
-                oldItem: CommentDataModel,
-                newItem: CommentDataModel
+                oldItem: CommentModel,
+                newItem: CommentModel
             ): Boolean {
-                return oldItem == newItem
+                return oldItem.commentData == newItem.commentData
             }
 
             override fun areContentsTheSame(
-                oldItem: CommentDataModel,
-                newItem: CommentDataModel
+                oldItem: CommentModel,
+                newItem: CommentModel
             ): Boolean {
-                return oldItem == newItem
+                return oldItem.commentData == newItem.commentData
             }
 
         }

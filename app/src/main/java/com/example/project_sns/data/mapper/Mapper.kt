@@ -1,6 +1,7 @@
 package com.example.project_sns.data.mapper
 
 import com.example.project_sns.data.response.CommentDataResponse
+import com.example.project_sns.data.response.CommentResponse
 import com.example.project_sns.data.response.ImageDataResponse
 import com.example.project_sns.data.response.KakaoDocumentsResponse
 import com.example.project_sns.data.response.KakaoMapResponse
@@ -8,8 +9,10 @@ import com.example.project_sns.data.response.KakaoMetaResponse
 import com.example.project_sns.data.response.MapDataResponse
 import com.example.project_sns.data.response.PostDataResponse
 import com.example.project_sns.data.response.ReCommentDataResponse
+import com.example.project_sns.data.response.ReCommentResponse
 import com.example.project_sns.data.response.UserDataResponse
 import com.example.project_sns.domain.model.CommentDataEntity
+import com.example.project_sns.domain.model.CommentEntity
 import com.example.project_sns.domain.model.ImageDataEntity
 import com.example.project_sns.domain.model.KakaoDocumentsEntity
 import com.example.project_sns.domain.model.KakaoMapEntity
@@ -17,6 +20,7 @@ import com.example.project_sns.domain.model.KakaoMetaEntity
 import com.example.project_sns.domain.model.MapDataEntity
 import com.example.project_sns.domain.model.PostDataEntity
 import com.example.project_sns.domain.model.ReCommentDataEntity
+import com.example.project_sns.domain.model.ReCommentEntity
 import com.example.project_sns.domain.model.UserDataEntity
 
 // <!---------- Firebase ---------->
@@ -33,9 +37,6 @@ fun UserDataResponse.toEntity() = UserDataEntity(
 fun PostDataResponse.toEntity() = PostDataEntity(
     uid = uid,
     postId = postId,
-    profileImage = profileImage,
-    name = name,
-    email = email,
     imageList = imageList?.map { it.toEntity() },
     postText = postText,
     createdAt = createdAt,
@@ -54,24 +55,32 @@ fun MapDataResponse.toEntity() = MapDataEntity(
 )
 
 fun CommentDataResponse.toEntity() = CommentDataEntity(
+    uid = uid,
+    postId = postId,
     commentId = commentId,
     comment = comment,
     commentAt = commentAt,
-    uid = uid,
-    name = name,
-    email = email,
-    profileImage = profileImage,
-    reCommentData = reCommentData?.toReCommentListEntity()
+    editedAt = editedAt,
+    reCommentSize = reCommentSize
 )
 
 fun ReCommentDataResponse.toEntity() = ReCommentDataEntity(
+    uid = uid,
     commentId = commentId,
+    reCommentId = reCommentId,
     comment = comment,
     commentAt = commentAt,
-    uid = uid,
-    name = name,
-    email = email,
-    profileImage = profileImage
+    editedAt = editedAt
+)
+
+fun CommentResponse.toEntity() = CommentEntity(
+    userData = userData.toEntity(),
+    commentData = commentData.toEntity()
+)
+
+fun ReCommentResponse.toEntity() = ReCommentEntity(
+    userData = userData.toEntity(),
+    reCommentData = reCommentData.toEntity()
 )
 
 fun List<PostDataResponse>.toPostListEntity(): List<PostDataEntity> {
@@ -83,6 +92,10 @@ fun List<CommentDataResponse>.toCommentListEntity(): List<CommentDataEntity> {
 }
 
 fun List<ReCommentDataResponse>.toReCommentListEntity(): List<ReCommentDataEntity> {
+    return this.map { it.toEntity() }
+}
+
+fun List<CommentResponse>.toCommentEntity(): List<CommentEntity> {
     return this.map { it.toEntity() }
 }
 

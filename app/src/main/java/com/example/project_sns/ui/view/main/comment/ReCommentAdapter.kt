@@ -9,13 +9,14 @@ import com.bumptech.glide.Glide
 import com.example.project_sns.R
 import com.example.project_sns.databinding.RvItemReCommentBinding
 import com.example.project_sns.ui.view.model.ReCommentDataModel
+import com.example.project_sns.ui.view.model.ReCommentModel
 
 class ReCommentAdapter(private val onClick: ReCommentItemClick) :
-    ListAdapter<ReCommentDataModel, ReCommentAdapter.ReCommentViewHolder>(diffUtil) {
+    ListAdapter<ReCommentModel, ReCommentAdapter.ReCommentViewHolder>(diffUtil) {
 
     interface ReCommentItemClick {
-        fun onClickEdit(item: ReCommentDataModel)
-        fun onClickDelete(item: ReCommentDataModel)
+        fun onClickEdit(item: ReCommentModel)
+        fun onClickDelete(item: ReCommentModel)
     }
 
     class ReCommentViewHolder(
@@ -23,17 +24,20 @@ class ReCommentAdapter(private val onClick: ReCommentItemClick) :
         private val onClick: ReCommentItemClick
     ) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(item: ReCommentDataModel) {
-            if (item.profileImage != null) {
+        fun bind(item: ReCommentModel) {
+            val userData = item.userData
+            val reCommentData = item.reCommentData
+
+            if (userData.profileImage != null) {
                 binding.ivReComment.clipToOutline = true
-                Glide.with(binding.root).load(item.profileImage).into(binding.ivReComment)
+                Glide.with(binding.root).load(userData.profileImage).into(binding.ivReComment)
             } else {
                 Glide.with(binding.root).load(R.drawable.ic_user_fill).into(binding.ivReComment)
             }
 
-            binding.tvItemReCommentName.text = item.name
-            binding.tvItemReCommentEmail.text = item.email
-            binding.tvItemReComment.text = item.comment
+            binding.tvItemReCommentName.text = userData.name
+            binding.tvItemReCommentEmail.text = userData.email
+            binding.tvItemReComment.text = reCommentData.comment
 
             binding.tvItemReCommentDelete.setOnClickListener {
                 onClick.onClickDelete(item)
@@ -58,17 +62,17 @@ class ReCommentAdapter(private val onClick: ReCommentItemClick) :
 
 
     companion object {
-        val diffUtil = object : DiffUtil.ItemCallback<ReCommentDataModel>() {
+        val diffUtil = object : DiffUtil.ItemCallback<ReCommentModel>() {
             override fun areItemsTheSame(
-                oldItem: ReCommentDataModel,
-                newItem: ReCommentDataModel
+                oldItem: ReCommentModel,
+                newItem: ReCommentModel
             ): Boolean {
                 return oldItem == newItem
             }
 
             override fun areContentsTheSame(
-                oldItem: ReCommentDataModel,
-                newItem: ReCommentDataModel
+                oldItem: ReCommentModel,
+                newItem: ReCommentModel
             ): Boolean {
                 return oldItem == newItem
             }

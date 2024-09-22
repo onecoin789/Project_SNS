@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class UploadCommentUseCase @Inject constructor(private val dataRepository: DataRepository) {
-    suspend operator fun invoke(postId: String, commentData: CommentDataEntity?): Flow<Boolean> {
-        return dataRepository.uploadComment(postId, commentData)
+    suspend operator fun invoke(commentData: CommentDataEntity?): Flow<Boolean> {
+        return dataRepository.uploadComment(commentData)
     }
 }

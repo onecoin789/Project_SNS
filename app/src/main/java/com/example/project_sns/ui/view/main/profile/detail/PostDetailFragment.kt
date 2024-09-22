@@ -11,6 +11,7 @@ import com.bumptech.glide.Glide
 import com.example.project_sns.R
 import com.example.project_sns.databinding.FragmentPostDetailBinding
 import com.example.project_sns.ui.BaseFragment
+import com.example.project_sns.ui.CurrentUser
 import com.example.project_sns.ui.mapper.toViewType
 import com.example.project_sns.ui.view.main.MainSharedViewModel
 import com.example.project_sns.ui.view.model.PostDataModel
@@ -38,15 +39,16 @@ class PostDetailFragment : BaseFragment<FragmentPostDetailBinding>() {
     }
 
     private fun initView() {
+        val currentUser = CurrentUser.userData
         val profile = binding.ivPDUser
 
         viewLifecycleOwner.lifecycleScope.launch {
             mainSharedViewModel.postData.observe(viewLifecycleOwner) { postData ->
 
                 if (postData != null) {
-                    if (postData.profileImage != null) {
+                    if (currentUser?.profileImage != null) {
                         profile.clipToOutline = true
-                        Glide.with(requireContext()).load(postData.profileImage).into(profile)
+                        Glide.with(requireContext()).load(currentUser.profileImage).into(profile)
                     } else {
                         Glide.with(requireContext()).load(R.drawable.ic_user_fill).into(profile)
                     }
@@ -55,9 +57,15 @@ class PostDetailFragment : BaseFragment<FragmentPostDetailBinding>() {
                         binding.tvPDLocation.text = postData.mapData.placeName
                     }
 
-                    binding.tvPDName.text = postData.name
-                    binding.tvPDEmail.text = postData.email
+                    binding.tvPDName.text = currentUser?.name
+                    binding.tvPDEmail.text = currentUser?.email
                     binding.tvPDPostText.text = postData.postText
+
+                    if (postData.editedAt != null) {
+                        binding.tvPDEdit.visibility = View.VISIBLE
+                    } else {
+                        binding.tvPDEdit.visibility = View.GONE
+                    }
 
                     initRv(postData)
 

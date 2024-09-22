@@ -56,20 +56,14 @@ class DeleteReCommentDialogFragment : DialogFragment() {
 
         binding.btnDlConfirm.setOnClickListener {
             viewLifecycleOwner.lifecycleScope.launch {
-                mainSharedViewModel.postData.observe(viewLifecycleOwner) { currentPostData ->
                     mainSharedViewModel.selectedCommentData.observe(viewLifecycleOwner) { currentCommentData ->
-                        mainSharedViewModel.selectedReCommentData.observe(viewLifecycleOwner) { item ->
-                            if (currentPostData != null && currentCommentData != null && item != null) {
-                                mainSharedViewModel.deleteReComment(
-                                    currentPostData.postId,
-                                    currentCommentData.commentId,
-                                    item.commentId
-                                )
+                        mainSharedViewModel.selectedReCommentData.observe(viewLifecycleOwner) { currentReCommentData ->
+                            if (currentCommentData != null && currentReCommentData != null) {
+                                mainSharedViewModel.deleteReComment(currentCommentData.commentData.commentId, currentReCommentData.reCommentId)
                             }
                         }
                     }
                 }
-            }
             dismiss()
         }
 

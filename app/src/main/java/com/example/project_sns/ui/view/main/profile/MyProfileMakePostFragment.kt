@@ -165,9 +165,6 @@ class MyProfileMakePostFragment : Fragment() {
     private fun initData() {
         val auth = CurrentUser.userData
         val uid = auth?.uid.toString()
-        val profileImage = auth?.profileImage
-        val name = auth?.name.toString()
-        val email = auth?.email.toString()
         val postText = binding.etMakeText.text.toString()
         val time = LocalDateTime.now()
 
@@ -175,9 +172,6 @@ class MyProfileMakePostFragment : Fragment() {
         val data = PostDataModel(
             uid = uid,
             postId = UUID.randomUUID().toString(),
-            profileImage = profileImage,
-            name = name,
-            email = email,
             imageList = imageList,
             postText = postText,
             mapData = MapDataModel(placeName, addressName, lat?.toDouble(), lng?.toDouble()),
