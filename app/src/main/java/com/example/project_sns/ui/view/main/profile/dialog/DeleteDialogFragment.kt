@@ -58,7 +58,7 @@ class DeleteDialogFragment : DialogFragment() {
 
         binding.btnDlConfirm.setOnClickListener {
             viewLifecycleOwner.lifecycleScope.launch {
-                mainSharedViewModel.commentListData.collect { data ->
+                mainSharedViewModel.commentListData.observe(viewLifecycleOwner) { data ->
                     mainSharedViewModel.postData.observe(viewLifecycleOwner) {
                         mainSharedViewModel.deletePost(it, data.map { it.commentData })
 

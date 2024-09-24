@@ -94,7 +94,7 @@ class CommentAdapter(private val onClick: CommentItemClick) :
                 oldItem: CommentModel,
                 newItem: CommentModel
             ): Boolean {
-                return oldItem.commentData == newItem.commentData
+                return oldItem.commentData.commentId == newItem.commentData.commentId
             }
 
             override fun areContentsTheSame(

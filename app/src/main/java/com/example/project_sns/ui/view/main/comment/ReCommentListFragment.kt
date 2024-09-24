@@ -20,6 +20,7 @@ import com.example.project_sns.ui.view.main.MainSharedViewModel
 import com.example.project_sns.ui.view.model.ReCommentDataModel
 import com.example.project_sns.ui.view.model.ReCommentModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import java.util.UUID
@@ -91,11 +92,18 @@ class ReCommentListFragment : BaseFragment<FragmentReCommentListBinding>() {
             }
         })
 
+        val linearLayoutManager = LinearLayoutManager(requireContext())
         with(binding.rvReComment) {
-            layoutManager =
-                LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+            layoutManager = linearLayoutManager
             adapter = listAdapter
         }
+
+        val lastVisible = linearLayoutManager.findLastVisibleItemPosition().plus(1)
+
+        binding.clReCommentMore.setOnClickListener {
+            mainSharedViewModel.reCommentLastVisibleItem.value = lastVisible
+        }
+
         viewLifecycleOwner.lifecycleScope.launch {
             mainSharedViewModel.reCommentListData.collect { reCommentData ->
                 val dataSet = reCommentData.sortedByDescending { it.reCommentData.commentAt }
@@ -104,9 +112,11 @@ class ReCommentListFragment : BaseFragment<FragmentReCommentListBinding>() {
                 if (reCommentData.isEmpty()) {
                     binding.tvReCommentNone.visibility = View.VISIBLE
                     binding.tvReCommentSuggest.visibility = View.VISIBLE
-                    binding.rvReComment.visibility = View.INVISIBLE
+                    binding.rvReComment.visibility = View.GONE
+                    binding.clReCommentMore.visibility = View.GONE
                 } else {
                     binding.rvReComment.visibility = View.VISIBLE
+                    binding.clReCommentMore.visibility = View.VISIBLE
                     binding.tvReCommentNone.visibility = View.INVISIBLE
                     binding.tvReCommentSuggest.visibility = View.INVISIBLE
                 }
