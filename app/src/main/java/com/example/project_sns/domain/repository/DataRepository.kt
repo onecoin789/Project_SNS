@@ -23,13 +23,13 @@ interface DataRepository {
 
     suspend fun uploadComment(commentData: CommentDataEntity?): Flow<Boolean>
 
-    suspend fun getComment(postId: String): Flow<List<CommentEntity>>
+    suspend fun getComment(postId: String, lastVisibleItem: Flow<Int>): Flow<List<CommentEntity>>
 
     suspend fun deleteComment(commentId: String): Result<String>
 
     suspend fun uploadReComment(reCommentData: ReCommentDataEntity?): Flow<Boolean>
 
-    suspend fun getReComment(commentId: String): Flow<List<ReCommentEntity>>
+    suspend fun getReComment(commentId: String, lastVisibleItem: Flow<Int>): Flow<List<ReCommentEntity>>
 
     suspend fun deleteReComment(commentId: String, reCommentId: String): Result<String>
 

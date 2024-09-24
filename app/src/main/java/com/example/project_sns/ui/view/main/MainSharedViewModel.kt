@@ -12,7 +12,7 @@ import com.example.project_sns.domain.usecase.DeletePostUseCase
 import com.example.project_sns.domain.usecase.DeleteReCommentUseCase
 import com.example.project_sns.domain.usecase.EditPostUseCase
 import com.example.project_sns.domain.usecase.EditProfileUseCase
-import com.example.project_sns.domain.usecase.GetCommentUseCase
+import com.example.project_sns.domain.usecase.GetCommentDataUseCase
 import com.example.project_sns.domain.usecase.GetCurrentUserPostDataUseCase
 import com.example.project_sns.domain.usecase.GetReCommentDataUseCase
 import com.example.project_sns.domain.usecase.SearchKakaoMapUseCase
@@ -25,7 +25,6 @@ import com.example.project_sns.ui.mapper.toCommentListModel
 import com.example.project_sns.ui.mapper.toEntity
 import com.example.project_sns.ui.mapper.toKakaoListEntity
 import com.example.project_sns.ui.mapper.toPostListModel
-import com.example.project_sns.ui.mapper.toReCommentDataListEntity
 import com.example.project_sns.ui.mapper.toReCommentListModel
 import com.example.project_sns.ui.util.CheckEditProfile
 import com.example.project_sns.ui.view.model.CommentDataModel
@@ -36,6 +35,7 @@ import com.example.project_sns.ui.view.model.ReCommentDataModel
 import com.example.project_sns.ui.view.model.ReCommentModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -52,7 +52,7 @@ class MainSharedViewModel @Inject constructor(
     private val deletePostUseCase: DeletePostUseCase,
     private val editPostUseCase: EditPostUseCase,
     private val uploadCommentUseCase: UploadCommentUseCase,
-    private val getCommentUseCase: GetCommentUseCase,
+    private val getCommentDataUseCase: GetCommentDataUseCase,
     private val uploadReCommentUseCase: UploadReCommentUseCase,
     private val deleteCommentUseCase: DeleteCommentUseCase,
     private val getReCommentDataUseCase: GetReCommentDataUseCase,
@@ -86,8 +86,8 @@ class MainSharedViewModel @Inject constructor(
     private val _commentData = MutableStateFlow<Boolean?>(null)
     val commentData: StateFlow<Boolean?> get() = _commentData
 
-    private val _commentListData = MutableStateFlow<List<CommentModel>>(emptyList())
-    val commentListData: StateFlow<List<CommentModel>> get() = _commentListData
+    private val _commentListData = MutableLiveData<List<CommentModel>>(emptyList())
+    val commentListData: LiveData<List<CommentModel>> get() = _commentListData
 
     private val _reCommentData = MutableStateFlow<Boolean?>(null)
     val reCommentData: StateFlow<Boolean?> get() = _reCommentData
@@ -98,6 +98,8 @@ class MainSharedViewModel @Inject constructor(
     private val _currentPage = MutableLiveData<Int>(0)
     val currentPage: LiveData<Int> get() = _currentPage
 
+
+    val reCommentLastVisibleItem = MutableStateFlow(0)
 
 
     fun startPage() {
@@ -150,9 +152,9 @@ class MainSharedViewModel @Inject constructor(
         }
     }
 
-    fun getComment(postId: String) {
+    fun getComment(postId: String, lastVisibleItem: Flow<Int>) {
         viewModelScope.launch {
-            getCommentUseCase(postId).collect {
+            getCommentDataUseCase(postId, lastVisibleItem).collect {
                 val commentList = it.toCommentListModel()
                 _commentListData.value = commentList
                 Log.d("test_vm", "${_commentListData.value}")
@@ -160,9 +162,9 @@ class MainSharedViewModel @Inject constructor(
         }
     }
 
-    fun getReComment(commentId: String) {
+    fun getReComment(commentId: String, lastVisibleItem: Flow<Int>) {
         viewModelScope.launch {
-            getReCommentDataUseCase(commentId).collect {
+            getReCommentDataUseCase(commentId, lastVisibleItem).collect {
                 val reCommentList = it.toReCommentListModel()
                 _reCommentListData.value = reCommentList
                 CurrentPost.reCommentList = it.toReCommentListModel()

@@ -75,20 +75,16 @@ class MainHomeFragment : BaseFragment<FragmentMainHomeBinding>() {
                     val lastVisible = linearLayoutManager.findLastVisibleItemPosition().plus(1)
                     if (!binding.rvHome.canScrollVertically(1)) {
                         binding.clHomeItemMore.setOnClickListener {
-                            lastVisibleItem.value = lastVisible
+                            mainViewModel.postLastVisibleItem.value = lastVisible
                         }
                     } else if (lastVisibleItem.value == lastVisible) {
                         binding.pbHome.visibility = View.GONE
                     }
                 }
             })
-            viewLifecycleOwner.lifecycleScope.launch {
-                mainViewModel.getAllPost()
-            }
         }
         viewLifecycleOwner.lifecycleScope.launch {
-            mainViewModel.getPagingData(lastVisibleItem)
-            delay(1000)
+            mainViewModel.getPagingData()
             mainViewModel.pagingData.collect { data ->
                 val dataByCreatedAt = data?.sortedByDescending { it.postData.createdAt }
                 postAdapter.submitList(dataByCreatedAt)
