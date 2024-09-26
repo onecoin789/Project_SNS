@@ -7,12 +7,12 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.project_sns.R
+import com.example.project_sns.databinding.RvItemProgressGrayBinding
 import com.example.project_sns.databinding.RvItemReCommentBinding
-import com.example.project_sns.ui.view.model.ReCommentDataModel
 import com.example.project_sns.ui.view.model.ReCommentModel
 
 class ReCommentAdapter(private val onClick: ReCommentItemClick) :
-    ListAdapter<ReCommentModel, ReCommentAdapter.ReCommentViewHolder>(diffUtil) {
+    ListAdapter<ReCommentModel, RecyclerView.ViewHolder>(diffUtil) {
 
     interface ReCommentItemClick {
         fun onClickEdit(item: ReCommentModel)
@@ -46,18 +46,32 @@ class ReCommentAdapter(private val onClick: ReCommentItemClick) :
             binding.tvItemReCommentEdit.setOnClickListener {
                 onClick.onClickEdit(item)
             }
-
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ReCommentViewHolder {
-        val binding = RvItemReCommentBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return ReCommentViewHolder(binding, onClick)
+    class ProgressViewHolder(val binding: RvItemProgressGrayBinding): RecyclerView.ViewHolder(binding.root)
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        if (viewType == ITEM) {
+            val binding = RvItemReCommentBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            return ReCommentViewHolder(binding, onClick)
+        } else {
+            val binding = RvItemProgressGrayBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            return ProgressViewHolder(binding)
+        }
     }
 
-    override fun onBindViewHolder(holder: ReCommentViewHolder, position: Int) {
-        val reCommentList = getItem(position)
-        holder.bind(reCommentList)
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        if (holder is ReCommentViewHolder) {
+            holder.bind(getItem(position))
+        }
+    }
+
+    override fun getItemViewType(position: Int): Int {
+        return when (getItem(position)) {
+            null -> LOADING
+            else -> ITEM
+        }
     }
 
 
@@ -76,7 +90,8 @@ class ReCommentAdapter(private val onClick: ReCommentItemClick) :
             ): Boolean {
                 return oldItem == newItem
             }
-
         }
+        private const val ITEM = 0
+        private const val LOADING = 1
     }
 }

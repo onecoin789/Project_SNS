@@ -29,6 +29,9 @@ class CommentFragment : BaseBottomSheet<FragmentCommentBinding>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        viewLifecycleOwner.lifecycleScope.launch {
+            mainSharedViewModel.resetCommentData()
+        }
         initViewPager()
         setPage()
 

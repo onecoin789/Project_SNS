@@ -1,4 +1,4 @@
-package com.example.project_sns.ui.view.main.profile
+package com.example.project_sns.ui.util
 
 import com.example.project_sns.ui.view.model.ImageDataModel
 

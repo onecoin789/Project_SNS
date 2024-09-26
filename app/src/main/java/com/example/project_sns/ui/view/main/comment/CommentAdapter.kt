@@ -10,15 +10,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.project_sns.R
 import com.example.project_sns.databinding.RvItemCommentBinding
-import com.example.project_sns.ui.CurrentPost
+import com.example.project_sns.databinding.RvItemProgressGrayBinding
 import com.example.project_sns.ui.CurrentUser
-import com.example.project_sns.ui.mapper.toReCommentDataListEntity
 import com.example.project_sns.ui.view.model.CommentModel
-import com.example.project_sns.ui.view.model.ReCommentDataModel
-import com.example.project_sns.ui.view.model.ReCommentModel
 
 class CommentAdapter(private val onClick: CommentItemClick) :
-    ListAdapter<CommentModel, CommentAdapter.CommentViewHolder>(diffUtil) {
+    ListAdapter<CommentModel, RecyclerView.ViewHolder>(diffUtil) {
 
     interface CommentItemClick {
         fun onClickCommentEdit(item: CommentModel)
@@ -76,16 +73,35 @@ class CommentAdapter(private val onClick: CommentItemClick) :
         }
     }
 
+    class ProgressViewHolder(val binding: RvItemProgressGrayBinding) :
+        RecyclerView.ViewHolder(binding.root)
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CommentViewHolder {
-        val binding =
-            RvItemCommentBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return CommentViewHolder(binding, onClick)
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        if (viewType == ITEM) {
+            val binding =
+                RvItemCommentBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            return CommentViewHolder(binding, onClick)
+        } else {
+            val binding =
+                RvItemProgressGrayBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            return ProgressViewHolder(binding)
+
+        }
     }
 
-    override fun onBindViewHolder(holder: CommentViewHolder, position: Int) {
-        val commentList = getItem(position)
-        holder.bind(commentList)
+
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        if (holder is CommentViewHolder) {
+            holder.bind(getItem(position))
+        }
+    }
+
+    override fun getItemViewType(position: Int): Int {
+        return when (getItem(position)) {
+            null -> LOADING
+            else -> ITEM
+        }
     }
 
     companion object {
@@ -103,7 +119,8 @@ class CommentAdapter(private val onClick: CommentItemClick) :
             ): Boolean {
                 return oldItem.commentData == newItem.commentData
             }
-
         }
+        private const val ITEM = 0
+        private const val LOADING = 1
     }
 }

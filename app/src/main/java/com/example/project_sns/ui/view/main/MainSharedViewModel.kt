@@ -92,14 +92,32 @@ class MainSharedViewModel @Inject constructor(
     private val _reCommentData = MutableStateFlow<Boolean?>(null)
     val reCommentData: StateFlow<Boolean?> get() = _reCommentData
 
-    private val _reCommentListData = MutableStateFlow<List<ReCommentModel>>(emptyList())
-    val reCommentListData: StateFlow<List<ReCommentModel>> get() = _reCommentListData
+    private val _reCommentListData = MutableLiveData<List<ReCommentModel>>(emptyList())
+    val reCommentListData: LiveData<List<ReCommentModel>> get() = _reCommentListData
 
     private val _currentPage = MutableLiveData<Int>(0)
     val currentPage: LiveData<Int> get() = _currentPage
 
 
     val reCommentLastVisibleItem = MutableStateFlow(0)
+
+
+
+    fun resetCommentData() {
+        viewModelScope.launch {
+            _commentListData.value = emptyList()
+            Log.d("test_vm", "${_commentListData.value}")
+
+        }
+    }
+
+    fun resetReCommentData() {
+        viewModelScope.launch {
+            _reCommentListData.value = emptyList()
+            Log.d("test_vm", "${_commentListData.value}")
+
+        }
+    }
 
 
     fun startPage() {

@@ -17,6 +17,17 @@
         app:layout_constraintTop_toTopOf="parent"
         android:contentDescription="@string/contentDescription"/>
 
+    <ImageView
+        android:id="@+id/ivHomeNotification"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_marginEnd="20dp"
+        android:background="@drawable/ic_notification"
+        app:layout_constraintTop_toTopOf="@+id/ivHomeDM"
+        app:layout_constraintEnd_toStartOf="@+id/ivHomeDM"
+        app:layout_constraintBottom_toBottomOf="@id/ivHomeDM"
+        android:contentDescription="@string/contentDescription"/>
+
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -204,7 +215,7 @@
                 android:layout_marginTop="30dp"
                 android:nestedScrollingEnabled="false"
                 android:visibility="visible"
-                app:layout_constraintTop_toBottomOf="@+id/clRecommendFrame" />
+                app:layout_constraintTop_toBottomOf="@+id/clRecommendFrame"/>
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/clHomeItemMore"
