@@ -45,6 +45,7 @@
     <string name="home_comment_none">아직 댓글이 없습니다</string>
     <string name="home_comment_suggest">댓글을 남겨보세요!</string>
     <string name="home_comment_for">님 에게 댓글</string>
+    <string name="home_comment_more">댓글 불러오기</string>
     <string name="home_more">게시물 불러오기</string>
     <string name="home_edit">(수정됨)</string>
 

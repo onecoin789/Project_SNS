@@ -16,8 +16,13 @@ import com.example.project_sns.databinding.FragmentMainHomeBinding
 import com.example.project_sns.ui.BaseFragment
 import com.example.project_sns.ui.view.main.MainSharedViewModel
 import com.example.project_sns.ui.view.main.MainViewModel
+import com.example.project_sns.ui.view.main.comment.CommentAdapter
+import com.example.project_sns.ui.view.model.CommentModel
+import com.example.project_sns.ui.view.model.PostModel
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
@@ -32,9 +37,9 @@ class MainHomeFragment : BaseFragment<FragmentMainHomeBinding>() {
 
     private val mainSharedViewModel: MainSharedViewModel by activityViewModels()
 
-    private val lastVisibleItem = MutableStateFlow(0)
+    private var postList: MutableList<PostModel?> = mutableListOf()
 
-    private var isLoading: Boolean = false
+    private lateinit var postAdapter: HomePostAdapter
 
 
     override fun getFragmentBinding(
@@ -51,15 +56,22 @@ class MainHomeFragment : BaseFragment<FragmentMainHomeBinding>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        getPostData()
         navigateView()
         initRv()
 
 
     }
 
+    private fun getPostData() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            mainViewModel.getPagingData()
+        }
+    }
+
 
     private fun initRv() {
-        val postAdapter = HomePostAdapter { data ->
+        postAdapter = HomePostAdapter { data ->
             viewLifecycleOwner.lifecycleScope.launch {
                 mainSharedViewModel.getPostData(data.postData)
             }
@@ -69,36 +81,58 @@ class MainHomeFragment : BaseFragment<FragmentMainHomeBinding>() {
         with(binding.rvHome) {
             layoutManager = linearLayoutManager
             adapter = postAdapter
+
             addOnScrollListener(object : RecyclerView.OnScrollListener() {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                     super.onScrolled(recyclerView, dx, dy)
                     val lastVisible = linearLayoutManager.findLastVisibleItemPosition().plus(1)
                     if (!binding.rvHome.canScrollVertically(1)) {
                         binding.clHomeItemMore.setOnClickListener {
-                            mainViewModel.postLastVisibleItem.value = lastVisible
+                            moreItem(lastVisible)
                         }
-                    } else if (lastVisibleItem.value == lastVisible) {
-                        binding.pbHome.visibility = View.GONE
                     }
                 }
             })
         }
-        viewLifecycleOwner.lifecycleScope.launch {
-            mainViewModel.getPagingData()
-            mainViewModel.pagingData.collect { data ->
-                val dataByCreatedAt = data?.sortedByDescending { it.postData.createdAt }
-                postAdapter.submitList(dataByCreatedAt)
-                if (data != null) {
-                    binding.clHomeItemMore.visibility = View.VISIBLE
-                    binding.pbHome.visibility = View.GONE
-                } else {
-                    binding.clHomeItemMore.visibility = View.GONE
-                    binding.pbHome.visibility = View.VISIBLE
-                }
-                Log.d("test_view", "$data")
+
+        mainViewModel.pagingData.observe(viewLifecycleOwner) { data ->
+            val dataByCreatedAt = data.sortedByDescending { it.postData.createdAt }
+
+            postList = dataByCreatedAt.toMutableList()
+            postAdapter.submitList(postList)
+            postAdapter.notifyItemInserted(data.size - 1)
+
+            if (data.isNotEmpty() && data != null) {
+                binding.clHomeItemMore.visibility = View.VISIBLE
+                binding.pbHome.visibility = View.GONE
+            } else {
+                binding.clHomeItemMore.visibility = View.GONE
+                binding.pbHome.visibility = View.VISIBLE
             }
+            Log.d("test_view", "$data")
         }
     }
+
+    private fun moreItem(lastVisible: Int) {
+        val mRecyclerView = binding.rvHome
+        val runnable = kotlinx.coroutines.Runnable {
+            postList.add(null)
+            postAdapter.notifyItemInserted(postList.size - 1)
+        }
+        mRecyclerView.post(runnable)
+
+        CoroutineScope(Dispatchers.Main).launch {
+            delay(1000)
+            val runnableMore = kotlinx.coroutines.Runnable {
+                postList.removeAt(postList.size - 1)
+                postAdapter.notifyItemRemoved(postList.size)
+                mainViewModel.postLastVisibleItem.value = lastVisible
+            }
+            delay(1000)
+            runnableMore.run()
+        }
+    }
+
 
     private fun navigateView() {
         binding.clHomeLow.setOnClickListener {

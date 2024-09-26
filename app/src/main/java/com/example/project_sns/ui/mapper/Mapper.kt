@@ -12,7 +12,7 @@ import com.example.project_sns.domain.model.PostEntity
 import com.example.project_sns.domain.model.ReCommentDataEntity
 import com.example.project_sns.domain.model.ReCommentEntity
 import com.example.project_sns.domain.model.UserDataEntity
-import com.example.project_sns.ui.view.main.profile.PostImageType
+import com.example.project_sns.ui.util.PostImageType
 import com.example.project_sns.ui.view.model.CommentDataModel
 import com.example.project_sns.ui.view.model.CommentModel
 import com.example.project_sns.ui.view.model.ImageDataModel

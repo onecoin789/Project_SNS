@@ -1,5 +1,7 @@
 package com.example.project_sns.ui.view.main
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.project_sns.domain.usecase.GetAllPostUseCase
@@ -32,8 +34,8 @@ class MainViewModel @Inject constructor(
     private val _allPostData = MutableStateFlow<List<PostDataModel>>(emptyList())
     val allPostData: StateFlow<List<PostDataModel>> get() = _allPostData
 
-    private val _pagingData = MutableStateFlow<List<PostModel>?>(emptyList())
-    val pagingData: StateFlow<List<PostModel>?> get() = _pagingData
+    private val _pagingData = MutableLiveData<List<PostModel>>(emptyList())
+    val pagingData: LiveData<List<PostModel>> get() = _pagingData
 
 
 

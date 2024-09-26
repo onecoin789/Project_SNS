@@ -8,8 +8,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.project_sns.databinding.RvItemImageListBinding
 import com.example.project_sns.databinding.RvItemVideoRadiusBinding
-import com.example.project_sns.ui.view.main.profile.PostImageType
-import com.example.project_sns.ui.view.main.profile.getType
+import com.example.project_sns.ui.util.PostImageType
+import com.example.project_sns.ui.util.getType
 import com.example.project_sns.ui.view.model.ImageDataModel
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem

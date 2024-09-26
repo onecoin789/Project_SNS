@@ -10,13 +10,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.project_sns.R
 import com.example.project_sns.databinding.RvItemPostPhotoBinding
+import com.example.project_sns.databinding.RvItemProgressBlackBinding
 import com.example.project_sns.ui.mapper.toViewType
 import com.example.project_sns.ui.view.main.profile.detail.PostImageAdapter
 import com.example.project_sns.ui.view.model.ImageDataModel
 import com.example.project_sns.ui.view.model.PostModel
 
 class HomePostAdapter(private val onItemClick: (PostModel) -> Unit) :
-    ListAdapter<PostModel, HomePostAdapter.HomePostViewHolder>(diffUtil) {
+    ListAdapter<PostModel, RecyclerView.ViewHolder>(diffUtil) {
 
     class HomePostViewHolder(
         private val binding: RvItemPostPhotoBinding,
@@ -77,15 +78,30 @@ class HomePostAdapter(private val onItemClick: (PostModel) -> Unit) :
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HomePostViewHolder {
-        val binding =
-            RvItemPostPhotoBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return HomePostViewHolder(binding, onItemClick)
+    class ProgressViewHolder(binding: RvItemProgressBlackBinding): RecyclerView.ViewHolder(binding.root)
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        if (viewType == ITEM) {
+            val binding =
+                RvItemPostPhotoBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            return HomePostViewHolder(binding, onItemClick)
+        } else {
+            val binding = RvItemProgressBlackBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            return ProgressViewHolder(binding)
+        }
     }
 
-    override fun onBindViewHolder(holder: HomePostViewHolder, position: Int) {
-        val postList = getItem(position) ?: return
-        holder.bind(postList)
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        if (holder is HomePostViewHolder) {
+            holder.bind(getItem(position))
+        }
+    }
+
+    override fun getItemViewType(position: Int): Int {
+        return when (getItem(position)) {
+            null -> LOADING
+            else -> ITEM
+        }
     }
 
     companion object {
@@ -100,7 +116,8 @@ class HomePostAdapter(private val onItemClick: (PostModel) -> Unit) :
             ): Boolean {
                 return oldItem == newItem
             }
-
         }
+        private const val ITEM = 0
+        private const val LOADING = 1
     }
 }

@@ -24,6 +24,9 @@ import com.example.project_sns.ui.view.model.CommentModel
 import com.example.project_sns.ui.view.model.ReCommentDataModel
 import com.example.project_sns.ui.view.model.ReCommentModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
@@ -36,6 +39,10 @@ class CommentListFragment : BaseFragment<FragmentCommentListBinding>() {
 
     private var commentData: CommentDataModel? = null
 
+    private var commentList: MutableList<CommentModel?> = mutableListOf()
+
+    private lateinit var listAdapter: CommentAdapter
+
     val commentLastVisibleItem = MutableStateFlow(0)
 
     override fun getFragmentBinding(
@@ -47,6 +54,7 @@ class CommentListFragment : BaseFragment<FragmentCommentListBinding>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
 
         getCommentData()
         initComment()
@@ -89,7 +97,7 @@ class CommentListFragment : BaseFragment<FragmentCommentListBinding>() {
 
 
     private fun initRv() {
-        val listAdapter = CommentAdapter(object : CommentAdapter.CommentItemClick {
+        listAdapter = CommentAdapter(object : CommentAdapter.CommentItemClick {
 
             override fun onClickCommentEdit(item: CommentModel) {
                 val editComment = binding.etComment
@@ -125,7 +133,9 @@ class CommentListFragment : BaseFragment<FragmentCommentListBinding>() {
                     super.onScrolled(recyclerView, dx, dy)
                     val lastVisible = linearLayoutManager.findLastVisibleItemPosition().plus(1)
                     if (!binding.rvComment.canScrollVertically(1)) {
-                        commentLastVisibleItem.value = lastVisible
+                        binding.clCommentMore.setOnClickListener {
+                            moreItem(lastVisible)
+                        }
                         Log.d("test_comment", "${commentLastVisibleItem.value}, $lastVisible")
                     }
                 }
@@ -134,18 +144,42 @@ class CommentListFragment : BaseFragment<FragmentCommentListBinding>() {
 
 
         mainSharedViewModel.commentListData.observe(viewLifecycleOwner) { data ->
-            val dataSet = data.sortedByDescending { it.commentData.commentAt }
-            listAdapter.submitList(dataSet)
+                val dataSet = data.sortedByDescending { it.commentData.commentAt }
 
-            if (data.isEmpty()) {
-                binding.tvCommentNone.visibility = View.VISIBLE
-                binding.tvCommentSuggest.visibility = View.VISIBLE
-                binding.rvComment.visibility = View.GONE
-            } else {
-                binding.rvComment.visibility = View.VISIBLE
-                binding.tvCommentNone.visibility = View.INVISIBLE
-                binding.tvCommentSuggest.visibility = View.INVISIBLE
+                commentList = dataSet.toMutableList()
+                listAdapter.submitList(commentList)
+                listAdapter.notifyItemInserted(data.size - 1)
+
+
+                if (data.isEmpty()) {
+                    binding.tvCommentNone.visibility = View.VISIBLE
+                    binding.tvCommentSuggest.visibility = View.VISIBLE
+                    binding.clCommentRvItem.visibility = View.GONE
+                } else {
+                    binding.clCommentRvItem.visibility = View.VISIBLE
+                    binding.tvCommentNone.visibility = View.INVISIBLE
+                    binding.tvCommentSuggest.visibility = View.INVISIBLE
+                }
+
+        }
+    }
+
+    private fun moreItem(lastVisible: Int) {
+        val mRecyclerView = binding.rvComment
+        val runnable = kotlinx.coroutines.Runnable {
+            commentList.add(null)
+            listAdapter.notifyItemInserted(commentList.size - 1)
+        }
+        mRecyclerView.post(runnable)
+
+        CoroutineScope(Dispatchers.Main).launch {
+            val runnableMore = kotlinx.coroutines.Runnable {
+                commentList.removeAt(commentList.size - 1)
+                listAdapter.notifyItemRemoved(commentList.size)
+                commentLastVisibleItem.value = lastVisible
             }
+            delay(1000)
+            runnableMore.run()
         }
     }
 
@@ -181,7 +215,6 @@ class CommentListFragment : BaseFragment<FragmentCommentListBinding>() {
             }
         }
     }
-
 
     private fun initCommentData() {
         val currentUser = CurrentUser.userData

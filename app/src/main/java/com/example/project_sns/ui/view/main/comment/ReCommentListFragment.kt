@@ -1,6 +1,7 @@
 package com.example.project_sns.ui.view.main.comment
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,6 +11,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.project_sns.R
 import com.example.project_sns.databinding.FragmentReCommentListBinding
@@ -17,9 +19,13 @@ import com.example.project_sns.ui.BaseFragment
 import com.example.project_sns.ui.CurrentUser
 import com.example.project_sns.ui.util.dateFormat
 import com.example.project_sns.ui.view.main.MainSharedViewModel
+import com.example.project_sns.ui.view.model.CommentModel
 import com.example.project_sns.ui.view.model.ReCommentDataModel
 import com.example.project_sns.ui.view.model.ReCommentModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
@@ -32,6 +38,12 @@ class ReCommentListFragment : BaseFragment<FragmentReCommentListBinding>() {
 
     private var reCommentData: ReCommentDataModel? = null
 
+    private var reCommentList: MutableList<ReCommentModel?> = mutableListOf()
+
+    private lateinit var listAdapter: ReCommentAdapter
+
+    val reCommentLastVisibleItem = MutableStateFlow(0)
+
     override fun getFragmentBinding(
         inflater: LayoutInflater,
         container: ViewGroup?
@@ -42,9 +54,16 @@ class ReCommentListFragment : BaseFragment<FragmentReCommentListBinding>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        clearData()
         initView()
         initRv()
         initReComment()
+    }
+
+    private fun clearData() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            mainSharedViewModel.resetReCommentData()
+        }
     }
 
     private fun initView() {
@@ -52,7 +71,8 @@ class ReCommentListFragment : BaseFragment<FragmentReCommentListBinding>() {
             if (commentData != null) {
                 binding.ivReCommentProfile.clipToOutline = true
                 if (commentData.userData.profileImage != null) {
-                    Glide.with(this).load(commentData.userData.profileImage).into(binding.ivReCommentProfile)
+                    Glide.with(this).load(commentData.userData.profileImage)
+                        .into(binding.ivReCommentProfile)
                 } else {
                     Glide.with(this).load(R.drawable.ic_user_fill).into(binding.ivReCommentProfile)
                 }
@@ -76,7 +96,7 @@ class ReCommentListFragment : BaseFragment<FragmentReCommentListBinding>() {
     }
 
     private fun initRv() {
-        val listAdapter = ReCommentAdapter(object : ReCommentAdapter.ReCommentItemClick {
+        listAdapter = ReCommentAdapter(object : ReCommentAdapter.ReCommentItemClick {
             override fun onClickEdit(item: ReCommentModel) {
                 initReComment()
                 val editComment = binding.etReComment
@@ -96,31 +116,56 @@ class ReCommentListFragment : BaseFragment<FragmentReCommentListBinding>() {
         with(binding.rvReComment) {
             layoutManager = linearLayoutManager
             adapter = listAdapter
-        }
 
-        val lastVisible = linearLayoutManager.findLastVisibleItemPosition().plus(1)
-
-        binding.clReCommentMore.setOnClickListener {
-            mainSharedViewModel.reCommentLastVisibleItem.value = lastVisible
-        }
-
-        viewLifecycleOwner.lifecycleScope.launch {
-            mainSharedViewModel.reCommentListData.collect { reCommentData ->
-                val dataSet = reCommentData.sortedByDescending { it.reCommentData.commentAt }
-                listAdapter.submitList(dataSet)
-
-                if (reCommentData.isEmpty()) {
-                    binding.tvReCommentNone.visibility = View.VISIBLE
-                    binding.tvReCommentSuggest.visibility = View.VISIBLE
-                    binding.rvReComment.visibility = View.GONE
-                    binding.clReCommentMore.visibility = View.GONE
-                } else {
-                    binding.rvReComment.visibility = View.VISIBLE
-                    binding.clReCommentMore.visibility = View.VISIBLE
-                    binding.tvReCommentNone.visibility = View.INVISIBLE
-                    binding.tvReCommentSuggest.visibility = View.INVISIBLE
+            addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    super.onScrolled(recyclerView, dx, dy)
+                    val lastVisible = linearLayoutManager.findLastVisibleItemPosition().plus(1)
+                    if (!binding.rvReComment.canScrollVertically(1)) {
+                        binding.clReCommentMore.setOnClickListener {
+                            moreItem(lastVisible)
+                        }
+                        Log.d("test_comment", "${reCommentLastVisibleItem.value}, $lastVisible")
+                    }
                 }
+            })
+        }
+
+        mainSharedViewModel.reCommentListData.observe(viewLifecycleOwner) { reCommentData ->
+            val dataSet = reCommentData.sortedByDescending { it.reCommentData.commentAt }
+
+            reCommentList = dataSet.toMutableList()
+            listAdapter.submitList(dataSet)
+            listAdapter.notifyItemInserted(reCommentData.size - 1)
+
+            if (reCommentData.isEmpty()) {
+                binding.tvReCommentNone.visibility = View.VISIBLE
+                binding.tvReCommentSuggest.visibility = View.VISIBLE
+                binding.clReCommentRvItem.visibility = View.GONE
+            } else {
+                binding.clReCommentRvItem.visibility = View.VISIBLE
+                binding.tvReCommentNone.visibility = View.INVISIBLE
+                binding.tvReCommentSuggest.visibility = View.INVISIBLE
             }
+        }
+    }
+
+    private fun moreItem(lastVisible: Int) {
+        val mRecyclerView = binding.rvReComment
+        val runnable = kotlinx.coroutines.Runnable {
+            reCommentList.add(null)
+            listAdapter.notifyItemInserted(reCommentList.size - 1)
+        }
+        mRecyclerView.post(runnable)
+
+        CoroutineScope(Dispatchers.Main).launch {
+            val runnableMore = kotlinx.coroutines.Runnable {
+                reCommentList.removeAt(reCommentList.size - 1)
+                listAdapter.notifyItemRemoved(reCommentList.size)
+                reCommentLastVisibleItem.value = lastVisible
+            }
+            delay(1000)
+            runnableMore.run()
         }
     }
 
