@@ -17,20 +17,15 @@ import com.example.project_sns.domain.model.PostDataEntity
 import com.example.project_sns.domain.model.PostEntity
 import com.example.project_sns.domain.model.ReCommentDataEntity
 import com.example.project_sns.domain.model.ReCommentEntity
-import com.example.project_sns.domain.model.UserDataEntity
 import com.example.project_sns.domain.repository.DataRepository
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentSnapshot
-import com.google.firebase.firestore.Filter
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
-import com.google.firebase.firestore.auth.User
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.flow.count
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
@@ -479,6 +474,7 @@ class DataRepositoryImpl @Inject constructor(
                                 }
                             }
                     }
+
                     else -> {
                         trySend(emptyList())
                     }

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/bg"
+    tools:context=".ui.view.main.notification.FollowPageFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/clFollowTop"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent">
+    <ImageView
+        android:id="@+id/ivFollowBack"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="25dp"
+        android:layout_marginBottom="25dp"
+        android:background="@drawable/item_btn_back"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:contentDescription="@string/contentDescription"/>
+
+    <ImageView
+        android:layout_width="18dp"
+        android:layout_height="18dp"
+        android:layout_marginEnd="3dp"
+        android:background="@drawable/ic_back"
+        app:layout_constraintBottom_toBottomOf="@+id/ivFollowBack"
+        app:layout_constraintEnd_toEndOf="@+id/ivFollowBack"
+        app:layout_constraintStart_toStartOf="@+id/ivFollowBack"
+        app:layout_constraintTop_toTopOf="@+id/ivFollowBack"
+        android:contentDescription="@string/contentDescription"/>
+
+    <TextView
+        android:id="@+id/tvFollowTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="25dp"
+        android:text="@string/follow_title"
+        android:textColor="@color/text"
+        android:textSize="35sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@id/ivFollowBack"
+        app:layout_constraintStart_toEndOf="@id/ivFollowBack"
+        app:layout_constraintTop_toTopOf="@id/ivFollowBack" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvFollow"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/clFollowTop"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        tools:listitem="@layout/rv_item_follow"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

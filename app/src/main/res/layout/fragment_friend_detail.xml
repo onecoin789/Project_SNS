@@ -8,7 +8,7 @@
     tools:context=".ui.view.detail.FriendDetailFragment">
 
     <ImageView
-        android:id="@+id/iv_FD_Back"
+        android:id="@+id/ivFDBack"
         android:layout_width="45dp"
         android:layout_height="45dp"
         android:layout_marginStart="20dp"
@@ -23,14 +23,14 @@
         android:layout_height="18dp"
         android:layout_marginEnd="3dp"
         android:background="@drawable/ic_back"
-        app:layout_constraintBottom_toBottomOf="@+id/iv_FD_Back"
-        app:layout_constraintEnd_toEndOf="@+id/iv_FD_Back"
-        app:layout_constraintStart_toStartOf="@+id/iv_FD_Back"
-        app:layout_constraintTop_toTopOf="@+id/iv_FD_Back"
+        app:layout_constraintBottom_toBottomOf="@+id/ivFDBack"
+        app:layout_constraintEnd_toEndOf="@+id/ivFDBack"
+        app:layout_constraintStart_toStartOf="@+id/ivFDBack"
+        app:layout_constraintTop_toTopOf="@+id/ivFDBack"
         android:contentDescription="@string/contentDescription"/>
 
     <ImageView
-        android:id="@+id/iv_FD_Like"
+        android:id="@+id/ivFDLike"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_marginEnd="10dp"
@@ -44,14 +44,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
-        app:layout_constraintTop_toBottomOf="@id/iv_FD_Back">
+        app:layout_constraintTop_toBottomOf="@id/ivFDBack">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/cl_FD_Profile"
+                android:id="@+id/clFDProfile"
                 android:layout_width="110dp"
                 android:layout_height="110dp"
                 android:layout_marginStart="30dp"
@@ -69,46 +69,53 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     android:contentDescription="@string/contentDescription"/>
+
+                <ImageView
+                    android:id="@+id/ivFDProfile"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_margin="3dp"
+                    android:scaleType="centerCrop"
+                    android:background="@drawable/item_btn_point"
+                    android:backgroundTint="@android:color/transparent"
+                    android:contentDescription="@string/contentDescription"/>
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <TextView
-                android:id="@+id/tv_FD_Name"
+                android:id="@+id/tvFDName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="25dp"
                 android:layout_marginTop="10dp"
-                android:text="name"
                 android:textColor="@color/text"
                 android:textSize="20sp"
                 android:textStyle="bold"
-                app:layout_constraintStart_toEndOf="@id/cl_FD_Profile"
-                app:layout_constraintTop_toTopOf="@id/cl_FD_Profile" />
+                app:layout_constraintStart_toEndOf="@id/clFDProfile"
+                app:layout_constraintTop_toTopOf="@id/clFDProfile" />
 
             <TextView
-                android:id="@+id/tv_FD_Email"
+                android:id="@+id/tvFDEmail"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="email@email.com"
                 android:textColor="@color/text"
                 android:textSize="15sp"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="@+id/tv_FD_Name"
-                app:layout_constraintTop_toBottomOf="@+id/tv_FD_Name" />
+                app:layout_constraintStart_toStartOf="@+id/tvFDName"
+                app:layout_constraintTop_toBottomOf="@+id/tvFDName" />
 
             <TextView
-                android:id="@+id/tv_FD_Intro"
+                android:id="@+id/tvFDIntro"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
-                android:text="한줄 소개"
                 android:textColor="@color/text"
                 android:textSize="15sp"
-                app:layout_constraintStart_toStartOf="@id/tv_FD_Email"
-                app:layout_constraintTop_toBottomOf="@id/tv_FD_Email" />
+                app:layout_constraintStart_toStartOf="@id/tvFDEmail"
+                app:layout_constraintTop_toBottomOf="@id/tvFDEmail" />
 
             <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/btn_FD_Edit"
+                android:id="@+id/btnFDFriendRequest"
                 android:layout_width="0dp"
                 android:layout_height="40dp"
                 android:layout_marginStart="15dp"
@@ -119,13 +126,14 @@
                 android:textColor="@color/text"
                 android:textSize="16sp"
                 android:textStyle="bold"
-                app:layout_constraintEnd_toStartOf="@+id/btn_FD_Friend"
+                android:visibility="visible"
+                app:layout_constraintEnd_toStartOf="@+id/btnFDSendDM"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/cl_FD_Profile" />
+                app:layout_constraintTop_toBottomOf="@id/clFDProfile" />
 
             <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/btn_FD_Friend"
+                android:id="@+id/btnFDSendDM"
                 android:layout_width="0dp"
                 android:layout_height="40dp"
                 android:layout_marginStart="15dp"
@@ -136,26 +144,63 @@
                 android:textColor="@color/text"
                 android:textSize="16sp"
                 android:textStyle="bold"
+                android:visibility="visible"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toEndOf="@+id/btn_FD_Edit"
-                app:layout_constraintTop_toBottomOf="@id/cl_FD_Profile" />
+                app:layout_constraintStart_toEndOf="@+id/btnFDFriendRequest"
+                app:layout_constraintTop_toBottomOf="@id/clFDProfile" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnFDEditProfile"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="50dp"
+                android:layout_marginEnd="15dp"
+                android:background="@drawable/item_btn_ripple"
+                android:text="@string/my_profile_edit"
+                android:textColor="@color/text"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:visibility="invisible"
+                app:layout_constraintEnd_toStartOf="@+id/btnFDFriendList"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/clFDProfile" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnFDFriendList"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="50dp"
+                android:layout_marginEnd="15dp"
+                android:background="@drawable/item_btn_ripple"
+                android:text="@string/my_friend"
+                android:textColor="@color/text"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:visibility="visible"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/btnFDEditProfile"
+                app:layout_constraintTop_toBottomOf="@id/clFDProfile" />
+
 
             <TextView
-                android:id="@+id/tv_FD_Number"
+                android:id="@+id/tvFDNumber"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
                 android:layout_marginTop="30dp"
-                android:text="9"
                 android:textColor="@color/text"
                 android:textSize="25sp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/btn_FD_Edit" />
+                app:layout_constraintTop_toBottomOf="@id/btnFDFriendRequest" />
 
             <TextView
-                android:id="@+id/tv_FD1"
+                android:id="@+id/tvFDCount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="3dp"
@@ -163,30 +208,30 @@
                 android:textColor="@color/text"
                 android:textSize="22sp"
                 android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="@id/tv_FD_Number"
-                app:layout_constraintStart_toEndOf="@id/tv_FD_Number"
-                app:layout_constraintTop_toTopOf="@id/tv_FD_Number" />
+                app:layout_constraintBottom_toBottomOf="@id/tvFDNumber"
+                app:layout_constraintStart_toEndOf="@id/tvFDNumber"
+                app:layout_constraintTop_toTopOf="@id/tvFDNumber" />
 
             <TextView
-                android:id="@+id/tv_FD2"
+                android:id="@+id/tvFDPost"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/my_post"
                 android:textColor="@color/hint"
                 android:textSize="22sp"
                 android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="@id/tv_FD_Number"
-                app:layout_constraintTop_toBottomOf="@id/tv_FD_Number" />
+                app:layout_constraintStart_toStartOf="@id/tvFDNumber"
+                app:layout_constraintTop_toBottomOf="@id/tvFDNumber" />
 
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rv_FD"
+                android:id="@+id/rvFD"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="30dp"
                 android:padding="5dp"
                 app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-                app:layout_constraintTop_toBottomOf="@id/tv_FD2"
+                app:layout_constraintTop_toBottomOf="@id/tvFDPost"
                 app:spanCount="3"
                 tools:listitem="@layout/rv_item_my_post" />
 

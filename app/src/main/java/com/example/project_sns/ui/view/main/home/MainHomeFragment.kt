@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.project_sns.R
 import com.example.project_sns.databinding.FragmentMainHomeBinding
 import com.example.project_sns.ui.BaseFragment
+import com.example.project_sns.ui.CurrentUser
 import com.example.project_sns.ui.view.main.MainSharedViewModel
 import com.example.project_sns.ui.view.main.MainViewModel
 import com.example.project_sns.ui.view.main.comment.CommentAdapter
@@ -71,12 +72,34 @@ class MainHomeFragment : BaseFragment<FragmentMainHomeBinding>() {
 
 
     private fun initRv() {
-        postAdapter = HomePostAdapter { data ->
-            viewLifecycleOwner.lifecycleScope.launch {
-                mainSharedViewModel.getPostData(data.postData)
+        postAdapter = HomePostAdapter(object : HomePostAdapter.PostItemClickListener {
+            override fun onClickCommentItem(item: PostModel) {
+                viewLifecycleOwner.lifecycleScope.launch {
+                    mainSharedViewModel.getPostData(item.postData)
+                }
+                findNavController().navigate(R.id.commentFragment)
             }
-            findNavController().navigate(R.id.commentFragment)
-        }
+
+            override fun onClickProfileImageItem(item: PostModel) {
+                viewLifecycleOwner.lifecycleScope.launch {
+                    mainSharedViewModel.getUserData(item.userData.uid)
+                    mainSharedViewModel.getUserPost(item.userData.uid)
+                }
+                findNavController().navigate(R.id.friendDetailFragment)
+                refreshRecyclerView()
+            }
+
+            override fun onClickProfileNameItem(item: PostModel) {
+                viewLifecycleOwner.lifecycleScope.launch {
+                    mainSharedViewModel.getUserData(item.userData.uid)
+                    mainSharedViewModel.getUserPost(item.userData.uid)
+                }
+                findNavController().navigate(R.id.friendDetailFragment)
+                refreshRecyclerView()
+            }
+
+        })
+
         val linearLayoutManager = LinearLayoutManager(requireContext())
         with(binding.rvHome) {
             layoutManager = linearLayoutManager
@@ -147,6 +170,15 @@ class MainHomeFragment : BaseFragment<FragmentMainHomeBinding>() {
         binding.ivHomeDM.setOnClickListener {
             findNavController().navigate(R.id.action_mainFragment_to_chatListFragment)
         }
+        binding.ivHomeNotification.setOnClickListener {
+            findNavController().navigate(R.id.notificationFragment)
+            refreshRecyclerView()
+        }
+    }
+
+    private fun refreshRecyclerView() {
+        mainViewModel.postLastVisibleItem.value = 0
+        mainViewModel.resetPagingData()
     }
 
 }

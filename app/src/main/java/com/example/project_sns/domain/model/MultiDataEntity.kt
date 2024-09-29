@@ -14,3 +14,8 @@ data class ReCommentEntity(
     val userData: UserDataEntity,
     val reCommentData: ReCommentDataEntity
 )
+
+data class RequestEntity(
+    val fromUid: UserDataEntity,
+    val toUid: String
+)

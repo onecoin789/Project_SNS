@@ -11,6 +11,8 @@ import com.example.project_sns.domain.model.PostDataEntity
 import com.example.project_sns.domain.model.PostEntity
 import com.example.project_sns.domain.model.ReCommentDataEntity
 import com.example.project_sns.domain.model.ReCommentEntity
+import com.example.project_sns.domain.model.RequestDataEntity
+import com.example.project_sns.domain.model.RequestEntity
 import com.example.project_sns.domain.model.UserDataEntity
 import com.example.project_sns.ui.util.PostImageType
 import com.example.project_sns.ui.view.model.CommentDataModel
@@ -24,6 +26,8 @@ import com.example.project_sns.ui.view.model.PostDataModel
 import com.example.project_sns.ui.view.model.PostModel
 import com.example.project_sns.ui.view.model.ReCommentDataModel
 import com.example.project_sns.ui.view.model.ReCommentModel
+import com.example.project_sns.ui.view.model.RequestDataModel
+import com.example.project_sns.ui.view.model.RequestModel
 import com.example.project_sns.ui.view.model.UserDataModel
 
 // <!---------- Firebase ---------->
@@ -131,6 +135,14 @@ fun ReCommentDataModel.toEntity() = ReCommentDataEntity(
     editedAt = editedAt
 )
 
+fun RequestDataEntity.toModel() = RequestDataModel(
+    fromUid = fromUid,
+    toUid = toUid
+)
+
+
+// <!---------- Multi Data ---------->
+
 fun PostEntity.toModel() = PostModel(
     userData = userData.toModel(),
     postData = postData.toModel()
@@ -156,6 +168,13 @@ fun PostModel.toEntity() = PostEntity(
     postData = postData.toEntity()
 )
 
+fun RequestEntity.toModel() = RequestModel(
+    fromUid = fromUid.toModel(),
+    toUid = toUid
+)
+
+
+
 
 
 
@@ -170,6 +189,10 @@ fun List<CommentEntity>.toCommentListModel(): List<CommentModel> {
 
 fun List<CommentDataModel>.toCommentListEntity(): List<CommentDataEntity> {
     return this.map { it.toEntity() }
+}
+
+fun List<RequestEntity>.toRequestDataModel(): List<RequestModel> {
+    return this.map { it.toModel() }
 }
 
 fun List<ReCommentDataModel>.toReCommentDataListEntity(): List<ReCommentDataEntity> {
@@ -191,6 +214,7 @@ fun List<ReCommentEntity>.toReCommentListModel(): List<ReCommentModel> {
 fun List<ReCommentModel>.toReCommentListEntity(): List<ReCommentEntity> {
     return this.map { it.toEntity() }
 }
+
 
 
 // <!---------- KakaoMap ---------->

@@ -10,6 +10,8 @@ import com.example.project_sns.data.response.MapDataResponse
 import com.example.project_sns.data.response.PostDataResponse
 import com.example.project_sns.data.response.ReCommentDataResponse
 import com.example.project_sns.data.response.ReCommentResponse
+import com.example.project_sns.data.response.RequestDataResponse
+import com.example.project_sns.data.response.RequestResponse
 import com.example.project_sns.data.response.UserDataResponse
 import com.example.project_sns.domain.model.CommentDataEntity
 import com.example.project_sns.domain.model.CommentEntity
@@ -21,6 +23,8 @@ import com.example.project_sns.domain.model.MapDataEntity
 import com.example.project_sns.domain.model.PostDataEntity
 import com.example.project_sns.domain.model.ReCommentDataEntity
 import com.example.project_sns.domain.model.ReCommentEntity
+import com.example.project_sns.domain.model.RequestDataEntity
+import com.example.project_sns.domain.model.RequestEntity
 import com.example.project_sns.domain.model.UserDataEntity
 
 // <!---------- Firebase ---------->
@@ -73,6 +77,14 @@ fun ReCommentDataResponse.toEntity() = ReCommentDataEntity(
     editedAt = editedAt
 )
 
+fun RequestDataResponse.toEntity() = RequestDataEntity(
+    fromUid = fromUid,
+    toUid = toUid
+)
+
+
+// <!---------- Multi Data ---------->
+
 fun CommentResponse.toEntity() = CommentEntity(
     userData = userData.toEntity(),
     commentData = commentData.toEntity()
@@ -81,6 +93,11 @@ fun CommentResponse.toEntity() = CommentEntity(
 fun ReCommentResponse.toEntity() = ReCommentEntity(
     userData = userData.toEntity(),
     reCommentData = reCommentData.toEntity()
+)
+
+fun RequestResponse.toEntity() = RequestEntity(
+    fromUid = fromUid.toEntity(),
+    toUid = toUid
 )
 
 fun List<PostDataResponse>.toPostListEntity(): List<PostDataEntity> {
@@ -96,6 +113,10 @@ fun List<ReCommentDataResponse>.toReCommentListEntity(): List<ReCommentDataEntit
 }
 
 fun List<CommentResponse>.toCommentEntity(): List<CommentEntity> {
+    return this.map { it.toEntity() }
+}
+
+fun List<RequestDataResponse>.toRequestDataEntity(): List<RequestDataEntity> {
     return this.map { it.toEntity() }
 }
 

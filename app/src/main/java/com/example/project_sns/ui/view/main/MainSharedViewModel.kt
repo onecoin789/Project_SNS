@@ -1,6 +1,7 @@
 package com.example.project_sns.ui.view.main
 
 import android.util.Log
+import android.util.Printer
 import android.view.View
 import android.widget.TextView
 import androidx.lifecycle.LiveData
@@ -15,7 +16,10 @@ import com.example.project_sns.domain.usecase.EditProfileUseCase
 import com.example.project_sns.domain.usecase.GetCommentDataUseCase
 import com.example.project_sns.domain.usecase.GetCurrentUserPostDataUseCase
 import com.example.project_sns.domain.usecase.GetReCommentDataUseCase
+import com.example.project_sns.domain.usecase.GetRequestDataUseCase
+import com.example.project_sns.domain.usecase.GetUserByUidUseCase
 import com.example.project_sns.domain.usecase.SearchKakaoMapUseCase
+import com.example.project_sns.domain.usecase.SendFriendRequestUseCase
 import com.example.project_sns.domain.usecase.UploadCommentUseCase
 import com.example.project_sns.domain.usecase.UploadPostUseCase
 import com.example.project_sns.domain.usecase.UploadReCommentUseCase
@@ -24,15 +28,21 @@ import com.example.project_sns.ui.mapper.toCommentListEntity
 import com.example.project_sns.ui.mapper.toCommentListModel
 import com.example.project_sns.ui.mapper.toEntity
 import com.example.project_sns.ui.mapper.toKakaoListEntity
+import com.example.project_sns.ui.mapper.toModel
 import com.example.project_sns.ui.mapper.toPostListModel
 import com.example.project_sns.ui.mapper.toReCommentListModel
+import com.example.project_sns.ui.mapper.toRequestDataModel
 import com.example.project_sns.ui.util.CheckEditProfile
 import com.example.project_sns.ui.view.model.CommentDataModel
 import com.example.project_sns.ui.view.model.CommentModel
 import com.example.project_sns.ui.view.model.KakaoDocumentsModel
 import com.example.project_sns.ui.view.model.PostDataModel
+import com.example.project_sns.ui.view.model.PostModel
 import com.example.project_sns.ui.view.model.ReCommentDataModel
 import com.example.project_sns.ui.view.model.ReCommentModel
+import com.example.project_sns.ui.view.model.RequestDataModel
+import com.example.project_sns.ui.view.model.RequestModel
+import com.example.project_sns.ui.view.model.UserDataModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
@@ -56,23 +66,29 @@ class MainSharedViewModel @Inject constructor(
     private val uploadReCommentUseCase: UploadReCommentUseCase,
     private val deleteCommentUseCase: DeleteCommentUseCase,
     private val getReCommentDataUseCase: GetReCommentDataUseCase,
-    private val deleteReCommentUseCase: DeleteReCommentUseCase
+    private val deleteReCommentUseCase: DeleteReCommentUseCase,
+    private val getUserByUidUseCase: GetUserByUidUseCase,
+    private val sendFriendRequestUseCase: SendFriendRequestUseCase,
+    private val getRequestDataUseCase: GetRequestDataUseCase
 ) : ViewModel() {
 
     private val _postUpLoadResult = MutableStateFlow<Boolean?>(null)
     val postUpLoadResult: StateFlow<Boolean?> get() = _postUpLoadResult
 
-    private val _postInformation = MutableStateFlow<List<PostDataModel>>(emptyList())
-    val postInformation: StateFlow<List<PostDataModel>> get() = _postInformation
-
     private val _editEvent = Channel<CheckEditProfile?> { }
     val editEvent = _editEvent.receiveAsFlow()
 
-    private val _mapList = MutableStateFlow<List<KakaoDocumentsModel>>(emptyList())
-    val mapList: StateFlow<List<KakaoDocumentsModel>> get() = _mapList
+    private val _userData = MutableLiveData<UserDataModel?>()
+    val userData: LiveData<UserDataModel?> get() = _userData
+
+    private val _postList = MutableStateFlow<List<PostDataModel>>(emptyList())
+    val postList: StateFlow<List<PostDataModel>> get() = _postList
 
     private val _postData = MutableLiveData<PostDataModel?>()
     val postData: LiveData<PostDataModel?> get() = _postData
+
+    private val _mapList = MutableStateFlow<List<KakaoDocumentsModel>>(emptyList())
+    val mapList: StateFlow<List<KakaoDocumentsModel>> get() = _mapList
 
     private val _selectedCommentData = MutableLiveData<CommentModel?>()
     val selectedCommentData: LiveData<CommentModel?> get() = _selectedCommentData
@@ -98,8 +114,15 @@ class MainSharedViewModel @Inject constructor(
     private val _currentPage = MutableLiveData<Int>(0)
     val currentPage: LiveData<Int> get() = _currentPage
 
+    private val _requestFriendResult = MutableStateFlow<Boolean?>(null)
+    val requestFriendResult: StateFlow<Boolean?> get() = _requestFriendResult
+
+    private val _requestList = MutableLiveData<List<RequestModel>>()
+    val requestList: LiveData<List<RequestModel>> get() = _requestList
+
 
     val reCommentLastVisibleItem = MutableStateFlow(0)
+
 
 
 
@@ -119,7 +142,6 @@ class MainSharedViewModel @Inject constructor(
         }
     }
 
-
     fun startPage() {
         if (_currentPage.value != 0) {
             _currentPage.value = 0
@@ -132,6 +154,23 @@ class MainSharedViewModel @Inject constructor(
 
     fun prevPage() {
         _currentPage.value = _currentPage.value?.minus(1)
+    }
+
+
+    fun getRequestList() {
+        viewModelScope.launch {
+            getRequestDataUseCase().collect { data ->
+                _requestList.value = data.toRequestDataModel()
+            }
+        }
+    }
+
+    fun requestFriend(sendUid: String, receiveUid: String) {
+        viewModelScope.launch {
+            sendFriendRequestUseCase(sendUid, receiveUid).collect { result ->
+                _requestFriendResult.value = result
+            }
+        }
     }
 
     fun uploadReComment(reCommentData: ReCommentDataModel?) {
@@ -153,11 +192,21 @@ class MainSharedViewModel @Inject constructor(
         }
     }
 
-    fun getCurrentUserPost(uid: String) {
+    fun getUserPost(uid: String) {
         viewModelScope.launch {
             getCurrentUserPostDataUseCase(uid).collect {
                 val postList = it.toPostListModel()
-                _postInformation.value = postList
+                _postList.value = postList
+            }
+        }
+    }
+
+    fun getUserData(uid: String) {
+        viewModelScope.launch {
+            getUserByUidUseCase(uid).collect { data ->
+                if (data != null) {
+                    _userData.value = data.toModel()
+                }
             }
         }
     }

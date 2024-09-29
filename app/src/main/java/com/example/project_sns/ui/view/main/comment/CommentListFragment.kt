@@ -97,7 +97,7 @@ class CommentListFragment : BaseFragment<FragmentCommentListBinding>() {
 
 
     private fun initRv() {
-        listAdapter = CommentAdapter(object : CommentAdapter.CommentItemClick {
+        listAdapter = CommentAdapter(object : CommentAdapter.CommentItemClickListener {
 
             override fun onClickCommentEdit(item: CommentModel) {
                 val editComment = binding.etComment

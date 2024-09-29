@@ -16,23 +16,37 @@ import com.example.project_sns.ui.view.main.profile.detail.PostImageAdapter
 import com.example.project_sns.ui.view.model.ImageDataModel
 import com.example.project_sns.ui.view.model.PostModel
 
-class HomePostAdapter(private val onItemClick: (PostModel) -> Unit) :
+class HomePostAdapter(private val onItemClick: PostItemClickListener) :
     ListAdapter<PostModel, RecyclerView.ViewHolder>(diffUtil) {
+
+    interface PostItemClickListener {
+        fun onClickCommentItem(item: PostModel)
+        fun onClickProfileImageItem(item: PostModel)
+        fun onClickProfileNameItem(item: PostModel)
+    }
 
     class HomePostViewHolder(
         private val binding: RvItemPostPhotoBinding,
-        private val onItemClick: (PostModel) -> Unit
+        private val onItemClick: PostItemClickListener
     ) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(item: PostModel) {
 
             val postData = item.postData
             val it = item.userData
-
+            //Click Event
             binding.tvItemHomeComment.setOnClickListener {
-                onItemClick(item)
+                onItemClick.onClickCommentItem(item)
             }
-            Log.d("test_data", postData.uid)
+            binding.ivItemHomeUser.setOnClickListener {
+                onItemClick.onClickProfileImageItem(item)
+            }
+            binding.tvItemHomeName.setOnClickListener {
+                onItemClick.onClickProfileNameItem(item)
+            }
+
+
+
             binding.tvItemHomePost.text = postData.postText
             if (postData.mapData?.placeName != null) {
                 binding.tvItemHomeLocation.text = postData.mapData.placeName
@@ -40,6 +54,7 @@ class HomePostAdapter(private val onItemClick: (PostModel) -> Unit) :
             initRv(postData.imageList)
             if (postData.imageList?.size == 1) {
                 binding.idcItem.visibility = View.INVISIBLE
+
             } else {
                 binding.idcItem.visibility = View.VISIBLE
             }
@@ -59,6 +74,7 @@ class HomePostAdapter(private val onItemClick: (PostModel) -> Unit) :
                 Glide.with(binding.root).load(R.drawable.ic_user_fill)
                     .into(binding.ivItemHomeUser)
             }
+
             binding.tvItemHomeEmail.text = it.email
             binding.tvItemHomeName.text = it.name
 
@@ -78,7 +94,8 @@ class HomePostAdapter(private val onItemClick: (PostModel) -> Unit) :
         }
     }
 
-    class ProgressViewHolder(binding: RvItemProgressBlackBinding): RecyclerView.ViewHolder(binding.root)
+    class ProgressViewHolder(binding: RvItemProgressBlackBinding) :
+        RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         if (viewType == ITEM) {
@@ -86,7 +103,11 @@ class HomePostAdapter(private val onItemClick: (PostModel) -> Unit) :
                 RvItemPostPhotoBinding.inflate(LayoutInflater.from(parent.context), parent, false)
             return HomePostViewHolder(binding, onItemClick)
         } else {
-            val binding = RvItemProgressBlackBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            val binding = RvItemProgressBlackBinding.inflate(
+                LayoutInflater.from(parent.context),
+                parent,
+                false
+            )
             return ProgressViewHolder(binding)
         }
     }
