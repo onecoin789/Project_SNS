@@ -6,6 +6,7 @@ import com.example.project_sns.domain.model.PostDataEntity
 import com.example.project_sns.domain.model.PostEntity
 import com.example.project_sns.domain.model.ReCommentDataEntity
 import com.example.project_sns.domain.model.ReCommentEntity
+import com.example.project_sns.domain.model.UserDataEntity
 import kotlinx.coroutines.flow.Flow
 
 

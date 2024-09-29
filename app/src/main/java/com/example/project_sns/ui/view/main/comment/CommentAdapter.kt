@@ -14,10 +14,10 @@ import com.example.project_sns.databinding.RvItemProgressGrayBinding
 import com.example.project_sns.ui.CurrentUser
 import com.example.project_sns.ui.view.model.CommentModel
 
-class CommentAdapter(private val onClick: CommentItemClick) :
+class CommentAdapter(private val onClick: CommentItemClickListener) :
     ListAdapter<CommentModel, RecyclerView.ViewHolder>(diffUtil) {
 
-    interface CommentItemClick {
+    interface CommentItemClickListener {
         fun onClickCommentEdit(item: CommentModel)
         fun onClickCommentDelete(item: CommentModel)
         fun onClickReCommentList(item: CommentModel)
@@ -26,7 +26,7 @@ class CommentAdapter(private val onClick: CommentItemClick) :
 
     class CommentViewHolder(
         private val binding: RvItemCommentBinding,
-        private val onClick: CommentItemClick
+        private val onClick: CommentItemClickListener
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: CommentModel) {

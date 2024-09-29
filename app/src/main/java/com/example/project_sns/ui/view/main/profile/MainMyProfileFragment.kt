@@ -74,10 +74,10 @@ class MainMyProfileFragment : BaseFragment<FragmentMainMyProfileBinding>() {
             sendData(data)
         }
         viewLifecycleOwner.lifecycleScope.launch {
-            mainSharedViewModel.postInformation.collect { data ->
+            mainSharedViewModel.postList.collect { data ->
                 val postNumber = data.size
                 binding.tvMyNumber.text = postNumber.toString()
-                mainSharedViewModel.getCurrentUserPost(uid)
+                mainSharedViewModel.getUserPost(uid)
                 listAdapter.submitList(data.sortedByDescending { it.createdAt })
                 if (data.isEmpty()) {
                     binding.tvMyNullPost.visibility = View.VISIBLE

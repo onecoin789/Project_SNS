@@ -42,6 +42,13 @@ class MainViewModel @Inject constructor(
     val postLastVisibleItem = MutableStateFlow(0)
 
 
+    fun resetPagingData() {
+        viewModelScope.launch {
+            _pagingData.value = emptyList()
+        }
+    }
+
+
     fun getPagingData() {
         viewModelScope.launch {
             getPagingPostUseCase(postLastVisibleItem).collect { data ->

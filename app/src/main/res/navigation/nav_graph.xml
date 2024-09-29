@@ -223,6 +223,16 @@
         android:name="com.example.project_sns.ui.view.main.comment.ReCommentListFragment"
         android:label="fragment_re_comment_list"
         tools:layout="@layout/fragment_re_comment_list" />
+    <fragment
+        android:id="@+id/followPageFragment"
+        android:name="com.example.project_sns.ui.view.main.notification.FollowPageFragment"
+        android:label="fragment_follow_page"
+        tools:layout="@layout/fragment_follow_page" />
+    <fragment
+        android:id="@+id/notificationFragment"
+        android:name="com.example.project_sns.ui.view.main.notification.NotificationFragment"
+        android:label="fragment_notification"
+        tools:layout="@layout/fragment_notification" />
 
 
 </navigation>

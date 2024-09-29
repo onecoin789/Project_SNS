@@ -3,7 +3,11 @@ package com.example.project_sns.data.repository
 import android.util.Log
 import androidx.core.net.toUri
 import com.example.project_sns.data.mapper.toEntity
+import com.example.project_sns.data.mapper.toRequestDataEntity
+import com.example.project_sns.data.response.RequestDataResponse
 import com.example.project_sns.data.response.UserDataResponse
+import com.example.project_sns.domain.model.RequestDataEntity
+import com.example.project_sns.domain.model.RequestEntity
 import com.example.project_sns.domain.model.UserDataEntity
 import com.example.project_sns.domain.repository.AuthRepository
 import com.google.firebase.auth.FirebaseAuth
@@ -17,6 +21,7 @@ import com.kakao.sdk.user.UserApiClient
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -116,6 +121,27 @@ class AuthRepositoryImpl @Inject constructor(
                 awaitClose {
                     snapshotListener.remove()
                 }
+            }
+        }
+    }
+
+    override suspend fun getUserByUid(uid: String): Flow<UserDataEntity?> {
+        return callbackFlow {
+            val docRef = db.collection("user").document(uid)
+            val snapshotListener = docRef.addSnapshotListener { snapshot, error ->
+                if (error != null) {
+                    trySend(null).isSuccess
+                    return@addSnapshotListener
+                }
+                if (snapshot != null) {
+                    val userResponse = snapshot.toObject(UserDataResponse::class.java)
+                    trySend(userResponse?.toEntity()).isSuccess
+                } else {
+                    trySend(null).isSuccess
+                }
+            }
+            awaitClose {
+                snapshotListener.remove()
             }
         }
     }
@@ -303,6 +329,42 @@ class AuthRepositoryImpl @Inject constructor(
             Result.failure(Exception("FirebaseFunctionsException: ${e.message}"))
         } catch (e: Exception) {
             Result.failure(Exception("Exception: ${e.message}"))
+        }
+    }
+
+    override suspend fun requestFriend(sendUid: String, receiveUid: String): Flow<Boolean> {
+        return flow {
+            try {
+                val requestFriend = hashMapOf(
+                    "fromUid" to sendUid,
+                    "toUid" to receiveUid
+                )
+                db.collection("request").document(sendUid).set(requestFriend)
+                emit(true)
+            } catch (e: Exception) {
+                emit(false)
+            }
+        }
+    }
+
+    override suspend fun getRequestList(): Flow<List<RequestEntity>> {
+        return callbackFlow {
+            val currentUserUid = auth.currentUser?.uid
+            val followList = mutableListOf<RequestEntity>()
+            val requestByUid = db.collection("request").whereEqualTo("toUid", currentUserUid).get()
+            requestByUid.addOnSuccessListener { data ->
+                val requestResponse = data.toObjects(RequestDataResponse::class.java).toRequestDataEntity()
+                requestResponse.map { receiveData ->
+                    db.collection("user").document(receiveData.fromUid).get().addOnSuccessListener { userData ->
+                        val userEntity = userData.toObject(UserDataResponse::class.java)?.toEntity()
+                        if (userEntity != null) {
+                            followList.addAll(listOf(RequestEntity(fromUid = userEntity, toUid = receiveData.toUid)))
+                            trySend(followList)
+                        }
+                    }
+                }
+            }
+            awaitClose()
         }
     }
 }

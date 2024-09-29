@@ -14,3 +14,8 @@ data class ReCommentResponse(
     val userData: UserDataResponse,
     val reCommentData: ReCommentDataResponse
 )
+
+data class RequestResponse(
+    val fromUid: UserDataResponse,
+    val toUid: String = ""
+)
