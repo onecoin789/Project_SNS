@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class SendFriendRequestUseCase @Inject constructor(private val authRepository: AuthRepository) {
-    suspend operator fun invoke(sendUid: String, receiveUid: String): Flow<Boolean> {
-        return authRepository.requestFriend(sendUid, receiveUid)
+    suspend operator fun invoke(requestId: String, fromUid: String, toUid: String): Flow<Boolean> {
+        return authRepository.requestFriend(requestId, fromUid, toUid)
     }
 }

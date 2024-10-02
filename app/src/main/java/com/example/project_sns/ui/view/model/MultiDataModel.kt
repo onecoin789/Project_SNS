@@ -27,6 +27,7 @@ data class ReCommentModel(
 
 @Parcelize
 data class RequestModel(
+    val requestId: String,
     val fromUid: UserDataModel,
     val toUid: String
 ): Parcelable

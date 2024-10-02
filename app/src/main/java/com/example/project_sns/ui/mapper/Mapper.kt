@@ -2,6 +2,7 @@ package com.example.project_sns.ui.mapper
 
 import com.example.project_sns.domain.model.CommentDataEntity
 import com.example.project_sns.domain.model.CommentEntity
+import com.example.project_sns.domain.model.FriendDataEntity
 import com.example.project_sns.domain.model.ImageDataEntity
 import com.example.project_sns.domain.model.KakaoDocumentsEntity
 import com.example.project_sns.domain.model.KakaoMapEntity
@@ -17,6 +18,7 @@ import com.example.project_sns.domain.model.UserDataEntity
 import com.example.project_sns.ui.util.PostImageType
 import com.example.project_sns.ui.view.model.CommentDataModel
 import com.example.project_sns.ui.view.model.CommentModel
+import com.example.project_sns.ui.view.model.FriendDataModel
 import com.example.project_sns.ui.view.model.ImageDataModel
 import com.example.project_sns.ui.view.model.KakaoDocumentsModel
 import com.example.project_sns.ui.view.model.KakaoMapModel
@@ -136,6 +138,7 @@ fun ReCommentDataModel.toEntity() = ReCommentDataEntity(
 )
 
 fun RequestDataEntity.toModel() = RequestDataModel(
+    requestId = requestId,
     fromUid = fromUid,
     toUid = toUid
 )
@@ -169,8 +172,13 @@ fun PostModel.toEntity() = PostEntity(
 )
 
 fun RequestEntity.toModel() = RequestModel(
+    requestId = requestId,
     fromUid = fromUid.toModel(),
     toUid = toUid
+)
+
+fun FriendDataEntity.toModel() = FriendDataModel(
+    friendList = friendList
 )
 
 
@@ -213,6 +221,14 @@ fun List<ReCommentEntity>.toReCommentListModel(): List<ReCommentModel> {
 
 fun List<ReCommentModel>.toReCommentListEntity(): List<ReCommentEntity> {
     return this.map { it.toEntity() }
+}
+
+fun List<FriendDataEntity>.toFriendListModel(): List<FriendDataModel> {
+    return this.map { it.toModel() }
+}
+
+fun List<UserDataEntity>.toUserDataListModel(): List<UserDataModel> {
+    return this.map { it.toModel() }
 }
 
 

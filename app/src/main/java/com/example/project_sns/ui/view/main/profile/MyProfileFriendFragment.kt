@@ -5,12 +5,26 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.project_sns.R
 import com.example.project_sns.databinding.FragmentMyProfileFriendBinding
 import com.example.project_sns.ui.BaseFragment
+import com.example.project_sns.ui.view.main.MainSharedViewModel
+import com.example.project_sns.ui.view.main.MainViewModel
+import com.example.project_sns.ui.view.model.UserDataModel
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class MyProfileFriendFragment : BaseFragment<FragmentMyProfileFriendBinding>() {
 
+    private val mainViewModel: MainViewModel by viewModels()
+
+    private val mainSharedViewModel: MainSharedViewModel by activityViewModels()
 
     override fun getFragmentBinding(
         inflater: LayoutInflater,
@@ -23,12 +37,48 @@ class MyProfileFriendFragment : BaseFragment<FragmentMyProfileFriendBinding>() {
         super.onViewCreated(view, savedInstanceState)
 
         initView()
+        initRv()
     }
 
     private fun initView() {
         binding.ivFriendBack.setOnClickListener {
             findNavController().popBackStack()
         }
+    }
+
+    private fun initRv() {
+        val friendListAdapter = MyProfileFriendAdapter(object : MyProfileFriendAdapter.MyProfileFriendItemClickListener {
+            override fun onClickFriendProfile(item: UserDataModel) {
+                navigateFriendDetail(item)
+            }
+
+            override fun onClickFriendName(item: UserDataModel) {
+                navigateFriendDetail(item)
+            }
+
+            override fun onClickFriendDelete(item: UserDataModel) {
+                TODO("Not yet implemented")
+            }
+        })
+
+        with(binding.rvFriend) {
+            adapter = friendListAdapter
+            layoutManager = LinearLayoutManager(requireContext())
+        }
+
+        lifecycleScope.launch {
+            mainSharedViewModel.friendList.observe(viewLifecycleOwner) { friendData ->
+                friendListAdapter.submitList(friendData)
+            }
+        }
+    }
+
+    private fun navigateFriendDetail(item: UserDataModel) {
+        viewLifecycleOwner.lifecycleScope.launch {
+            mainSharedViewModel.getUserData(item.uid)
+            mainSharedViewModel.getUserPost(item.uid)
+        }
+        findNavController().navigate(R.id.friendDetailFragment)
     }
 
 }

@@ -2,6 +2,7 @@ package com.example.project_sns.data.mapper
 
 import com.example.project_sns.data.response.CommentDataResponse
 import com.example.project_sns.data.response.CommentResponse
+import com.example.project_sns.data.response.FriendDataResponse
 import com.example.project_sns.data.response.ImageDataResponse
 import com.example.project_sns.data.response.KakaoDocumentsResponse
 import com.example.project_sns.data.response.KakaoMapResponse
@@ -15,6 +16,7 @@ import com.example.project_sns.data.response.RequestResponse
 import com.example.project_sns.data.response.UserDataResponse
 import com.example.project_sns.domain.model.CommentDataEntity
 import com.example.project_sns.domain.model.CommentEntity
+import com.example.project_sns.domain.model.FriendDataEntity
 import com.example.project_sns.domain.model.ImageDataEntity
 import com.example.project_sns.domain.model.KakaoDocumentsEntity
 import com.example.project_sns.domain.model.KakaoMapEntity
@@ -78,10 +80,10 @@ fun ReCommentDataResponse.toEntity() = ReCommentDataEntity(
 )
 
 fun RequestDataResponse.toEntity() = RequestDataEntity(
+    requestId = requestId,
     fromUid = fromUid,
     toUid = toUid
 )
-
 
 // <!---------- Multi Data ---------->
 
@@ -96,6 +98,7 @@ fun ReCommentResponse.toEntity() = ReCommentEntity(
 )
 
 fun RequestResponse.toEntity() = RequestEntity(
+    requestId = requestId,
     fromUid = fromUid.toEntity(),
     toUid = toUid
 )
@@ -119,6 +122,8 @@ fun List<CommentResponse>.toCommentEntity(): List<CommentEntity> {
 fun List<RequestDataResponse>.toRequestDataEntity(): List<RequestDataEntity> {
     return this.map { it.toEntity() }
 }
+
+
 
 
 

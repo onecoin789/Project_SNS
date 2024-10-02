@@ -4,19 +4,26 @@ import android.util.Log
 import androidx.core.net.toUri
 import com.example.project_sns.data.mapper.toEntity
 import com.example.project_sns.data.mapper.toRequestDataEntity
+import com.example.project_sns.data.response.FriendDataResponse
 import com.example.project_sns.data.response.RequestDataResponse
 import com.example.project_sns.data.response.UserDataResponse
+import com.example.project_sns.data.response.toEntity
+import com.example.project_sns.domain.model.FriendDataEntity
 import com.example.project_sns.domain.model.RequestDataEntity
 import com.example.project_sns.domain.model.RequestEntity
 import com.example.project_sns.domain.model.UserDataEntity
 import com.example.project_sns.domain.repository.AuthRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthException
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreException
+import com.google.firebase.firestore.SetOptions
+import com.google.firebase.firestore.dataObjects
 import com.google.firebase.functions.FirebaseFunctions
 import com.google.firebase.functions.FirebaseFunctionsException
 import com.google.firebase.storage.FirebaseStorage
+import com.kakao.sdk.cert.a.a
 import com.kakao.sdk.user.UserApiClient
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -44,6 +51,8 @@ class AuthRepositoryImpl @Inject constructor(
             val result = auth.createUserWithEmailAndPassword(email, password).await()
             val user = result.user
             val storageRef = storage.getReference("image").child("${user?.uid}/profileImage")
+            val friendList = arrayListOf<String>()
+            val friendData = hashMapOf("friendList" to friendList)
 
             if (user != null) {
                 if (profileImage != null) {
@@ -58,6 +67,7 @@ class AuthRepositoryImpl @Inject constructor(
                                 "createdAt" to createdAt
                             )
                             db.collection("user").document(user.uid).set(data)
+                            db.collection("friendList").document(user.uid).set(friendData)
                         }
                     }
                 } else {
@@ -69,6 +79,7 @@ class AuthRepositoryImpl @Inject constructor(
                         "createdAt" to createdAt
                     )
                     db.collection("user").document(user.uid).set(data)
+                    db.collection("friendList").document(user.uid).set(friendData)
                 }
                 Result.success("Success")
             } else {
@@ -332,14 +343,19 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun requestFriend(sendUid: String, receiveUid: String): Flow<Boolean> {
+    override suspend fun requestFriend(
+        requestId: String,
+        fromUid: String,
+        toUid: String
+    ): Flow<Boolean> {
         return flow {
             try {
-                val requestFriend = hashMapOf(
-                    "fromUid" to sendUid,
-                    "toUid" to receiveUid
+                val requestData = hashMapOf(
+                    "requestId" to requestId,
+                    "fromUid" to fromUid,
+                    "toUid" to toUid
                 )
-                db.collection("request").document(sendUid).set(requestFriend)
+                db.collection("request").document(requestId).set(requestData)
                 emit(true)
             } catch (e: Exception) {
                 emit(false)
@@ -353,18 +369,97 @@ class AuthRepositoryImpl @Inject constructor(
             val followList = mutableListOf<RequestEntity>()
             val requestByUid = db.collection("request").whereEqualTo("toUid", currentUserUid).get()
             requestByUid.addOnSuccessListener { data ->
-                val requestResponse = data.toObjects(RequestDataResponse::class.java).toRequestDataEntity()
+                val requestResponse =
+                    data.toObjects(RequestDataResponse::class.java).toRequestDataEntity()
                 requestResponse.map { receiveData ->
-                    db.collection("user").document(receiveData.fromUid).get().addOnSuccessListener { userData ->
-                        val userEntity = userData.toObject(UserDataResponse::class.java)?.toEntity()
-                        if (userEntity != null) {
-                            followList.addAll(listOf(RequestEntity(fromUid = userEntity, toUid = receiveData.toUid)))
-                            trySend(followList)
+                    db.collection("user").document(receiveData.fromUid).get()
+                        .addOnSuccessListener { userData ->
+                            val userEntity =
+                                userData.toObject(UserDataResponse::class.java)?.toEntity()
+                            if (userEntity != null) {
+                                followList.addAll(
+                                    listOf(
+                                        RequestEntity(
+                                            requestId = receiveData.requestId,
+                                            fromUid = userEntity,
+                                            toUid = receiveData.toUid
+                                        )
+                                    )
+                                )
+                                trySend(followList)
+                            }
                         }
-                    }
                 }
             }
             awaitClose()
         }
     }
+
+    override suspend fun acceptFriendRequest(
+        requestId: String,
+        fromUid: String,
+        toUid: String
+    ): Flow<Boolean> {
+        return flow {
+            try {
+                db.runTransaction { transaction ->
+                    val fromUidRef = db.collection("friendList").document(fromUid)
+                    val toUidRef = db.collection("friendList").document(toUid)
+
+                    transaction.update(
+                        fromUidRef,
+                        "friendList",
+                        FieldValue.arrayUnion(toUid)
+                    )
+                    transaction.update(
+                        toUidRef,
+                        "friendList",
+                        FieldValue.arrayUnion(fromUid)
+                    )
+                }.await()
+                db.collection("request").document(requestId).delete()
+                emit(true)
+            } catch (e: Exception) {
+                Log.d("tag", "${e.message}")
+                emit(false)
+            }
+        }
+    }
+
+    override suspend fun rejectFriendRequest(requestId: String): Flow<Boolean> {
+        return flow {
+            try {
+                db.collection("request").document(requestId).delete()
+                emit(true)
+            } catch (e: Exception) {
+                emit(false)
+            }
+        }
+    }
+
+    override suspend fun getFriendList(uid: String): Flow<List<UserDataEntity>> {
+        return callbackFlow {
+            val friendList = mutableListOf<UserDataEntity>()
+            db.collection("friendList").document(uid).get().addOnSuccessListener { friendResponse ->
+                val friendEntity =
+                    friendResponse.toObject(FriendDataResponse::class.java)?.toEntity()
+                if (friendEntity != null) {
+                    friendEntity.friendList.map { friendUid ->
+                        db.collection("user").document(friendUid).get().addOnSuccessListener { userData ->
+                            val userEntity = userData.toObject(UserDataResponse::class.java)?.toEntity()
+                            if (userEntity != null) {
+                                friendList.add(userEntity)
+                                trySend(friendList)
+                            }
+                        }
+                    }
+                } else {
+                    trySend(emptyList())
+                }
+            }
+            awaitClose()
+        }
+    }
+
+
 }

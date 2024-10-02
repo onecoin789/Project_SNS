@@ -1,5 +1,6 @@
 package com.example.project_sns.domain.repository
 
+import com.example.project_sns.domain.model.FriendDataEntity
 import com.example.project_sns.domain.model.RequestEntity
 import com.example.project_sns.domain.model.UserDataEntity
 import kotlinx.coroutines.flow.Flow
@@ -21,8 +22,14 @@ interface AuthRepository {
 
     suspend fun kakaoLogin(accessToken: String): Result<String>
 
-    suspend fun requestFriend(sendUid: String, receiveUid: String): Flow<Boolean>
+    suspend fun requestFriend(requestId: String, fromUid: String, toUid: String): Flow<Boolean>
 
     suspend fun getRequestList(): Flow<List<RequestEntity>>
+
+    suspend fun acceptFriendRequest(requestId: String, fromUid: String, toUid: String): Flow<Boolean>
+
+    suspend fun rejectFriendRequest(requestId: String): Flow<Boolean>
+
+    suspend fun getFriendList(uid: String): Flow<List<UserDataEntity>>
 
 }
