@@ -16,6 +16,7 @@ data class ReCommentResponse(
 )
 
 data class RequestResponse(
+    val requestId: String = "",
     val fromUid: UserDataResponse,
     val toUid: String = ""
 )

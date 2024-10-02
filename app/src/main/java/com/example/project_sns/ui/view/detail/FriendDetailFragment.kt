@@ -22,6 +22,7 @@ import com.example.project_sns.ui.view.model.PostDataModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import java.util.UUID
 
 
 @AndroidEntryPoint
@@ -55,6 +56,7 @@ class FriendDetailFragment : BaseFragment<FragmentFriendDetailBinding>() {
             mainSharedViewModel.userData.observe(viewLifecycleOwner) { userData ->
                 val currentUserUid = CurrentUser.userData?.uid
                 val receiveUid = userData?.uid
+                val requestId = UUID.randomUUID().toString()
 
                 if (userData != null) {
                     binding.tvFDName.text = userData.name
@@ -83,7 +85,7 @@ class FriendDetailFragment : BaseFragment<FragmentFriendDetailBinding>() {
                 }
                 binding.btnFDFriendRequest.setOnClickListener {
                     if (currentUserUid != null && receiveUid != null) {
-                        mainSharedViewModel.requestFriend(currentUserUid, receiveUid)
+                        mainSharedViewModel.requestFriend(requestId, currentUserUid, receiveUid)
                         collectFlow()
                     }
                 }

@@ -62,6 +62,10 @@ class MainMyProfileFragment : BaseFragment<FragmentMainMyProfileBinding>() {
                     } else {
                         binding.tvMyIntro.text = userData.intro
                     }
+                    binding.btnMyFriend.setOnClickListener {
+                        mainSharedViewModel.getFriendList(userData.uid)
+                        findNavController().navigate(R.id.friendFragment)
+                    }
                 }
             }
         }

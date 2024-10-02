@@ -30,6 +30,8 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
+const val COLLECTION_POST = "post"
+
 class DataRepositoryImpl @Inject constructor(
     private val auth: FirebaseAuth,
     private val db: FirebaseFirestore,
@@ -94,7 +96,6 @@ class DataRepositoryImpl @Inject constructor(
                     Log.d("test_data", "$imageList")
                     emit(true)
                 }
-
             } catch (e: Exception) {
                 emit(false)
             }

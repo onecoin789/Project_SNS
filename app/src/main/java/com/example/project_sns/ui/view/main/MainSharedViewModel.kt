@@ -15,6 +15,7 @@ import com.example.project_sns.domain.usecase.EditPostUseCase
 import com.example.project_sns.domain.usecase.EditProfileUseCase
 import com.example.project_sns.domain.usecase.GetCommentDataUseCase
 import com.example.project_sns.domain.usecase.GetCurrentUserPostDataUseCase
+import com.example.project_sns.domain.usecase.GetFriendListDataUseCase
 import com.example.project_sns.domain.usecase.GetReCommentDataUseCase
 import com.example.project_sns.domain.usecase.GetRequestDataUseCase
 import com.example.project_sns.domain.usecase.GetUserByUidUseCase
@@ -32,9 +33,11 @@ import com.example.project_sns.ui.mapper.toModel
 import com.example.project_sns.ui.mapper.toPostListModel
 import com.example.project_sns.ui.mapper.toReCommentListModel
 import com.example.project_sns.ui.mapper.toRequestDataModel
+import com.example.project_sns.ui.mapper.toUserDataListModel
 import com.example.project_sns.ui.util.CheckEditProfile
 import com.example.project_sns.ui.view.model.CommentDataModel
 import com.example.project_sns.ui.view.model.CommentModel
+import com.example.project_sns.ui.view.model.FriendDataModel
 import com.example.project_sns.ui.view.model.KakaoDocumentsModel
 import com.example.project_sns.ui.view.model.PostDataModel
 import com.example.project_sns.ui.view.model.PostModel
@@ -69,7 +72,8 @@ class MainSharedViewModel @Inject constructor(
     private val deleteReCommentUseCase: DeleteReCommentUseCase,
     private val getUserByUidUseCase: GetUserByUidUseCase,
     private val sendFriendRequestUseCase: SendFriendRequestUseCase,
-    private val getRequestDataUseCase: GetRequestDataUseCase
+    private val getRequestDataUseCase: GetRequestDataUseCase,
+    private val getFriendListDataUseCase: GetFriendListDataUseCase
 ) : ViewModel() {
 
     private val _postUpLoadResult = MutableStateFlow<Boolean?>(null)
@@ -117,8 +121,8 @@ class MainSharedViewModel @Inject constructor(
     private val _requestFriendResult = MutableStateFlow<Boolean?>(null)
     val requestFriendResult: StateFlow<Boolean?> get() = _requestFriendResult
 
-    private val _requestList = MutableLiveData<List<RequestModel>>()
-    val requestList: LiveData<List<RequestModel>> get() = _requestList
+    private val _friendList = MutableLiveData<List<UserDataModel>>()
+    val friendList: LiveData<List<UserDataModel>> get() = _friendList
 
 
     val reCommentLastVisibleItem = MutableStateFlow(0)
@@ -126,19 +130,24 @@ class MainSharedViewModel @Inject constructor(
 
 
 
+    fun getFriendList(uid: String) {
+        viewModelScope.launch {
+            getFriendListDataUseCase(uid).collect { data ->
+                _friendList.value = data.toUserDataListModel()
+                Log.d("test_vm", "${_friendList.value}")
+            }
+        }
+    }
+
     fun resetCommentData() {
         viewModelScope.launch {
             _commentListData.value = emptyList()
-            Log.d("test_vm", "${_commentListData.value}")
-
         }
     }
 
     fun resetReCommentData() {
         viewModelScope.launch {
             _reCommentListData.value = emptyList()
-            Log.d("test_vm", "${_commentListData.value}")
-
         }
     }
 
@@ -157,17 +166,9 @@ class MainSharedViewModel @Inject constructor(
     }
 
 
-    fun getRequestList() {
+    fun requestFriend(requestId: String, sendUid: String, receiveUid: String) {
         viewModelScope.launch {
-            getRequestDataUseCase().collect { data ->
-                _requestList.value = data.toRequestDataModel()
-            }
-        }
-    }
-
-    fun requestFriend(sendUid: String, receiveUid: String) {
-        viewModelScope.launch {
-            sendFriendRequestUseCase(sendUid, receiveUid).collect { result ->
+            sendFriendRequestUseCase(requestId, sendUid, receiveUid).collect { result ->
                 _requestFriendResult.value = result
             }
         }

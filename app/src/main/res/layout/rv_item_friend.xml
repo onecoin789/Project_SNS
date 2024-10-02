@@ -6,7 +6,6 @@
     android:layout_height="wrap_content">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/cl_Search_T"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
@@ -15,46 +14,48 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
-            android:id="@+id/iv_Search"
+            android:id="@+id/ivItemFriendProfile"
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:background="@drawable/ic_user_fill"
+            android:background="@drawable/item_profile"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             android:contentDescription="@string/contentDescription"/>
 
         <TextView
-            android:id="@+id/tv_Item_Search_Name"
+            android:id="@+id/tvItemFriendName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
             android:textColor="@color/text"
-            android:textSize="20sp"
+            android:textSize="18sp"
             android:textStyle="bold"
-            app:layout_constraintBottom_toTopOf="@+id/tv_Item_Search_Email"
-            app:layout_constraintStart_toEndOf="@id/iv_Search"
+            android:text="@string/test"
+            app:layout_constraintBottom_toTopOf="@+id/tvItemFriendEmail"
+            app:layout_constraintStart_toEndOf="@id/ivItemFriendProfile"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_chainStyle="packed" />
 
         <TextView
-            android:id="@+id/tv_Item_Search_Email"
+            android:id="@+id/tvItemFriendEmail"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/hint"
-            android:textSize="18sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/tv_Item_Search_Name"
-            app:layout_constraintTop_toBottomOf="@+id/tv_Item_Search_Name" />
+            android:textSize="16sp"
+            android:text="@string/test"
+            app:layout_constraintBottom_toBottomOf="@+id/ivItemFriendProfile"
+            app:layout_constraintStart_toStartOf="@+id/tvItemFriendName"
+            app:layout_constraintTop_toBottomOf="@+id/tvItemFriendName" />
 
         <ImageView
-            android:id="@+id/iv_Item_Search_Delete"
+            android:id="@+id/ivItemFriendDelete"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_marginEnd="10dp"
             android:background="@drawable/ic_delete"
-            app:layout_constraintBottom_toBottomOf="@id/tv_Item_Search_Email"
+            app:layout_constraintBottom_toBottomOf="@id/tvItemFriendEmail"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/tv_Item_Search_Name"
+            app:layout_constraintTop_toTopOf="@+id/tvItemFriendName"
             android:contentDescription="@string/contentDescription"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
