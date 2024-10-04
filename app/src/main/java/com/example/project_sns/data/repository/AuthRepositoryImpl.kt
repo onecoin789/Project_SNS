@@ -403,16 +403,16 @@ class AuthRepositoryImpl @Inject constructor(
         return flow {
             try {
                 db.runTransaction { transaction ->
-                    val fromUidRef = db.collection("friendList").document(fromUid)
-                    val toUidRef = db.collection("friendList").document(toUid)
+                    val fromUidDoc = db.collection("friendList").document(fromUid)
+                    val toUidDoc = db.collection("friendList").document(toUid)
 
                     transaction.update(
-                        fromUidRef,
+                        fromUidDoc,
                         "friendList",
                         FieldValue.arrayUnion(toUid)
                     )
                     transaction.update(
-                        toUidRef,
+                        toUidDoc,
                         "friendList",
                         FieldValue.arrayUnion(fromUid)
                     )
@@ -461,5 +461,19 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
-
+    override suspend fun deleteFriend(fromUid: String, toUid: String): Flow<Boolean> {
+        return flow {
+            try {
+                db.runTransaction { transaction ->
+                    val fromUidDoc = db.collection("friendList").document(fromUid)
+                    val toUidDoc = db.collection("friendList").document(toUid)
+                    transaction.update(fromUidDoc, "friendList", FieldValue.arrayRemove(toUid))
+                    transaction.update(toUidDoc, "friendList", FieldValue.arrayRemove(fromUid))
+                }.await()
+                emit(true)
+            } catch (e: Exception) {
+                emit(false)
+            }
+        }
+    }
 }

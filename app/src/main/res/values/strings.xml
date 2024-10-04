@@ -28,6 +28,8 @@
 
     <!-- MyProfile -->
     <string name="my_request">친구 요청</string>
+    <string name="my_cancel">요청 취소</string>
+    <string name="my_delete">친구 삭제</string>
     <string name="my_message">메세지 보내기</string>
     <string name="my_number">개</string>
     <string name="my_post">게시물</string>
@@ -121,15 +123,14 @@
 
     <!-- Notification -->
     <string name="notification_title">알림</string>
-    <string name="notification_request">팔로우 요청</string>
+    <string name="notification_request">친구 요청</string>
     <string name="notification_request_explain">요청을 확인 할 수 있습니다.</string>
     <string name="notification_none">표시할 알림이 없습니다</string>
 
     <!-- FollowPage -->
-    <string name="follow_title">팔로우 요청</string>
+    <string name="follow_title">친구 요청</string>
     <string name="follow_item_accept">수락</string>
     <string name="follow_item_reject">거절</string>
-
 
 
 </resources>

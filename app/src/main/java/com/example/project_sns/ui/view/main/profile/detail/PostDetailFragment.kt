@@ -1,10 +1,12 @@
 package com.example.project_sns.ui.view.main.profile.detail
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
@@ -14,6 +16,7 @@ import com.example.project_sns.ui.BaseFragment
 import com.example.project_sns.ui.CurrentUser
 import com.example.project_sns.ui.mapper.toViewType
 import com.example.project_sns.ui.view.main.MainSharedViewModel
+import com.example.project_sns.ui.view.main.MainViewModel
 import com.example.project_sns.ui.view.model.PostDataModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -34,6 +37,12 @@ class PostDetailFragment : BaseFragment<FragmentPostDetailBinding>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        lifecycleScope.launch {
+            mainSharedViewModel.postList.collect {
+                Log.d("Tag2", "${it.size}")
+            }
+        }
 
         initView()
     }

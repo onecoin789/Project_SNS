@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.project_sns.domain.usecase.AcceptFriendRequestUseCase
+import com.example.project_sns.domain.usecase.DeleteFriendUseCase
 import com.example.project_sns.domain.usecase.GetRequestDataUseCase
 import com.example.project_sns.domain.usecase.RejectFriendRequestUseCase
 import com.example.project_sns.ui.mapper.toRequestDataModel
@@ -21,7 +22,7 @@ import javax.inject.Inject
 class NotificationViewModel @Inject constructor(
     private val getRequestDataUseCase: GetRequestDataUseCase,
     private val acceptFriendUseCase: AcceptFriendRequestUseCase,
-    private val rejectFriendRequestUseCase: RejectFriendRequestUseCase
+    private val rejectFriendRequestUseCase: RejectFriendRequestUseCase,
 ): ViewModel() {
 
     private val _requestList = MutableLiveData<List<RequestModel>>()

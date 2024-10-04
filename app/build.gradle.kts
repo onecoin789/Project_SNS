@@ -30,8 +30,10 @@ android {
         buildConfigField("String", "API_KEY", properties.getProperty("API_KEY"))
         buildConfigField("String", "NATIVE_KEY", properties.getProperty("NATIVE_KEY"))
         buildConfigField("String", "KAKAO_NATIVE_KEY", properties.getProperty("KAKAO_NATIVE_KEY"))
+        buildConfigField("String", "NAVER_CLIENT_ID", properties.getProperty("NAVER_CLIENT_ID"))
         resValue("string", "NATIVE_KEY", properties.getProperty("NATIVE_KEY"))
         resValue("string", "KAKAO_NATIVE_KEY", properties.getProperty("KAKAO_NATIVE_KEY"))
+        resValue("string", "NAVER_CLIENT_ID", properties.getProperty("NAVER_CLIENT_ID"))
 
     }
 
@@ -119,6 +121,8 @@ dependencies {
     implementation(libs.kakao.sdk)
     implementation(libs.google.services.location)
 
+    // naver
+    implementation("com.naver.maps:map-sdk:3.19.1")
 
 
 }

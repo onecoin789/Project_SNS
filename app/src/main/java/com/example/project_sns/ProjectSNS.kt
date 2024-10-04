@@ -2,6 +2,7 @@ package com.example.project_sns
 
 import android.app.Application
 import com.kakao.sdk.common.KakaoSdk
+import com.naver.maps.map.NaverMapSdk
 import dagger.hilt.android.HiltAndroidApp
 
 
@@ -17,6 +18,7 @@ class ProjectSNS : Application() {
         application = this
 
         KakaoSdk.init(this, BuildConfig.NATIVE_KEY)
+        NaverMapSdk.getInstance(this).client = NaverMapSdk.NaverCloudPlatformClient(BuildConfig.NAVER_CLIENT_ID)
     }
 
 //    private fun getHashKey() {

@@ -574,6 +574,33 @@ class DataRepositoryImpl @Inject constructor(
                     }
 
                     else -> {
+                        db.collection("post").orderBy("createdAt", Query.Direction.DESCENDING)
+                            .limit(lastVisibleItem.toLong()).get().addOnSuccessListener { postData ->
+                                val documents = postData.documents
+                                val postResponse = postData.toObjects(PostDataResponse::class.java)
+                                    .toPostListEntity()
+                                postResponse.map { postEntity ->
+                                    db.collection("user").document(postEntity.uid).get()
+                                        .addOnSuccessListener { userData ->
+                                            val userEntity =
+                                                userData.toObject(UserDataResponse::class.java)
+                                                    ?.toEntity()
+                                            if (userEntity != null) {
+                                                postList.addAll(
+                                                    listOf(
+                                                        PostEntity(
+                                                            userEntity,
+                                                            postEntity
+                                                        )
+                                                    )
+                                                )
+                                            }
+                                            postDocuments.addAll(documents)
+                                            trySend(postList)
+                                            Log.d("test_impl", "$postList")
+                                        }
+                                }
+                            }
                         trySend(null)
                     }
                 }

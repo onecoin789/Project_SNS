@@ -9,6 +9,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.project_sns.domain.usecase.DeleteCommentUseCase
+import com.example.project_sns.domain.usecase.DeleteFriendUseCase
 import com.example.project_sns.domain.usecase.DeletePostUseCase
 import com.example.project_sns.domain.usecase.DeleteReCommentUseCase
 import com.example.project_sns.domain.usecase.EditPostUseCase
@@ -16,9 +17,11 @@ import com.example.project_sns.domain.usecase.EditProfileUseCase
 import com.example.project_sns.domain.usecase.GetCommentDataUseCase
 import com.example.project_sns.domain.usecase.GetCurrentUserPostDataUseCase
 import com.example.project_sns.domain.usecase.GetFriendListDataUseCase
+import com.example.project_sns.domain.usecase.GetPagingPostUseCase
 import com.example.project_sns.domain.usecase.GetReCommentDataUseCase
 import com.example.project_sns.domain.usecase.GetRequestDataUseCase
 import com.example.project_sns.domain.usecase.GetUserByUidUseCase
+import com.example.project_sns.domain.usecase.RejectFriendRequestUseCase
 import com.example.project_sns.domain.usecase.SearchKakaoMapUseCase
 import com.example.project_sns.domain.usecase.SendFriendRequestUseCase
 import com.example.project_sns.domain.usecase.UploadCommentUseCase
@@ -30,6 +33,7 @@ import com.example.project_sns.ui.mapper.toCommentListModel
 import com.example.project_sns.ui.mapper.toEntity
 import com.example.project_sns.ui.mapper.toKakaoListEntity
 import com.example.project_sns.ui.mapper.toModel
+import com.example.project_sns.ui.mapper.toPostDataListModel
 import com.example.project_sns.ui.mapper.toPostListModel
 import com.example.project_sns.ui.mapper.toReCommentListModel
 import com.example.project_sns.ui.mapper.toRequestDataModel
@@ -58,6 +62,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainSharedViewModel @Inject constructor(
+    private val getPagingPostUseCase: GetPagingPostUseCase,
     private val uploadPostUseCase: UploadPostUseCase,
     private val getCurrentUserPostDataUseCase: GetCurrentUserPostDataUseCase,
     private val editProfileUseCase: EditProfileUseCase,
@@ -72,8 +77,8 @@ class MainSharedViewModel @Inject constructor(
     private val deleteReCommentUseCase: DeleteReCommentUseCase,
     private val getUserByUidUseCase: GetUserByUidUseCase,
     private val sendFriendRequestUseCase: SendFriendRequestUseCase,
-    private val getRequestDataUseCase: GetRequestDataUseCase,
-    private val getFriendListDataUseCase: GetFriendListDataUseCase
+    private val getFriendListDataUseCase: GetFriendListDataUseCase,
+    private val deleteFriendUseCase: DeleteFriendUseCase
 ) : ViewModel() {
 
     private val _postUpLoadResult = MutableStateFlow<Boolean?>(null)
@@ -124,10 +129,49 @@ class MainSharedViewModel @Inject constructor(
     private val _friendList = MutableLiveData<List<UserDataModel>>()
     val friendList: LiveData<List<UserDataModel>> get() = _friendList
 
+    private val _deleteFriendResult = MutableStateFlow<Boolean?>(null)
+    val deleteFriendResult: StateFlow<Boolean?> get() = _deleteFriendResult
+
+    private val _pagingData = MutableLiveData<List<PostModel>>(emptyList())
+    val pagingData: LiveData<List<PostModel>> get() = _pagingData
+
+    private val _postLastVisibleItem = MutableStateFlow<Int>(0)
+    val postLastVisibleItem: StateFlow<Int> get() = _postLastVisibleItem
+
 
     val reCommentLastVisibleItem = MutableStateFlow(0)
 
 
+
+    fun postLastVisibleItem(lastVisibleItem: Int) {
+        viewModelScope.launch {
+            _postLastVisibleItem.value = lastVisibleItem
+        }
+    }
+
+    fun resetPagingData() {
+        viewModelScope.launch {
+            _pagingData.value = emptyList()
+        }
+    }
+
+
+    fun getPagingData() {
+        viewModelScope.launch {
+            getPagingPostUseCase(postLastVisibleItem).collect { data ->
+                _pagingData.value = data?.toPostDataListModel()
+            }
+        }
+    }
+
+
+    fun deleteFriend(fromUid: String, toUid: String) {
+        viewModelScope.launch {
+            deleteFriendUseCase(fromUid, toUid).collect { result ->
+                _deleteFriendResult.value = result
+            }
+        }
+    }
 
 
     fun getFriendList(uid: String) {
