@@ -26,6 +26,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
@@ -57,16 +58,24 @@ class MainHomeFragment : BaseFragment<FragmentMainHomeBinding>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        getPostData()
+        mainSharedViewModel.pagingData.observe(viewLifecycleOwner) {
+            Log.d("Tag2", "${it.size}")
+        }
+        lifecycleScope.launch {
+            mainViewModel.allPostData.collect {
+                Log.d("Tag1", "${it.size}")
+            }
+        }
+
         navigateView()
         initRv()
-
+        getPostData()
 
     }
 
     private fun getPostData() {
         viewLifecycleOwner.lifecycleScope.launch {
-            mainViewModel.getPagingData()
+            mainSharedViewModel.getPagingData()
         }
     }
 
@@ -85,7 +94,7 @@ class MainHomeFragment : BaseFragment<FragmentMainHomeBinding>() {
                     mainSharedViewModel.getUserData(item.userData.uid)
                     mainSharedViewModel.getUserPost(item.userData.uid)
                 }
-                findNavController().navigate(R.id.friendDetailFragment)
+                findNavController().navigate(R.id.action_mainFragment_to_friendDetailFragment)
                 refreshRecyclerView()
             }
 
@@ -94,7 +103,7 @@ class MainHomeFragment : BaseFragment<FragmentMainHomeBinding>() {
                     mainSharedViewModel.getUserData(item.userData.uid)
                     mainSharedViewModel.getUserPost(item.userData.uid)
                 }
-                findNavController().navigate(R.id.friendDetailFragment)
+                findNavController().navigate(R.id.action_mainFragment_to_friendDetailFragment)
                 refreshRecyclerView()
             }
 
@@ -111,14 +120,16 @@ class MainHomeFragment : BaseFragment<FragmentMainHomeBinding>() {
                     val lastVisible = linearLayoutManager.findLastVisibleItemPosition().plus(1)
                     if (!binding.rvHome.canScrollVertically(1)) {
                         binding.clHomeItemMore.setOnClickListener {
-                            moreItem(lastVisible)
+                            lifecycleScope.launch {
+                                moreItem(lastVisible)
+                            }
                         }
                     }
                 }
             })
         }
 
-        mainViewModel.pagingData.observe(viewLifecycleOwner) { data ->
+        mainSharedViewModel.pagingData.observe(viewLifecycleOwner) { data ->
             val dataByCreatedAt = data.sortedByDescending { it.postData.createdAt }
 
             postList = dataByCreatedAt.toMutableList()
@@ -127,10 +138,8 @@ class MainHomeFragment : BaseFragment<FragmentMainHomeBinding>() {
 
             if (data.isNotEmpty() && data != null) {
                 binding.clHomeItemMore.visibility = View.VISIBLE
-                binding.pbHome.visibility = View.GONE
             } else {
                 binding.clHomeItemMore.visibility = View.GONE
-                binding.pbHome.visibility = View.VISIBLE
             }
             Log.d("test_view", "$data")
         }
@@ -149,7 +158,8 @@ class MainHomeFragment : BaseFragment<FragmentMainHomeBinding>() {
             val runnableMore = kotlinx.coroutines.Runnable {
                 postList.removeAt(postList.size - 1)
                 postAdapter.notifyItemRemoved(postList.size)
-                mainViewModel.postLastVisibleItem.value = lastVisible
+                mainSharedViewModel.postLastVisibleItem(lastVisible)
+//                mainViewModel.postLastVisibleItem.value = lastVisible
             }
             delay(1000)
             runnableMore.run()
@@ -172,13 +182,13 @@ class MainHomeFragment : BaseFragment<FragmentMainHomeBinding>() {
         }
         binding.ivHomeNotification.setOnClickListener {
             findNavController().navigate(R.id.notificationFragment)
-            refreshRecyclerView()
+//            refreshRecyclerView()
         }
     }
 
     private fun refreshRecyclerView() {
-        mainViewModel.postLastVisibleItem.value = 0
-        mainViewModel.resetPagingData()
+        mainSharedViewModel.postLastVisibleItem(0)
+        mainSharedViewModel.resetPagingData()
     }
 
 }

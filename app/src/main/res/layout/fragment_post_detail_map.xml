@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg"
+    tools:context=".ui.view.main.profile.detail.PostDetailMapFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/fcMap"
+            android:name="com.naver.maps.map.MapFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:navermap_zoom="8"
+            app:navermap_mapType="Navi"/>
+
+        <ImageView
+            android:id="@+id/ivMapBack"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="25dp"
+            android:background="@drawable/item_btn_back"
+            android:contentDescription="@string/contentDescription"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:layout_marginEnd="3dp"
+            android:background="@drawable/ic_back"
+            android:contentDescription="@string/contentDescription"
+            app:layout_constraintBottom_toBottomOf="@+id/ivMapBack"
+            app:layout_constraintEnd_toEndOf="@+id/ivMapBack"
+            app:layout_constraintStart_toStartOf="@+id/ivMapBack"
+            app:layout_constraintTop_toTopOf="@+id/ivMapBack" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/clMapBottomSheet"
+        android:layout_width="match_parent"
+        android:layout_height="400dp"
+        android:background="@drawable/item_bottomsheet"
+        android:backgroundTint="@color/item"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+
+        <ImageView
+            android:id="@+id/ivMoreLine"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginHorizontal="175dp"
+            android:layout_marginTop="15dp"
+            android:background="@drawable/item_edittext_radius"
+            android:backgroundTint="@color/text"
+            android:contentDescription="@string/contentDescription"
+            android:paddingTop="5dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="15sp"
+            android:background="@color/chat"
+            app:layout_constraintTop_toBottomOf="@id/ivMoreLine"
+            android:contentDescription="@string/contentDescription"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -34,5 +34,9 @@ class PostDetailSelectBottomFragment : BaseBottomSheet<FragmentPostDetailSelectB
         binding.clMoreEdit.setOnClickListener {
             findNavController().navigate(R.id.action_postDetailSelectBottomFragment_to_myPostEditFragment)
         }
+
+        binding.clMoreLocation.setOnClickListener {
+            findNavController().navigate(R.id.action_postDetailSelectBottomFragment_to_postDetailMapFragment)
+        }
     }
 }

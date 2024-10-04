@@ -66,14 +66,14 @@
             android:id="@+id/action_mainFragment_to_makePostFragment"
             app:destination="@id/makePostFragment" />
         <action
-            android:id="@+id/action_mainFragment_to_friendFragment"
-            app:destination="@id/friendFragment" />
-        <action
             android:id="@+id/action_mainFragment_to_settingFragment"
             app:destination="@id/settingFragment" />
         <action
             android:id="@+id/action_mainFragment_to_postDetailFragment"
             app:destination="@id/postDetailFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_friendDetailFragment"
+            app:destination="@id/friendDetailFragment" />
 
     </fragment>
 
@@ -147,6 +147,9 @@
         android:name="com.example.project_sns.ui.view.detail.FriendDetailFragment"
         android:label="fragment_friend_detail"
         tools:layout="@layout/fragment_friend_detail" >
+        <action
+            android:id="@+id/action_friendDetailFragment_to_friendFragment"
+            app:destination="@id/friendFragment" />
     </fragment>
     <fragment
         android:id="@+id/postDetailFragment"
@@ -200,6 +203,9 @@
         <action
             android:id="@+id/action_postDetailSelectBottomFragment_to_myPostEditFragment"
             app:destination="@id/myPostEditFragment" />
+        <action
+            android:id="@+id/action_postDetailSelectBottomFragment_to_postDetailMapFragment"
+            app:destination="@id/postDetailMapFragment" />
     </dialog>
     <fragment
         android:id="@+id/myPostEditFragment"
@@ -225,14 +231,19 @@
         tools:layout="@layout/fragment_re_comment_list" />
     <fragment
         android:id="@+id/followPageFragment"
-        android:name="com.example.project_sns.ui.view.main.notification.FollowPageFragment"
+        android:name="com.example.project_sns.ui.view.main.notification.RequestPageFragment"
         android:label="fragment_follow_page"
-        tools:layout="@layout/fragment_follow_page" />
+        tools:layout="@layout/fragment_request_page" />
     <fragment
         android:id="@+id/notificationFragment"
         android:name="com.example.project_sns.ui.view.main.notification.NotificationFragment"
         android:label="fragment_notification"
         tools:layout="@layout/fragment_notification" />
+    <fragment
+        android:id="@+id/postDetailMapFragment"
+        android:name="com.example.project_sns.ui.view.main.profile.detail.PostDetailMapFragment"
+        android:label="fragment_post_detail_map"
+        tools:layout="@layout/fragment_post_detail_map" />
 
 
 </navigation>

@@ -128,7 +128,6 @@
                 android:textStyle="bold"
                 android:visibility="visible"
                 app:layout_constraintEnd_toStartOf="@+id/btnFDSendDM"
-                app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/clFDProfile" />
 
@@ -146,8 +145,41 @@
                 android:textStyle="bold"
                 android:visibility="visible"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toEndOf="@+id/btnFDFriendRequest"
+                app:layout_constraintTop_toBottomOf="@id/clFDProfile" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnFDFriendDelete"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="50dp"
+                android:layout_marginEnd="30dp"
+                android:background="@drawable/item_btn_ripple"
+                android:text="@string/my_delete"
+                android:textColor="@color/text"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:visibility="invisible"
+                app:layout_constraintEnd_toStartOf="@+id/btnFDSendDM"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/clFDProfile" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnFDFriendCancel"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="50dp"
+                android:layout_marginEnd="30dp"
+                android:background="@drawable/item_btn_ripple"
+                android:text="@string/my_cancel"
+                android:textColor="@color/text"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:visibility="invisible"
+                app:layout_constraintEnd_toStartOf="@+id/btnFDSendDM"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/clFDProfile" />
 
             <androidx.appcompat.widget.AppCompatButton
@@ -180,7 +212,7 @@
                 android:textColor="@color/text"
                 android:textSize="16sp"
                 android:textStyle="bold"
-                android:visibility="visible"
+                android:visibility="invisible"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toEndOf="@+id/btnFDEditProfile"

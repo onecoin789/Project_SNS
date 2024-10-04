@@ -1,6 +1,7 @@
 package com.example.project_sns.ui.view.main.profile
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -39,9 +40,24 @@ class MainMyProfileFragment : BaseFragment<FragmentMainMyProfileBinding>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        lifecycleScope.launch {
+            mainSharedViewModel.postList.collect {
+                Log.d("Tag2", "${it.size}")
+            }
+        }
         initView()
         navigateView()
         initRv()
+        getPostList()
+    }
+
+    private fun getPostList() {
+        val currentUser = CurrentUser.userData?.uid
+        viewLifecycleOwner.lifecycleScope.launch {
+            if (currentUser != null) {
+                mainSharedViewModel.getUserPost(currentUser)
+            }
+        }
     }
 
     private fun initView() {
@@ -73,7 +89,6 @@ class MainMyProfileFragment : BaseFragment<FragmentMainMyProfileBinding>() {
 
 
     private fun initRv() {
-        val uid = CurrentUser.userData?.uid.toString()
         val listAdapter = MyProfilePostAdapter { data ->
             sendData(data)
         }
@@ -81,7 +96,6 @@ class MainMyProfileFragment : BaseFragment<FragmentMainMyProfileBinding>() {
             mainSharedViewModel.postList.collect { data ->
                 val postNumber = data.size
                 binding.tvMyNumber.text = postNumber.toString()
-                mainSharedViewModel.getUserPost(uid)
                 listAdapter.submitList(data.sortedByDescending { it.createdAt })
                 if (data.isEmpty()) {
                     binding.tvMyNullPost.visibility = View.VISIBLE
@@ -123,7 +137,7 @@ class MainMyProfileFragment : BaseFragment<FragmentMainMyProfileBinding>() {
         }
 
         binding.btnMyFriend.setOnClickListener {
-            findNavController().navigate(R.id.action_mainFragment_to_friendFragment)
+            findNavController().navigate(R.id.action_mainFragment_to_friendDetailFragment)
         }
 
         binding.ivMyAdd.setOnClickListener {

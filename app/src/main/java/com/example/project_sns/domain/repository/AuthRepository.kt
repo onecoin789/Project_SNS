@@ -1,6 +1,5 @@
 package com.example.project_sns.domain.repository
 
-import com.example.project_sns.domain.model.FriendDataEntity
 import com.example.project_sns.domain.model.RequestEntity
 import com.example.project_sns.domain.model.UserDataEntity
 import kotlinx.coroutines.flow.Flow
@@ -31,5 +30,7 @@ interface AuthRepository {
     suspend fun rejectFriendRequest(requestId: String): Flow<Boolean>
 
     suspend fun getFriendList(uid: String): Flow<List<UserDataEntity>>
+
+    suspend fun deleteFriend(fromUid: String, toUid: String): Flow<Boolean>
 
 }
