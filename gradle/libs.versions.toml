@@ -38,6 +38,7 @@ exoplayerCore = "2.17.0"
 exoplayerUi = "2.17.0"
 pagingRuntimeKtx = "3.3.2"
 mediationTestSuite = "3.0.0"
+jsoup = "1.18.1"
 
 
 
@@ -78,6 +79,7 @@ exoplayer-core = { group = "com.google.android.exoplayer", name = "exoplayer-cor
 exoplayer-ui = { group = "com.google.android.exoplayer", name = "exoplayer-ui", version.ref = "exoplayerUi" }
 androidx-paging-runtime-ktx = { group = "androidx.paging", name = "paging-runtime-ktx", version.ref = "pagingRuntimeKtx" }
 mediation-test-suite = { group = "com.google.android.ads", name = "mediation-test-suite", version.ref = "mediationTestSuite" }
+jsoup = { group = "org.jsoup", name = "jsoup", version.ref = "jsoup" }
 
 
 [plugins]

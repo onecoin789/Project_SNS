@@ -18,6 +18,7 @@ data class ImageDataEntity(
 
 data class MapDataEntity(
     var placeName: String?,
+    var placeUrl: String?,
     var addressName: String?,
     var lat: Double?,
     var lng: Double?

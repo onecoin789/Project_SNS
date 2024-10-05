@@ -65,7 +65,7 @@
                     android:id="@+id/ivNotificationRequestFrame"
                     android:layout_width="65dp"
                     android:layout_height="65dp"
-                    android:background="@drawable/item_circle_radius_20"
+                    android:background="@drawable/item_circle_radius_30"
                     android:contentDescription="@string/contentDescription"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />

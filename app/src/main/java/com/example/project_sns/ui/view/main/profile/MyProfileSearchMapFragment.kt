@@ -47,19 +47,19 @@ class MyProfileSearchMapFragment : BottomSheetDialogFragment() {
     }
 
     private fun initView() {
-        binding.btnMap.setOnClickListener {
+        binding.btnSearchMap.setOnClickListener {
           initRv()
         }
     }
 
 
     private fun initRv() {
-        val query = binding.etMap.text.toString()
+        val query = binding.etSearchMap.text.toString()
         val mapAdapter = KakaoMapListAdapter { data ->
             sendMapData(data)
             findNavController().popBackStack()
         }
-        with(binding.rvMap) {
+        with(binding.rvSearchMap) {
             LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
             adapter = mapAdapter
         }
@@ -67,9 +67,16 @@ class MyProfileSearchMapFragment : BottomSheetDialogFragment() {
             Toast.makeText(requireContext(), "검색어를 입력해주세요!", Toast.LENGTH_SHORT).show()
         } else {
             viewLifecycleOwner.lifecycleScope.launch {
-                mainSharedViewModel.searchMapList(query = query, size = 10, page = 10)
+                mainSharedViewModel.searchMapList(query = query)
                 mainSharedViewModel.mapList.collect { list ->
-                    mapAdapter.submitList(list)
+                    if (list.isNotEmpty()) {
+                        binding.rvSearchMap.visibility = View.VISIBLE
+                        binding.tvSearchMap.visibility = View.GONE
+                        mapAdapter.submitList(list)
+                    } else {
+                        binding.tvSearchMap.visibility = View.VISIBLE
+                        binding.rvSearchMap.visibility = View.GONE
+                    }
                 }
             }
         }
@@ -82,6 +89,7 @@ class MyProfileSearchMapFragment : BottomSheetDialogFragment() {
         bundle.putString("addressName", mapData.addressName)
         bundle.putString("lat", mapData.lat)
         bundle.putString("lng", mapData.lng)
+        bundle.putString("placeUrl", mapData.placeUrl)
         setFragmentResult("data", bundleOf("mapData" to bundle))
     }
 

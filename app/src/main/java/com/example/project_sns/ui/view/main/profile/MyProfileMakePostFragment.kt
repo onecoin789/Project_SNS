@@ -1,6 +1,7 @@
 package com.example.project_sns.ui.view.main.profile
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -36,6 +37,7 @@ class MyProfileMakePostFragment : Fragment() {
     private var imageList: ArrayList<ImageDataModel>? = arrayListOf()
 
     private var placeName: String? = null
+    private var placeUrl: String? = null
     private var addressName: String? = null
     private var lat: String? = null
     private var lng: String? = null
@@ -131,9 +133,12 @@ class MyProfileMakePostFragment : Fragment() {
                 binding.tvMakeLocationInfo.text = mapData.getString("addressName")
 
                 placeName = mapData.getString("placeName")
+                placeUrl = mapData.getString("placeUrl")
                 addressName = mapData.getString("addressName")
                 lat = mapData.getString("lat")
                 lng = mapData.getString("lng")
+
+                Log.d("TagData", "$placeUrl, $placeName")
 
             } else {
                 binding.clMakeLocationText.visibility = View.GONE
@@ -174,7 +179,7 @@ class MyProfileMakePostFragment : Fragment() {
             postId = UUID.randomUUID().toString(),
             imageList = imageList,
             postText = postText,
-            mapData = MapDataModel(placeName, addressName, lat?.toDouble(), lng?.toDouble()),
+            mapData = MapDataModel(placeName, placeUrl, addressName, lat?.toDouble(), lng?.toDouble()),
             createdAt = dateFormat(time),
             editedAt = null
         )

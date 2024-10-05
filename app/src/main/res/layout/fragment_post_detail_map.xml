@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -17,8 +16,8 @@
             android:name="com.naver.maps.map.MapFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:navermap_zoom="8"
-            app:navermap_mapType="Navi"/>
+            app:navermap_mapType="Navi"
+            app:navermap_zoom="8" />
 
         <ImageView
             android:id="@+id/ivMapBack"
@@ -42,19 +41,21 @@
             app:layout_constraintStart_toStartOf="@+id/ivMapBack"
             app:layout_constraintTop_toTopOf="@+id/ivMapBack" />
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/clMapBottomSheet"
         android:layout_width="match_parent"
-        android:layout_height="400dp"
+        android:layout_height="wrap_content"
         android:background="@drawable/item_bottomsheet"
         android:backgroundTint="@color/item"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+        android:paddingBottom="20dp"
+        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
+        app:behavior_peekHeight="120dp"
+        app:layout_constraintBottom_toBottomOf="parent">
 
         <ImageView
-            android:id="@+id/ivMoreLine"
+            android:id="@+id/ivMapWhiteBar"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginHorizontal="175dp"
@@ -68,12 +69,122 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
+            android:id="@+id/ivMapLine"
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_marginTop="15sp"
             android:background="@color/chat"
-            app:layout_constraintTop_toBottomOf="@id/ivMoreLine"
+            android:contentDescription="@string/contentDescription"
+            app:layout_constraintTop_toBottomOf="@id/ivMapWhiteBar" />
+
+        <TextView
+            android:id="@+id/tvMapPlaceName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:text="@string/test"
+            android:textColor="@color/text"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/ivMapLine" />
+
+        <TextView
+            android:id="@+id/tvMapAddressName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="1dp"
+            android:layout_marginTop="5dp"
+            android:text="@string/test"
+            android:textColor="@color/hint"
+            android:textSize="17sp"
+            app:layout_constraintStart_toStartOf="@+id/tvMapPlaceName"
+            app:layout_constraintTop_toBottomOf="@+id/tvMapPlaceName" />
+
+        <TextView
+            android:id="@+id/tvMapPlaceUrl"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:text="@string/test"
+            android:textColor="#2196F3"
+            android:textSize="17sp"
+            app:layout_constraintStart_toStartOf="@+id/tvMapAddressName"
+            app:layout_constraintTop_toBottomOf="@+id/tvMapAddressName" />
+
+        <ImageView
+            android:id="@+id/ivMapDecoration"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:background="@drawable/ic_triangle"
+            android:layout_marginTop="5dp"
+            android:layout_marginStart="23dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvMapPlaceUrl"
             android:contentDescription="@string/contentDescription"/>
 
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/clMapOG"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="-22dp"
+            android:layout_marginEnd="100dp"
+            android:background="@drawable/item_radius_5"
+            android:backgroundTint="@color/text"
+            app:layout_constraintTop_toBottomOf="@+id/ivMapDecoration">
+
+            <ImageView
+                android:id="@+id/ivMapOGImage"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                app:layout_constraintDimensionRatio="1:0.5"
+                app:layout_constraintTop_toTopOf="parent"
+                android:contentDescription="@string/contentDescription"/>
+
+            <TextView
+                android:id="@+id/tvMapOGTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginHorizontal="15dp"
+                android:textSize="14sp"
+                android:textColor="@color/bg"
+                android:text="@string/test"
+                android:maxLines="1"
+                android:ellipsize="end"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/ivMapOGImage"/>
+
+            <TextView
+                android:id="@+id/tvMapOGDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="15dp"
+                android:textSize="14sp"
+                android:textColor="@color/hint"
+                android:text="@string/test"
+                android:maxLines="1"
+                android:ellipsize="end"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tvMapOGTitle"/>
+
+            <TextView
+                android:id="@+id/tvMapOGUrl"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="15dp"
+                android:textSize="14sp"
+                android:textColor="@color/hint"
+                android:text="@string/test"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="10dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tvMapOGDescription"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

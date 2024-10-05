@@ -68,7 +68,11 @@ fun ImageDataModel.toViewType(type: String): PostImageType {
 }
 
 fun MapDataEntity.toModel() = MapDataModel(
-    placeName = placeName, addressName = addressName, lat = lat, lng = lng
+    placeName = placeName,
+    placeUrl = placeUrl,
+    addressName = addressName,
+    lat = lat,
+    lng = lng
 )
 
 
@@ -115,7 +119,11 @@ fun ImageDataModel.toEntity() = ImageDataEntity(
 )
 
 fun MapDataModel.toEntity() = MapDataEntity(
-    placeName = placeName, addressName = addressName, lat = lat, lng = lng
+    placeName = placeName,
+    placeUrl = placeUrl,
+    addressName = addressName,
+    lat = lat,
+    lng = lng
 )
 
 fun CommentDataModel.toEntity() = CommentDataEntity(

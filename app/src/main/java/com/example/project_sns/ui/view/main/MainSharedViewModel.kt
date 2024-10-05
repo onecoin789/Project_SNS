@@ -350,9 +350,9 @@ class MainSharedViewModel @Inject constructor(
         }
     }
 
-    fun searchMapList(query: String, size: Int, page: Int) {
+    fun searchMapList(query: String) {
         viewModelScope.launch {
-            searchKakaoMapUseCase(query = query, size = size, page = page).collect { data ->
+            searchKakaoMapUseCase(query = query, size = 10, page = 5).collect { data ->
                 if (data != null) {
                     _mapList.value = data.documents.toKakaoListEntity()
                 }

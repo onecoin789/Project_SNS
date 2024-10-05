@@ -74,6 +74,7 @@ dependencies {
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.mediation.test.suite)
+    implementation(libs.jsoup)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -123,6 +124,7 @@ dependencies {
 
     // naver
     implementation("com.naver.maps:map-sdk:3.19.1")
+
 
 
 }
