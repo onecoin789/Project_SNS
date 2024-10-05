@@ -77,6 +77,7 @@ class MyPostEditFragment : BaseFragment<FragmentMyProfileMakePostBinding>() {
                         data.mapData.addressName = null
                         data.mapData.lat = null
                         data.mapData.lng = null
+                        data.mapData.placeUrl = null
                         binding.clMakeLocationText.visibility = View.GONE
                     }
                 } else {
@@ -140,8 +141,6 @@ class MyPostEditFragment : BaseFragment<FragmentMyProfileMakePostBinding>() {
                     }
                 }
                 initViewPager(imageList)
-                Log.d("image_data", "$imageList")
-                Log.d("image_data_before2", "")
             }
     }
 
@@ -171,6 +170,7 @@ class MyPostEditFragment : BaseFragment<FragmentMyProfileMakePostBinding>() {
                 binding.tvMakeLocationInfo.text = mapData.getString("addressName")
 
                 getMapData?.placeName = mapData.getString("placeName")
+                getMapData?.placeUrl = mapData.getString("placeUrl")
                 getMapData?.addressName = mapData.getString("addressName")
                 getMapData?.lat = mapData.getString("lat")?.toDouble()
                 getMapData?.lng = mapData.getString("lng")?.toDouble()

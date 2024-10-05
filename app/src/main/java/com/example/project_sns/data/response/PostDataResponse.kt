@@ -18,6 +18,7 @@ data class ImageDataResponse(
 
 data class MapDataResponse(
     var placeName: String? = null,
+    var placeUrl: String? = null,
     var addressName: String? = null,
     var lat: Double? = null,
     var lng: Double? = null

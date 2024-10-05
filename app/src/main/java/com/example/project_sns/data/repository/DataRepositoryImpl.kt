@@ -601,7 +601,6 @@ class DataRepositoryImpl @Inject constructor(
                                         }
                                 }
                             }
-                        trySend(null)
                     }
                 }
             }

@@ -57,7 +57,11 @@ fun ImageDataResponse.toEntity() = ImageDataEntity(
 )
 
 fun MapDataResponse.toEntity() = MapDataEntity(
-    placeName = placeName, addressName = addressName, lat = lat, lng = lng
+    placeName = placeName,
+    placeUrl = placeUrl,
+    addressName = addressName,
+    lat = lat,
+    lng = lng
 )
 
 fun CommentDataResponse.toEntity() = CommentDataEntity(

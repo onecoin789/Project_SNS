@@ -37,6 +37,7 @@
     <string name="my_friend">친구 목록</string>
     <string name="my_null_post">게시물을 추가해보세요!</string>
     <string name="my_map">장소 키워드를 검색해주세요</string>
+    <string name="my_search_map">검색어를 입력해주세요</string>
 
     <!-- Home -->
     <string name="home_today">오늘의 추천 운동</string>
