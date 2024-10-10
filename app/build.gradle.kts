@@ -83,11 +83,14 @@ dependencies {
     // paging
     implementation(libs.androidx.paging.runtime.ktx)
 
-    // view pager2
+    // swipeRefreshLayout
+    implementation(libs.androidx.swiperefreshlayout)
+
+    // viewPager2
     implementation(libs.androidx.viewpager2)
     implementation(libs.dotsindicator)
 
-    // navigation fragment
+    // navigationFragment
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
 
@@ -114,7 +117,7 @@ dependencies {
     implementation(libs.exoplayer.core)
     implementation(libs.exoplayer.ui)
 
-    //image picker
+    //imagePicker
     implementation(libs.ted.image.picker)
 
     // kakao
@@ -123,7 +126,7 @@ dependencies {
     implementation(libs.google.services.location)
 
     // naver
-    implementation("com.naver.maps:map-sdk:3.19.1")
+    implementation(libs.naver.maps)
 
 
 

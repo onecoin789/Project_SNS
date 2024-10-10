@@ -4,7 +4,6 @@ import android.content.Intent
 import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,7 +14,7 @@ import com.bumptech.glide.Glide
 import com.example.project_sns.R
 import com.example.project_sns.databinding.FragmentPostDetailMapBinding
 import com.example.project_sns.ui.BaseFragment
-import com.example.project_sns.ui.og_tag.OgTagParser
+import com.example.project_sns.ui.util.OgTagParser
 import com.example.project_sns.ui.view.main.MainSharedViewModel
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.naver.maps.geometry.LatLng
@@ -132,8 +131,8 @@ class PostDetailMapFragment : BaseFragment<FragmentPostDetailMapBinding>(), OnMa
                         marker.icon = MarkerIcons.BLACK
                         marker.iconTintColor = Color.RED
                         marker.captionText = placeName
-
-                        Log.d("Tag_Location", "$latData, $lngData")
+                        marker.captionColor = Color.WHITE
+                        marker.captionHaloColor = Color.BLACK
                     }
                 }
             }

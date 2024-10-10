@@ -1,6 +1,7 @@
 package com.example.project_sns.ui.view.main.notification
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -56,6 +57,10 @@ class RequestPageFragment : BaseFragment<FragmentRequestPageBinding>() {
                 notificationViewModel.acceptResult.collect { acceptResult ->
                     if (acceptResult == true) {
                         Toast.makeText(requireContext(), "성공", Toast.LENGTH_SHORT).show()
+                        getRequestList()
+                        notificationViewModel.requestList.observe(viewLifecycleOwner) { requestList ->
+                            Log.d("tag_requestPage", "$requestList")
+                        }
                     } else if (acceptResult == false) {
                         Toast.makeText(requireContext(), "실패", Toast.LENGTH_SHORT).show()
                     }
@@ -70,6 +75,7 @@ class RequestPageFragment : BaseFragment<FragmentRequestPageBinding>() {
                 notificationViewModel.rejectResult.collect { rejectResult ->
                     if (rejectResult == true) {
                         Toast.makeText(requireContext(), "성공", Toast.LENGTH_SHORT).show()
+                        getRequestList()
                     } else if (rejectResult == false) {
                         Toast.makeText(requireContext(), "실패", Toast.LENGTH_SHORT).show()
                     }

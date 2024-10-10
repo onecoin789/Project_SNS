@@ -51,6 +51,15 @@ class MainMyProfileFragment : BaseFragment<FragmentMainMyProfileBinding>() {
         getPostList()
     }
 
+    private fun getFriendList() {
+        val currentUser = CurrentUser.userData?.uid
+        viewLifecycleOwner.lifecycleScope.launch {
+            if (currentUser != null) {
+                mainSharedViewModel.getFriendList(currentUser)
+            }
+        }
+    }
+
     private fun getPostList() {
         val currentUser = CurrentUser.userData?.uid
         viewLifecycleOwner.lifecycleScope.launch {
@@ -78,12 +87,13 @@ class MainMyProfileFragment : BaseFragment<FragmentMainMyProfileBinding>() {
                     } else {
                         binding.tvMyIntro.text = userData.intro
                     }
-                    binding.btnMyFriend.setOnClickListener {
-                        mainSharedViewModel.getFriendList(userData.uid)
-                        findNavController().navigate(R.id.friendFragment)
-                    }
                 }
             }
+        }
+
+        binding.btnMyFriend.setOnClickListener {
+            getFriendList()
+            findNavController().navigate(R.id.friendFragment)
         }
     }
 
@@ -137,7 +147,7 @@ class MainMyProfileFragment : BaseFragment<FragmentMainMyProfileBinding>() {
         }
 
         binding.btnMyFriend.setOnClickListener {
-            findNavController().navigate(R.id.action_mainFragment_to_friendDetailFragment)
+            findNavController().navigate(R.id.action_mainFragment_to_friendFragment)
         }
 
         binding.ivMyAdd.setOnClickListener {

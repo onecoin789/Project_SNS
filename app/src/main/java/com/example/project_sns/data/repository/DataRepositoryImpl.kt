@@ -524,11 +524,7 @@ class DataRepositoryImpl @Inject constructor(
                                                 userData.toObject(UserDataResponse::class.java)
                                                     ?.toEntity()
                                             if (userEntity != null) {
-                                                postList.addAll(
-                                                    listOf(
-                                                        PostEntity(
-                                                            userEntity,
-                                                            postEntity
+                                                postList.addAll(listOf(PostEntity(userEntity, postEntity
                                                         )
                                                     )
                                                 )

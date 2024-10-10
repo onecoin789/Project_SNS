@@ -367,28 +367,39 @@ class AuthRepositoryImpl @Inject constructor(
         return callbackFlow {
             val currentUserUid = auth.currentUser?.uid
             val followList = mutableListOf<RequestEntity>()
-            val requestByUid = db.collection("request").whereEqualTo("toUid", currentUserUid).get()
-            requestByUid.addOnSuccessListener { data ->
-                val requestResponse =
-                    data.toObjects(RequestDataResponse::class.java).toRequestDataEntity()
-                requestResponse.map { receiveData ->
-                    db.collection("user").document(receiveData.fromUid).get()
-                        .addOnSuccessListener { userData ->
-                            val userEntity =
-                                userData.toObject(UserDataResponse::class.java)?.toEntity()
-                            if (userEntity != null) {
-                                followList.addAll(
-                                    listOf(
-                                        RequestEntity(
-                                            requestId = receiveData.requestId,
-                                            fromUid = userEntity,
-                                            toUid = receiveData.toUid
+            val requestByUid = db.collection("request").whereEqualTo("toUid", currentUserUid)
+            requestByUid.addSnapshotListener { requestResponse, error ->
+                if (error != null) {
+                    trySend(emptyList())
+                }
+                if (requestResponse != null) {
+                    val requestEntity =
+                        requestResponse.toObjects(RequestDataResponse::class.java)
+                            .toRequestDataEntity()
+                    requestEntity.map { userResponse ->
+                        db.collection("user").document(userResponse.fromUid)
+                            .addSnapshotListener { userData, error ->
+                                if (error != null) {
+                                    trySend(emptyList())
+                                }
+                                if (userData != null) {
+                                    val userEntity =
+                                        userData.toObject(UserDataResponse::class.java)?.toEntity()
+                                    if (userEntity != null) {
+                                        followList.addAll(
+                                            listOf(
+                                                RequestEntity(
+                                                    requestId = userResponse.requestId,
+                                                    fromUid = userEntity,
+                                                    toUid = userResponse.toUid
+                                                )
+                                            )
                                         )
-                                    )
-                                )
-                                trySend(followList)
+                                        trySend(followList)
+                                    }
+                                }
                             }
-                        }
+                    }
                 }
             }
             awaitClose()
@@ -437,24 +448,88 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun checkFriendRequest(toUid: String): Flow<Boolean> {
+        return callbackFlow {
+            val fromUid = auth.currentUser?.uid
+            val query = db.collection("request").whereEqualTo("fromUid", fromUid)
+                .whereEqualTo("toUid", toUid)
+            val snapshotListener = query.addSnapshotListener { task, error ->
+                if (error != null) {
+                    trySend(false)
+                }
+                if (task != null) {
+                    val document = task.documents
+                    if (document.isNotEmpty()) {
+                        Log.d("Tag_Success", "$document")
+                        trySend(true)
+                    } else {
+                        Log.d("Tag_Fail", "$document")
+                        trySend(false)
+                    }
+                }
+
+            }
+            awaitClose {
+                snapshotListener.remove()
+            }
+        }
+    }
+
+    override suspend fun cancelFriendRequest(fromUid: String, toUid: String): Flow<Boolean> {
+        return callbackFlow {
+            val documentList = mutableListOf<RequestDataResponse>()
+            val query = db.collection("request").whereEqualTo("fromUid", fromUid)
+                .whereEqualTo("toUid", toUid)
+            query.get().addOnSuccessListener { requestResponse ->
+                val document = requestResponse?.toObjects(RequestDataResponse::class.java)
+                if (document != null) {
+                    documentList.addAll(document)
+                    val requestId = documentList.first().requestId
+                    Log.d("tag_impl", "$requestId, $documentList")
+                    db.collection("request").document(requestId).delete().addOnSuccessListener {
+                        documentList.clear()
+                        trySend(true)
+                    }
+                } else {
+                    trySend(false)
+                }
+            }
+            awaitClose()
+        }
+    }
+
+
     override suspend fun getFriendList(uid: String): Flow<List<UserDataEntity>> {
         return callbackFlow {
             val friendList = mutableListOf<UserDataEntity>()
-            db.collection("friendList").document(uid).get().addOnSuccessListener { friendResponse ->
-                val friendEntity =
-                    friendResponse.toObject(FriendDataResponse::class.java)?.toEntity()
-                if (friendEntity != null) {
-                    friendEntity.friendList.map { friendUid ->
-                        db.collection("user").document(friendUid).get().addOnSuccessListener { userData ->
-                            val userEntity = userData.toObject(UserDataResponse::class.java)?.toEntity()
-                            if (userEntity != null) {
-                                friendList.add(userEntity)
-                                trySend(friendList)
-                            }
-                        }
-                    }
-                } else {
+            db.collection("friendList").document(uid).addSnapshotListener { friendResponse, error ->
+                if (error != null) {
                     trySend(emptyList())
+                }
+                if (friendResponse != null) {
+                    val friendEntity =
+                        friendResponse.toObject(FriendDataResponse::class.java)?.toEntity()
+                    if (friendEntity != null) {
+                        friendEntity.friendList.map { friendUid ->
+                            db.collection("user").document(friendUid)
+                                .addSnapshotListener { userData, error ->
+                                    if (error != null) {
+                                        trySend(emptyList())
+                                    }
+                                    if (userData != null) {
+                                        val userEntity =
+                                            userData.toObject(UserDataResponse::class.java)
+                                                ?.toEntity()
+                                        if (userEntity != null) {
+                                            friendList.addAll(listOf(userEntity))
+                                            trySend(friendList)
+                                        }
+                                    }
+                                }
+                        }
+                    } else {
+                        trySend(emptyList())
+                    }
                 }
             }
             awaitClose()
