@@ -39,6 +39,8 @@ exoplayerUi = "2.17.0"
 pagingRuntimeKtx = "3.3.2"
 mediationTestSuite = "3.0.0"
 jsoup = "1.18.1"
+swiperefreshlayout = "1.2.0-alpha01"
+naverMaps = "3.19.1"
 
 
 
@@ -80,6 +82,8 @@ exoplayer-ui = { group = "com.google.android.exoplayer", name = "exoplayer-ui", 
 androidx-paging-runtime-ktx = { group = "androidx.paging", name = "paging-runtime-ktx", version.ref = "pagingRuntimeKtx" }
 mediation-test-suite = { group = "com.google.android.ads", name = "mediation-test-suite", version.ref = "mediationTestSuite" }
 jsoup = { group = "org.jsoup", name = "jsoup", version.ref = "jsoup" }
+androidx-swiperefreshlayout = { group = "androidx.swiperefreshlayout", name = "swiperefreshlayout", version.ref = "swiperefreshlayout" }
+naver-maps = { group = "com.naver.maps", name = "map-sdk", version.ref = "naverMaps" }
 
 
 [plugins]

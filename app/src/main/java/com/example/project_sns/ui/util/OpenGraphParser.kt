@@ -1,4 +1,4 @@
-package com.example.project_sns.ui.og_tag
+package com.example.project_sns.ui.util
 
 import kotlinx.coroutines.*
 import org.jsoup.Jsoup

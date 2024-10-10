@@ -58,7 +58,7 @@ class MainHomeFragment : BaseFragment<FragmentMainHomeBinding>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        mainSharedViewModel.pagingData.observe(viewLifecycleOwner) {
+        mainViewModel.pagingData.observe(viewLifecycleOwner) {
             Log.d("Tag2", "${it.size}")
         }
         lifecycleScope.launch {
@@ -67,15 +67,32 @@ class MainHomeFragment : BaseFragment<FragmentMainHomeBinding>() {
             }
         }
 
+        refreshRecyclerView()
         navigateView()
         initRv()
         getPostData()
+        refreshLayout()
 
     }
 
     private fun getPostData() {
         viewLifecycleOwner.lifecycleScope.launch {
-            mainSharedViewModel.getPagingData()
+            val lastVisible = mainViewModel.postLastVisibleItem
+            mainViewModel.getPagingData(lastVisible)
+        }
+    }
+
+    private fun refreshLayout() {
+        binding.refreshLayoutHome.setOnRefreshListener {
+            CoroutineScope(Dispatchers.Default).launch {
+                postAdapter.submitList(emptyList())
+                refreshRecyclerView()
+            }
+            CoroutineScope(Dispatchers.Main).launch {
+                delay(1000)
+                refreshRecyclerView()
+                binding.refreshLayoutHome.isRefreshing = false
+            }
         }
     }
 
@@ -90,19 +107,13 @@ class MainHomeFragment : BaseFragment<FragmentMainHomeBinding>() {
             }
 
             override fun onClickProfileImageItem(item: PostModel) {
-                viewLifecycleOwner.lifecycleScope.launch {
-                    mainSharedViewModel.getUserData(item.userData.uid)
-                    mainSharedViewModel.getUserPost(item.userData.uid)
-                }
+                getDataByUid(item)
                 findNavController().navigate(R.id.action_mainFragment_to_friendDetailFragment)
                 refreshRecyclerView()
             }
 
             override fun onClickProfileNameItem(item: PostModel) {
-                viewLifecycleOwner.lifecycleScope.launch {
-                    mainSharedViewModel.getUserData(item.userData.uid)
-                    mainSharedViewModel.getUserPost(item.userData.uid)
-                }
+                getDataByUid(item)
                 findNavController().navigate(R.id.action_mainFragment_to_friendDetailFragment)
                 refreshRecyclerView()
             }
@@ -129,7 +140,7 @@ class MainHomeFragment : BaseFragment<FragmentMainHomeBinding>() {
             })
         }
 
-        mainSharedViewModel.pagingData.observe(viewLifecycleOwner) { data ->
+        mainViewModel.pagingData.observe(viewLifecycleOwner) { data ->
             val dataByCreatedAt = data.sortedByDescending { it.postData.createdAt }
 
             postList = dataByCreatedAt.toMutableList()
@@ -158,10 +169,10 @@ class MainHomeFragment : BaseFragment<FragmentMainHomeBinding>() {
             val runnableMore = kotlinx.coroutines.Runnable {
                 postList.removeAt(postList.size - 1)
                 postAdapter.notifyItemRemoved(postList.size)
-                mainSharedViewModel.postLastVisibleItem(lastVisible)
+                mainViewModel.postLastVisibleItem(lastVisible)
 //                mainViewModel.postLastVisibleItem.value = lastVisible
             }
-            delay(1000)
+            delay(500)
             runnableMore.run()
         }
     }
@@ -187,8 +198,16 @@ class MainHomeFragment : BaseFragment<FragmentMainHomeBinding>() {
     }
 
     private fun refreshRecyclerView() {
-        mainSharedViewModel.postLastVisibleItem(0)
-        mainSharedViewModel.resetPagingData()
+        mainViewModel.postLastVisibleItem(0)
+        mainViewModel.resetPagingData()
+    }
+
+    private fun getDataByUid(item: PostModel) {
+        viewLifecycleOwner.lifecycleScope.launch {
+            mainSharedViewModel.getUserData(item.userData.uid)
+            mainSharedViewModel.getUserPost(item.userData.uid)
+            mainSharedViewModel.checkFriendRequest(item.userData.uid)
+        }
     }
 
 }

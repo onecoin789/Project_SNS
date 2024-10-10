@@ -77,7 +77,6 @@ class FriendDetailFragment : BaseFragment<FragmentFriendDetailBinding>() {
             mainSharedViewModel.userData.observe(viewLifecycleOwner) { userData ->
                 val currentUserUid = CurrentUser.userData?.uid
                 val receiveUid = userData?.uid
-                val requestId = UUID.randomUUID().toString()
 
                 if (userData != null) {
                     binding.tvFDName.text = userData.name
@@ -103,14 +102,18 @@ class FriendDetailFragment : BaseFragment<FragmentFriendDetailBinding>() {
                         binding.btnFDEditProfile.visibility = View.INVISIBLE
                         binding.btnFDFriendList.visibility = View.INVISIBLE
                     }
-                    checkFriend(userData)
+                    checkFriendRequest(userData)
                 }
 
                 binding.btnFDFriendCancel.setOnClickListener {
-
+                    if (currentUserUid != null && receiveUid != null) {
+                        mainSharedViewModel.cancelFriendRequest(currentUserUid, receiveUid)
+                        collectCancelFlow()
+                    }
                 }
 
                 binding.btnFDFriendRequest.setOnClickListener {
+                    val requestId = UUID.randomUUID().toString()
                     if (currentUserUid != null && receiveUid != null) {
                         mainSharedViewModel.requestFriend(requestId, currentUserUid, receiveUid)
                         collectAcceptFlow()
@@ -130,14 +133,45 @@ class FriendDetailFragment : BaseFragment<FragmentFriendDetailBinding>() {
     }
 
     private fun checkFriend(userData: UserDataModel) {
-        lifecycleScope.launch {
-            mainSharedViewModel.friendList.observe(viewLifecycleOwner) { friendList ->
+        viewLifecycleOwner.lifecycleScope.launch {
+            mainSharedViewModel.friendList.collect { friendList ->
+                Log.d("friend_result", "$friendList")
                 if (friendList.contains(userData)) {
                     binding.btnFDFriendDelete.visibility = View.VISIBLE
                     binding.btnFDFriendRequest.visibility = View.INVISIBLE
+                    binding.btnFDFriendCancel.visibility = View.INVISIBLE
                 } else {
                     binding.btnFDFriendRequest.visibility = View.VISIBLE
                     binding.btnFDFriendDelete.visibility = View.INVISIBLE
+                    binding.btnFDFriendCancel.visibility = View.INVISIBLE
+                }
+            }
+        }
+    }
+
+    private fun checkFriendRequest(userData: UserDataModel) {
+        viewLifecycleOwner.lifecycleScope.launch {
+            mainSharedViewModel.checkFriendRequest.collect { result ->
+                Log.d("request_result", "$result")
+                if (result == true) {
+                    binding.btnFDFriendCancel.visibility = View.VISIBLE
+                    binding.btnFDFriendRequest.visibility = View.INVISIBLE
+                    binding.btnFDFriendDelete.visibility = View.INVISIBLE
+                } else if (result == false) {
+                    checkFriend(userData)
+                }
+            }
+        }
+    }
+
+    private fun collectCancelFlow() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            mainSharedViewModel.cancelFriendRequest.collect { result ->
+                Log.d("cancel_result", "$result")
+                if (result == true) {
+                    Toast.makeText(requireActivity(), "요청 삭제 성공!", Toast.LENGTH_SHORT).show()
+                } else if (result == false) {
+                    Toast.makeText(requireActivity(), "요청 삭제 실패", Toast.LENGTH_SHORT).show()
                 }
             }
         }
@@ -160,6 +194,7 @@ class FriendDetailFragment : BaseFragment<FragmentFriendDetailBinding>() {
             mainSharedViewModel.deleteFriendResult.collect { result ->
                 if (result == true) {
                     Toast.makeText(requireActivity(), "친구 삭제 성공!", Toast.LENGTH_SHORT).show()
+                    getFriendList()
                 } else if (result == false){
                     Toast.makeText(requireActivity(), "친구 삭제 실패", Toast.LENGTH_SHORT).show()
                 }

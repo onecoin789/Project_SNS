@@ -8,6 +8,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.project_sns.domain.usecase.CancelFriendRequestUseCase
+import com.example.project_sns.domain.usecase.CheckFriendRequestUseCase
 import com.example.project_sns.domain.usecase.DeleteCommentUseCase
 import com.example.project_sns.domain.usecase.DeleteFriendUseCase
 import com.example.project_sns.domain.usecase.DeletePostUseCase
@@ -78,7 +80,9 @@ class MainSharedViewModel @Inject constructor(
     private val getUserByUidUseCase: GetUserByUidUseCase,
     private val sendFriendRequestUseCase: SendFriendRequestUseCase,
     private val getFriendListDataUseCase: GetFriendListDataUseCase,
-    private val deleteFriendUseCase: DeleteFriendUseCase
+    private val deleteFriendUseCase: DeleteFriendUseCase,
+    private val checkFriendRequestUseCase: CheckFriendRequestUseCase,
+    private val cancelFriendRequestUseCase: CancelFriendRequestUseCase
 ) : ViewModel() {
 
     private val _postUpLoadResult = MutableStateFlow<Boolean?>(null)
@@ -126,8 +130,8 @@ class MainSharedViewModel @Inject constructor(
     private val _requestFriendResult = MutableStateFlow<Boolean?>(null)
     val requestFriendResult: StateFlow<Boolean?> get() = _requestFriendResult
 
-    private val _friendList = MutableLiveData<List<UserDataModel>>()
-    val friendList: LiveData<List<UserDataModel>> get() = _friendList
+    private val _friendList = MutableStateFlow<List<UserDataModel>>(emptyList())
+    val friendList: StateFlow<List<UserDataModel>> get() = _friendList
 
     private val _deleteFriendResult = MutableStateFlow<Boolean?>(null)
     val deleteFriendResult: StateFlow<Boolean?> get() = _deleteFriendResult
@@ -138,31 +142,53 @@ class MainSharedViewModel @Inject constructor(
     private val _postLastVisibleItem = MutableStateFlow<Int>(0)
     val postLastVisibleItem: StateFlow<Int> get() = _postLastVisibleItem
 
+    private val _checkFriendRequest = MutableStateFlow<Boolean?>(null)
+    val checkFriendRequest: StateFlow<Boolean?> get() = _checkFriendRequest
+
+    private val _cancelFriendRequest = MutableStateFlow<Boolean?>(null)
+    val cancelFriendRequest: StateFlow<Boolean?> get() = _cancelFriendRequest
+
 
     val reCommentLastVisibleItem = MutableStateFlow(0)
 
 
 
-    fun postLastVisibleItem(lastVisibleItem: Int) {
+    fun cancelFriendRequest(fromUid: String, toUid: String) {
         viewModelScope.launch {
-            _postLastVisibleItem.value = lastVisibleItem
-        }
-    }
-
-    fun resetPagingData() {
-        viewModelScope.launch {
-            _pagingData.value = emptyList()
-        }
-    }
-
-
-    fun getPagingData() {
-        viewModelScope.launch {
-            getPagingPostUseCase(postLastVisibleItem).collect { data ->
-                _pagingData.value = data?.toPostDataListModel()
+            cancelFriendRequestUseCase(fromUid, toUid).collect { result ->
+                _cancelFriendRequest.value = result
             }
         }
     }
+
+    fun checkFriendRequest(toUid: String) {
+        viewModelScope.launch {
+            checkFriendRequestUseCase(toUid).collect { result ->
+                _checkFriendRequest.value = result
+            }
+        }
+    }
+
+//    fun postLastVisibleItem(lastVisibleItem: Int) {
+//        viewModelScope.launch {
+//            _postLastVisibleItem.value = lastVisibleItem
+//        }
+//    }
+//
+//    fun resetPagingData() {
+//        viewModelScope.launch {
+//            _pagingData.value = emptyList()
+//        }
+//    }
+
+
+//    fun getPagingData(lastVisibleItem: Flow<Int>) {
+//        viewModelScope.launch {
+//            getPagingPostUseCase(lastVisibleItem).collect { data ->
+//                _pagingData.value = data?.toPostDataListModel()
+//            }
+//        }
+//    }
 
 
     fun deleteFriend(fromUid: String, toUid: String) {
@@ -178,7 +204,6 @@ class MainSharedViewModel @Inject constructor(
         viewModelScope.launch {
             getFriendListDataUseCase(uid).collect { data ->
                 _friendList.value = data.toUserDataListModel()
-                Log.d("test_vm", "${_friendList.value}")
             }
         }
     }

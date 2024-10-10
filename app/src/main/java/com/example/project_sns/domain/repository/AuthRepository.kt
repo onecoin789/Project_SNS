@@ -29,6 +29,10 @@ interface AuthRepository {
 
     suspend fun rejectFriendRequest(requestId: String): Flow<Boolean>
 
+    suspend fun checkFriendRequest(toUid: String): Flow<Boolean>
+
+    suspend fun cancelFriendRequest(fromUid: String, toUid: String): Flow<Boolean>
+
     suspend fun getFriendList(uid: String): Flow<List<UserDataEntity>>
 
     suspend fun deleteFriend(fromUid: String, toUid: String): Flow<Boolean>
