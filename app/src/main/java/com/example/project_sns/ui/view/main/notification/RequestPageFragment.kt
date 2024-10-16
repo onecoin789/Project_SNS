@@ -13,7 +13,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.project_sns.databinding.FragmentRequestPageBinding
 import com.example.project_sns.ui.BaseFragment
-import com.example.project_sns.ui.view.model.RequestModel
+import com.example.project_sns.ui.model.RequestModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 

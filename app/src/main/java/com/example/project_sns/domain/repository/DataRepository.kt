@@ -1,12 +1,13 @@
 package com.example.project_sns.domain.repository
 
-import com.example.project_sns.domain.model.CommentDataEntity
-import com.example.project_sns.domain.model.CommentEntity
-import com.example.project_sns.domain.model.PostDataEntity
-import com.example.project_sns.domain.model.PostEntity
-import com.example.project_sns.domain.model.ReCommentDataEntity
-import com.example.project_sns.domain.model.ReCommentEntity
-import com.example.project_sns.domain.model.UserDataEntity
+import com.example.project_sns.domain.entity.ChatRoomDataEntity
+import com.example.project_sns.domain.entity.CommentDataEntity
+import com.example.project_sns.domain.entity.CommentEntity
+import com.example.project_sns.domain.entity.MessageDataEntity
+import com.example.project_sns.domain.entity.PostDataEntity
+import com.example.project_sns.domain.entity.PostEntity
+import com.example.project_sns.domain.entity.ReCommentDataEntity
+import com.example.project_sns.domain.entity.ReCommentEntity
 import kotlinx.coroutines.flow.Flow
 
 
@@ -35,5 +36,11 @@ interface DataRepository {
     suspend fun deleteReComment(commentId: String, reCommentId: String): Result<String>
 
     suspend fun getPagingPost(lastVisibleItem: Flow<Int>): Flow<List<PostEntity>?>
+
+    suspend fun checkChatRoom(senderUid: String, recipientUid: String): Flow<ChatRoomDataEntity?>
+
+    suspend fun sendFirstMessage(chatRoomId: String, senderUid: String, recipientUid: String, messageData: MessageDataEntity): Flow<Boolean>
+
+    suspend fun sendMessage(chatRoomId: String, messageData: MessageDataEntity): Flow<Boolean>
 
 }

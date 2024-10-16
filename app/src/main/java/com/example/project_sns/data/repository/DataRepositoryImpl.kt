@@ -6,17 +6,21 @@ import com.example.project_sns.data.mapper.toCommentListEntity
 import com.example.project_sns.data.mapper.toEntity
 import com.example.project_sns.data.mapper.toPostListEntity
 import com.example.project_sns.data.mapper.toReCommentListEntity
+import com.example.project_sns.data.response.ChatRoomDataResponse
 import com.example.project_sns.data.response.CommentDataResponse
 import com.example.project_sns.data.response.PostDataResponse
 import com.example.project_sns.data.response.ReCommentDataResponse
 import com.example.project_sns.data.response.UserDataResponse
-import com.example.project_sns.domain.model.CommentDataEntity
-import com.example.project_sns.domain.model.CommentEntity
-import com.example.project_sns.domain.model.ImageDataEntity
-import com.example.project_sns.domain.model.PostDataEntity
-import com.example.project_sns.domain.model.PostEntity
-import com.example.project_sns.domain.model.ReCommentDataEntity
-import com.example.project_sns.domain.model.ReCommentEntity
+import com.example.project_sns.data.response.toEntity
+import com.example.project_sns.domain.entity.ChatRoomDataEntity
+import com.example.project_sns.domain.entity.CommentDataEntity
+import com.example.project_sns.domain.entity.CommentEntity
+import com.example.project_sns.domain.entity.ImageDataEntity
+import com.example.project_sns.domain.entity.MessageDataEntity
+import com.example.project_sns.domain.entity.PostDataEntity
+import com.example.project_sns.domain.entity.PostEntity
+import com.example.project_sns.domain.entity.ReCommentDataEntity
+import com.example.project_sns.domain.entity.ReCommentEntity
 import com.example.project_sns.domain.repository.DataRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentSnapshot
@@ -24,13 +28,22 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.channels.onSuccess
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
+import java.util.UUID
 import javax.inject.Inject
 
-const val COLLECTION_POST = "post"
+private const val COLLECTION_USER = "user"
+private const val COLLECTION_POST = "post"
+private const val COLLECTION_COMMENT = "comment"
+private const val COLLECTION_RE_COMMENT = "reComment"
+private const val COLLECTION_CHAT = "chat"
+private const val COLLECTION_CHAT_MESSAGE = "message"
+
+private const val TAG = "data_repo_impl"
 
 class DataRepositoryImpl @Inject constructor(
     private val auth: FirebaseAuth,
@@ -51,7 +64,7 @@ class DataRepositoryImpl @Inject constructor(
                         "createdAt" to postData.createdAt,
                         "editedAt" to postData.editedAt
                     )
-                    db.collection("post").document(postData.postId).set(data).await()
+                    db.collection(COLLECTION_POST).document(postData.postId).set(data).await()
                     if (postData.imageList != null) {
                         for (i in 0 until postData.imageList.count()) {
                             val imageToUri = postData.imageList[i].imageUri.toUri()
@@ -70,7 +83,7 @@ class DataRepositoryImpl @Inject constructor(
                                         )
                                         val imageData =
                                             mapOf("imageList" to imageList.sortedBy { it.downloadUrl })
-                                        db.collection("post").document(postData.postId)
+                                        db.collection(COLLECTION_POST).document(postData.postId)
                                             .update(imageData)
                                     }
                                 }
@@ -86,14 +99,14 @@ class DataRepositoryImpl @Inject constructor(
                                         )
                                         val imageData =
                                             mapOf("imageList" to imageList.sortedBy { it.downloadUrl })
-                                        db.collection("post").document(postData.postId)
+                                        db.collection(COLLECTION_POST).document(postData.postId)
                                             .update(imageData)
                                     }
                                 }
                             }
                         }
                     }
-                    Log.d("test_data", "$imageList")
+                    Log.d(TAG, "$imageList")
                     emit(true)
                 }
             } catch (e: Exception) {
@@ -106,7 +119,7 @@ class DataRepositoryImpl @Inject constructor(
         return callbackFlow {
             val mAuth = auth.currentUser?.uid
             if (mAuth != null) {
-                val postData = db.collection("post").whereEqualTo("uid", uid)
+                val postData = db.collection(COLLECTION_POST).whereEqualTo("uid", uid)
                 val snapShotListener = postData.addSnapshotListener { snapshot, error ->
                     if (error != null) {
                         trySend(emptyList()).isSuccess
@@ -129,7 +142,7 @@ class DataRepositoryImpl @Inject constructor(
     override suspend fun getAllPost(): Flow<List<PostDataEntity>> {
         return callbackFlow {
             val snapshotListener =
-                db.collection("post").orderBy("createdAt", Query.Direction.DESCENDING)
+                db.collection(COLLECTION_POST).orderBy("createdAt", Query.Direction.DESCENDING)
                     .addSnapshotListener { snapshot, error ->
                         if (error != null) {
                             trySend(emptyList()).isSuccess
@@ -156,7 +169,7 @@ class DataRepositoryImpl @Inject constructor(
         return try {
             val uid = auth.currentUser?.uid
             if (postData != null) {
-                val postDB = db.collection("post").document(postData.postId)
+                val postDB = db.collection(COLLECTION_POST).document(postData.postId)
                 for (i in 0 until 9) {
                     val storage = storage.getReference("image")
                         .child("${uid}/${postData.postId}/${postData.createdAt}_${i}")
@@ -178,7 +191,7 @@ class DataRepositoryImpl @Inject constructor(
                 val imageList: ArrayList<ImageDataEntity> = arrayListOf()
 
                 if (postData != null) {
-                    db.collection("post").document(postData.postId).set(postData).await()
+                    db.collection(COLLECTION_POST).document(postData.postId).set(postData).await()
 
 
                     if (postData.imageList != null) {
@@ -199,7 +212,7 @@ class DataRepositoryImpl @Inject constructor(
                                         )
                                         val imageData =
                                             mapOf("imageList" to imageList.sortedBy { it.downloadUrl })
-                                        db.collection("post").document(postData.postId)
+                                        db.collection(COLLECTION_POST).document(postData.postId)
                                             .update(imageData)
                                     }
                                 }
@@ -215,7 +228,7 @@ class DataRepositoryImpl @Inject constructor(
                                         )
                                         val imageData =
                                             mapOf("imageList" to imageList.sortedBy { it.downloadUrl })
-                                        db.collection("post").document(postData.postId)
+                                        db.collection(COLLECTION_POST).document(postData.postId)
                                             .update(imageData)
                                     }
                                 }
@@ -237,7 +250,8 @@ class DataRepositoryImpl @Inject constructor(
         return flow {
             try {
                 if (commentData != null) {
-                    db.collection("comment").document(commentData.commentId).set(commentData)
+                    db.collection(COLLECTION_COMMENT).document(commentData.commentId)
+                        .set(commentData)
                 }
                 emit(true)
             } catch (e: Exception) {
@@ -257,7 +271,7 @@ class DataRepositoryImpl @Inject constructor(
                 when (lastVisibleItem) {
 
                     0 -> {
-                        db.collection("comment").whereEqualTo("postId", postId)
+                        db.collection(COLLECTION_COMMENT).whereEqualTo("postId", postId)
                             .orderBy("commentAt", Query.Direction.DESCENDING).limit(3)
                             .addSnapshotListener { commentData, e ->
                                 if (e != null) {
@@ -268,7 +282,8 @@ class DataRepositoryImpl @Inject constructor(
                                         commentData.toObjects(CommentDataResponse::class.java)
                                             .toCommentListEntity()
                                     commentResponse.map { commentEntity ->
-                                        db.collection("user").document(commentEntity.uid).get()
+                                        db.collection(COLLECTION_USER).document(commentEntity.uid)
+                                            .get()
                                             .addOnSuccessListener { userData ->
                                                 val userEntity =
                                                     userData.toObject(UserDataResponse::class.java)
@@ -285,7 +300,7 @@ class DataRepositoryImpl @Inject constructor(
                                                 }
                                                 commentDocuments.addAll(documents)
                                                 trySend(commentList)
-                                                Log.d("comment_impl", "$documents")
+                                                Log.d(TAG, "$documents")
                                             }
                                     }
                                 }
@@ -293,7 +308,7 @@ class DataRepositoryImpl @Inject constructor(
                     }
 
                     commentList.size -> {
-                        db.collection("comment").whereEqualTo("postId", postId)
+                        db.collection(COLLECTION_COMMENT).whereEqualTo("postId", postId)
                             .orderBy("commentAt", Query.Direction.DESCENDING)
                             .startAfter(commentDocuments.last()).limit(3)
                             .addSnapshotListener { commentData, e ->
@@ -305,7 +320,8 @@ class DataRepositoryImpl @Inject constructor(
                                         commentData.toObjects(CommentDataResponse::class.java)
                                             .toCommentListEntity()
                                     commentResponse.map { commentEntity ->
-                                        db.collection("user").document(commentEntity.uid).get()
+                                        db.collection(COLLECTION_USER).document(commentEntity.uid)
+                                            .get()
                                             .addOnSuccessListener { userData ->
                                                 val userEntity =
                                                     userData.toObject(UserDataResponse::class.java)
@@ -319,11 +335,11 @@ class DataRepositoryImpl @Inject constructor(
                                                             )
                                                         )
                                                     )
-                                                    Log.d("comment_impl1", "${commentList}")
+                                                    Log.d(TAG, "${commentList}")
                                                 }
                                                 commentDocuments.addAll(documents)
                                                 trySend(commentList)
-                                                Log.d("comment_impl2", "${commentList}, $documents")
+                                                Log.d(TAG, "${commentList}, $documents")
                                             }
 
                                     }
@@ -344,16 +360,17 @@ class DataRepositoryImpl @Inject constructor(
         commentId: String,
     ): Result<String> {
         return try {
-            val commentDB = db.collection("comment").document(commentId)
+            val commentDB = db.collection(COLLECTION_COMMENT).document(commentId)
 
-            db.collection("reComment").whereEqualTo("commentId", commentId).get()
+            db.collection(COLLECTION_RE_COMMENT).whereEqualTo("commentId", commentId).get()
                 .addOnSuccessListener {
                     if (!it.isEmpty) {
                         for (i in 0 until it.size()) {
                             val reCommentData =
                                 it.documents[i].toObject(ReCommentDataResponse::class.java)
                             if (reCommentData?.reCommentId != null) {
-                                db.collection("reComment").document(reCommentData.reCommentId)
+                                db.collection(COLLECTION_RE_COMMENT)
+                                    .document(reCommentData.reCommentId)
                                     .delete()
                             }
                         }
@@ -375,14 +392,15 @@ class DataRepositoryImpl @Inject constructor(
         return flow {
             try {
                 if (reCommentData != null) {
-                    db.collection("reComment").document(reCommentData.reCommentId)
+                    db.collection(COLLECTION_RE_COMMENT).document(reCommentData.reCommentId)
                         .set(reCommentData).await()
-                    db.collection("reComment").whereEqualTo("commentId", reCommentData.commentId)
+                    db.collection(COLLECTION_RE_COMMENT)
+                        .whereEqualTo("commentId", reCommentData.commentId)
                         .get().addOnCompleteListener { task ->
                             val taskSize = task.result.size()
-                            Log.d("test_impl", "$taskSize")
+                            Log.d(TAG, "$taskSize")
                             val reCommentSize = mapOf("reCommentSize" to taskSize)
-                            db.collection("comment").document(reCommentData.commentId)
+                            db.collection(COLLECTION_COMMENT).document(reCommentData.commentId)
                                 .update(reCommentSize)
                         }
                 }
@@ -404,7 +422,7 @@ class DataRepositoryImpl @Inject constructor(
             lastVisibleItem.collect { lastVisibleItem ->
                 when (lastVisibleItem) {
 
-                    0 -> db.collection("reComment").whereEqualTo("commentId", commentId)
+                    0 -> db.collection(COLLECTION_RE_COMMENT).whereEqualTo("commentId", commentId)
                         .orderBy("commentAt", Query.Direction.DESCENDING).limit(3)
                         .addSnapshotListener { reCommentData, e ->
                             if (e != null) {
@@ -415,7 +433,8 @@ class DataRepositoryImpl @Inject constructor(
                                     reCommentData.toObjects(ReCommentDataResponse::class.java)
                                         .toReCommentListEntity()
                                 reCommentResponse.map { reCommentEntity ->
-                                    db.collection("user").document(reCommentEntity.uid).get()
+                                    db.collection(COLLECTION_USER).document(reCommentEntity.uid)
+                                        .get()
                                         .addOnSuccessListener { userData ->
                                             val userEntity =
                                                 userData.toObject(UserDataResponse::class.java)
@@ -432,14 +451,14 @@ class DataRepositoryImpl @Inject constructor(
                                             }
                                             reCommentDocuments.addAll(documents)
                                             trySend(reCommentList)
-                                            Log.d("test_impl", "$reCommentList")
+                                            Log.d(TAG, "$reCommentList")
                                         }
                                 }
                             }
                         }
 
                     reCommentList.size -> {
-                        db.collection("reComment").whereEqualTo("commentId", commentId)
+                        db.collection(COLLECTION_RE_COMMENT).whereEqualTo("commentId", commentId)
                             .orderBy("commentAt", Query.Direction.DESCENDING)
                             .startAfter(reCommentDocuments.last()).limit(3)
                             .addSnapshotListener { reCommentData, e ->
@@ -451,7 +470,7 @@ class DataRepositoryImpl @Inject constructor(
                                         reCommentData.toObjects(ReCommentDataResponse::class.java)
                                             .toReCommentListEntity()
                                     reCommentResponse.map { reCommentEntity ->
-                                        db.collection("user").document(reCommentEntity.uid)
+                                        db.collection(COLLECTION_USER).document(reCommentEntity.uid)
                                             .get()
                                             .addOnSuccessListener { userData ->
                                                 val userEntity =
@@ -469,7 +488,7 @@ class DataRepositoryImpl @Inject constructor(
                                                 }
                                                 reCommentDocuments.addAll(documents)
                                                 trySend(reCommentList)
-                                                Log.d("test_impl", "$reCommentList")
+                                                Log.d(TAG, "$reCommentList")
                                             }
                                     }
                                 }
@@ -490,14 +509,14 @@ class DataRepositoryImpl @Inject constructor(
         reCommentId: String
     ): Result<String> {
         return try {
-            val reCommentDB = db.collection("reComment").document(reCommentId)
+            val reCommentDB = db.collection(COLLECTION_RE_COMMENT).document(reCommentId)
             reCommentDB.delete().await()
-            db.collection("reComment").whereEqualTo("commentId", commentId).get()
+            db.collection(COLLECTION_RE_COMMENT).whereEqualTo("commentId", commentId).get()
                 .addOnCompleteListener { task ->
                     val taskSize = task.result.size()
-                    Log.d("test_impl", "$taskSize")
+                    Log.d(TAG, "$taskSize")
                     val reCommentSize = mapOf("reCommentSize" to taskSize)
-                    db.collection("comment").document(commentId).update(reCommentSize)
+                    db.collection(COLLECTION_COMMENT).document(commentId).update(reCommentSize)
                 }
             Result.success("success")
         } catch (e: Exception) {
@@ -512,33 +531,37 @@ class DataRepositoryImpl @Inject constructor(
             lastVisibleItem.collect { lastVisibleItem ->
                 when (lastVisibleItem) {
                     0 -> {
-                        db.collection("post").orderBy("createdAt", Query.Direction.DESCENDING)
+                        db.collection(COLLECTION_POST)
+                            .orderBy("createdAt", Query.Direction.DESCENDING)
                             .limit(3).get().addOnSuccessListener { postData ->
                                 val documents = postData.documents
                                 val postResponse = postData.toObjects(PostDataResponse::class.java)
                                     .toPostListEntity()
                                 postResponse.map { postEntity ->
-                                    db.collection("user").document(postEntity.uid).get()
+                                    db.collection(COLLECTION_USER).document(postEntity.uid).get()
                                         .addOnSuccessListener { userData ->
                                             val userEntity =
                                                 userData.toObject(UserDataResponse::class.java)
                                                     ?.toEntity()
                                             if (userEntity != null) {
-                                                postList.addAll(listOf(PostEntity(userEntity, postEntity
+                                                postList.addAll(
+                                                    listOf(
+                                                        PostEntity(
+                                                            userEntity, postEntity
                                                         )
                                                     )
                                                 )
                                             }
                                             postDocuments.addAll(documents)
                                             trySend(postList)
-                                            Log.d("test_impl", "$postList")
+                                            Log.d(TAG, "$postList")
                                         }
                                 }
                             }
                     }
 
                     postList.size -> {
-                        db.collection("post")
+                        db.collection(COLLECTION_POST)
                             .orderBy("createdAt", Query.Direction.DESCENDING)
                             .startAfter(postDocuments.last()).limit(3)
                             .get().addOnSuccessListener { postData ->
@@ -547,7 +570,7 @@ class DataRepositoryImpl @Inject constructor(
                                     postData.toObjects(PostDataResponse::class.java)
                                         .toPostListEntity()
                                 postResponse.map { postEntity ->
-                                    db.collection("user").document(postEntity.uid).get()
+                                    db.collection(COLLECTION_USER).document(postEntity.uid).get()
                                         .addOnSuccessListener { userData ->
                                             val userEntity =
                                                 userData.toObject(UserDataResponse::class.java)
@@ -570,13 +593,15 @@ class DataRepositoryImpl @Inject constructor(
                     }
 
                     else -> {
-                        db.collection("post").orderBy("createdAt", Query.Direction.DESCENDING)
-                            .limit(lastVisibleItem.toLong()).get().addOnSuccessListener { postData ->
+                        db.collection(COLLECTION_POST)
+                            .orderBy("createdAt", Query.Direction.DESCENDING)
+                            .limit(lastVisibleItem.toLong()).get()
+                            .addOnSuccessListener { postData ->
                                 val documents = postData.documents
                                 val postResponse = postData.toObjects(PostDataResponse::class.java)
                                     .toPostListEntity()
                                 postResponse.map { postEntity ->
-                                    db.collection("user").document(postEntity.uid).get()
+                                    db.collection(COLLECTION_USER).document(postEntity.uid).get()
                                         .addOnSuccessListener { userData ->
                                             val userEntity =
                                                 userData.toObject(UserDataResponse::class.java)
@@ -593,7 +618,7 @@ class DataRepositoryImpl @Inject constructor(
                                             }
                                             postDocuments.addAll(documents)
                                             trySend(postList)
-                                            Log.d("test_impl", "$postList")
+                                            Log.d(TAG, "$postList")
                                         }
                                 }
                             }
@@ -601,6 +626,74 @@ class DataRepositoryImpl @Inject constructor(
                 }
             }
             awaitClose()
+        }
+    }
+
+    override suspend fun checkChatRoom(
+        senderUid: String,
+        recipientUid: String
+    ): Flow<ChatRoomDataEntity?> {
+        return callbackFlow {
+            val query = db.collection(COLLECTION_CHAT).whereEqualTo("senderUid", senderUid)
+                .whereEqualTo("recipientUid", recipientUid)
+            query.get().addOnSuccessListener { chatData ->
+                if (chatData != null) {
+                    val snapshotList = chatData.toObjects(ChatRoomDataResponse::class.java)
+                    val chatList = mutableListOf<ChatRoomDataResponse>()
+                    chatList.addAll(snapshotList)
+                    if (chatList.isNotEmpty()) {
+                        Log.d("Chat_Tag_Success", "$snapshotList")
+                        val chatRoomDataEntity = chatList[0].toEntity()
+                        trySend(chatRoomDataEntity)
+                    } else {
+                        Log.d("Chat_Tag_Fail", "$snapshotList")
+                        trySend(null)
+                    }
+                }
+            }
+            awaitClose()
+        }
+    }
+
+    override suspend fun sendFirstMessage(
+        chatRoomId: String,
+        senderUid: String,
+        recipientUid: String,
+        messageData: MessageDataEntity
+    ): Flow<Boolean> {
+        return flow {
+            try {
+                val chatRoomData = hashMapOf(
+                    "chatRoomId" to chatRoomId,
+                    "senderUid" to senderUid,
+                    "recipientUid" to recipientUid
+                )
+                val chatRoomDB = db.collection(COLLECTION_CHAT).document(chatRoomId)
+
+                chatRoomDB.set(chatRoomData).addOnSuccessListener {
+                    chatRoomDB.collection(COLLECTION_CHAT_MESSAGE).document(messageData.messageId).set(messageData)
+                }
+                emit(true)
+            } catch (e: Exception) {
+                emit(false)
+            }
+        }
+    }
+
+    override suspend fun sendMessage(
+        chatRoomId: String,
+        messageData: MessageDataEntity
+    ): Flow<Boolean> {
+        return flow {
+            try {
+                Log.d("tag_impl_send", chatRoomId)
+                val chatRoomDB = db.collection(COLLECTION_CHAT).document(chatRoomId)
+                val messageDB = chatRoomDB.collection(COLLECTION_CHAT_MESSAGE).document(messageData.messageId)
+                messageDB.set(messageData).await()
+                emit(true)
+            } catch (e: Exception) {
+                emit(false)
+            }
         }
     }
 }

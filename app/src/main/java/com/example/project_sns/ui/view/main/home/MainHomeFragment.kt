@@ -18,8 +18,8 @@ import com.example.project_sns.ui.CurrentUser
 import com.example.project_sns.ui.view.main.MainSharedViewModel
 import com.example.project_sns.ui.view.main.MainViewModel
 import com.example.project_sns.ui.view.main.comment.CommentAdapter
-import com.example.project_sns.ui.view.model.CommentModel
-import com.example.project_sns.ui.view.model.PostModel
+import com.example.project_sns.ui.model.CommentModel
+import com.example.project_sns.ui.model.PostModel
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -74,6 +74,7 @@ class MainHomeFragment : BaseFragment<FragmentMainHomeBinding>() {
         refreshLayout()
 
     }
+
 
     private fun getPostData() {
         viewLifecycleOwner.lifecycleScope.launch {
@@ -189,6 +190,7 @@ class MainHomeFragment : BaseFragment<FragmentMainHomeBinding>() {
             findNavController().navigate(R.id.action_mainFragment_to_recommendFragment)
         }
         binding.ivHomeDM.setOnClickListener {
+            getFriendList()
             findNavController().navigate(R.id.action_mainFragment_to_chatListFragment)
         }
         binding.ivHomeNotification.setOnClickListener {
@@ -207,6 +209,15 @@ class MainHomeFragment : BaseFragment<FragmentMainHomeBinding>() {
             mainSharedViewModel.getUserData(item.userData.uid)
             mainSharedViewModel.getUserPost(item.userData.uid)
             mainSharedViewModel.checkFriendRequest(item.userData.uid)
+        }
+    }
+
+    private fun getFriendList() {
+        val currentUser = CurrentUser.userData?.uid
+        viewLifecycleOwner.lifecycleScope.launch {
+            if (currentUser != null) {
+                mainSharedViewModel.getFriendList(currentUser)
+            }
         }
     }
 

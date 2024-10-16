@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
 import androidx.viewbinding.ViewBinding
 import com.example.project_sns.R
-import com.example.project_sns.ui.view.model.PostDataModel
+import com.example.project_sns.ui.model.PostDataModel
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 abstract class BaseBottomSheet<T : ViewBinding>:BottomSheetDialogFragment() {

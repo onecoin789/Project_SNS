@@ -19,9 +19,9 @@ import com.example.project_sns.ui.mapper.toViewType
 import com.example.project_sns.ui.util.dateFormat
 import com.example.project_sns.ui.view.main.MainSharedViewModel
 import com.example.project_sns.ui.view.main.profile.detail.PostRadiusImageAdapter
-import com.example.project_sns.ui.view.model.ImageDataModel
-import com.example.project_sns.ui.view.model.MapDataModel
-import com.example.project_sns.ui.view.model.PostDataModel
+import com.example.project_sns.ui.model.ImageDataModel
+import com.example.project_sns.ui.model.MapDataModel
+import com.example.project_sns.ui.model.PostDataModel
 import dagger.hilt.android.AndroidEntryPoint
 import gun0912.tedimagepicker.builder.TedImagePicker
 import kotlinx.coroutines.launch

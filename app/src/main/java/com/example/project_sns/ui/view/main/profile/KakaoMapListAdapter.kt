@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.project_sns.databinding.RvItemMapListBinding
-import com.example.project_sns.ui.view.model.KakaoDocumentsModel
+import com.example.project_sns.ui.model.KakaoDocumentsModel
 
 class KakaoMapListAdapter(private val onItemClick: (KakaoDocumentsModel) -> Unit) :
     ListAdapter<KakaoDocumentsModel, KakaoMapListAdapter.MapListViewHolder>(diffUtil) {

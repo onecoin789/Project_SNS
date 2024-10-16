@@ -9,7 +9,7 @@ import com.bumptech.glide.Glide
 import com.example.project_sns.R
 import com.example.project_sns.databinding.RvItemProgressGrayBinding
 import com.example.project_sns.databinding.RvItemReCommentBinding
-import com.example.project_sns.ui.view.model.ReCommentModel
+import com.example.project_sns.ui.model.ReCommentModel
 
 class ReCommentAdapter(private val onClick: ReCommentItemClick) :
     ListAdapter<ReCommentModel, RecyclerView.ViewHolder>(diffUtil) {

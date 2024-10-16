@@ -1,6 +1,6 @@
 package com.example.project_sns.domain.usecase
 
-import com.example.project_sns.domain.model.KakaoMapEntity
+import com.example.project_sns.domain.entity.KakaoMapEntity
 import com.example.project_sns.domain.repository.KakaoMapRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject

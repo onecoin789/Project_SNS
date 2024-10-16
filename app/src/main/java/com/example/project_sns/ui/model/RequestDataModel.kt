@@ -1,6 +1,6 @@
-package com.example.project_sns.domain.model
+package com.example.project_sns.ui.model
 
-data class RequestDataEntity(
+data class RequestDataModel(
     val requestId: String,
     val fromUid: String,
     val toUid: String

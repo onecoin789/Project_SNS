@@ -1,6 +1,6 @@
-package com.example.project_sns.ui.view.model
+package com.example.project_sns.ui.model
 
-import com.example.project_sns.domain.model.FriendDataEntity
+import com.example.project_sns.domain.entity.FriendDataEntity
 
 data class FriendDataModel(
     val friendList: List<String>

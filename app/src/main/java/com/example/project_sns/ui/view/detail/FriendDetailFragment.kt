@@ -21,8 +21,8 @@ import com.example.project_sns.ui.CurrentUser
 import com.example.project_sns.ui.view.main.MainSharedViewModel
 import com.example.project_sns.ui.view.main.MainViewModel
 import com.example.project_sns.ui.view.main.notification.NotificationViewModel
-import com.example.project_sns.ui.view.model.PostDataModel
-import com.example.project_sns.ui.view.model.UserDataModel
+import com.example.project_sns.ui.model.PostDataModel
+import com.example.project_sns.ui.model.UserDataModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -167,7 +167,6 @@ class FriendDetailFragment : BaseFragment<FragmentFriendDetailBinding>() {
     private fun collectCancelFlow() {
         viewLifecycleOwner.lifecycleScope.launch {
             mainSharedViewModel.cancelFriendRequest.collect { result ->
-                Log.d("cancel_result", "$result")
                 if (result == true) {
                     Toast.makeText(requireActivity(), "요청 삭제 성공!", Toast.LENGTH_SHORT).show()
                 } else if (result == false) {

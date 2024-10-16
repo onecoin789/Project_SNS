@@ -1,6 +1,5 @@
 package com.example.project_sns.domain.usecase
 
-import com.example.project_sns.domain.model.ReCommentDataEntity
 import com.example.project_sns.domain.repository.DataRepository
 import javax.inject.Inject
 

@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.project_sns.R
 import com.example.project_sns.databinding.RvItemFriendBinding
-import com.example.project_sns.ui.view.model.UserDataModel
+import com.example.project_sns.ui.model.UserDataModel
 
 class MyProfileFriendAdapter(private val onItemClick: MyProfileFriendItemClickListener):
     ListAdapter<UserDataModel, RecyclerView.ViewHolder>(diffUtil) {

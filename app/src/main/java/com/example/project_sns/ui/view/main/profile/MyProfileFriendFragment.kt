@@ -16,7 +16,7 @@ import com.example.project_sns.ui.BaseFragment
 import com.example.project_sns.ui.CurrentUser
 import com.example.project_sns.ui.view.main.MainSharedViewModel
 import com.example.project_sns.ui.view.main.MainViewModel
-import com.example.project_sns.ui.view.model.UserDataModel
+import com.example.project_sns.ui.model.UserDataModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 

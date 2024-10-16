@@ -1,25 +1,32 @@
-package com.example.project_sns.domain.model
+package com.example.project_sns.ui.model
 
-data class PostDataEntity(
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
+
+@Parcelize
+data class PostDataModel(
     val uid: String,
     val postId: String,
-    val imageList: List<ImageDataEntity>?,
+    val imageList: List<ImageDataModel>?,
     val postText: String?,
     val createdAt: String,
     val editedAt: String?,
-    val mapData: MapDataEntity?
-)
+    val mapData: MapDataModel?
+) : Parcelable
 
-data class ImageDataEntity(
+@Parcelize
+data class ImageDataModel(
     val downloadUrl: String,
     val imageUri: String,
     val imageType: String
-)
+): Parcelable
 
-data class MapDataEntity(
+@Parcelize
+data class MapDataModel(
     var placeName: String?,
     var placeUrl: String?,
     var addressName: String?,
     var lat: Double?,
     var lng: Double?
-)
+): Parcelable

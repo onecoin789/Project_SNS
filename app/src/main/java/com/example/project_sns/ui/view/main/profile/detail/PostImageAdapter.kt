@@ -10,7 +10,7 @@ import com.example.project_sns.databinding.RvItemImageListBinding
 import com.example.project_sns.databinding.RvItemVideoBinding
 import com.example.project_sns.ui.util.PostImageType
 import com.example.project_sns.ui.util.getType
-import com.example.project_sns.ui.view.model.ImageDataModel
+import com.example.project_sns.ui.model.ImageDataModel
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
 

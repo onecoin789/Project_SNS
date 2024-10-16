@@ -1,6 +1,6 @@
 package com.example.project_sns.domain.repository
 
-import com.example.project_sns.domain.model.KakaoMapEntity
+import com.example.project_sns.domain.entity.KakaoMapEntity
 import kotlinx.coroutines.flow.Flow
 
 interface KakaoMapRepository {

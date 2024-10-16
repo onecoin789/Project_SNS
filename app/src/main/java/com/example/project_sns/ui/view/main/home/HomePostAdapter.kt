@@ -1,6 +1,5 @@
 package com.example.project_sns.ui.view.main.home
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,9 +11,9 @@ import com.example.project_sns.R
 import com.example.project_sns.databinding.RvItemPostPhotoBinding
 import com.example.project_sns.databinding.RvItemProgressBlackBinding
 import com.example.project_sns.ui.mapper.toViewType
+import com.example.project_sns.ui.model.ImageDataModel
+import com.example.project_sns.ui.model.PostModel
 import com.example.project_sns.ui.view.main.profile.detail.PostImageAdapter
-import com.example.project_sns.ui.view.model.ImageDataModel
-import com.example.project_sns.ui.view.model.PostModel
 
 class HomePostAdapter(private val onItemClick: PostItemClickListener) :
     ListAdapter<PostModel, RecyclerView.ViewHolder>(diffUtil) {

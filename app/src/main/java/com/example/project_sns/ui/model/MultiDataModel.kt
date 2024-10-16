@@ -1,10 +1,6 @@
-package com.example.project_sns.ui.view.model
+package com.example.project_sns.ui.model
 
 import android.os.Parcelable
-import com.example.project_sns.data.response.ReCommentDataResponse
-import com.example.project_sns.data.response.UserDataResponse
-import com.example.project_sns.domain.model.CommentDataEntity
-import com.example.project_sns.domain.model.UserDataEntity
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
