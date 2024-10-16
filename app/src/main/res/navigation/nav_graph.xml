@@ -98,7 +98,7 @@
         android:label="fragment_my_profile"
         tools:layout="@layout/fragment_main_my_profile" >
         <argument android:name="mapData"
-            app:argType="com.example.project_sns.ui.view.model.KakaoDocumentsModel" />
+            app:argType="com.example.project_sns.ui.model.KakaoDocumentsModel" />
     </fragment>
     <fragment
         android:id="@+id/editFragment"
@@ -143,7 +143,7 @@
         tools:layout="@layout/fragment_comment_list" >
         <argument
             android:name="commentData"
-            app:argType="com.example.project_sns.ui.view.model.PostDataModel" />
+            app:argType="com.example.project_sns.ui.model.PostDataModel" />
     </fragment>
     <fragment
         android:id="@+id/friendDetailFragment"
@@ -161,7 +161,7 @@
         tools:layout="@layout/fragment_post_detail" >
         <argument
             android:name="postData"
-            app:argType="com.example.project_sns.ui.view.model.PostDataModel" />
+            app:argType="com.example.project_sns.ui.model.PostDataModel" />
         <action
             android:id="@+id/action_postDetailFragment_to_postDetailSelectBottomFragment"
             app:destination="@id/postDetailSelectBottomFragment" />
@@ -202,7 +202,7 @@
         tools:layout="@layout/fragment_post_detail_select_bottom" >
         <argument
             android:name="postData"
-            app:argType="com.example.project_sns.ui.view.model.PostDataModel" />
+            app:argType="com.example.project_sns.ui.model.PostDataModel" />
         <action
             android:id="@+id/action_postDetailSelectBottomFragment_to_myPostEditFragment"
             app:destination="@id/myPostEditFragment" />

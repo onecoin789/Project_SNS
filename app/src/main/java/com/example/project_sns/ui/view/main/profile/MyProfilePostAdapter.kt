@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.project_sns.databinding.RvItemMyPostBinding
-import com.example.project_sns.ui.view.model.PostDataModel
+import com.example.project_sns.ui.model.PostDataModel
 
 class MyProfilePostAdapter(private val onItemClick: (PostDataModel) -> Unit) :
     ListAdapter<PostDataModel, MyProfilePostAdapter.MyPostViewHolder>(diffUtil) {

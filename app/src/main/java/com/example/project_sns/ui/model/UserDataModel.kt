@@ -1,4 +1,4 @@
-package com.example.project_sns.ui.view.model
+package com.example.project_sns.ui.model
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize

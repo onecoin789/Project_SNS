@@ -2,7 +2,6 @@ package com.example.project_sns.data.mapper
 
 import com.example.project_sns.data.response.CommentDataResponse
 import com.example.project_sns.data.response.CommentResponse
-import com.example.project_sns.data.response.FriendDataResponse
 import com.example.project_sns.data.response.ImageDataResponse
 import com.example.project_sns.data.response.KakaoDocumentsResponse
 import com.example.project_sns.data.response.KakaoMapResponse
@@ -14,20 +13,19 @@ import com.example.project_sns.data.response.ReCommentResponse
 import com.example.project_sns.data.response.RequestDataResponse
 import com.example.project_sns.data.response.RequestResponse
 import com.example.project_sns.data.response.UserDataResponse
-import com.example.project_sns.domain.model.CommentDataEntity
-import com.example.project_sns.domain.model.CommentEntity
-import com.example.project_sns.domain.model.FriendDataEntity
-import com.example.project_sns.domain.model.ImageDataEntity
-import com.example.project_sns.domain.model.KakaoDocumentsEntity
-import com.example.project_sns.domain.model.KakaoMapEntity
-import com.example.project_sns.domain.model.KakaoMetaEntity
-import com.example.project_sns.domain.model.MapDataEntity
-import com.example.project_sns.domain.model.PostDataEntity
-import com.example.project_sns.domain.model.ReCommentDataEntity
-import com.example.project_sns.domain.model.ReCommentEntity
-import com.example.project_sns.domain.model.RequestDataEntity
-import com.example.project_sns.domain.model.RequestEntity
-import com.example.project_sns.domain.model.UserDataEntity
+import com.example.project_sns.domain.entity.CommentDataEntity
+import com.example.project_sns.domain.entity.CommentEntity
+import com.example.project_sns.domain.entity.ImageDataEntity
+import com.example.project_sns.domain.entity.KakaoDocumentsEntity
+import com.example.project_sns.domain.entity.KakaoMapEntity
+import com.example.project_sns.domain.entity.KakaoMetaEntity
+import com.example.project_sns.domain.entity.MapDataEntity
+import com.example.project_sns.domain.entity.PostDataEntity
+import com.example.project_sns.domain.entity.ReCommentDataEntity
+import com.example.project_sns.domain.entity.ReCommentEntity
+import com.example.project_sns.domain.entity.RequestDataEntity
+import com.example.project_sns.domain.entity.RequestEntity
+import com.example.project_sns.domain.entity.UserDataEntity
 
 // <!---------- Firebase ---------->
 

@@ -10,7 +10,7 @@ import com.example.project_sns.domain.usecase.DeleteFriendUseCase
 import com.example.project_sns.domain.usecase.GetRequestDataUseCase
 import com.example.project_sns.domain.usecase.RejectFriendRequestUseCase
 import com.example.project_sns.ui.mapper.toRequestDataModel
-import com.example.project_sns.ui.view.model.RequestModel
+import com.example.project_sns.ui.model.RequestModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

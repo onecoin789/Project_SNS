@@ -17,7 +17,7 @@ import com.example.project_sns.ui.CurrentUser
 import com.example.project_sns.ui.mapper.toViewType
 import com.example.project_sns.ui.view.main.MainSharedViewModel
 import com.example.project_sns.ui.view.main.MainViewModel
-import com.example.project_sns.ui.view.model.PostDataModel
+import com.example.project_sns.ui.model.PostDataModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 

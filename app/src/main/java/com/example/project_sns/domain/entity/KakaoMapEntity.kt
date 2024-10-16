@@ -1,4 +1,4 @@
-package com.example.project_sns.domain.model
+package com.example.project_sns.domain.entity
 
 data class KakaoMapEntity(
     val documents: List<KakaoDocumentsEntity>,

@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.project_sns.R
 import com.example.project_sns.databinding.RvItemFollowBinding
-import com.example.project_sns.ui.view.model.RequestModel
+import com.example.project_sns.ui.model.RequestModel
 
 class RequestListAdapter(private val onItemClick: FollowItemClickListener) :
     ListAdapter<RequestModel, RequestListAdapter.FollowListViewHolder>(diffUtil) {

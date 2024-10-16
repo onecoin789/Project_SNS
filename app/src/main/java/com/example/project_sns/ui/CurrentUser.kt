@@ -1,9 +1,9 @@
 package com.example.project_sns.ui
 
-import com.example.project_sns.ui.view.model.PostDataModel
-import com.example.project_sns.ui.view.model.ReCommentDataModel
-import com.example.project_sns.ui.view.model.ReCommentModel
-import com.example.project_sns.ui.view.model.UserDataModel
+import com.example.project_sns.ui.model.PostDataModel
+import com.example.project_sns.ui.model.ReCommentDataModel
+import com.example.project_sns.ui.model.ReCommentModel
+import com.example.project_sns.ui.model.UserDataModel
 
 object CurrentUser {
     var userData: UserDataModel? = null

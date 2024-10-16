@@ -1,6 +1,6 @@
 package com.example.project_sns.ui.util
 
-import com.example.project_sns.ui.view.model.ImageDataModel
+import com.example.project_sns.ui.model.ImageDataModel
 
 
 sealed class PostImageType {

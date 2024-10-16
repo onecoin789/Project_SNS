@@ -12,7 +12,7 @@ import com.example.project_sns.R
 import com.example.project_sns.databinding.RvItemCommentBinding
 import com.example.project_sns.databinding.RvItemProgressGrayBinding
 import com.example.project_sns.ui.CurrentUser
-import com.example.project_sns.ui.view.model.CommentModel
+import com.example.project_sns.ui.model.CommentModel
 
 class CommentAdapter(private val onClick: CommentItemClickListener) :
     ListAdapter<CommentModel, RecyclerView.ViewHolder>(diffUtil) {

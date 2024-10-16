@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.project_sns.R
 import com.example.project_sns.databinding.FragmentMyProfileSearchMapBinding
 import com.example.project_sns.ui.view.main.MainSharedViewModel
-import com.example.project_sns.ui.view.model.KakaoDocumentsModel
+import com.example.project_sns.ui.model.KakaoDocumentsModel
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch

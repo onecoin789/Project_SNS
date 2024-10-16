@@ -19,10 +19,10 @@ import com.example.project_sns.ui.BaseFragment
 import com.example.project_sns.ui.CurrentUser
 import com.example.project_sns.ui.util.dateFormat
 import com.example.project_sns.ui.view.main.MainSharedViewModel
-import com.example.project_sns.ui.view.model.CommentDataModel
-import com.example.project_sns.ui.view.model.CommentModel
-import com.example.project_sns.ui.view.model.ReCommentDataModel
-import com.example.project_sns.ui.view.model.ReCommentModel
+import com.example.project_sns.ui.model.CommentDataModel
+import com.example.project_sns.ui.model.CommentModel
+import com.example.project_sns.ui.model.ReCommentDataModel
+import com.example.project_sns.ui.model.ReCommentModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

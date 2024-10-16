@@ -1,7 +1,7 @@
 package com.example.project_sns.domain.repository
 
-import com.example.project_sns.domain.model.RequestEntity
-import com.example.project_sns.domain.model.UserDataEntity
+import com.example.project_sns.domain.entity.RequestEntity
+import com.example.project_sns.domain.entity.UserDataEntity
 import kotlinx.coroutines.flow.Flow
 
 

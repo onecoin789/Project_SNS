@@ -1,15 +1,15 @@
-package com.example.project_sns.ui.view.model
+package com.example.project_sns.ui.model
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
+
 @Parcelize
-data class CommentDataModel(
+data class ReCommentDataModel(
     val uid: String,
-    val postId: String,
     val commentId: String,
+    val reCommentId: String,
     val comment: String,
     val commentAt: String,
-    val editedAt: String?,
-    val reCommentSize: Int
+    val editedAt: String?
 ): Parcelable

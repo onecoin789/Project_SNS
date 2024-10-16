@@ -8,22 +8,17 @@ import com.example.project_sns.data.response.FriendDataResponse
 import com.example.project_sns.data.response.RequestDataResponse
 import com.example.project_sns.data.response.UserDataResponse
 import com.example.project_sns.data.response.toEntity
-import com.example.project_sns.domain.model.FriendDataEntity
-import com.example.project_sns.domain.model.RequestDataEntity
-import com.example.project_sns.domain.model.RequestEntity
-import com.example.project_sns.domain.model.UserDataEntity
+import com.example.project_sns.domain.entity.RequestEntity
+import com.example.project_sns.domain.entity.UserDataEntity
 import com.example.project_sns.domain.repository.AuthRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreException
-import com.google.firebase.firestore.SetOptions
-import com.google.firebase.firestore.dataObjects
 import com.google.firebase.functions.FirebaseFunctions
 import com.google.firebase.functions.FirebaseFunctionsException
 import com.google.firebase.storage.FirebaseStorage
-import com.kakao.sdk.cert.a.a
 import com.kakao.sdk.user.UserApiClient
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -33,6 +28,11 @@ import kotlinx.coroutines.tasks.await
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
+
+private const val COLLECTION_USER = "user"
+private const val COLLECTION_POST = "post"
+private const val COLLECTION_REQUEST = "request"
+private const val COLLECTION_FRIEND_LIST = "friendList"
 
 class AuthRepositoryImpl @Inject constructor(
     private val db: FirebaseFirestore,
@@ -66,8 +66,8 @@ class AuthRepositoryImpl @Inject constructor(
                                 "profileImage" to downloadUri,
                                 "createdAt" to createdAt
                             )
-                            db.collection("user").document(user.uid).set(data)
-                            db.collection("friendList").document(user.uid).set(friendData)
+                            db.collection(COLLECTION_USER).document(user.uid).set(data)
+                            db.collection(COLLECTION_FRIEND_LIST).document(user.uid).set(friendData)
                         }
                     }
                 } else {
@@ -78,8 +78,8 @@ class AuthRepositoryImpl @Inject constructor(
                         "profileImage" to null,
                         "createdAt" to createdAt
                     )
-                    db.collection("user").document(user.uid).set(data)
-                    db.collection("friendList").document(user.uid).set(friendData)
+                    db.collection(COLLECTION_USER).document(user.uid).set(data)
+                    db.collection(COLLECTION_FRIEND_LIST).document(user.uid).set(friendData)
                 }
                 Result.success("Success")
             } else {
@@ -116,7 +116,7 @@ class AuthRepositoryImpl @Inject constructor(
         return callbackFlow {
             val mAuth = auth.currentUser?.uid
             if (mAuth != null) {
-                val docRef = db.collection("user").document(mAuth)
+                val docRef = db.collection(COLLECTION_USER).document(mAuth)
                 val snapshotListener = docRef.addSnapshotListener { snapshot, error ->
                     if (error != null) {
                         trySend(null).isSuccess
@@ -138,7 +138,7 @@ class AuthRepositoryImpl @Inject constructor(
 
     override suspend fun getUserByUid(uid: String): Flow<UserDataEntity?> {
         return callbackFlow {
-            val docRef = db.collection("user").document(uid)
+            val docRef = db.collection(COLLECTION_USER).document(uid)
             val snapshotListener = docRef.addSnapshotListener { snapshot, error ->
                 if (error != null) {
                     trySend(null).isSuccess
@@ -180,8 +180,8 @@ class AuthRepositoryImpl @Inject constructor(
                             "profileImage" to downloadUri,
                             "createdAt" to createdAt
                         )
-                        db.collection("user").document(uid).set(data)
-                        db.collection("post").whereEqualTo("uid", uid).get()
+                        db.collection(COLLECTION_USER).document(uid).set(data)
+                        db.collection(COLLECTION_POST).whereEqualTo("uid", uid).get()
                             .addOnSuccessListener { post ->
                                 post.documents.forEach { document ->
                                     db.runTransaction { trans ->
@@ -242,8 +242,8 @@ class AuthRepositoryImpl @Inject constructor(
                     "profileImage" to beforeProfile,
                     "createdAt" to createdAt
                 )
-                db.collection("user").document(uid).set(data)
-                db.collection("post").whereEqualTo("uid", uid).get()
+                db.collection(COLLECTION_USER).document(uid).set(data)
+                db.collection(COLLECTION_POST).whereEqualTo("uid", uid).get()
                     .addOnSuccessListener { post ->
                         post.documents.forEach { document ->
                             db.runTransaction { trans ->
@@ -312,7 +312,7 @@ class AuthRepositoryImpl @Inject constructor(
                                     val name = user.kakaoAccount?.profile?.nickname
                                     val email = "kakao${user.id}"
                                     if (uid != null) {
-                                        db.collection("user").document(uid).get()
+                                        db.collection(COLLECTION_USER).document(uid).get()
                                             .addOnSuccessListener { dataCheck ->
                                                 if (!dataCheck.exists()) {
                                                     val kakaoData = hashMapOf(
@@ -323,7 +323,7 @@ class AuthRepositoryImpl @Inject constructor(
                                                         "intro" to "",
                                                         "createdAt" to createdAt
                                                     )
-                                                    db.collection("user").document(uid)
+                                                    db.collection(COLLECTION_USER).document(uid)
                                                         .set(kakaoData)
                                                 }
                                             }
@@ -355,7 +355,7 @@ class AuthRepositoryImpl @Inject constructor(
                     "fromUid" to fromUid,
                     "toUid" to toUid
                 )
-                db.collection("request").document(requestId).set(requestData)
+                db.collection(COLLECTION_REQUEST).document(requestId).set(requestData)
                 emit(true)
             } catch (e: Exception) {
                 emit(false)
@@ -367,7 +367,7 @@ class AuthRepositoryImpl @Inject constructor(
         return callbackFlow {
             val currentUserUid = auth.currentUser?.uid
             val followList = mutableListOf<RequestEntity>()
-            val requestByUid = db.collection("request").whereEqualTo("toUid", currentUserUid)
+            val requestByUid = db.collection(COLLECTION_REQUEST).whereEqualTo("toUid", currentUserUid)
             requestByUid.addSnapshotListener { requestResponse, error ->
                 if (error != null) {
                     trySend(emptyList())
@@ -377,7 +377,7 @@ class AuthRepositoryImpl @Inject constructor(
                         requestResponse.toObjects(RequestDataResponse::class.java)
                             .toRequestDataEntity()
                     requestEntity.map { userResponse ->
-                        db.collection("user").document(userResponse.fromUid)
+                        db.collection(COLLECTION_USER).document(userResponse.fromUid)
                             .addSnapshotListener { userData, error ->
                                 if (error != null) {
                                     trySend(emptyList())
@@ -414,8 +414,8 @@ class AuthRepositoryImpl @Inject constructor(
         return flow {
             try {
                 db.runTransaction { transaction ->
-                    val fromUidDoc = db.collection("friendList").document(fromUid)
-                    val toUidDoc = db.collection("friendList").document(toUid)
+                    val fromUidDoc = db.collection(COLLECTION_FRIEND_LIST).document(fromUid)
+                    val toUidDoc = db.collection(COLLECTION_FRIEND_LIST).document(toUid)
 
                     transaction.update(
                         fromUidDoc,
@@ -428,7 +428,7 @@ class AuthRepositoryImpl @Inject constructor(
                         FieldValue.arrayUnion(fromUid)
                     )
                 }.await()
-                db.collection("request").document(requestId).delete()
+                db.collection(COLLECTION_REQUEST).document(requestId).delete()
                 emit(true)
             } catch (e: Exception) {
                 Log.d("tag", "${e.message}")
@@ -440,7 +440,7 @@ class AuthRepositoryImpl @Inject constructor(
     override suspend fun rejectFriendRequest(requestId: String): Flow<Boolean> {
         return flow {
             try {
-                db.collection("request").document(requestId).delete()
+                db.collection(COLLECTION_REQUEST).document(requestId).delete()
                 emit(true)
             } catch (e: Exception) {
                 emit(false)
@@ -451,7 +451,7 @@ class AuthRepositoryImpl @Inject constructor(
     override suspend fun checkFriendRequest(toUid: String): Flow<Boolean> {
         return callbackFlow {
             val fromUid = auth.currentUser?.uid
-            val query = db.collection("request").whereEqualTo("fromUid", fromUid)
+            val query = db.collection(COLLECTION_REQUEST).whereEqualTo("fromUid", fromUid)
                 .whereEqualTo("toUid", toUid)
             val snapshotListener = query.addSnapshotListener { task, error ->
                 if (error != null) {
@@ -478,7 +478,7 @@ class AuthRepositoryImpl @Inject constructor(
     override suspend fun cancelFriendRequest(fromUid: String, toUid: String): Flow<Boolean> {
         return callbackFlow {
             val documentList = mutableListOf<RequestDataResponse>()
-            val query = db.collection("request").whereEqualTo("fromUid", fromUid)
+            val query = db.collection(COLLECTION_REQUEST).whereEqualTo("fromUid", fromUid)
                 .whereEqualTo("toUid", toUid)
             query.get().addOnSuccessListener { requestResponse ->
                 val document = requestResponse?.toObjects(RequestDataResponse::class.java)
@@ -486,7 +486,7 @@ class AuthRepositoryImpl @Inject constructor(
                     documentList.addAll(document)
                     val requestId = documentList.first().requestId
                     Log.d("tag_impl", "$requestId, $documentList")
-                    db.collection("request").document(requestId).delete().addOnSuccessListener {
+                    db.collection(COLLECTION_REQUEST).document(requestId).delete().addOnSuccessListener {
                         documentList.clear()
                         trySend(true)
                     }
@@ -502,7 +502,7 @@ class AuthRepositoryImpl @Inject constructor(
     override suspend fun getFriendList(uid: String): Flow<List<UserDataEntity>> {
         return callbackFlow {
             val friendList = mutableListOf<UserDataEntity>()
-            db.collection("friendList").document(uid).addSnapshotListener { friendResponse, error ->
+            db.collection(COLLECTION_FRIEND_LIST).document(uid).addSnapshotListener { friendResponse, error ->
                 if (error != null) {
                     trySend(emptyList())
                 }
@@ -511,7 +511,7 @@ class AuthRepositoryImpl @Inject constructor(
                         friendResponse.toObject(FriendDataResponse::class.java)?.toEntity()
                     if (friendEntity != null) {
                         friendEntity.friendList.map { friendUid ->
-                            db.collection("user").document(friendUid)
+                            db.collection(COLLECTION_USER).document(friendUid)
                                 .addSnapshotListener { userData, error ->
                                     if (error != null) {
                                         trySend(emptyList())
@@ -540,8 +540,8 @@ class AuthRepositoryImpl @Inject constructor(
         return flow {
             try {
                 db.runTransaction { transaction ->
-                    val fromUidDoc = db.collection("friendList").document(fromUid)
-                    val toUidDoc = db.collection("friendList").document(toUid)
+                    val fromUidDoc = db.collection(COLLECTION_FRIEND_LIST).document(fromUid)
+                    val toUidDoc = db.collection(COLLECTION_FRIEND_LIST).document(toUid)
                     transaction.update(fromUidDoc, "friendList", FieldValue.arrayRemove(toUid))
                     transaction.update(toUidDoc, "friendList", FieldValue.arrayRemove(fromUid))
                 }.await()
