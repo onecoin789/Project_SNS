@@ -81,14 +81,14 @@ class ReCommentAdapter(private val onClick: ReCommentItemClick) :
                 oldItem: ReCommentModel,
                 newItem: ReCommentModel
             ): Boolean {
-                return oldItem == newItem
+                return oldItem.reCommentData.reCommentId == newItem.reCommentData.reCommentId
             }
 
             override fun areContentsTheSame(
                 oldItem: ReCommentModel,
                 newItem: ReCommentModel
             ): Boolean {
-                return oldItem == newItem
+                return oldItem.reCommentData == newItem.reCommentData
             }
         }
         private const val ITEM = 0

@@ -106,7 +106,6 @@ class DataRepositoryImpl @Inject constructor(
                             }
                         }
                     }
-                    Log.d(TAG, "$imageList")
                     emit(true)
                 }
             } catch (e: Exception) {
@@ -267,12 +266,14 @@ class DataRepositoryImpl @Inject constructor(
         return callbackFlow {
             val commentList = mutableListOf<CommentEntity>()
             val commentDocuments = mutableListOf<DocumentSnapshot>()
-            lastVisibleItem.collect { lastVisibleItem ->
-                when (lastVisibleItem) {
 
+            lastVisibleItem.collect { lastVisibleItem ->
+                Log.d("test_comment_impl1", "${commentList.size}, $lastVisibleItem")
+                when (lastVisibleItem) {
                     0 -> {
+                        Log.d("test_comment_impl2", "0")
                         db.collection(COLLECTION_COMMENT).whereEqualTo("postId", postId)
-                            .orderBy("commentAt", Query.Direction.DESCENDING).limit(3)
+                            .orderBy("commentAt", Query.Direction.DESCENDING).limit(2)
                             .addSnapshotListener { commentData, e ->
                                 if (e != null) {
                                     trySend(emptyList())
@@ -300,17 +301,17 @@ class DataRepositoryImpl @Inject constructor(
                                                 }
                                                 commentDocuments.addAll(documents)
                                                 trySend(commentList)
-                                                Log.d(TAG, "$documents")
+                                                Log.d("impl", "$commentList")
                                             }
                                     }
                                 }
                             }
                     }
-
                     commentList.size -> {
+                        Log.d("test_comment_impl3", "commentList")
                         db.collection(COLLECTION_COMMENT).whereEqualTo("postId", postId)
                             .orderBy("commentAt", Query.Direction.DESCENDING)
-                            .startAfter(commentDocuments.last()).limit(3)
+                            .startAfter(commentDocuments.last()).limit(2)
                             .addSnapshotListener { commentData, e ->
                                 if (e != null) {
                                     trySend(emptyList())
@@ -335,20 +336,53 @@ class DataRepositoryImpl @Inject constructor(
                                                             )
                                                         )
                                                     )
-                                                    Log.d(TAG, "${commentList}")
                                                 }
                                                 commentDocuments.addAll(documents)
                                                 trySend(commentList)
-                                                Log.d(TAG, "${commentList}, $documents")
                                             }
 
                                     }
                                 }
                             }
                     }
-
                     else -> {
-                        trySend(emptyList())
+                        commentList.clear()
+                        Log.d("test_comment_impl4", "$lastVisibleItem, ${commentList.size}")
+                        db.collection(COLLECTION_COMMENT).whereEqualTo("postId", postId)
+                            .orderBy("commentAt", Query.Direction.DESCENDING)
+                            .limit(lastVisibleItem.toLong())
+                            .addSnapshotListener { commentData, e ->
+                                if (e != null) {
+                                    trySend(emptyList())
+                                } else if (commentData != null) {
+                                    val documents = commentData.documents
+                                    val commentResponse =
+                                        commentData.toObjects(CommentDataResponse::class.java)
+                                            .toCommentListEntity()
+                                    commentResponse.map { commentEntity ->
+                                        db.collection(COLLECTION_USER)
+                                            .document(commentEntity.uid)
+                                            .get()
+                                            .addOnSuccessListener { userData ->
+                                                val userEntity =
+                                                    userData.toObject(UserDataResponse::class.java)
+                                                        ?.toEntity()
+                                                if (userEntity != null) {
+                                                    commentList.addAll(
+                                                        listOf(
+                                                            CommentEntity(
+                                                                userEntity,
+                                                                commentEntity
+                                                            )
+                                                        )
+                                                    )
+                                                }
+                                                commentDocuments.addAll(documents)
+                                                trySend(commentList)
+                                            }
+                                    }
+                                }
+                            }
                     }
                 }
             }
@@ -398,7 +432,6 @@ class DataRepositoryImpl @Inject constructor(
                         .whereEqualTo("commentId", reCommentData.commentId)
                         .get().addOnCompleteListener { task ->
                             val taskSize = task.result.size()
-                            Log.d(TAG, "$taskSize")
                             val reCommentSize = mapOf("reCommentSize" to taskSize)
                             db.collection(COLLECTION_COMMENT).document(reCommentData.commentId)
                                 .update(reCommentSize)
@@ -423,7 +456,7 @@ class DataRepositoryImpl @Inject constructor(
                 when (lastVisibleItem) {
 
                     0 -> db.collection(COLLECTION_RE_COMMENT).whereEqualTo("commentId", commentId)
-                        .orderBy("commentAt", Query.Direction.DESCENDING).limit(3)
+                        .orderBy("commentAt", Query.Direction.DESCENDING).limit(2)
                         .addSnapshotListener { reCommentData, e ->
                             if (e != null) {
                                 trySend(emptyList())
@@ -451,7 +484,6 @@ class DataRepositoryImpl @Inject constructor(
                                             }
                                             reCommentDocuments.addAll(documents)
                                             trySend(reCommentList)
-                                            Log.d(TAG, "$reCommentList")
                                         }
                                 }
                             }
@@ -460,7 +492,7 @@ class DataRepositoryImpl @Inject constructor(
                     reCommentList.size -> {
                         db.collection(COLLECTION_RE_COMMENT).whereEqualTo("commentId", commentId)
                             .orderBy("commentAt", Query.Direction.DESCENDING)
-                            .startAfter(reCommentDocuments.last()).limit(3)
+                            .startAfter(reCommentDocuments.last()).limit(2)
                             .addSnapshotListener { reCommentData, e ->
                                 if (e != null) {
                                     trySend(emptyList())
@@ -488,13 +520,11 @@ class DataRepositoryImpl @Inject constructor(
                                                 }
                                                 reCommentDocuments.addAll(documents)
                                                 trySend(reCommentList)
-                                                Log.d(TAG, "$reCommentList")
                                             }
                                     }
                                 }
                             }
                     }
-
                     else -> {
                         trySend(emptyList())
                     }
@@ -514,7 +544,6 @@ class DataRepositoryImpl @Inject constructor(
             db.collection(COLLECTION_RE_COMMENT).whereEqualTo("commentId", commentId).get()
                 .addOnCompleteListener { task ->
                     val taskSize = task.result.size()
-                    Log.d(TAG, "$taskSize")
                     val reCommentSize = mapOf("reCommentSize" to taskSize)
                     db.collection(COLLECTION_COMMENT).document(commentId).update(reCommentSize)
                 }
@@ -554,7 +583,6 @@ class DataRepositoryImpl @Inject constructor(
                                             }
                                             postDocuments.addAll(documents)
                                             trySend(postList)
-                                            Log.d(TAG, "$postList")
                                         }
                                 }
                             }
@@ -618,7 +646,6 @@ class DataRepositoryImpl @Inject constructor(
                                             }
                                             postDocuments.addAll(documents)
                                             trySend(postList)
-                                            Log.d(TAG, "$postList")
                                         }
                                 }
                             }
@@ -642,11 +669,9 @@ class DataRepositoryImpl @Inject constructor(
                     val chatList = mutableListOf<ChatRoomDataResponse>()
                     chatList.addAll(snapshotList)
                     if (chatList.isNotEmpty()) {
-                        Log.d("Chat_Tag_Success", "$snapshotList")
                         val chatRoomDataEntity = chatList[0].toEntity()
                         trySend(chatRoomDataEntity)
                     } else {
-                        Log.d("Chat_Tag_Fail", "$snapshotList")
                         trySend(null)
                     }
                 }
@@ -671,7 +696,8 @@ class DataRepositoryImpl @Inject constructor(
                 val chatRoomDB = db.collection(COLLECTION_CHAT).document(chatRoomId)
 
                 chatRoomDB.set(chatRoomData).addOnSuccessListener {
-                    chatRoomDB.collection(COLLECTION_CHAT_MESSAGE).document(messageData.messageId).set(messageData)
+                    chatRoomDB.collection(COLLECTION_CHAT_MESSAGE).document(messageData.messageId)
+                        .set(messageData)
                 }
                 emit(true)
             } catch (e: Exception) {
@@ -686,9 +712,9 @@ class DataRepositoryImpl @Inject constructor(
     ): Flow<Boolean> {
         return flow {
             try {
-                Log.d("tag_impl_send", chatRoomId)
                 val chatRoomDB = db.collection(COLLECTION_CHAT).document(chatRoomId)
-                val messageDB = chatRoomDB.collection(COLLECTION_CHAT_MESSAGE).document(messageData.messageId)
+                val messageDB =
+                    chatRoomDB.collection(COLLECTION_CHAT_MESSAGE).document(messageData.messageId)
                 messageDB.set(messageData).await()
                 emit(true)
             } catch (e: Exception) {

@@ -1,7 +1,5 @@
 package com.example.project_sns.ui.view.main
 
-import android.util.Log
-import android.util.Printer
 import android.view.View
 import android.widget.TextView
 import androidx.lifecycle.LiveData
@@ -21,9 +19,7 @@ import com.example.project_sns.domain.usecase.GetCurrentUserPostDataUseCase
 import com.example.project_sns.domain.usecase.GetFriendListDataUseCase
 import com.example.project_sns.domain.usecase.GetPagingPostUseCase
 import com.example.project_sns.domain.usecase.GetReCommentDataUseCase
-import com.example.project_sns.domain.usecase.GetRequestDataUseCase
 import com.example.project_sns.domain.usecase.GetUserByUidUseCase
-import com.example.project_sns.domain.usecase.RejectFriendRequestUseCase
 import com.example.project_sns.domain.usecase.SearchKakaoMapUseCase
 import com.example.project_sns.domain.usecase.SendFriendRequestUseCase
 import com.example.project_sns.domain.usecase.UploadCommentUseCase
@@ -35,23 +31,18 @@ import com.example.project_sns.ui.mapper.toCommentListModel
 import com.example.project_sns.ui.mapper.toEntity
 import com.example.project_sns.ui.mapper.toKakaoListEntity
 import com.example.project_sns.ui.mapper.toModel
-import com.example.project_sns.ui.mapper.toPostDataListModel
 import com.example.project_sns.ui.mapper.toPostListModel
 import com.example.project_sns.ui.mapper.toReCommentListModel
-import com.example.project_sns.ui.mapper.toRequestDataModel
 import com.example.project_sns.ui.mapper.toUserDataListModel
-import com.example.project_sns.ui.util.CheckEditProfile
 import com.example.project_sns.ui.model.CommentDataModel
 import com.example.project_sns.ui.model.CommentModel
-import com.example.project_sns.ui.model.FriendDataModel
 import com.example.project_sns.ui.model.KakaoDocumentsModel
 import com.example.project_sns.ui.model.PostDataModel
 import com.example.project_sns.ui.model.PostModel
 import com.example.project_sns.ui.model.ReCommentDataModel
 import com.example.project_sns.ui.model.ReCommentModel
-import com.example.project_sns.ui.model.RequestDataModel
-import com.example.project_sns.ui.model.RequestModel
 import com.example.project_sns.ui.model.UserDataModel
+import com.example.project_sns.ui.util.CheckEditProfile
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
@@ -72,17 +63,17 @@ class MainSharedViewModel @Inject constructor(
     private val deletePostUseCase: DeletePostUseCase,
     private val editPostUseCase: EditPostUseCase,
     private val uploadCommentUseCase: UploadCommentUseCase,
-    private val getCommentDataUseCase: GetCommentDataUseCase,
     private val uploadReCommentUseCase: UploadReCommentUseCase,
-    private val deleteCommentUseCase: DeleteCommentUseCase,
-    private val getReCommentDataUseCase: GetReCommentDataUseCase,
-    private val deleteReCommentUseCase: DeleteReCommentUseCase,
     private val getUserByUidUseCase: GetUserByUidUseCase,
     private val sendFriendRequestUseCase: SendFriendRequestUseCase,
     private val getFriendListDataUseCase: GetFriendListDataUseCase,
     private val deleteFriendUseCase: DeleteFriendUseCase,
     private val checkFriendRequestUseCase: CheckFriendRequestUseCase,
-    private val cancelFriendRequestUseCase: CancelFriendRequestUseCase
+    private val cancelFriendRequestUseCase: CancelFriendRequestUseCase,
+
+    private val getCommentDataUseCase: GetCommentDataUseCase,
+    private val deleteCommentUseCase: DeleteCommentUseCase,
+
 ) : ViewModel() {
 
     private val _postUpLoadResult = MutableStateFlow<Boolean?>(null)
@@ -115,14 +106,8 @@ class MainSharedViewModel @Inject constructor(
     private val _commentData = MutableStateFlow<Boolean?>(null)
     val commentData: StateFlow<Boolean?> get() = _commentData
 
-    private val _commentListData = MutableLiveData<List<CommentModel>>(emptyList())
-    val commentListData: LiveData<List<CommentModel>> get() = _commentListData
-
     private val _reCommentData = MutableStateFlow<Boolean?>(null)
     val reCommentData: StateFlow<Boolean?> get() = _reCommentData
-
-    private val _reCommentListData = MutableLiveData<List<ReCommentModel>>(emptyList())
-    val reCommentListData: LiveData<List<ReCommentModel>> get() = _reCommentListData
 
     private val _currentPage = MutableLiveData<Int>(0)
     val currentPage: LiveData<Int> get() = _currentPage
@@ -148,9 +133,27 @@ class MainSharedViewModel @Inject constructor(
     private val _cancelFriendRequest = MutableStateFlow<Boolean?>(null)
     val cancelFriendRequest: StateFlow<Boolean?> get() = _cancelFriendRequest
 
+    private val _commentListData = MutableLiveData<List<CommentModel>>(emptyList())
+    val commentListData: LiveData<List<CommentModel>> get() = _commentListData
 
-    val reCommentLastVisibleItem = MutableStateFlow(0)
 
+    val commentLastVisibleItem = MutableStateFlow(0)
+
+    // <!-- commentPageSet -->
+
+    fun startPage() {
+        if (_currentPage.value != 0) {
+            _currentPage.value = 0
+        }
+    }
+
+    fun nextPage() {
+        _currentPage.value = _currentPage.value?.plus(1)
+    }
+
+    fun prevPage() {
+        _currentPage.value = _currentPage.value?.minus(1)
+    }
 
 
     fun cancelFriendRequest(fromUid: String, toUid: String) {
@@ -161,6 +164,54 @@ class MainSharedViewModel @Inject constructor(
         }
     }
 
+    // <!-- commentLine -->
+
+    fun setNullData() {
+        viewModelScope.launch {
+            _selectedCommentData.value = null
+        }
+    }
+
+    fun uploadComment(commentData: CommentDataModel?) {
+        viewModelScope.launch {
+            uploadCommentUseCase(commentData?.toEntity()).collect { result ->
+                _commentData.value = result
+            }
+        }
+    }
+
+    fun getSelectCommentData(data: CommentModel?) {
+        viewModelScope.launch {
+            if (data != null) {
+                _selectedCommentData.value = data
+            }
+        }
+    }
+
+
+    // <!-- reCommentLine -->
+
+
+    fun uploadReComment(reCommentData: ReCommentDataModel?) {
+        viewModelScope.launch {
+            if (reCommentData != null) {
+                uploadReCommentUseCase(reCommentData.toEntity()).collect { result ->
+                    _reCommentData.value = result
+                }
+            }
+        }
+    }
+
+    fun getSelectReCommentData(data: ReCommentDataModel?) {
+        viewModelScope.launch {
+            if (data != null) {
+                _selectedReCommentData.value = data
+            }
+        }
+    }
+
+
+
     fun checkFriendRequest(toUid: String) {
         viewModelScope.launch {
             checkFriendRequestUseCase(toUid).collect { result ->
@@ -168,27 +219,6 @@ class MainSharedViewModel @Inject constructor(
             }
         }
     }
-
-//    fun postLastVisibleItem(lastVisibleItem: Int) {
-//        viewModelScope.launch {
-//            _postLastVisibleItem.value = lastVisibleItem
-//        }
-//    }
-//
-//    fun resetPagingData() {
-//        viewModelScope.launch {
-//            _pagingData.value = emptyList()
-//        }
-//    }
-
-
-//    fun getPagingData(lastVisibleItem: Flow<Int>) {
-//        viewModelScope.launch {
-//            getPagingPostUseCase(lastVisibleItem).collect { data ->
-//                _pagingData.value = data?.toPostDataListModel()
-//            }
-//        }
-//    }
 
 
     fun deleteFriend(fromUid: String, toUid: String) {
@@ -208,47 +238,11 @@ class MainSharedViewModel @Inject constructor(
         }
     }
 
-    fun resetCommentData() {
-        viewModelScope.launch {
-            _commentListData.value = emptyList()
-        }
-    }
-
-    fun resetReCommentData() {
-        viewModelScope.launch {
-            _reCommentListData.value = emptyList()
-        }
-    }
-
-    fun startPage() {
-        if (_currentPage.value != 0) {
-            _currentPage.value = 0
-        }
-    }
-
-    fun nextPage() {
-        _currentPage.value = _currentPage.value?.plus(1)
-    }
-
-    fun prevPage() {
-        _currentPage.value = _currentPage.value?.minus(1)
-    }
-
 
     fun requestFriend(requestId: String, sendUid: String, receiveUid: String) {
         viewModelScope.launch {
             sendFriendRequestUseCase(requestId, sendUid, receiveUid).collect { result ->
                 _requestFriendResult.value = result
-            }
-        }
-    }
-
-    fun uploadReComment(reCommentData: ReCommentDataModel?) {
-        viewModelScope.launch {
-            if (reCommentData != null) {
-                uploadReCommentUseCase(reCommentData.toEntity()).collect { result ->
-                    _reCommentData.value = result
-                }
             }
         }
     }
@@ -277,34 +271,6 @@ class MainSharedViewModel @Inject constructor(
                 if (data != null) {
                     _userData.value = data.toModel()
                 }
-            }
-        }
-    }
-
-    fun uploadComment(commentData: CommentDataModel?) {
-        viewModelScope.launch {
-            uploadCommentUseCase(commentData?.toEntity()).collect { result ->
-                _commentData.value = result
-            }
-        }
-    }
-
-    fun getComment(postId: String, lastVisibleItem: Flow<Int>) {
-        viewModelScope.launch {
-            getCommentDataUseCase(postId, lastVisibleItem).collect {
-                val commentList = it.toCommentListModel()
-                _commentListData.value = commentList
-                Log.d("test_vm", "${_commentListData.value}")
-            }
-        }
-    }
-
-    fun getReComment(commentId: String, lastVisibleItem: Flow<Int>) {
-        viewModelScope.launch {
-            getReCommentDataUseCase(commentId, lastVisibleItem).collect {
-                val reCommentList = it.toReCommentListModel()
-                _reCommentListData.value = reCommentList
-                CurrentPost.reCommentList = it.toReCommentListModel()
             }
         }
     }
@@ -394,26 +360,30 @@ class MainSharedViewModel @Inject constructor(
         }
     }
 
-    fun getCommentData(data: CommentModel?) {
-        viewModelScope.launch {
-            if (data != null) {
-                _selectedCommentData.value = data
-            }
-        }
-    }
-
-    fun getReCommentData(data: ReCommentDataModel?) {
-        viewModelScope.launch {
-            if (data != null) {
-                _selectedReCommentData.value = data
-            }
-        }
-    }
-
 
     fun deletePost(postData: PostDataModel?, commentList: List<CommentDataModel>?) {
         viewModelScope.launch {
             deletePostUseCase(postData?.toEntity(), commentList?.toCommentListEntity())
+        }
+    }
+
+    fun editPost(postData: PostDataModel?) {
+        viewModelScope.launch {
+            editPostUseCase(postData?.toEntity()).collect { result ->
+                _postEditResult.value = result
+            }
+        }
+    }
+
+
+
+//    // <!-- commentLine -->
+//
+//
+    fun clearCommentData() {
+        viewModelScope.launch {
+            _commentListData.value = emptyList()
+            commentLastVisibleItem.value = 0
         }
     }
 
@@ -423,16 +393,13 @@ class MainSharedViewModel @Inject constructor(
         }
     }
 
-    fun deleteReComment(commentId: String, reCommentId: String) {
-        viewModelScope.launch {
-            deleteReCommentUseCase(commentId, reCommentId)
-        }
-    }
 
-    fun editPost(postData: PostDataModel?) {
+    fun getComment(postId: String, lastVisibleItem: Flow<Int>) {
+        _commentListData.value = emptyList()
         viewModelScope.launch {
-            editPostUseCase(postData?.toEntity()).collect { result ->
-                _postEditResult.value = result
+            getCommentDataUseCase(postId, lastVisibleItem).collect {
+                val commentList = it.toCommentListModel()
+                _commentListData.value = commentList
             }
         }
     }

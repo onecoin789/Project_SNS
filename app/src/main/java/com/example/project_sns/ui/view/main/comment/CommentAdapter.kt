@@ -1,6 +1,6 @@
 package com.example.project_sns.ui.view.main.comment
 
-
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -91,6 +91,8 @@ class CommentAdapter(private val onClick: CommentItemClickListener) :
     }
 
 
+
+
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (holder is CommentViewHolder) {
             holder.bind(getItem(position))
@@ -124,3 +126,5 @@ class CommentAdapter(private val onClick: CommentItemClickListener) :
         private const val LOADING = 1
     }
 }
+
+

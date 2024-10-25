@@ -3,16 +3,21 @@ package com.example.project_sns.ui.view.main.profile.dialog
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.example.project_sns.databinding.FragmentDialogBinding
 import com.example.project_sns.ui.view.main.MainSharedViewModel
+import com.example.project_sns.ui.view.main.comment.CommentViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 
@@ -24,6 +29,8 @@ class DeleteCommentDialogFragment : DialogFragment() {
 
     private var mainText: String? = null
     private var subText: String? = null
+
+    private val commentViewModel: CommentViewModel by viewModels()
 
     private val mainSharedViewModel: MainSharedViewModel by activityViewModels()
 
@@ -55,13 +62,7 @@ class DeleteCommentDialogFragment : DialogFragment() {
         binding.tvDlSub.text = subText
 
         binding.btnDlConfirm.setOnClickListener {
-            viewLifecycleOwner.lifecycleScope.launch {
-                mainSharedViewModel.selectedCommentData.observe(viewLifecycleOwner) { item ->
-                    if (item != null) {
-                        mainSharedViewModel.deleteComment(item.commentData.commentId)
-                    }
-                }
-            }
+            deleteCommentData()
             dismiss()
         }
 
@@ -69,6 +70,19 @@ class DeleteCommentDialogFragment : DialogFragment() {
             dismiss()
         }
     }
+
+
+    private fun deleteCommentData() {
+//        viewLifecycleOwner.lifecycleScope.launch {
+//            mainSharedViewModel.selectedCommentData.observe(viewLifecycleOwner) { item ->
+//                if (item != null) {
+//                    mainSharedViewModel.deleteComment(item.commentData.commentId)
+//                    getCommentData()
+//                }
+//            }
+//        }
+    }
+
 
 
     override fun onDestroyView() {

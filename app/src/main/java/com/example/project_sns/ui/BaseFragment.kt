@@ -46,6 +46,16 @@ abstract class BaseFragment<T : ViewBinding>: Fragment() {
         findNavController().navigate(R.id.deleteReCommentDialogFragment, bundle)
     }
 
+    fun inflateDialog(mainText: String, subText: String, onClick: Unit) {
+        val dialog = BaseDialog(mainText, subText)
+        dialog.setButtonClickListener(object : BaseDialog.DialogClickEvent {
+            override fun onClickConfirm() {
+                return onClick
+            }
+        })
+        dialog.show(childFragmentManager, "dialog")
+    }
+
 
 
     override fun onDestroyView() {

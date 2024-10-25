@@ -55,15 +55,15 @@ class DeleteReCommentDialogFragment : DialogFragment() {
         binding.tvDlSub.text = subText
 
         binding.btnDlConfirm.setOnClickListener {
-            viewLifecycleOwner.lifecycleScope.launch {
-                    mainSharedViewModel.selectedCommentData.observe(viewLifecycleOwner) { currentCommentData ->
-                        mainSharedViewModel.selectedReCommentData.observe(viewLifecycleOwner) { currentReCommentData ->
-                            if (currentCommentData != null && currentReCommentData != null) {
-                                mainSharedViewModel.deleteReComment(currentCommentData.commentData.commentId, currentReCommentData.reCommentId)
-                            }
-                        }
-                    }
-                }
+//            viewLifecycleOwner.lifecycleScope.launch {
+//                    mainSharedViewModel.selectedCommentData.observe(viewLifecycleOwner) { currentCommentData ->
+//                        mainSharedViewModel.selectedReCommentData.observe(viewLifecycleOwner) { currentReCommentData ->
+//                            if (currentCommentData != null && currentReCommentData != null) {
+//                                commentViewModel.deleteReComment(currentCommentData.commentData.commentId, currentReCommentData.reCommentId)
+//                            }
+//                        }
+//                    }
+//                }
             dismiss()
         }
 

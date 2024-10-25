@@ -247,6 +247,10 @@
         android:name="com.example.project_sns.ui.view.main.profile.detail.PostDetailMapFragment"
         android:label="fragment_post_detail_map"
         tools:layout="@layout/fragment_post_detail_map" />
+    <dialog
+        android:id="@+id/baseDialog"
+        android:name="com.example.project_sns.ui.BaseDialog"
+        android:label="BaseDialog" />
 
 
 </navigation>
