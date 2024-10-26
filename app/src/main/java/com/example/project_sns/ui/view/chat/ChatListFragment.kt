@@ -23,6 +23,8 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class ChatListFragment : BaseFragment<FragmentChatListBinding>() {
 
+    private val chatViewModel: ChatViewModel by viewModels()
+
     private val mainSharedViewModel: MainSharedViewModel by activityViewModels()
 
     private lateinit var friendListAdapter: ChatListFriendListAdapter

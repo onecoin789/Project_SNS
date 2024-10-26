@@ -37,7 +37,7 @@ interface DataRepository {
 
     suspend fun getPagingPost(lastVisibleItem: Flow<Int>): Flow<List<PostEntity>?>
 
-    suspend fun checkChatRoom(senderUid: String, recipientUid: String): Flow<ChatRoomDataEntity?>
+    suspend fun checkChatRoom(recipientUid: String): Flow<Boolean>
 
     suspend fun sendFirstMessage(chatRoomId: String, senderUid: String, recipientUid: String, messageData: MessageDataEntity): Flow<Boolean>
 

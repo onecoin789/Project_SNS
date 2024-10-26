@@ -132,6 +132,7 @@
     <string name="follow_title">친구 요청</string>
     <string name="follow_item_accept">수락</string>
     <string name="follow_item_reject">거절</string>
+    <string name="follow_item_intro">표시할 알림이 없습니다!</string>
 
 
 </resources>

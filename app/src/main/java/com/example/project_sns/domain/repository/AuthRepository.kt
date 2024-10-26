@@ -21,9 +21,11 @@ interface AuthRepository {
 
     suspend fun kakaoLogin(accessToken: String): Result<String>
 
+    suspend fun checkRequestList(): Flow<Boolean>
+
     suspend fun requestFriend(requestId: String, fromUid: String, toUid: String): Flow<Boolean>
 
-    suspend fun getRequestList(): Flow<List<RequestEntity>>
+    suspend fun getRequestList(lastVisibleItem: Flow<Int>): Flow<List<RequestEntity>>
 
     suspend fun acceptFriendRequest(requestId: String, fromUid: String, toUid: String): Flow<Boolean>
 

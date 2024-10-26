@@ -25,8 +25,8 @@ class ChatViewModel @Inject constructor(
     private val sendFirstMessageUseCase: SendFirstMessageUseCase
 ): ViewModel() {
 
-    private val _checkChatRoomData = MutableLiveData<ChatRoomDataModel?>()
-    val checkChatRoomData: LiveData<ChatRoomDataModel?> get() = _checkChatRoomData
+    private val _checkChatRoomData = MutableLiveData<Boolean?>()
+    val checkChatRoomData: LiveData<Boolean?> get() = _checkChatRoomData
 
     private val _sendMessageResult = MutableLiveData<Boolean?>()
     val sendMessageResult: LiveData<Boolean?> get() = _sendMessageResult
@@ -37,15 +37,14 @@ class ChatViewModel @Inject constructor(
 
     fun clearResult() {
         viewModelScope.launch {
-            _sendFirstMessageResult.value = null
-            _sendMessageResult.value = null
+            _checkChatRoomData.value = null
         }
     }
 
-    fun checkChatRoom(senderUid: String, recipientUid: String) {
+    fun checkChatRoom(recipientUid: String) {
         viewModelScope.launch {
-            checkChatRoomDataUseCase(senderUid, recipientUid).collect { result ->
-                _checkChatRoomData.value = result?.toModel()
+            checkChatRoomDataUseCase(recipientUid).collect { result ->
+                _checkChatRoomData.value = result
             }
         }
     }

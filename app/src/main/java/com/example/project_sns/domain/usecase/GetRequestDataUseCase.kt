@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class GetRequestDataUseCase @Inject constructor(private val authRepository: AuthRepository) {
-    suspend operator fun invoke(): Flow<List<RequestEntity>> {
-        return authRepository.getRequestList()
+    suspend operator fun invoke(lastVisibleItem: Flow<Int>): Flow<List<RequestEntity>> {
+        return authRepository.getRequestList(lastVisibleItem)
     }
 }

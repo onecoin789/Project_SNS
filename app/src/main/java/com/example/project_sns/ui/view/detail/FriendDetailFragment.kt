@@ -46,15 +46,6 @@ class FriendDetailFragment : BaseFragment<FragmentFriendDetailBinding>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        mainSharedViewModel.pagingData.observe(viewLifecycleOwner) {
-            Log.d("Tag2", "${it}")
-        }
-
-        lifecycleScope.launch {
-            mainViewModel.allPostData.collect {
-                Log.d("Tag1", "${it.size}")
-            }
-        }
 
         getFriendList()
         initView()

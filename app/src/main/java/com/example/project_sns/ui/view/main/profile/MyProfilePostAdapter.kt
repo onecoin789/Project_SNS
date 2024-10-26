@@ -22,7 +22,7 @@ class MyProfilePostAdapter(private val onItemClick: (PostDataModel) -> Unit) :
             if (item.imageList.isNullOrEmpty()) {
                 Glide.with(binding.root).load(item.imageList?.map { it.imageUri }).into(binding.ivItemMyPost)
             } else {
-                Glide.with(binding.root).load(item.imageList[0].imageUri).into(binding.ivItemMyPost)
+                Glide.with(binding.root).load(item.imageList[0].downloadUrl).into(binding.ivItemMyPost)
             }
 
             if (item.imageList?.size != 1) {
