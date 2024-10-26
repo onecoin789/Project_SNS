@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -15,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.project_sns.R
 import com.example.project_sns.databinding.FragmentReCommentListBinding
+import com.example.project_sns.ui.BaseDialog
 import com.example.project_sns.ui.BaseFragment
 import com.example.project_sns.ui.CurrentUser
 import com.example.project_sns.ui.util.dateFormat
@@ -36,13 +38,14 @@ class ReCommentListFragment : BaseFragment<FragmentReCommentListBinding>() {
 
     private val mainSharedViewModel: MainSharedViewModel by activityViewModels()
 
+    private val commentViewModel: CommentViewModel by viewModels()
+
     private var reCommentData: ReCommentDataModel? = null
 
     private var reCommentList: MutableList<ReCommentModel?> = mutableListOf()
 
     private lateinit var listAdapter: ReCommentAdapter
 
-    val reCommentLastVisibleItem = MutableStateFlow(0)
 
     override fun getFragmentBinding(
         inflater: LayoutInflater,
@@ -54,17 +57,40 @@ class ReCommentListFragment : BaseFragment<FragmentReCommentListBinding>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        clearData()
         initView()
         initRv()
         initReComment()
+        getReCommentData()
+
+
     }
 
-    private fun clearData() {
+    private fun getCommentData() {
         viewLifecycleOwner.lifecycleScope.launch {
-            mainSharedViewModel.resetReCommentData()
+            mainSharedViewModel.postData.observe(viewLifecycleOwner) { postData ->
+                if (postData != null) {
+                    mainSharedViewModel.getComment(
+                        postData.postId,
+                        mainSharedViewModel.commentLastVisibleItem
+                    )
+                }
+            }
         }
     }
+
+    private fun getReCommentData() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            mainSharedViewModel.selectedCommentData.observe(viewLifecycleOwner) { item ->
+                if (item != null) {
+                    commentViewModel.getReComment(
+                        item.commentData.commentId,
+                        commentViewModel.reCommentLastVisibleItem
+                    )
+                }
+            }
+        }
+    }
+
 
     private fun initView() {
         mainSharedViewModel.selectedCommentData.observe(viewLifecycleOwner) { commentData ->
@@ -90,13 +116,15 @@ class ReCommentListFragment : BaseFragment<FragmentReCommentListBinding>() {
             }
         }
         binding.ivReCommentBack.setOnClickListener {
+            getCommentData()
+            commentViewModel.clearReCommentData()
             mainSharedViewModel.prevPage()
         }
-
     }
 
     private fun initRv() {
         listAdapter = ReCommentAdapter(object : ReCommentAdapter.ReCommentItemClick {
+
             override fun onClickEdit(item: ReCommentModel) {
                 initReComment()
                 val editComment = binding.etReComment
@@ -106,8 +134,13 @@ class ReCommentListFragment : BaseFragment<FragmentReCommentListBinding>() {
 
             override fun onClickDelete(item: ReCommentModel) {
                 viewLifecycleOwner.lifecycleScope.launch {
-                    mainSharedViewModel.getReCommentData(item.reCommentData)
-                    inflateReCommentDialog("댓글 삭제", "댓글을 삭제할까요?")
+                    val dialog = BaseDialog("댓글을 삭제 하시겠습니까?", "삭제하시면 되돌릴 수 없습니다!")
+                    dialog.setButtonClickListener(object : BaseDialog.DialogClickEvent {
+                        override fun onClickConfirm() {
+                            getNewItem(item)
+                        }
+                    })
+                    dialog.show(childFragmentManager, "dialog")
                 }
             }
         })
@@ -118,25 +151,24 @@ class ReCommentListFragment : BaseFragment<FragmentReCommentListBinding>() {
             adapter = listAdapter
 
             addOnScrollListener(object : RecyclerView.OnScrollListener() {
-                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                    super.onScrolled(recyclerView, dx, dy)
+                override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                    super.onScrollStateChanged(recyclerView, newState)
                     val lastVisible = linearLayoutManager.findLastVisibleItemPosition().plus(1)
-                    if (!binding.rvReComment.canScrollVertically(1)) {
-                        binding.clReCommentMore.setOnClickListener {
-                            moreItem(lastVisible)
-                        }
-                        Log.d("test_comment", "${reCommentLastVisibleItem.value}, $lastVisible")
+                    if (!binding.rvReComment.canScrollVertically(1) && newState == RecyclerView.SCROLL_STATE_IDLE) {
+                        moreItem(lastVisible)
+                        Log.d(
+                            "test_comment",
+                            "${commentViewModel.reCommentLastVisibleItem.value}, $lastVisible"
+                        )
                     }
                 }
             })
         }
 
-        mainSharedViewModel.reCommentListData.observe(viewLifecycleOwner) { reCommentData ->
+        commentViewModel.reCommentListData.observe(viewLifecycleOwner) { reCommentData ->
             val dataSet = reCommentData.sortedByDescending { it.reCommentData.commentAt }
-
             reCommentList = dataSet.toMutableList()
             listAdapter.submitList(dataSet)
-            listAdapter.notifyItemInserted(reCommentData.size - 1)
 
             if (reCommentData.isEmpty()) {
                 binding.tvReCommentNone.visibility = View.VISIBLE
@@ -155,6 +187,7 @@ class ReCommentListFragment : BaseFragment<FragmentReCommentListBinding>() {
         val runnable = kotlinx.coroutines.Runnable {
             reCommentList.add(null)
             listAdapter.notifyItemInserted(reCommentList.size - 1)
+            Log.d("rv_reComment", "$reCommentList")
         }
         mRecyclerView.post(runnable)
 
@@ -162,10 +195,39 @@ class ReCommentListFragment : BaseFragment<FragmentReCommentListBinding>() {
             val runnableMore = kotlinx.coroutines.Runnable {
                 reCommentList.removeAt(reCommentList.size - 1)
                 listAdapter.notifyItemRemoved(reCommentList.size)
-                reCommentLastVisibleItem.value = lastVisible
+                commentViewModel.reCommentLastVisibleItem.value = lastVisible
             }
             delay(1000)
             runnableMore.run()
+        }
+    }
+
+    private fun getNewItem(item: ReCommentModel) {
+        CoroutineScope(Dispatchers.Main).launch {
+            binding.rvReComment.visibility = View.GONE
+            binding.pbReComment.visibility = View.VISIBLE
+            deleteReCommentData(item)
+            delay(300)
+            commentViewModel.clearReCommentData()
+            binding.tvReCommentNone.visibility = View.GONE
+            binding.tvReCommentSuggest.visibility = View.GONE
+            delay(300)
+            val runnableRefresh = kotlinx.coroutines.Runnable {
+                getReCommentData()
+            }
+            runnableRefresh.run()
+            delay(300)
+            binding.rvReComment.visibility = View.VISIBLE
+            binding.pbReComment.visibility = View.GONE
+        }
+    }
+
+    private fun deleteReCommentData(item: ReCommentModel) {
+        viewLifecycleOwner.lifecycleScope.launch {
+            commentViewModel.deleteReComment(
+                item.reCommentData.commentId,
+                item.reCommentData.reCommentId
+            )
         }
     }
 
@@ -199,6 +261,7 @@ class ReCommentListFragment : BaseFragment<FragmentReCommentListBinding>() {
                 mainSharedViewModel.reCommentData.collect {
                     if (it == true) {
                         binding.etReComment.text.clear()
+                        getReCommentData()
                     } else if (it == false) {
                         Toast.makeText(
                             requireContext(),
@@ -218,6 +281,7 @@ class ReCommentListFragment : BaseFragment<FragmentReCommentListBinding>() {
                 mainSharedViewModel.reCommentData.collect {
                     if (it == true) {
                         binding.etReComment.text.clear()
+                        getReCommentData()
                         Toast.makeText(requireContext(), "댓글이 수정되었습니다.", Toast.LENGTH_SHORT)
                             .show()
                     } else if (it == false) {

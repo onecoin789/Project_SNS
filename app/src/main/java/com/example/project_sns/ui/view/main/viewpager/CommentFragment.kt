@@ -29,9 +29,7 @@ class CommentFragment : BaseBottomSheet<FragmentCommentBinding>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewLifecycleOwner.lifecycleScope.launch {
-            mainSharedViewModel.resetCommentData()
-        }
+
         initViewPager()
         setPage()
 
@@ -39,6 +37,7 @@ class CommentFragment : BaseBottomSheet<FragmentCommentBinding>() {
 
     private fun initViewPager() {
         val viewPager = binding.vpComment
+        viewPager.isUserInputEnabled = false
         viewPager.adapter = CommentViewPagerAdapter(this)
     }
 

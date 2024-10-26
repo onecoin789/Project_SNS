@@ -9,12 +9,14 @@ import android.widget.Toast
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.project_sns.databinding.FragmentCommentListBinding
+import com.example.project_sns.ui.BaseDialog
 import com.example.project_sns.ui.BaseFragment
 import com.example.project_sns.ui.CurrentUser
 import com.example.project_sns.ui.util.dateFormat
@@ -37,13 +39,14 @@ class CommentListFragment : BaseFragment<FragmentCommentListBinding>() {
 
     private val mainSharedViewModel: MainSharedViewModel by activityViewModels()
 
+    private val commentViewModel: CommentViewModel by viewModels()
+
     private var commentData: CommentDataModel? = null
 
     private var commentList: MutableList<CommentModel?> = mutableListOf()
 
     private lateinit var listAdapter: CommentAdapter
 
-    val commentLastVisibleItem = MutableStateFlow(0)
 
     override fun getFragmentBinding(
         inflater: LayoutInflater,
@@ -59,6 +62,7 @@ class CommentListFragment : BaseFragment<FragmentCommentListBinding>() {
         getCommentData()
         initComment()
         initRv()
+
     }
 
 
@@ -66,7 +70,10 @@ class CommentListFragment : BaseFragment<FragmentCommentListBinding>() {
         viewLifecycleOwner.lifecycleScope.launch {
             mainSharedViewModel.postData.observe(viewLifecycleOwner) { postData ->
                 if (postData != null) {
-                    mainSharedViewModel.getComment(postData.postId, commentLastVisibleItem)
+                    mainSharedViewModel.getComment(
+                        postData.postId,
+                        mainSharedViewModel.commentLastVisibleItem
+                    )
                 }
             }
         }
@@ -107,20 +114,20 @@ class CommentListFragment : BaseFragment<FragmentCommentListBinding>() {
 
             override fun onClickCommentDelete(item: CommentModel) {
                 viewLifecycleOwner.lifecycleScope.launch {
-                    mainSharedViewModel.getCommentData(item)
-                    inflateCommentDialog("댓글 삭제", "댓글을 삭제할까요?")
+                    val dialog = BaseDialog("댓글을 삭제 하시겠습니까?", "삭제하시면 되돌릴 수 없습니다!")
+                    dialog.setButtonClickListener(object : BaseDialog.DialogClickEvent {
+                        override fun onClickConfirm() {
+                            getNewItem(item)
+                        }
+                    })
+                    dialog.show(childFragmentManager, "dialog")
                 }
             }
 
             override fun onClickReCommentList(item: CommentModel) {
-                viewLifecycleOwner.lifecycleScope.launch {
-                    mainSharedViewModel.getCommentData(item)
-                    mainSharedViewModel.getReComment(
-                        item.commentData.commentId,
-                        mainSharedViewModel.reCommentLastVisibleItem
-                    )
-                }
+                mainSharedViewModel.getSelectCommentData(item)
                 mainSharedViewModel.nextPage()
+                Log.d("test_comment", "${mainSharedViewModel.selectedCommentData.value}")
             }
         })
         val linearLayoutManager = LinearLayoutManager(requireContext())
@@ -129,14 +136,16 @@ class CommentListFragment : BaseFragment<FragmentCommentListBinding>() {
             adapter = listAdapter
 
             addOnScrollListener(object : RecyclerView.OnScrollListener() {
-                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                    super.onScrolled(recyclerView, dx, dy)
+                override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                    super.onScrollStateChanged(recyclerView, newState)
                     val lastVisible = linearLayoutManager.findLastVisibleItemPosition().plus(1)
-                    if (!binding.rvComment.canScrollVertically(1)) {
-                        binding.clCommentMore.setOnClickListener {
-                            moreItem(lastVisible)
-                        }
-                        Log.d("test_comment", "${commentLastVisibleItem.value}, $lastVisible")
+                    val totalCount = listAdapter.itemCount
+                    if (!binding.rvComment.canScrollVertically(1) && newState == RecyclerView.SCROLL_STATE_IDLE) {
+                        moreItem(lastVisible)
+                        Log.d(
+                            "test_comment",
+                            "${mainSharedViewModel.commentLastVisibleItem.value}, $lastVisible, $totalCount"
+                        )
                     }
                 }
             })
@@ -144,23 +153,19 @@ class CommentListFragment : BaseFragment<FragmentCommentListBinding>() {
 
 
         mainSharedViewModel.commentListData.observe(viewLifecycleOwner) { data ->
-                val dataSet = data.sortedByDescending { it.commentData.commentAt }
+            val dataSet = data.sortedByDescending { it.commentData.commentAt }
+            commentList = dataSet.toMutableList()
+            listAdapter.submitList(commentList)
 
-                commentList = dataSet.toMutableList()
-                listAdapter.submitList(commentList)
-                listAdapter.notifyItemInserted(data.size - 1)
-
-
-                if (data.isEmpty()) {
-                    binding.tvCommentNone.visibility = View.VISIBLE
-                    binding.tvCommentSuggest.visibility = View.VISIBLE
-                    binding.clCommentRvItem.visibility = View.GONE
-                } else {
-                    binding.clCommentRvItem.visibility = View.VISIBLE
-                    binding.tvCommentNone.visibility = View.INVISIBLE
-                    binding.tvCommentSuggest.visibility = View.INVISIBLE
-                }
-
+            if (data.isEmpty()) {
+                binding.tvCommentNone.visibility = View.VISIBLE
+                binding.tvCommentSuggest.visibility = View.VISIBLE
+                binding.clCommentRvItem.visibility = View.GONE
+            } else {
+                binding.clCommentRvItem.visibility = View.VISIBLE
+                binding.tvCommentNone.visibility = View.INVISIBLE
+                binding.tvCommentSuggest.visibility = View.INVISIBLE
+            }
         }
     }
 
@@ -176,10 +181,37 @@ class CommentListFragment : BaseFragment<FragmentCommentListBinding>() {
             val runnableMore = kotlinx.coroutines.Runnable {
                 commentList.removeAt(commentList.size - 1)
                 listAdapter.notifyItemRemoved(commentList.size)
-                commentLastVisibleItem.value = lastVisible
+                mainSharedViewModel.commentLastVisibleItem.value = lastVisible
             }
             delay(1000)
             runnableMore.run()
+        }
+    }
+
+    private fun getNewItem(item: CommentModel) {
+        CoroutineScope(Dispatchers.Main).launch {
+            binding.rvComment.visibility = View.GONE
+            binding.pbComment.visibility = View.VISIBLE
+            deleteCommentData(item)
+            delay(300)
+            mainSharedViewModel.clearCommentData()
+            binding.tvCommentNone.visibility = View.GONE
+            binding.tvCommentSuggest.visibility = View.GONE
+            delay(300)
+            val runnableRefresh = kotlinx.coroutines.Runnable {
+                getCommentData()
+            }
+            runnableRefresh.run()
+            delay(300)
+            binding.rvComment.visibility = View.VISIBLE
+            binding.pbComment.visibility = View.GONE
+            mainSharedViewModel.setNullData()
+        }
+    }
+
+    private fun deleteCommentData(item: CommentModel) {
+        viewLifecycleOwner.lifecycleScope.launch {
+            mainSharedViewModel.deleteComment(item.commentData.commentId)
         }
     }
 
@@ -190,6 +222,7 @@ class CommentListFragment : BaseFragment<FragmentCommentListBinding>() {
                 mainSharedViewModel.commentData.collect {
                     if (it == true) {
                         binding.etComment.text.clear()
+                        getCommentData()
                     } else if (it == false) {
                         Toast.makeText(requireContext(), "잠시 후 다시 시도해주세요", Toast.LENGTH_SHORT)
                             .show()
@@ -205,6 +238,7 @@ class CommentListFragment : BaseFragment<FragmentCommentListBinding>() {
                 mainSharedViewModel.commentData.collect {
                     if (it == true) {
                         binding.etComment.text.clear()
+                        getCommentData()
                         Toast.makeText(requireContext(), "댓글이 수정되었습니다.", Toast.LENGTH_SHORT)
                             .show()
                     } else if (it == false) {

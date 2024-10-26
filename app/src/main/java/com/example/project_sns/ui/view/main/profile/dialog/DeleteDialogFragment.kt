@@ -9,11 +9,13 @@ import android.view.ViewGroup
 import android.view.Window
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.project_sns.R
 import com.example.project_sns.databinding.FragmentDialogBinding
 import com.example.project_sns.ui.view.main.MainSharedViewModel
+import com.example.project_sns.ui.view.main.comment.CommentViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -26,6 +28,8 @@ class DeleteDialogFragment : DialogFragment() {
 
     private var mainText: String? = null
     private var subText: String? = null
+
+    private val commentViewModel: CommentViewModel by viewModels()
 
     private val mainSharedViewModel: MainSharedViewModel by activityViewModels()
 
