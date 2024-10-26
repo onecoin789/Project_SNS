@@ -307,6 +307,7 @@ class DataRepositoryImpl @Inject constructor(
                                 }
                             }
                     }
+
                     commentList.size -> {
                         Log.d("test_comment_impl3", "commentList")
                         db.collection(COLLECTION_COMMENT).whereEqualTo("postId", postId)
@@ -345,6 +346,7 @@ class DataRepositoryImpl @Inject constructor(
                                 }
                             }
                     }
+
                     else -> {
                         commentList.clear()
                         Log.d("test_comment_impl4", "$lastVisibleItem, ${commentList.size}")
@@ -525,6 +527,7 @@ class DataRepositoryImpl @Inject constructor(
                                 }
                             }
                     }
+
                     else -> {
                         trySend(emptyList())
                     }
@@ -657,25 +660,25 @@ class DataRepositoryImpl @Inject constructor(
     }
 
     override suspend fun checkChatRoom(
-        senderUid: String,
         recipientUid: String
-    ): Flow<ChatRoomDataEntity?> {
+    ): Flow<Boolean> {
         return callbackFlow {
-            val query = db.collection(COLLECTION_CHAT).whereEqualTo("senderUid", senderUid)
+            val senderUid = auth.currentUser?.uid
+            db.collection(COLLECTION_CHAT).whereEqualTo("senderUid", senderUid)
                 .whereEqualTo("recipientUid", recipientUid)
-            query.get().addOnSuccessListener { chatData ->
-                if (chatData != null) {
-                    val snapshotList = chatData.toObjects(ChatRoomDataResponse::class.java)
-                    val chatList = mutableListOf<ChatRoomDataResponse>()
-                    chatList.addAll(snapshotList)
-                    if (chatList.isNotEmpty()) {
-                        val chatRoomDataEntity = chatList[0].toEntity()
-                        trySend(chatRoomDataEntity)
-                    } else {
-                        trySend(null)
+                .addSnapshotListener { snapshot, e ->
+                    if (e != null) {
+                        trySend(false)
+                    }
+                    if (snapshot != null) {
+                        val document = snapshot.documents
+                        if (document.size != 0) {
+                            trySend(true)
+                        } else {
+                            trySend(false)
+                        }
                     }
                 }
-            }
             awaitClose()
         }
     }

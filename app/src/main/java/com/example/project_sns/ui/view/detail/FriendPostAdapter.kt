@@ -1,8 +1,10 @@
 package com.example.project_sns.ui.view.detail
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.paging.LOG_TAG
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -19,10 +21,11 @@ class FriendPostAdapter(private val onItemClick: (PostDataModel) -> Unit) :
         private val onItemClick: (PostDataModel) -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(item: PostDataModel) {
+            Log.d("image_list", "${item.imageList}")
             if (item.imageList.isNullOrEmpty()) {
                 Glide.with(binding.root).load(item.imageList?.map { it.imageUri }).into(binding.ivItemMyPost)
             } else {
-                Glide.with(binding.root).load(item.imageList[0].imageUri).into(binding.ivItemMyPost)
+                Glide.with(binding.root).load(item.imageList[0].downloadUrl).into(binding.ivItemMyPost)
             }
 
             if (item.imageList?.size != 1) {

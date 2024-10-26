@@ -4,13 +4,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.project_sns.domain.usecase.DeleteCommentUseCase
 import com.example.project_sns.domain.usecase.DeleteReCommentUseCase
-import com.example.project_sns.domain.usecase.GetCommentDataUseCase
 import com.example.project_sns.domain.usecase.GetReCommentDataUseCase
-import com.example.project_sns.ui.mapper.toCommentListModel
 import com.example.project_sns.ui.mapper.toReCommentListModel
-import com.example.project_sns.ui.model.CommentModel
 import com.example.project_sns.ui.model.ReCommentModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow

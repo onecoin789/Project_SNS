@@ -41,8 +41,6 @@ class MainViewModel @Inject constructor(
     val postLastVisibleItem: StateFlow<Int> get() = _postLastVisibleItem
 
 
-
-
     fun getPagingData(lastVisibleItem: Flow<Int>) {
         viewModelScope.launch {
             getPagingPostUseCase(lastVisibleItem).collect { data ->

@@ -6,12 +6,14 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.project_sns.domain.usecase.AcceptFriendRequestUseCase
+import com.example.project_sns.domain.usecase.CheckRequestListUseCase
 import com.example.project_sns.domain.usecase.DeleteFriendUseCase
 import com.example.project_sns.domain.usecase.GetRequestDataUseCase
 import com.example.project_sns.domain.usecase.RejectFriendRequestUseCase
 import com.example.project_sns.ui.mapper.toRequestDataModel
 import com.example.project_sns.ui.model.RequestModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -23,6 +25,7 @@ class NotificationViewModel @Inject constructor(
     private val getRequestDataUseCase: GetRequestDataUseCase,
     private val acceptFriendUseCase: AcceptFriendRequestUseCase,
     private val rejectFriendRequestUseCase: RejectFriendRequestUseCase,
+    private val checkRequestListUseCase: CheckRequestListUseCase
 ): ViewModel() {
 
     private val _requestList = MutableLiveData<List<RequestModel>>()
@@ -34,7 +37,11 @@ class NotificationViewModel @Inject constructor(
     private val _rejectResult = MutableStateFlow<Boolean?>(null)
     val rejectResult: StateFlow<Boolean?> get() = _rejectResult
 
+    private val _checkRequestResult = MutableLiveData<Boolean>()
+    val checkRequestResult: LiveData<Boolean> get() = _checkRequestResult
 
+
+    val requestLastVisibleItem = MutableStateFlow(0)
 
     fun rejectRequest(requestId: String) {
         viewModelScope.launch {
@@ -52,11 +59,26 @@ class NotificationViewModel @Inject constructor(
         }
     }
 
-    fun getRequestList() {
+    fun getRequestList(lastVisibleItem: Flow<Int>) {
         viewModelScope.launch {
-            getRequestDataUseCase().collect { data ->
+            getRequestDataUseCase(lastVisibleItem).collect { data ->
                 _requestList.value = data.toRequestDataModel()
-                Log.d("requestList", "${requestList.value}")
+            }
+        }
+    }
+
+    fun clearRequestItem() {
+        viewModelScope.launch {
+            requestLastVisibleItem.value = 0
+            _requestList.value = emptyList()
+        }
+    }
+
+    fun checkRequestList() {
+        viewModelScope.launch {
+            checkRequestListUseCase().collect { result ->
+                _checkRequestResult.value = result
+                Log.d("check_request", "$result")
             }
         }
     }

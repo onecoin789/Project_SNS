@@ -82,7 +82,7 @@
         android:layout_marginTop="5dp"
         android:background="@drawable/item_list_point"
         android:padding="10dp"
-        android:visibility="gone"
+        android:visibility="visible"
         app:layout_constraintTop_toBottomOf="@+id/clReCommentTop">
 
         <ImageView
@@ -90,6 +90,7 @@
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_marginTop="3dp"
+            android:layout_marginStart="5dp"
             android:background="@drawable/item_profile"
             android:contentDescription="@string/contentDescription"
             android:scaleType="centerCrop"
@@ -154,6 +155,7 @@
             android:text="@string/item_comment_edit"
             android:textColor="@color/hint"
             android:textSize="14sp"
+            android:visibility="invisible"
             app:layout_constraintStart_toStartOf="@id/tvReCommentComment"
             app:layout_constraintTop_toBottomOf="@id/tvReCommentComment" />
 
@@ -165,6 +167,7 @@
             android:text="@string/item_comment_delete"
             android:textColor="@color/hint"
             android:textSize="14sp"
+            android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="@id/tvReCommentCommentEdit"
             app:layout_constraintStart_toEndOf="@id/tvReCommentCommentEdit"
             app:layout_constraintTop_toTopOf="@id/tvReCommentCommentEdit" />
@@ -175,7 +178,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toTopOf="@id/etReComment"
-        app:layout_constraintTop_toBottomOf="@id/clReCommentTop"
+        app:layout_constraintTop_toBottomOf="@id/clReCommentMid"
         tools:ignore="SpeakableTextPresentCheck">
 
         <androidx.constraintlayout.widget.ConstraintLayout

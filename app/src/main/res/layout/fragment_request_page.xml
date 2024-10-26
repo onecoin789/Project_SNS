@@ -8,12 +8,12 @@
     tools:context=".ui.view.main.notification.RequestPageFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/clFollowTop"
+        android:id="@+id/clRequestTop"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent">
     <ImageView
-        android:id="@+id/ivFollowBack"
+        android:id="@+id/ivRequestBack"
         android:layout_width="45dp"
         android:layout_height="45dp"
         android:layout_marginStart="20dp"
@@ -30,14 +30,14 @@
         android:layout_height="18dp"
         android:layout_marginEnd="3dp"
         android:background="@drawable/ic_back"
-        app:layout_constraintBottom_toBottomOf="@+id/ivFollowBack"
-        app:layout_constraintEnd_toEndOf="@+id/ivFollowBack"
-        app:layout_constraintStart_toStartOf="@+id/ivFollowBack"
-        app:layout_constraintTop_toTopOf="@+id/ivFollowBack"
+        app:layout_constraintBottom_toBottomOf="@+id/ivRequestBack"
+        app:layout_constraintEnd_toEndOf="@+id/ivRequestBack"
+        app:layout_constraintStart_toStartOf="@+id/ivRequestBack"
+        app:layout_constraintTop_toTopOf="@+id/ivRequestBack"
         android:contentDescription="@string/contentDescription"/>
 
     <TextView
-        android:id="@+id/tvFollowTitle"
+        android:id="@+id/tvRequestTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="25dp"
@@ -45,16 +45,40 @@
         android:textColor="@color/text"
         android:textSize="35sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@id/ivFollowBack"
-        app:layout_constraintStart_toEndOf="@id/ivFollowBack"
-        app:layout_constraintTop_toTopOf="@id/ivFollowBack" />
+        app:layout_constraintBottom_toBottomOf="@id/ivRequestBack"
+        app:layout_constraintStart_toEndOf="@id/ivRequestBack"
+        app:layout_constraintTop_toTopOf="@id/ivRequestBack" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvFollow"
+    <TextView
+        android:id="@+id/tvRequestIntro"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/clFollowTop"
+        android:text="@string/follow_item_intro"
+        android:textSize="18sp"
+        android:textColor="@color/hint"
+        android:gravity="center"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <ProgressBar
+        android:id="@+id/pbRequest"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvRequest"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/clRequestTop"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         tools:listitem="@layout/rv_item_follow"/>
 

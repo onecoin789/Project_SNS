@@ -107,11 +107,11 @@ class ReCommentListFragment : BaseFragment<FragmentReCommentListBinding>() {
                 binding.tvReCommentComment.text = commentData.commentData.comment
 
                 if (commentData.userData.uid == CurrentUser.userData?.uid) {
-                    binding.tvReCommentCommentEdit.visibility = View.VISIBLE
-                    binding.tvReCommentCommentDelete.visibility = View.VISIBLE
+                    binding.tvReCommentCommentEdit.visibility = View.INVISIBLE
+                    binding.tvReCommentCommentDelete.visibility = View.INVISIBLE
                 } else {
-                    binding.tvReCommentCommentEdit.visibility = View.GONE
-                    binding.tvReCommentCommentDelete.visibility = View.GONE
+                    binding.tvReCommentCommentEdit.visibility = View.INVISIBLE
+                    binding.tvReCommentCommentDelete.visibility = View.INVISIBLE
                 }
             }
         }
@@ -137,7 +137,7 @@ class ReCommentListFragment : BaseFragment<FragmentReCommentListBinding>() {
                     val dialog = BaseDialog("댓글을 삭제 하시겠습니까?", "삭제하시면 되돌릴 수 없습니다!")
                     dialog.setButtonClickListener(object : BaseDialog.DialogClickEvent {
                         override fun onClickConfirm() {
-                            getNewItem(item)
+                            getDeleteItem(item)
                         }
                     })
                     dialog.show(childFragmentManager, "dialog")
@@ -202,11 +202,30 @@ class ReCommentListFragment : BaseFragment<FragmentReCommentListBinding>() {
         }
     }
 
-    private fun getNewItem(item: ReCommentModel) {
+    private fun getDeleteItem(item: ReCommentModel) {
         CoroutineScope(Dispatchers.Main).launch {
             binding.rvReComment.visibility = View.GONE
             binding.pbReComment.visibility = View.VISIBLE
             deleteReCommentData(item)
+            delay(300)
+            commentViewModel.clearReCommentData()
+            binding.tvReCommentNone.visibility = View.GONE
+            binding.tvReCommentSuggest.visibility = View.GONE
+            delay(300)
+            val runnableRefresh = kotlinx.coroutines.Runnable {
+                getReCommentData()
+            }
+            runnableRefresh.run()
+            delay(300)
+            binding.rvReComment.visibility = View.VISIBLE
+            binding.pbReComment.visibility = View.GONE
+        }
+    }
+
+    private fun getNewItem() {
+        CoroutineScope(Dispatchers.Main).launch {
+            binding.rvReComment.visibility = View.GONE
+            binding.pbReComment.visibility = View.VISIBLE
             delay(300)
             commentViewModel.clearReCommentData()
             binding.tvReCommentNone.visibility = View.GONE
@@ -261,7 +280,7 @@ class ReCommentListFragment : BaseFragment<FragmentReCommentListBinding>() {
                 mainSharedViewModel.reCommentData.collect {
                     if (it == true) {
                         binding.etReComment.text.clear()
-                        getReCommentData()
+                        getNewItem()
                     } else if (it == false) {
                         Toast.makeText(
                             requireContext(),
@@ -281,7 +300,7 @@ class ReCommentListFragment : BaseFragment<FragmentReCommentListBinding>() {
                 mainSharedViewModel.reCommentData.collect {
                     if (it == true) {
                         binding.etReComment.text.clear()
-                        getReCommentData()
+                        getNewItem()
                         Toast.makeText(requireContext(), "댓글이 수정되었습니다.", Toast.LENGTH_SHORT)
                             .show()
                     } else if (it == false) {

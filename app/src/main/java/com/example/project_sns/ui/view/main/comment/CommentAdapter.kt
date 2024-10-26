@@ -107,6 +107,9 @@ class CommentAdapter(private val onClick: CommentItemClickListener) :
     }
 
     companion object {
+        private const val ITEM = 0
+        private const val LOADING = 1
+
         val diffUtil = object : DiffUtil.ItemCallback<CommentModel>() {
             override fun areItemsTheSame(
                 oldItem: CommentModel,
@@ -122,8 +125,6 @@ class CommentAdapter(private val onClick: CommentItemClickListener) :
                 return oldItem.commentData == newItem.commentData
             }
         }
-        private const val ITEM = 0
-        private const val LOADING = 1
     }
 }
 

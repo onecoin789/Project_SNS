@@ -5,9 +5,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.viewbinding.ViewBinding
 import com.example.project_sns.R
+import com.example.project_sns.ui.view.main.MainSharedViewModel
 
 abstract class BaseFragment<T : ViewBinding>: Fragment() {
 
@@ -23,6 +25,7 @@ abstract class BaseFragment<T : ViewBinding>: Fragment() {
     }
 
     abstract fun getFragmentBinding(inflater: LayoutInflater, container: ViewGroup?): T
+
 
     fun backButton() {
         findNavController().popBackStack()

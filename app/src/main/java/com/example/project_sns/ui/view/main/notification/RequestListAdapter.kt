@@ -8,17 +8,18 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.project_sns.R
 import com.example.project_sns.databinding.RvItemFollowBinding
+import com.example.project_sns.databinding.RvItemProgressBlackBinding
 import com.example.project_sns.ui.model.RequestModel
 
 class RequestListAdapter(private val onItemClick: FollowItemClickListener) :
-    ListAdapter<RequestModel, RequestListAdapter.FollowListViewHolder>(diffUtil) {
+    ListAdapter<RequestModel, RecyclerView.ViewHolder>(diffUtil) {
 
     interface FollowItemClickListener {
         fun onClickAcceptButton(item: RequestModel)
         fun onClickRejectButton(item: RequestModel)
     }
 
-    class FollowListViewHolder(
+    class RequestListViewHolder(
         private val binding: RvItemFollowBinding,
         private val onItemClick: FollowItemClickListener
     ) : RecyclerView.ViewHolder(binding.root) {
@@ -46,17 +47,35 @@ class RequestListAdapter(private val onItemClick: FollowItemClickListener) :
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FollowListViewHolder {
-        val binding = RvItemFollowBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return FollowListViewHolder(binding, onItemClick)
+    class ProgressViewHolder(val binding: RvItemProgressBlackBinding) : RecyclerView.ViewHolder(binding.root)
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        if (viewType == ITEM) {
+            val binding = RvItemFollowBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            return RequestListViewHolder(binding, onItemClick)
+        } else {
+            val binding = RvItemProgressBlackBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            return ProgressViewHolder(binding)
+        }
     }
 
-    override fun onBindViewHolder(holder: FollowListViewHolder, position: Int) {
-        val item = getItem(position)
-        holder.bind(item)
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        if (holder is RequestListViewHolder) {
+            holder.bind(getItem(position))
+        }
+    }
+
+    override fun getItemViewType(position: Int): Int {
+        return when (getItem(position)) {
+            null -> LOADING
+            else -> ITEM
+        }
     }
 
     companion object {
+        private const val ITEM = 0
+        private const val LOADING = 1
+
         val diffUtil = object : DiffUtil.ItemCallback<RequestModel>() {
             override fun areItemsTheSame(oldItem: RequestModel, newItem: RequestModel): Boolean {
                 return oldItem == newItem

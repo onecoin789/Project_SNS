@@ -166,6 +166,29 @@ class MainSharedViewModel @Inject constructor(
 
     // <!-- commentLine -->
 
+    fun getComment(postId: String, lastVisibleItem: Flow<Int>) {
+        _commentListData.value = emptyList()
+        viewModelScope.launch {
+            getCommentDataUseCase(postId, lastVisibleItem).collect {
+                val commentList = it.toCommentListModel()
+                _commentListData.value = commentList
+            }
+        }
+    }
+
+    fun clearCommentData() {
+        viewModelScope.launch {
+            _commentListData.value = emptyList()
+            commentLastVisibleItem.value = 0
+        }
+    }
+
+    fun deleteComment(postId: String) {
+        viewModelScope.launch {
+            deleteCommentUseCase(postId)
+        }
+    }
+
     fun setNullData() {
         viewModelScope.launch {
             _selectedCommentData.value = null
@@ -231,6 +254,7 @@ class MainSharedViewModel @Inject constructor(
 
 
     fun getFriendList(uid: String) {
+        _friendList.value = emptyList()
         viewModelScope.launch {
             getFriendListDataUseCase(uid).collect { data ->
                 _friendList.value = data.toUserDataListModel()
@@ -375,33 +399,5 @@ class MainSharedViewModel @Inject constructor(
         }
     }
 
-
-
-//    // <!-- commentLine -->
-//
-//
-    fun clearCommentData() {
-        viewModelScope.launch {
-            _commentListData.value = emptyList()
-            commentLastVisibleItem.value = 0
-        }
-    }
-
-    fun deleteComment(postId: String) {
-        viewModelScope.launch {
-            deleteCommentUseCase(postId)
-        }
-    }
-
-
-    fun getComment(postId: String, lastVisibleItem: Flow<Int>) {
-        _commentListData.value = emptyList()
-        viewModelScope.launch {
-            getCommentDataUseCase(postId, lastVisibleItem).collect {
-                val commentList = it.toCommentListModel()
-                _commentListData.value = commentList
-            }
-        }
-    }
 
 }
