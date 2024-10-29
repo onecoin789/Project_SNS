@@ -70,11 +70,10 @@ class MainSharedViewModel @Inject constructor(
     private val deleteFriendUseCase: DeleteFriendUseCase,
     private val checkFriendRequestUseCase: CheckFriendRequestUseCase,
     private val cancelFriendRequestUseCase: CancelFriendRequestUseCase,
-
     private val getCommentDataUseCase: GetCommentDataUseCase,
     private val deleteCommentUseCase: DeleteCommentUseCase,
 
-) : ViewModel() {
+    ) : ViewModel() {
 
     private val _postUpLoadResult = MutableStateFlow<Boolean?>(null)
     val postUpLoadResult: StateFlow<Boolean?> get() = _postUpLoadResult
@@ -124,9 +123,6 @@ class MainSharedViewModel @Inject constructor(
     private val _pagingData = MutableLiveData<List<PostModel>>(emptyList())
     val pagingData: LiveData<List<PostModel>> get() = _pagingData
 
-    private val _postLastVisibleItem = MutableStateFlow<Int>(0)
-    val postLastVisibleItem: StateFlow<Int> get() = _postLastVisibleItem
-
     private val _checkFriendRequest = MutableStateFlow<Boolean?>(null)
     val checkFriendRequest: StateFlow<Boolean?> get() = _checkFriendRequest
 
@@ -136,8 +132,22 @@ class MainSharedViewModel @Inject constructor(
     private val _commentListData = MutableLiveData<List<CommentModel>>(emptyList())
     val commentListData: LiveData<List<CommentModel>> get() = _commentListData
 
+    private val _chatRoomId = MutableLiveData<String?>()
+    val chatRoomId: LiveData<String?> get() = _chatRoomId
+
+
+    val homePostLastVisibleItem = MutableStateFlow(0)
 
     val commentLastVisibleItem = MutableStateFlow(0)
+
+
+    fun getChatRoomId(id: String) {
+        _chatRoomId.value = id
+    }
+
+    fun clearChatRoomId() {
+        _chatRoomId.value = null
+    }
 
     // <!-- commentPageSet -->
 
@@ -232,7 +242,6 @@ class MainSharedViewModel @Inject constructor(
             }
         }
     }
-
 
 
     fun checkFriendRequest(toUid: String) {

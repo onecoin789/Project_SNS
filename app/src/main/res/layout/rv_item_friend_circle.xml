@@ -18,7 +18,8 @@
             android:id="@+id/ivItemFriendCircle"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@drawable/item_circle_radius_100"
+            android:background="@drawable/item_profile"
+            android:scaleType="centerCrop"
             android:backgroundTint="@color/bg"
             android:contentDescription="@string/contentDescription"/>
 

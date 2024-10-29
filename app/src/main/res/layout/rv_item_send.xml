@@ -2,7 +2,8 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:background="@color/bg">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -14,34 +15,50 @@
             android:id="@+id/iv_Item_Item_Send_Profile"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:background="@drawable/ic_user_fill"
+            android:background="@drawable/item_profile"
+            android:scaleType="centerCrop"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             android:contentDescription="@string/contentDescription"/>
 
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/cl_Item_Chat_Send"
+            android:id="@+id/clItemChatSend"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="5dp"
             android:layout_marginTop="5dp"
             android:background="@drawable/item_edittext_radius"
             android:backgroundTint="@color/chat"
-            android:paddingHorizontal="17dp"
+            android:paddingStart="17dp"
+            android:paddingEnd="16dp"
             android:paddingVertical="13dp"
             app:layout_constraintStart_toEndOf="@+id/iv_Item_Item_Send_Profile"
             app:layout_constraintTop_toTopOf="@+id/iv_Item_Item_Send_Profile">
 
             <TextView
-                android:id="@+id/tv_Item_Send_Text"
+                android:id="@+id/tvItemSendText"
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
                 android:maxWidth="200dp"
                 android:textColor="@color/text"
+                android:textSize="14sp"
+                android:text="@string/test"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <TextView
+            android:id="@+id/tvItemChatSendAt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/test"
+            android:textSize="12sp"
+            android:textColor="@color/dialog_hint"
+            android:layout_marginStart="5dp"
+            android:layout_marginBottom="3dp"
+            app:layout_constraintStart_toEndOf="@+id/clItemChatSend"
+            app:layout_constraintBottom_toBottomOf="@+id/clItemChatSend"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

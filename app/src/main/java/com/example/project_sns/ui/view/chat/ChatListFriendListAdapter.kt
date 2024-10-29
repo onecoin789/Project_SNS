@@ -42,7 +42,6 @@ class ChatListFriendListAdapter(private val onItemClick: (UserDataModel) -> Unit
         holder.bind(friendData)
     }
 
-    fun getFriendList() = currentList
 
     companion object {
         val diffUtil = object : DiffUtil.ItemCallback<UserDataModel>() {

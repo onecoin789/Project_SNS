@@ -8,15 +8,20 @@ import com.example.project_sns.data.mapper.toPostListEntity
 import com.example.project_sns.data.mapper.toReCommentListEntity
 import com.example.project_sns.data.response.ChatRoomDataResponse
 import com.example.project_sns.data.response.CommentDataResponse
+import com.example.project_sns.data.response.MessageDataResponse
 import com.example.project_sns.data.response.PostDataResponse
 import com.example.project_sns.data.response.ReCommentDataResponse
 import com.example.project_sns.data.response.UserDataResponse
+import com.example.project_sns.data.response.toChatRoomListEntity
 import com.example.project_sns.data.response.toEntity
+import com.example.project_sns.data.response.toMessageListEntity
 import com.example.project_sns.domain.entity.ChatRoomDataEntity
+import com.example.project_sns.domain.entity.ChatRoomEntity
 import com.example.project_sns.domain.entity.CommentDataEntity
 import com.example.project_sns.domain.entity.CommentEntity
 import com.example.project_sns.domain.entity.ImageDataEntity
 import com.example.project_sns.domain.entity.MessageDataEntity
+import com.example.project_sns.domain.entity.MessageEntity
 import com.example.project_sns.domain.entity.PostDataEntity
 import com.example.project_sns.domain.entity.PostEntity
 import com.example.project_sns.domain.entity.ReCommentDataEntity
@@ -24,6 +29,7 @@ import com.example.project_sns.domain.entity.ReCommentEntity
 import com.example.project_sns.domain.repository.DataRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.storage.FirebaseStorage
@@ -663,22 +669,50 @@ class DataRepositoryImpl @Inject constructor(
         recipientUid: String
     ): Flow<Boolean> {
         return callbackFlow {
+            val participant = arrayListOf<String>()
             val senderUid = auth.currentUser?.uid
-            db.collection(COLLECTION_CHAT).whereEqualTo("senderUid", senderUid)
-                .whereEqualTo("recipientUid", recipientUid)
-                .addSnapshotListener { snapshot, e ->
-                    if (e != null) {
-                        trySend(false)
-                    }
-                    if (snapshot != null) {
-                        val document = snapshot.documents
-                        if (document.size != 0) {
-                            trySend(true)
-                        } else {
-                            trySend(false)
+            if (senderUid != null) {
+                participant.add(senderUid)
+                participant.add(recipientUid)
+                db.collection(COLLECTION_CHAT)
+                    .whereEqualTo("participant", participant)
+                    .get().addOnSuccessListener { snapshot ->
+                        if (snapshot != null) {
+                            val document = snapshot.documents
+                            if (document.size != 0) {
+                                trySend(true)
+                            } else {
+                                trySend(false)
+                            }
                         }
                     }
-                }
+            }
+            awaitClose()
+        }
+    }
+
+    override suspend fun getChatRoomData(recipientUid: String): Flow<ChatRoomDataEntity?> {
+        return callbackFlow {
+            val participant = arrayListOf<String>()
+            val senderUid = auth.currentUser?.uid
+            if (senderUid != null) {
+                participant.add(senderUid)
+                participant.add(recipientUid)
+                db.collection(COLLECTION_CHAT).whereEqualTo("participant", participant)
+                    .addSnapshotListener { chatRoomData, e ->
+                        if (e != null) {
+                            trySend(null)
+                        }
+                        if (chatRoomData != null) {
+                            val chatRoomEntity =
+                                chatRoomData.toObjects(ChatRoomDataResponse::class.java).first()
+                                    .toEntity()
+                            trySend(chatRoomEntity)
+                        } else {
+                            trySend(null)
+                        }
+                    }
+            }
             awaitClose()
         }
     }
@@ -691,10 +725,16 @@ class DataRepositoryImpl @Inject constructor(
     ): Flow<Boolean> {
         return flow {
             try {
+                val participant = arrayListOf<String>()
+                participant.add(senderUid)
+                participant.add(recipientUid)
                 val chatRoomData = hashMapOf(
                     "chatRoomId" to chatRoomId,
-                    "senderUid" to senderUid,
-                    "recipientUid" to recipientUid
+                    "participant" to participant,
+//                    "senderUid" to senderUid,
+//                    "recipientUid" to recipientUid
+                    "lastMessage" to messageData.message,
+                    "lastSendAt" to messageData.sendAt
                 )
                 val chatRoomDB = db.collection(COLLECTION_CHAT).document(chatRoomId)
 
@@ -713,16 +753,79 @@ class DataRepositoryImpl @Inject constructor(
         chatRoomId: String,
         messageData: MessageDataEntity
     ): Flow<Boolean> {
-        return flow {
+        return callbackFlow {
             try {
                 val chatRoomDB = db.collection(COLLECTION_CHAT).document(chatRoomId)
                 val messageDB =
                     chatRoomDB.collection(COLLECTION_CHAT_MESSAGE).document(messageData.messageId)
-                messageDB.set(messageData).await()
-                emit(true)
+                messageDB.set(messageData).addOnSuccessListener {
+                    chatRoomDB.update("lastMessage", messageData.message)
+                    chatRoomDB.update("lastSendAt", messageData.sendAt)
+                    trySend(true)
+                }
             } catch (e: Exception) {
-                emit(false)
+                trySend(false)
             }
+            awaitClose()
+        }
+    }
+
+    override suspend fun getChatRoomList(): Flow<List<ChatRoomEntity>> {
+        return callbackFlow {
+            val currentUser = auth.currentUser?.uid
+            val chatRoomList = mutableListOf<ChatRoomEntity>()
+            if (currentUser != null) {
+                db.collection(COLLECTION_CHAT).whereArrayContains("participant", currentUser).addSnapshotListener { snapshot, e ->
+                    if (e != null) {
+                        trySend(emptyList())
+                    }
+                    if (snapshot != null) {
+                        val chatRoomData = snapshot.toObjects(ChatRoomDataResponse::class.java).toChatRoomListEntity()
+                        chatRoomData.map { chatRoomEntity ->
+                            val userData = chatRoomEntity.participant.minus(currentUser).first()
+                            db.collection(COLLECTION_USER).document(userData).get().addOnSuccessListener { userResponse ->
+                                val userEntity = userResponse.toObject(UserDataResponse::class.java)?.toEntity()
+                                if (userEntity != null) {
+                                    chatRoomList.addAll(listOf(ChatRoomEntity(userEntity, chatRoomEntity)))
+                                }
+                                trySend(chatRoomList)
+                            }
+                        }
+                    }
+                }
+            }
+            awaitClose()
+        }
+    }
+
+    override suspend fun getChatMessageData(chatRoomId: String): Flow<List<MessageEntity>> {
+        return callbackFlow {
+            val messageList = mutableListOf<MessageEntity>()
+            val messageDocuments = mutableListOf<DocumentSnapshot>()
+            db.collection(COLLECTION_CHAT).document(chatRoomId).collection(COLLECTION_CHAT_MESSAGE)
+                .whereEqualTo("chatRoomId", chatRoomId).orderBy("sendAt", Query.Direction.ASCENDING)
+                .addSnapshotListener { snapshot, e ->
+                    if (e != null) {
+                        trySend(emptyList())
+                    }
+                    if (snapshot != null) {
+                        val documents = snapshot.documents
+                        val messageListEntity = snapshot.toObjects(MessageDataResponse::class.java)
+                            .toMessageListEntity()
+                        messageListEntity.map { messageEntity ->
+                            db.collection(COLLECTION_USER).document(messageEntity.uid).get()
+                                .addOnSuccessListener { userData ->
+                                    val userEntity = userData.toObject(UserDataResponse::class.java)?.toEntity()
+                                    if (userEntity != null) {
+                                        messageList.addAll(listOf(MessageEntity(userEntity, messageEntity)))
+                                    }
+                                    messageDocuments.addAll(documents)
+                                    trySend(messageList)
+                                }
+                        }
+                    }
+                }
+            awaitClose()
         }
     }
 }

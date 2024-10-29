@@ -85,15 +85,20 @@ class MainHomeFragment : BaseFragment<FragmentMainHomeBinding>() {
 
     private fun refreshLayout() {
         binding.refreshLayoutHome.setOnRefreshListener {
-            CoroutineScope(Dispatchers.Default).launch {
-                postAdapter.submitList(emptyList())
-                refreshRecyclerView()
-            }
             CoroutineScope(Dispatchers.Main).launch {
-                delay(1000)
+                binding.clHomeItemMore.visibility = View.GONE
+                binding.rvHome.visibility = View.GONE
                 refreshRecyclerView()
+                delay(500)
+                getPostData()
+                mainViewModel.postLastVisibleItem(0)
+                initRv()
+                delay(1000)
+                binding.rvHome.visibility = View.VISIBLE
+                binding.clHomeItemMore.visibility = View.VISIBLE
                 binding.refreshLayoutHome.isRefreshing = false
             }
+            // FIXME: 새로고침 후 more item 안됨
         }
     }
 
@@ -110,13 +115,11 @@ class MainHomeFragment : BaseFragment<FragmentMainHomeBinding>() {
             override fun onClickProfileImageItem(item: PostModel) {
                 getDataByUid(item)
                 findNavController().navigate(R.id.action_mainFragment_to_friendDetailFragment)
-                refreshRecyclerView()
             }
 
             override fun onClickProfileNameItem(item: PostModel) {
                 getDataByUid(item)
                 findNavController().navigate(R.id.action_mainFragment_to_friendDetailFragment)
-                refreshRecyclerView()
             }
 
         })
@@ -134,6 +137,7 @@ class MainHomeFragment : BaseFragment<FragmentMainHomeBinding>() {
                         binding.clHomeItemMore.setOnClickListener {
                             lifecycleScope.launch {
                                 moreItem(lastVisible)
+                                // FIXME: 하단에 위치하면 계속해서 more item 하는 버그있음 수정필요
                             }
                         }
                     }
@@ -148,11 +152,6 @@ class MainHomeFragment : BaseFragment<FragmentMainHomeBinding>() {
             postAdapter.submitList(postList)
             postAdapter.notifyItemInserted(data.size - 1)
 
-            if (data.isNotEmpty() && data != null) {
-                binding.clHomeItemMore.visibility = View.VISIBLE
-            } else {
-                binding.clHomeItemMore.visibility = View.GONE
-            }
             Log.d("test_view", "$data")
         }
     }

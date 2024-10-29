@@ -1,9 +1,11 @@
 package com.example.project_sns.domain.repository
 
 import com.example.project_sns.domain.entity.ChatRoomDataEntity
+import com.example.project_sns.domain.entity.ChatRoomEntity
 import com.example.project_sns.domain.entity.CommentDataEntity
 import com.example.project_sns.domain.entity.CommentEntity
 import com.example.project_sns.domain.entity.MessageDataEntity
+import com.example.project_sns.domain.entity.MessageEntity
 import com.example.project_sns.domain.entity.PostDataEntity
 import com.example.project_sns.domain.entity.PostEntity
 import com.example.project_sns.domain.entity.ReCommentDataEntity
@@ -39,8 +41,14 @@ interface DataRepository {
 
     suspend fun checkChatRoom(recipientUid: String): Flow<Boolean>
 
+    suspend fun getChatRoomData(recipientUid: String): Flow<ChatRoomDataEntity?>
+
     suspend fun sendFirstMessage(chatRoomId: String, senderUid: String, recipientUid: String, messageData: MessageDataEntity): Flow<Boolean>
 
     suspend fun sendMessage(chatRoomId: String, messageData: MessageDataEntity): Flow<Boolean>
+
+    suspend fun getChatRoomList(): Flow<List<ChatRoomEntity>>
+
+    suspend fun getChatMessageData(chatRoomId: String): Flow<List<MessageEntity>>
 
 }
