@@ -1,6 +1,8 @@
 package com.example.project_sns.ui.model
 
 import android.os.Parcelable
+import com.example.project_sns.domain.entity.MessageDataEntity
+import com.example.project_sns.domain.entity.UserDataEntity
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
@@ -26,4 +28,16 @@ data class RequestModel(
     val requestId: String,
     val fromUid: UserDataModel,
     val toUid: String
+): Parcelable
+
+@Parcelize
+data class ChatRoomModel(
+    val userData: UserDataModel,
+    val chatRoomData: ChatRoomDataModel
+): Parcelable
+
+@Parcelize
+data class MessageModel(
+    val userData: UserDataModel,
+    val messageData: MessageDataModel
 ): Parcelable

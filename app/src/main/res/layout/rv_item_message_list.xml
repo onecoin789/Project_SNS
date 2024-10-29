@@ -5,7 +5,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/cl_Item_List_T"
+        android:id="@+id/clItemList"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
@@ -14,47 +14,64 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
-            android:id="@+id/iv_Item_List_Profile"
+            android:id="@+id/ivItemListProfile"
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:background="@drawable/ic_user_fill"
+            android:background="@drawable/item_profile"
+            android:scaleType="centerCrop"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             android:contentDescription="@string/contentDescription"/>
 
         <TextView
-            android:id="@+id/tv_Item_List_Name"
+            android:id="@+id/tvItemListName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="15dp"
             android:textColor="@color/text"
-            android:textSize="20sp"
+            android:textSize="18sp"
+            android:text="@string/test"
             android:textStyle="bold"
-            app:layout_constraintStart_toEndOf="@+id/iv_Item_List_Profile"
-            app:layout_constraintTop_toTopOf="@+id/iv_Item_List_Profile"
-            app:layout_constraintBottom_toBottomOf="@+id/iv_Item_List_Profile"/>
+            android:layout_marginTop="3dp"
+            app:layout_constraintStart_toEndOf="@+id/ivItemListProfile"
+            app:layout_constraintTop_toTopOf="@+id/ivItemListProfile"
+            app:layout_constraintBottom_toTopOf="@+id/tvItemListMessage"/>
 
         <TextView
-            android:id="@+id/tv_Item_List"
+            android:id="@+id/tvItemListMessage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/text"
+            android:textSize="16sp"
+            android:text="@string/test"
+            android:textStyle="bold"
+            android:layout_marginTop="3dp"
+            android:layout_marginStart="1dp"
+            app:layout_constraintStart_toStartOf="@+id/tvItemListName"
+            app:layout_constraintTop_toBottomOf="@+id/tvItemListName"
+            app:layout_constraintBottom_toBottomOf="@+id/ivItemListProfile"/>
+
+        <TextView
+            android:id="@+id/tvItemLast"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/item_time"
             android:textColor="@color/hint"
-            android:textSize="18sp"
-            android:layout_marginTop="20dp"
-            app:layout_constraintTop_toBottomOf="@+id/tv_Item_List_Name"
-            app:layout_constraintStart_toStartOf="@id/tv_Item_List_Name"/>
+            android:textSize="16sp"
+            android:layout_marginTop="10dp"
+            app:layout_constraintTop_toBottomOf="@+id/tvItemListMessage"
+            app:layout_constraintStart_toStartOf="@id/tvItemListName"/>
 
         <TextView
-            android:id="@+id/tv_Item_List_Time"
+            android:id="@+id/tvItemListTime"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/hint"
-            android:textSize="18sp"
+            android:textSize="16sp"
             android:layout_marginStart="15dp"
-            app:layout_constraintStart_toEndOf="@+id/tv_Item_List"
-            app:layout_constraintTop_toTopOf="@id/tv_Item_List"
-            app:layout_constraintBottom_toBottomOf="@id/tv_Item_List"/>
+            app:layout_constraintStart_toEndOf="@+id/tvItemLast"
+            app:layout_constraintTop_toTopOf="@id/tvItemLast"
+            app:layout_constraintBottom_toBottomOf="@id/tvItemLast"/>
 
 
 

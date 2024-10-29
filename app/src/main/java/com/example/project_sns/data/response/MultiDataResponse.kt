@@ -20,3 +20,13 @@ data class RequestResponse(
     val fromUid: UserDataResponse,
     val toUid: String = ""
 )
+
+data class ChatRoomResponse(
+    val userData: UserDataResponse,
+    val chatRoomData: ChatRoomDataResponse
+)
+
+data class MessageResponse(
+    val userData: UserDataResponse,
+    val messageData: MessageDataResponse
+)

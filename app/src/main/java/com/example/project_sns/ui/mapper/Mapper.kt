@@ -1,5 +1,6 @@
 package com.example.project_sns.ui.mapper
 
+import com.example.project_sns.domain.entity.ChatRoomEntity
 import com.example.project_sns.domain.entity.CommentDataEntity
 import com.example.project_sns.domain.entity.CommentEntity
 import com.example.project_sns.domain.entity.FriendDataEntity
@@ -8,6 +9,7 @@ import com.example.project_sns.domain.entity.KakaoDocumentsEntity
 import com.example.project_sns.domain.entity.KakaoMapEntity
 import com.example.project_sns.domain.entity.KakaoMetaEntity
 import com.example.project_sns.domain.entity.MapDataEntity
+import com.example.project_sns.domain.entity.MessageEntity
 import com.example.project_sns.domain.entity.PostDataEntity
 import com.example.project_sns.domain.entity.PostEntity
 import com.example.project_sns.domain.entity.ReCommentDataEntity
@@ -15,6 +17,7 @@ import com.example.project_sns.domain.entity.ReCommentEntity
 import com.example.project_sns.domain.entity.RequestDataEntity
 import com.example.project_sns.domain.entity.RequestEntity
 import com.example.project_sns.domain.entity.UserDataEntity
+import com.example.project_sns.ui.model.ChatRoomModel
 import com.example.project_sns.ui.util.PostImageType
 import com.example.project_sns.ui.model.CommentDataModel
 import com.example.project_sns.ui.model.CommentModel
@@ -24,6 +27,7 @@ import com.example.project_sns.ui.model.KakaoDocumentsModel
 import com.example.project_sns.ui.model.KakaoMapModel
 import com.example.project_sns.ui.model.KakaoMetaModel
 import com.example.project_sns.ui.model.MapDataModel
+import com.example.project_sns.ui.model.MessageModel
 import com.example.project_sns.ui.model.PostDataModel
 import com.example.project_sns.ui.model.PostModel
 import com.example.project_sns.ui.model.ReCommentDataModel
@@ -31,6 +35,7 @@ import com.example.project_sns.ui.model.ReCommentModel
 import com.example.project_sns.ui.model.RequestDataModel
 import com.example.project_sns.ui.model.RequestModel
 import com.example.project_sns.ui.model.UserDataModel
+import com.example.project_sns.ui.model.toModel
 
 // <!---------- Firebase ---------->
 
@@ -189,6 +194,16 @@ fun FriendDataEntity.toModel() = FriendDataModel(
     friendList = friendList
 )
 
+fun ChatRoomEntity.toModel() = ChatRoomModel(
+    userData = userData.toModel(),
+    chatRoomData = chatRoomData.toModel()
+)
+
+fun MessageEntity.toModel() = MessageModel(
+    userData = userData.toModel(),
+    messageData = messageData.toModel()
+)
+
 
 
 
@@ -236,6 +251,14 @@ fun List<FriendDataEntity>.toFriendListModel(): List<FriendDataModel> {
 }
 
 fun List<UserDataEntity>.toUserDataListModel(): List<UserDataModel> {
+    return this.map { it.toModel() }
+}
+
+fun List<ChatRoomEntity>.toChatRoomListModel(): List<ChatRoomModel> {
+    return this.map { it.toModel() }
+}
+
+fun List<MessageEntity>.toMessageListModel(): List<MessageModel> {
     return this.map { it.toModel() }
 }
 
