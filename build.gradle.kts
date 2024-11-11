@@ -11,6 +11,8 @@ plugins {
     alias(libs.plugins.jetbrainsKotlinAndroid) apply false
     alias(libs.plugins.ksp) apply false
     alias(libs.plugins.googleDaggerHiltAndroid) apply false
-    id("com.google.gms.google-services") version "4.4.2" apply false
-    id("com.google.firebase.crashlytics") version "2.9.9" apply false
+    alias(libs.plugins.googleGmsGoogleServices) apply false
+    alias(libs.plugins.firebaseCrashlytics) apply false
+//    id("com.google.gms.google-services") version "4.4.2" apply false
+//    id("com.google.firebase.crashlytics") version "2.9.9" apply false
 }

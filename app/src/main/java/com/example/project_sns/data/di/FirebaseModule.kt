@@ -3,6 +3,8 @@ package com.example.project_sns.data.di
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.functions.FirebaseFunctions
+import com.google.firebase.messaging.FirebaseMessaging
+import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.storage.FirebaseStorage
 import dagger.Module
 import dagger.Provides
@@ -32,5 +34,10 @@ object FirebaseModule {
     @Singleton
     fun provideFirebaseFunction(): FirebaseFunctions =
         FirebaseFunctions.getInstance("asia-northeast3")
+
+    @Provides
+    @Singleton
+    fun provideFirebaseMessaging(): FirebaseMessaging =
+        FirebaseMessaging.getInstance()
 
 }

@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.project_sns.domain.usecase.CheckChatRoomDataUseCase
+import com.example.project_sns.domain.usecase.CheckMessageDataUseCase
 import com.example.project_sns.domain.usecase.GetChatMessageDataUseCase
 import com.example.project_sns.domain.usecase.GetChatRoomDataUseCase
 import com.example.project_sns.domain.usecase.GetChatRoomListUseCase
@@ -19,6 +20,8 @@ import com.example.project_sns.ui.model.MessageModel
 import com.example.project_sns.ui.model.toEntity
 import com.example.project_sns.ui.model.toModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -29,6 +32,7 @@ class ChatViewModel @Inject constructor(
     private val sendFirstMessageUseCase: SendFirstMessageUseCase,
     private val getChatRoomDataUseCase: GetChatRoomDataUseCase,
     private val getChatRoomListUseCase: GetChatRoomListUseCase,
+    private val checkMessageDataUseCase: CheckMessageDataUseCase,
     private val getChatMessageDataUseCase: GetChatMessageDataUseCase
 ): ViewModel() {
 
@@ -47,9 +51,19 @@ class ChatViewModel @Inject constructor(
     private val _chatRoomList = MutableLiveData<List<ChatRoomModel>>()
     val chatRoomList: LiveData<List<ChatRoomModel>> get() = _chatRoomList
 
+    private val _checkMessageDataResult = MutableLiveData<Boolean>()
+    val checkMessageDataResult: LiveData<Boolean> get() = _checkMessageDataResult
+
     private val _messageList = MutableLiveData<List<MessageModel>>()
     val messageList: LiveData<List<MessageModel>> get() = _messageList
 
+    val messageLastVisibleItem = MutableStateFlow<Int>(0)
+
+
+    fun clearMessageList() {
+        _messageList.value = emptyList()
+        messageLastVisibleItem.value = 0
+    }
 
     fun getChatRoomList() {
         viewModelScope.launch {
@@ -60,9 +74,17 @@ class ChatViewModel @Inject constructor(
         }
     }
 
-    fun getMessageList(chatRoomId: String) {
+    fun checkMessageData(chatRoomId: String) {
         viewModelScope.launch {
-            getChatMessageDataUseCase(chatRoomId).collect { messageData ->
+            checkMessageDataUseCase(chatRoomId).collect { result ->
+                _checkMessageDataResult.value = result
+            }
+        }
+    }
+
+    fun getMessageList(chatRoomId: String, lastVisibleItem: Flow<Int>) {
+        viewModelScope.launch {
+            getChatMessageDataUseCase(chatRoomId, lastVisibleItem).collect { messageData ->
                 val messageList = messageData.toMessageListModel()
                 _messageList.value = messageList
             }
