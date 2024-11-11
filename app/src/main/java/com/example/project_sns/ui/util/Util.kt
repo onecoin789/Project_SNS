@@ -1,6 +1,5 @@
 package com.example.project_sns.ui.util
 
-import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 

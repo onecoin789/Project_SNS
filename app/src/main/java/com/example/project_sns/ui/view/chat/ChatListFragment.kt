@@ -84,7 +84,7 @@ class ChatListFragment : BaseFragment<FragmentChatListBinding>() {
 
     private fun initRv() {
         friendListAdapter = ChatListFriendListAdapter { data ->
-            checkChatRoom(data)
+            checkChatRoomExist(data)
         }
         with(binding.rvChatListFriend) {
             LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
@@ -97,6 +97,7 @@ class ChatListFragment : BaseFragment<FragmentChatListBinding>() {
 
             mainSharedViewModel.getChatRoomId(chatRoomId)
             chatSharedViewModel.getChatRoomData(userData.uid)
+            chatSharedViewModel.checkChatRoomExist(userData.uid)
             onClickFriendList(userData)
 
         }
@@ -114,18 +115,18 @@ class ChatListFragment : BaseFragment<FragmentChatListBinding>() {
     }
 
     private fun checkFirst(userData: UserDataModel) {
-        chatViewModel.checkChatRoom(userData.uid)
+        chatSharedViewModel.checkChatRoomExist(userData.uid)
     }
 
     private fun getChatRoomData(userData: UserDataModel) {
         chatViewModel.getChatRoomData(userData.uid)
     }
 
-    private fun checkChatRoom(userData: UserDataModel) {
+    private fun checkChatRoomExist(userData: UserDataModel) {
         CoroutineScope(Dispatchers.Main).launch {
             checkFirst(userData)
             delay(200)
-            chatViewModel.checkChatRoomData.observe(viewLifecycleOwner) { result ->
+            chatSharedViewModel.checkChatRoomData.observe(viewLifecycleOwner) { result ->
                 if (result == true) {
                     getChatRoomData(userData)
                     chatViewModel.chatRoomData.observe(viewLifecycleOwner) { data ->
@@ -134,7 +135,7 @@ class ChatListFragment : BaseFragment<FragmentChatListBinding>() {
                             onClickFriendList(userData)
                         }
                     }
-                } else {
+                } else if (result == false) {
                     onClickFriendList(userData)
                 }
             }

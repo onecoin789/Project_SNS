@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class GetChatMessageDataUseCase @Inject constructor(private val dataRepository: DataRepository) {
-    suspend operator fun invoke(chatRoomId: String): Flow<List<MessageEntity>> {
-        return dataRepository.getChatMessageData(chatRoomId)
+    suspend operator fun invoke(chatRoomId: String, lastVisibleItem: Flow<Int>): Flow<List<MessageEntity>> {
+        return dataRepository.getChatMessageData(chatRoomId, lastVisibleItem)
     }
 }

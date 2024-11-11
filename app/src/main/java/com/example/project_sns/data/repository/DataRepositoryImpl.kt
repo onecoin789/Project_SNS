@@ -32,6 +32,7 @@ import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
+import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.channels.onSuccess
@@ -54,7 +55,8 @@ private const val TAG = "data_repo_impl"
 class DataRepositoryImpl @Inject constructor(
     private val auth: FirebaseAuth,
     private val db: FirebaseFirestore,
-    private val storage: FirebaseStorage
+    private val storage: FirebaseStorage,
+    private val messaging: FirebaseMessaging
 ) : DataRepository {
     override suspend fun uploadPost(postData: PostDataEntity): Flow<Boolean> {
         return flow {
@@ -680,8 +682,10 @@ class DataRepositoryImpl @Inject constructor(
                         if (snapshot != null) {
                             val document = snapshot.documents
                             if (document.size != 0) {
+                                Log.d("check_chat", "$document")
                                 trySend(true)
                             } else {
+                                Log.d("check_chat", "$document")
                                 trySend(false)
                             }
                         }
@@ -692,13 +696,14 @@ class DataRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getChatRoomData(recipientUid: String): Flow<ChatRoomDataEntity?> {
+        // FIXME: List가 비었다고 나옴 로직 없애거나 완전 수정 필요
         return callbackFlow {
             val participant = arrayListOf<String>()
             val senderUid = auth.currentUser?.uid
             if (senderUid != null) {
                 participant.add(senderUid)
                 participant.add(recipientUid)
-                db.collection(COLLECTION_CHAT).whereEqualTo("participant", participant)
+               db.collection(COLLECTION_CHAT).whereEqualTo("participant", participant)
                     .addSnapshotListener { chatRoomData, e ->
                         if (e != null) {
                             trySend(null)
@@ -753,20 +758,18 @@ class DataRepositoryImpl @Inject constructor(
         chatRoomId: String,
         messageData: MessageDataEntity
     ): Flow<Boolean> {
-        return callbackFlow {
+        return flow {
             try {
                 val chatRoomDB = db.collection(COLLECTION_CHAT).document(chatRoomId)
-                val messageDB =
-                    chatRoomDB.collection(COLLECTION_CHAT_MESSAGE).document(messageData.messageId)
+                val messageDB = chatRoomDB.collection(COLLECTION_CHAT_MESSAGE).document(messageData.messageId)
                 messageDB.set(messageData).addOnSuccessListener {
                     chatRoomDB.update("lastMessage", messageData.message)
                     chatRoomDB.update("lastSendAt", messageData.sendAt)
-                    trySend(true)
                 }
+                emit(true)
             } catch (e: Exception) {
-                trySend(false)
+                emit(false)
             }
-            awaitClose()
         }
     }
 
@@ -775,10 +778,10 @@ class DataRepositoryImpl @Inject constructor(
             val currentUser = auth.currentUser?.uid
             val chatRoomList = mutableListOf<ChatRoomEntity>()
             if (currentUser != null) {
-                db.collection(COLLECTION_CHAT).whereArrayContains("participant", currentUser).addSnapshotListener { snapshot, e ->
-                    if (e != null) {
-                        trySend(emptyList())
-                    }
+                db.collection(COLLECTION_CHAT).whereArrayContains("participant", currentUser).get().addOnSuccessListener { snapshot ->
+//                    if (e != null) {
+//                        trySend(emptyList())
+//                    }
                     if (snapshot != null) {
                         val chatRoomData = snapshot.toObjects(ChatRoomDataResponse::class.java).toChatRoomListEntity()
                         chatRoomData.map { chatRoomEntity ->
@@ -798,33 +801,107 @@ class DataRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getChatMessageData(chatRoomId: String): Flow<List<MessageEntity>> {
+    override suspend fun checkMessageData(chatRoomId: String): Flow<Boolean> {
+        return callbackFlow {
+            val query = db.collection(COLLECTION_CHAT).document(chatRoomId)
+                .collection(COLLECTION_CHAT_MESSAGE).whereEqualTo("chatRoomId", chatRoomId)
+            query.addSnapshotListener { snapshot, e ->
+                if (e != null) {
+                    trySend(false)
+                }
+                if (snapshot != null) {
+                    val document = snapshot.documents.size
+                    if (document != 0) {
+                        trySend(true)
+                    } else {
+                        trySend(false)
+                    }
+                }
+            }
+            awaitClose()
+        }
+    }
+
+    override suspend fun getChatMessageData(chatRoomId: String, lastVisibleItem: Flow<Int>): Flow<List<MessageEntity>> {
         return callbackFlow {
             val messageList = mutableListOf<MessageEntity>()
             val messageDocuments = mutableListOf<DocumentSnapshot>()
-            db.collection(COLLECTION_CHAT).document(chatRoomId).collection(COLLECTION_CHAT_MESSAGE)
-                .whereEqualTo("chatRoomId", chatRoomId).orderBy("sendAt", Query.Direction.ASCENDING)
-                .addSnapshotListener { snapshot, e ->
-                    if (e != null) {
-                        trySend(emptyList())
-                    }
-                    if (snapshot != null) {
-                        val documents = snapshot.documents
-                        val messageListEntity = snapshot.toObjects(MessageDataResponse::class.java)
-                            .toMessageListEntity()
-                        messageListEntity.map { messageEntity ->
-                            db.collection(COLLECTION_USER).document(messageEntity.uid).get()
-                                .addOnSuccessListener { userData ->
-                                    val userEntity = userData.toObject(UserDataResponse::class.java)?.toEntity()
-                                    if (userEntity != null) {
-                                        messageList.addAll(listOf(MessageEntity(userEntity, messageEntity)))
-                                    }
-                                    messageDocuments.addAll(documents)
-                                    trySend(messageList)
+            val query = db.collection(COLLECTION_CHAT).document(chatRoomId)
+                .collection(COLLECTION_CHAT_MESSAGE)
+                .whereEqualTo("chatRoomId", chatRoomId)
+                .orderBy("sendAt", Query.Direction.ASCENDING)
+
+            lastVisibleItem.collect { lastVisibleItem ->
+                when (lastVisibleItem) {
+                    0 -> query.limit(10)
+                        .addSnapshotListener { snapshot, e ->
+                            if (e != null) {
+                                trySend(emptyList())
+                            }
+                            if (snapshot != null) {
+                                val documents = snapshot.documents
+                                val messageListEntity =
+                                    snapshot.toObjects(MessageDataResponse::class.java)
+                                        .toMessageListEntity()
+                                messageListEntity.map { messageEntity ->
+                                    db.collection(COLLECTION_USER).document(messageEntity.uid).get()
+                                        .addOnSuccessListener { userData ->
+                                            val userEntity =
+                                                userData.toObject(UserDataResponse::class.java)
+                                                    ?.toEntity()
+                                            if (userEntity != null) {
+                                                messageList.addAll(
+                                                    listOf(
+                                                        MessageEntity(
+                                                            userEntity,
+                                                            messageEntity
+                                                        )
+                                                    )
+                                                )
+                                            }
+                                            messageDocuments.addAll(documents)
+                                            trySend(messageList)
+                                        }
                                 }
+                            }
+                        }
+
+                    messageList.size -> query.startAfter(messageDocuments.last()).limit(10).addSnapshotListener { snapshot, e ->
+                        if (e != null) {
+                            trySend(emptyList())
+                        }
+                        if (snapshot != null) {
+                            val documents = snapshot.documents
+                            val messageListEntity =
+                                snapshot.toObjects(MessageDataResponse::class.java)
+                                    .toMessageListEntity()
+                            messageListEntity.map { messageEntity ->
+                                db.collection(COLLECTION_USER).document(messageEntity.uid).get()
+                                    .addOnSuccessListener { userData ->
+                                        val userEntity =
+                                            userData.toObject(UserDataResponse::class.java)
+                                                ?.toEntity()
+                                        if (userEntity != null) {
+                                            messageList.addAll(
+                                                listOf(
+                                                    MessageEntity(
+                                                        userEntity,
+                                                        messageEntity
+                                                    )
+                                                )
+                                            )
+                                        }
+                                        messageDocuments.addAll(documents)
+                                        trySend(messageList)
+                                    }
+                            }
                         }
                     }
+                    else -> {
+                        Log.d("message_else", "message_else")
+                    }
                 }
+            }
             awaitClose()
         }
     }
