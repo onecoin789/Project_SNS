@@ -2,6 +2,7 @@ package com.example.project_sns.ui.model
 
 import android.os.Parcelable
 import com.example.project_sns.domain.entity.MessageDataEntity
+import com.example.project_sns.ui.CurrentUser
 import com.example.project_sns.ui.util.chatTimeFormat
 import com.example.project_sns.ui.util.stringToLocalTime
 import kotlinx.parcelize.Parcelize
@@ -26,4 +27,17 @@ fun MessageDataModel.toEntity() = MessageDataEntity(
 
 fun List<MessageDataEntity>.toMessageListModel(): List<MessageDataModel> {
     return this.map { it.toModel() }
+}
+
+enum class MessageType {
+    CURRENT_USER,
+    OTHER_USER
+}
+
+fun MessageModel.toType(): MessageType {
+    return if (this.userData.uid == CurrentUser.userData?.uid) {
+        MessageType.CURRENT_USER
+    } else {
+        MessageType.OTHER_USER
+    }
 }

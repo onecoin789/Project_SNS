@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/bg">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -12,7 +12,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
-            android:id="@+id/iv_Item_Item_Send_Profile"
+            android:id="@+id/ivItemItemSendProfile"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:background="@drawable/item_profile"
@@ -33,11 +33,11 @@
             android:paddingStart="17dp"
             android:paddingEnd="16dp"
             android:paddingVertical="13dp"
-            app:layout_constraintStart_toEndOf="@+id/iv_Item_Item_Send_Profile"
-            app:layout_constraintTop_toTopOf="@+id/iv_Item_Item_Send_Profile">
+            app:layout_constraintStart_toEndOf="@+id/ivItemItemSendProfile"
+            app:layout_constraintTop_toTopOf="@+id/ivItemItemSendProfile">
 
             <TextView
-                android:id="@+id/tvItemSendText"
+                android:id="@+id/tvItemChatSendText"
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
                 android:maxWidth="200dp"
@@ -59,6 +59,44 @@
             android:layout_marginBottom="3dp"
             app:layout_constraintStart_toEndOf="@+id/clItemChatSend"
             app:layout_constraintBottom_toBottomOf="@+id/clItemChatSend"/>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/clItemChatReceive"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/item_edittext_radius"
+            android:backgroundTint="@color/point"
+            android:paddingStart="17dp"
+            android:paddingEnd="16dp"
+            android:paddingVertical="13dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/tvItemChatReceiveText"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:maxWidth="200dp"
+                android:text="@string/test"
+                android:textSize="14sp"
+                android:textColor="@color/text"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <TextView
+            android:id="@+id/tvItemChatReceiveAt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/test"
+            android:textSize="12sp"
+            android:textColor="@color/dialog_hint"
+            android:layout_marginEnd="5dp"
+            android:layout_marginBottom="3dp"
+            app:layout_constraintEnd_toStartOf="@+id/clItemChatReceive"
+            app:layout_constraintBottom_toBottomOf="@+id/clItemChatReceive"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
