@@ -95,7 +95,7 @@ class ChatListFragment : BaseFragment<FragmentChatListBinding>() {
             val userData = data.userData
             val chatRoomId = data.chatRoomData.chatRoomId
 
-            mainSharedViewModel.getChatRoomId(chatRoomId)
+            chatSharedViewModel.getChatRoomId(chatRoomId)
             chatSharedViewModel.getChatRoomData(userData.uid)
             chatSharedViewModel.checkChatRoomExist(userData.uid)
             onClickFriendList(userData)
@@ -131,7 +131,7 @@ class ChatListFragment : BaseFragment<FragmentChatListBinding>() {
                     getChatRoomData(userData)
                     chatViewModel.chatRoomData.observe(viewLifecycleOwner) { data ->
                         if (data != null) {
-                            mainSharedViewModel.getChatRoomId(data.chatRoomId)
+                            chatSharedViewModel.getChatRoomId(data.chatRoomId)
                             onClickFriendList(userData)
                         }
                     }
