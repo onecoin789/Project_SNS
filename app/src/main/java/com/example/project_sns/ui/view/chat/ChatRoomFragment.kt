@@ -37,6 +37,8 @@ class ChatRoomFragment : BaseFragment<FragmentChatRoomBinding>() {
 
     private lateinit var messageListAdapter: MessageListAdapter
 
+    private var messageListSize: Int = 0
+
     override fun getFragmentBinding(
         inflater: LayoutInflater,
         container: ViewGroup?
@@ -50,6 +52,16 @@ class ChatRoomFragment : BaseFragment<FragmentChatRoomBinding>() {
         initView()
         initRv()
         checkChatRoomData()
+        checkMessage()
+        checkMessageDataResult()
+    }
+
+    private fun checkMessage() {
+        chatSharedViewModel.chatRoomId.observe(viewLifecycleOwner) { chatRoomId ->
+            if (chatRoomId != null) {
+                chatViewModel.checkMessageData(chatRoomId)
+            }
+        }
     }
 
     private fun checkChatRoomExist() {
@@ -67,12 +79,14 @@ class ChatRoomFragment : BaseFragment<FragmentChatRoomBinding>() {
                 binding.tvChatRoomNone.visibility = View.GONE
                 binding.rvChat.visibility = View.VISIBLE
                 getMessageList()
-            } else if (result == false) {
+            }
+            else if (result == false) {
                 binding.tvChatRoomNone.visibility = View.VISIBLE
                 binding.rvChat.visibility = View.GONE
             }
         }
     }
+
 
     private fun getChatRoomData() {
         CoroutineScope(Dispatchers.Main).launch {
@@ -84,7 +98,7 @@ class ChatRoomFragment : BaseFragment<FragmentChatRoomBinding>() {
             delay(500)
             chatViewModel.chatRoomData.observe(viewLifecycleOwner) {
                 if (it != null)
-                    mainSharedViewModel.getChatRoomId(it.chatRoomId)
+                    chatSharedViewModel.getChatRoomId(it.chatRoomId)
             }
         }
     }
@@ -107,13 +121,19 @@ class ChatRoomFragment : BaseFragment<FragmentChatRoomBinding>() {
         binding.btnChatTextSend.visibility = View.VISIBLE
 
         binding.ivChatRoomBack.setOnClickListener {
-            mainSharedViewModel.clearChatRoomId()
+            chatSharedViewModel.clearChatRoomId()
             chatSharedViewModel.clearCheckData()
             backButton()
         }
     }
 
     private fun initRv() {
+        chatViewModel.messageList.observe(viewLifecycleOwner) { messageList ->
+            Log.d("message", "$messageList")
+            messageListAdapter.submitList(messageList)
+            messageListSize = messageList.size
+        }
+
         messageListAdapter =
             MessageListAdapter(object : MessageListAdapter.MessageItemClickListener {
 
@@ -124,16 +144,12 @@ class ChatRoomFragment : BaseFragment<FragmentChatRoomBinding>() {
             layoutManager = linearLayoutManager
             adapter = messageListAdapter
         }
-        chatViewModel.messageList.observe(viewLifecycleOwner) { messageList ->
-            Log.d("message", "$messageList")
-            messageListAdapter.submitList(messageList)
-        }
     }
 
     private fun getMessageList() {
         val lastVisibleItem = chatViewModel.messageLastVisibleItem
         viewLifecycleOwner.lifecycleScope.launch {
-            mainSharedViewModel.chatRoomId.observe(viewLifecycleOwner) { chatRoomId ->
+            chatSharedViewModel.chatRoomId.observe(viewLifecycleOwner) { chatRoomId ->
                 Log.d("chatRoomId", "$chatRoomId")
                 if (chatRoomId != null) {
                     chatViewModel.getMessageList(chatRoomId, lastVisibleItem)
@@ -161,53 +177,6 @@ class ChatRoomFragment : BaseFragment<FragmentChatRoomBinding>() {
             }
         }
     }
-//
-//    private fun checkMessageState() {
-//        chatViewModel.chatRoomData.observe(viewLifecycleOwner) { chatRoomData ->
-//            if (chatRoomData != null) {
-//                chatViewModel.checkMessageData(chatRoomData.chatRoomId)
-//            }
-//        }
-//        chatViewModel.checkMessageDataResult.observe(viewLifecycleOwner) { result ->
-//            if (result == true) {
-//                getMessageList()
-//            } else {
-//                Toast.makeText(requireContext(), "갱신 실패", Toast.LENGTH_SHORT).show()
-//            }
-//        }
-//    }
-//
-//    private fun getChatRoomData() {
-//        viewLifecycleOwner.lifecycleScope.launch {
-//            mainSharedViewModel.userData.observe(viewLifecycleOwner) { userData ->
-//                if (userData != null) {
-//                    chatViewModel.getChatRoomData(userData.uid)
-//                }
-//            }
-//        }
-//    }
-//
-//    private fun checkChatRoom() {
-//
-//        val currentUser = CurrentUser.userData?.uid ?: throw NullPointerException("User Data Null!")
-//        val newChatRoomId = UUID.randomUUID().toString()
-//        val message = binding.etChat.text.toString()
-//        val messageId = UUID.randomUUID().toString()
-//        val sendAt = chatDateFormat(LocalDateTime.now())
-//
-//        chatViewModel.checkChatRoomData.observe(viewLifecycleOwner) { result ->
-//            Log.d("check_result", "$result")
-//            if (result == true) {
-//                sendMessage(currentUser, message, messageId, sendAt)
-//            } else {
-//                sendFirstMessage(
-//                    newChatRoomId,
-//                    currentUser,
-//                    MessageDataModel(currentUser, newChatRoomId, messageId, message, sendAt)
-//                )
-//            }
-//        }
-//    }
 
     private fun sendFirstMessage(
         chatRoomId: String,
@@ -264,7 +233,9 @@ class ChatRoomFragment : BaseFragment<FragmentChatRoomBinding>() {
                 Log.d("chat_result", "$result")
                 if (result == true) {
                     binding.etChat.text.clear()
-                    checkMessageData()
+                    getMessageList()
+                    Log.d("messageSize", "$messageListSize")
+                    binding.rvChat.smoothScrollToPosition(messageListSize)
                 } else if (result == false) {
                     Toast.makeText(requireContext(), "메세지 보내기 실패", Toast.LENGTH_SHORT).show()
                 }
@@ -272,25 +243,13 @@ class ChatRoomFragment : BaseFragment<FragmentChatRoomBinding>() {
         }
     }
 
-    private fun checkMessageData() {
-        CoroutineScope(Dispatchers.Main).launch {
-            mainSharedViewModel.chatRoomId.observe(viewLifecycleOwner) {
-                if (it != null) {
-                    chatViewModel.checkMessageData(it)
-                }
-            }
-            delay(500)
-            checkMessageDataResult()
-        }
-
-    }
 
     private fun checkMessageDataResult() {
         lifecycleScope.launch {
             chatViewModel.checkMessageDataResult.observe(viewLifecycleOwner) { result ->
                 if (result == true) {
                     getMessageList()
-                    Toast.makeText(requireContext(), "메세지 보내기 성공", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "메세지 받기 성공", Toast.LENGTH_SHORT).show()
                 } else {
                     Toast.makeText(requireContext(), "메세지 보내기 실패", Toast.LENGTH_SHORT).show()
                 }

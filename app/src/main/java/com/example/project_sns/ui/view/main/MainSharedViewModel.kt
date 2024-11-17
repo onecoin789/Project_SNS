@@ -132,22 +132,11 @@ class MainSharedViewModel @Inject constructor(
     private val _commentListData = MutableLiveData<List<CommentModel>>(emptyList())
     val commentListData: LiveData<List<CommentModel>> get() = _commentListData
 
-    private val _chatRoomId = MutableLiveData<String?>()
-    val chatRoomId: LiveData<String?> get() = _chatRoomId
-
 
     val homePostLastVisibleItem = MutableStateFlow(0)
 
     val commentLastVisibleItem = MutableStateFlow(0)
 
-
-    fun getChatRoomId(id: String) {
-        _chatRoomId.value = id
-    }
-
-    fun clearChatRoomId() {
-        _chatRoomId.value = null
-    }
 
     // <!-- commentPageSet -->
 

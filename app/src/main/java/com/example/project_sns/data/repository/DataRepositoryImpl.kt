@@ -671,21 +671,22 @@ class DataRepositoryImpl @Inject constructor(
         recipientUid: String
     ): Flow<Boolean> {
         return callbackFlow {
-            val participant = arrayListOf<String>()
             val senderUid = auth.currentUser?.uid
             if (senderUid != null) {
-                participant.add(senderUid)
-                participant.add(recipientUid)
                 db.collection(COLLECTION_CHAT)
-                    .whereEqualTo("participant", participant)
+                    .whereArrayContainsAny("participant", listOf(senderUid, recipientUid))
                     .get().addOnSuccessListener { snapshot ->
+//                        if (e != null) {
+//                            Log.d("check_chat2", "${e.message}")
+//                            trySend(false)
+//                        }
                         if (snapshot != null) {
                             val document = snapshot.documents
                             if (document.size != 0) {
-                                Log.d("check_chat", "$document")
+                                Log.d("check_chat1", "$document")
                                 trySend(true)
                             } else {
-                                Log.d("check_chat", "$document")
+                                Log.d("check_chat2", "null data")
                                 trySend(false)
                             }
                         }
@@ -698,12 +699,11 @@ class DataRepositoryImpl @Inject constructor(
     override suspend fun getChatRoomData(recipientUid: String): Flow<ChatRoomDataEntity?> {
         // FIXME: List가 비었다고 나옴 로직 없애거나 완전 수정 필요
         return callbackFlow {
-            val participant = arrayListOf<String>()
             val senderUid = auth.currentUser?.uid
             if (senderUid != null) {
-                participant.add(senderUid)
-                participant.add(recipientUid)
-               db.collection(COLLECTION_CHAT).whereEqualTo("participant", participant)
+               db.collection(COLLECTION_CHAT)
+                   .whereArrayContains("participant", senderUid)
+                   .whereArrayContains("participant", recipientUid)
                     .addSnapshotListener { chatRoomData, e ->
                         if (e != null) {
                             trySend(null)
@@ -833,11 +833,8 @@ class DataRepositoryImpl @Inject constructor(
 
             lastVisibleItem.collect { lastVisibleItem ->
                 when (lastVisibleItem) {
-                    0 -> query.limit(10)
-                        .addSnapshotListener { snapshot, e ->
-                            if (e != null) {
-                                trySend(emptyList())
-                            }
+                    0 -> query
+                        .get().addOnSuccessListener { snapshot ->
                             if (snapshot != null) {
                                 val documents = snapshot.documents
                                 val messageListEntity =

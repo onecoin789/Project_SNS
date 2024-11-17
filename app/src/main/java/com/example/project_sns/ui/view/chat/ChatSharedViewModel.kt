@@ -25,6 +25,17 @@ class ChatSharedViewModel @Inject constructor(
     private val _chatRoomData = MutableLiveData<ChatRoomDataModel?>()
     val chatRoomData: LiveData<ChatRoomDataModel?> get() = _chatRoomData
 
+    private val _chatRoomId = MutableLiveData<String?>()
+    val chatRoomId: LiveData<String?> get() = _chatRoomId
+
+
+    fun getChatRoomId(id: String) {
+        _chatRoomId.value = id
+    }
+
+    fun clearChatRoomId() {
+        _chatRoomId.value = null
+    }
 
     fun clearCheckData() {
         viewModelScope.launch {
