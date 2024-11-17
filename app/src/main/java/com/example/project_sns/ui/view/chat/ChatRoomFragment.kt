@@ -14,6 +14,7 @@ import com.example.project_sns.databinding.FragmentChatRoomBinding
 import com.example.project_sns.ui.BaseFragment
 import com.example.project_sns.ui.CurrentUser
 import com.example.project_sns.ui.model.MessageDataModel
+import com.example.project_sns.ui.model.toType
 import com.example.project_sns.ui.util.chatDateFormat
 import com.example.project_sns.ui.util.dateFormat
 import com.example.project_sns.ui.view.main.MainSharedViewModel
@@ -79,8 +80,7 @@ class ChatRoomFragment : BaseFragment<FragmentChatRoomBinding>() {
                 binding.tvChatRoomNone.visibility = View.GONE
                 binding.rvChat.visibility = View.VISIBLE
                 getMessageList()
-            }
-            else if (result == false) {
+            } else if (result == false) {
                 binding.tvChatRoomNone.visibility = View.VISIBLE
                 binding.rvChat.visibility = View.GONE
             }
@@ -201,7 +201,6 @@ class ChatRoomFragment : BaseFragment<FragmentChatRoomBinding>() {
                     MessageDataModel(senderUid, chatRoom.chatRoomId, messageId, message, sendAt)
                 chatViewModel.sendMessage(chatRoom.chatRoomId, messageData)
                 collectMessageResult()
-                // FIXME: 요청 계속 보냄
             }
         }
     }
@@ -235,7 +234,6 @@ class ChatRoomFragment : BaseFragment<FragmentChatRoomBinding>() {
                     binding.etChat.text.clear()
                     getMessageList()
                     Log.d("messageSize", "$messageListSize")
-                    binding.rvChat.smoothScrollToPosition(messageListSize)
                 } else if (result == false) {
                     Toast.makeText(requireContext(), "메세지 보내기 실패", Toast.LENGTH_SHORT).show()
                 }

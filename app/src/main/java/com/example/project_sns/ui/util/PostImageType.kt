@@ -8,7 +8,7 @@ sealed class PostImageType {
     data class PostVideo(val type: ImageDataModel): PostImageType()
 }
 
-fun PostImageType.getType(): String? {
+fun PostImageType.getType(): String {
     return when(this) {
         is PostImageType.PostImage -> this.type.imageType
         is PostImageType.PostVideo -> this.type.imageType

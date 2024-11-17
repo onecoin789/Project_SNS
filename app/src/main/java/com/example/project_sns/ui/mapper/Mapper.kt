@@ -208,8 +208,6 @@ fun MessageEntity.toModel() = MessageModel(
 
 
 
-
-
 fun List<PostDataEntity>.toPostListModel(): List<PostDataModel> {
     return this.map { it.toModel() }
 }
