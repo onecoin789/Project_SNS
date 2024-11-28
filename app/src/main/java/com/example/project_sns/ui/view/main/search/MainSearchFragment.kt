@@ -1,6 +1,8 @@
 package com.example.project_sns.ui.view.main.search
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,7 +24,45 @@ class MainSearchFragment : BaseFragment<FragmentMainSearchBinding>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        initSearch()
+        editTextWatcher()
+    }
+
+    private fun editTextWatcher() {
+        val searchKeyWords = binding.etSearch.text.toString()
+
+        binding.ivSearchDelete.setOnClickListener {
+            binding.etSearch.text.clear()
+        }
+
+        binding.etSearch.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                if (binding.etSearch.text.isEmpty()) {
+                    binding.clSearchShow.visibility = View.GONE
+                } else {
+                    binding.clSearchShow.visibility = View.VISIBLE
+                    binding.tvSearchWord.text = searchKeyWords
+                }
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                if (binding.etSearch.text.isEmpty()) {
+                    binding.clSearchShow.visibility = View.GONE
+                } else {
+                    binding.clSearchShow.visibility = View.VISIBLE
+                    binding.tvSearchWord.text = searchKeyWords
+                }
+            }
+
+            override fun afterTextChanged(s: Editable?) {
+                if (binding.etSearch.text.isEmpty()) {
+                    binding.clSearchShow.visibility = View.GONE
+                } else {
+                    binding.clSearchShow.visibility = View.VISIBLE
+                    binding.tvSearchWord.text = searchKeyWords
+                }
+            }
+
+        })
     }
 
     private fun initSearch() {
