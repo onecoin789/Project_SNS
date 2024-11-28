@@ -17,19 +17,13 @@ import com.example.project_sns.R
 import com.example.project_sns.databinding.FragmentLoginBinding
 import com.example.project_sns.ui.BaseFragment
 import com.example.project_sns.ui.util.CheckLogin
-import com.google.android.gms.tasks.RuntimeExecutionException
-import com.google.firebase.Firebase
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.functions.FirebaseFunctions
-import com.google.firebase.functions.functions
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.common.model.ClientError
 import com.kakao.sdk.common.model.ClientErrorCause
 import com.kakao.sdk.user.UserApiClient
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
+import java.util.TimeZone
 
 
 @AndroidEntryPoint

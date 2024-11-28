@@ -1,6 +1,9 @@
 package com.example.project_sns.ui.view.chat
 
+import android.net.Uri
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -10,6 +13,9 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.OnScrollListener
+import com.example.project_sns.R
 import com.example.project_sns.databinding.FragmentChatRoomBinding
 import com.example.project_sns.ui.BaseFragment
 import com.example.project_sns.ui.CurrentUser
@@ -19,12 +25,14 @@ import com.example.project_sns.ui.util.chatDateFormat
 import com.example.project_sns.ui.util.dateFormat
 import com.example.project_sns.ui.view.main.MainSharedViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import gun0912.tedimagepicker.builder.TedImagePicker
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
+import java.util.TimeZone
 import java.util.UUID
 
 @AndroidEntryPoint
@@ -36,7 +44,11 @@ class ChatRoomFragment : BaseFragment<FragmentChatRoomBinding>() {
 
     private val mainSharedViewModel: MainSharedViewModel by activityViewModels()
 
+    private var chatImageList: MutableList<Uri>? = null
+
     private lateinit var messageListAdapter: MessageListAdapter
+
+    private lateinit var chatRoomImageListAdapter: ChatRoomImageListAdapter
 
     private var messageListSize: Int = 0
 
@@ -50,11 +62,109 @@ class ChatRoomFragment : BaseFragment<FragmentChatRoomBinding>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        initView()
         initRv()
+        initView()
         checkChatRoomData()
         checkMessage()
         checkMessageDataResult()
+        editTextWatcher()
+    }
+
+
+    private fun initView() {
+
+        mainSharedViewModel.userData.observe(viewLifecycleOwner) { userData ->
+            if (userData != null) {
+                binding.tvChatRoomName.text = userData.name
+                binding.tvChatRoomEmail.text = userData.email
+            }
+        }
+
+        binding.btnChatTextSend.setOnClickListener {
+            checkMessageState()
+        }
+
+        binding.btnChatPhotoSend.setOnClickListener {
+            TedImagePicker.with(requireContext()).imageAndVideo()
+                .buttonBackground(R.color.point)
+                .buttonTextColor(R.color.text)
+                .max(10, "이미지는 최대 10장 입니다.")
+                .startMultiImage { uri ->
+
+                    chatImageList = uri.toMutableList()
+                    chatRoomImageListAdapter.submitList(chatImageList)
+
+                    Log.d("image_count", "$chatImageList")
+
+                    if (chatImageList == null) {
+                        binding.clChatRoomImageList.visibility = View.GONE
+                    } else {
+                        binding.clChatRoomImageList.visibility = View.VISIBLE
+                    }
+                }
+        }
+
+
+        binding.tvChatRoomImageCancel.setOnClickListener {
+            chatImageList = null
+            binding.clChatRoomImageList.visibility = View.GONE
+            Log.d("image_count", "$chatImageList")
+        }
+
+
+        binding.ivChatRoomBack.setOnClickListener {
+            chatSharedViewModel.clearChatRoomId()
+            chatSharedViewModel.clearCheckData()
+            backButton()
+        }
+
+
+    }
+
+    private fun initRv() {
+        chatViewModel.messageList.observe(viewLifecycleOwner) { messageList ->
+            Log.d("message", "$messageList")
+            messageListAdapter.submitList(messageList)
+            messageListSize = messageList.size
+        }
+
+        messageListAdapter =
+            MessageListAdapter(object : MessageListAdapter.MessageItemClickListener {
+
+            })
+
+        val linearLayoutManager = LinearLayoutManager(requireContext())
+        with(binding.rvChat) {
+            layoutManager = linearLayoutManager
+            adapter = messageListAdapter
+        }
+
+        chatRoomImageListAdapter =
+            ChatRoomImageListAdapter(object : ChatRoomImageListAdapter.ChatRoomImageClickListener {
+                override fun onClickImageCancel(item: Uri) {
+                    CoroutineScope(Dispatchers.Main).launch {
+                        chatImageList?.remove(item)
+                        binding.rvChatRoomImage.visibility = View.GONE
+                        delay(100)
+                        if (chatImageList?.isEmpty() == true) {
+                            chatImageList = null
+                            binding.rvChatRoomImage.visibility = View.VISIBLE
+                            binding.clChatRoomImageList.visibility = View.GONE
+                        } else {
+                            chatRoomImageListAdapter.submitList(chatImageList)
+                            binding.rvChatRoomImage.visibility = View.VISIBLE
+                        }
+                        Log.d("chatImageList", "$chatImageList, $item")
+                    }
+                }
+
+            })
+        val imageLayoutManager =
+            LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+        with(binding.rvChatRoomImage) {
+            layoutManager = imageLayoutManager
+            adapter = chatRoomImageListAdapter
+        }
     }
 
     private fun checkMessage() {
@@ -103,49 +213,6 @@ class ChatRoomFragment : BaseFragment<FragmentChatRoomBinding>() {
         }
     }
 
-
-    private fun initView() {
-
-        mainSharedViewModel.userData.observe(viewLifecycleOwner) { userData ->
-            if (userData != null) {
-                binding.tvChatRoomName.text = userData.name
-                binding.tvChatRoomEmail.text = userData.email
-            }
-        }
-
-        binding.btnChatTextSend.setOnClickListener {
-            checkMessageState()
-        }
-
-        binding.btnChatPhotoSend.visibility = View.INVISIBLE
-        binding.btnChatTextSend.visibility = View.VISIBLE
-
-        binding.ivChatRoomBack.setOnClickListener {
-            chatSharedViewModel.clearChatRoomId()
-            chatSharedViewModel.clearCheckData()
-            backButton()
-        }
-    }
-
-    private fun initRv() {
-        chatViewModel.messageList.observe(viewLifecycleOwner) { messageList ->
-            Log.d("message", "$messageList")
-            messageListAdapter.submitList(messageList)
-            messageListSize = messageList.size
-        }
-
-        messageListAdapter =
-            MessageListAdapter(object : MessageListAdapter.MessageItemClickListener {
-
-            })
-
-        val linearLayoutManager = LinearLayoutManager(requireContext())
-        with(binding.rvChat) {
-            layoutManager = linearLayoutManager
-            adapter = messageListAdapter
-        }
-    }
-
     private fun getMessageList() {
         val lastVisibleItem = chatViewModel.messageLastVisibleItem
         viewLifecycleOwner.lifecycleScope.launch {
@@ -163,7 +230,9 @@ class ChatRoomFragment : BaseFragment<FragmentChatRoomBinding>() {
         val newChatRoomId = UUID.randomUUID().toString()
         val message = binding.etChat.text.toString()
         val messageId = UUID.randomUUID().toString()
-        val sendAt = chatDateFormat(LocalDateTime.now())
+        val sendAt = chatDateFormat()
+        Log.d("date", sendAt)
+        // FIXME: localtime 말고 utc로 올리기 시로 변경
 
         chatSharedViewModel.checkChatRoomData.observe(viewLifecycleOwner) { result ->
             if (result == true) {
@@ -253,6 +322,50 @@ class ChatRoomFragment : BaseFragment<FragmentChatRoomBinding>() {
                 }
             }
         }
+    }
+
+    private fun scroll() {
+        binding.rvChat.addOnScrollListener(object : OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                recyclerView.smoothScrollToPosition(messageListSize - 1)
+            }
+        })
+    }
+
+    private fun editTextWatcher() {
+        binding.etChat.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                if (binding.etChat.text.isEmpty()) {
+                    binding.btnChatTextSend.visibility = View.INVISIBLE
+                    binding.btnChatPhotoSend.visibility = View.VISIBLE
+                } else {
+                    binding.btnChatTextSend.visibility = View.VISIBLE
+                    binding.btnChatPhotoSend.visibility = View.INVISIBLE
+                }
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                if (binding.etChat.text.isEmpty()) {
+                    binding.btnChatTextSend.visibility = View.INVISIBLE
+                    binding.btnChatPhotoSend.visibility = View.VISIBLE
+                } else {
+                    binding.btnChatTextSend.visibility = View.VISIBLE
+                    binding.btnChatPhotoSend.visibility = View.INVISIBLE
+                }
+            }
+
+            override fun afterTextChanged(s: Editable?) {
+                if (binding.etChat.text.isEmpty()) {
+                    binding.btnChatTextSend.visibility = View.INVISIBLE
+                    binding.btnChatPhotoSend.visibility = View.VISIBLE
+                } else {
+                    binding.btnChatTextSend.visibility = View.VISIBLE
+                    binding.btnChatPhotoSend.visibility = View.INVISIBLE
+                }
+            }
+
+        })
     }
 
 }
