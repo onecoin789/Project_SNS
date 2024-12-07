@@ -1,8 +1,12 @@
 package com.example.project_sns.ui.model
 
+import android.net.Uri
 import android.os.Parcelable
+import com.example.project_sns.domain.MessageViewType
 import com.example.project_sns.domain.entity.MessageDataEntity
-import com.example.project_sns.ui.CurrentUser
+import com.example.project_sns.domain.entity.UploadMessageDataEntity
+import com.example.project_sns.ui.mapper.toEntity
+import com.example.project_sns.ui.mapper.toModel
 import com.example.project_sns.ui.util.chatTimeFormat
 import com.example.project_sns.ui.util.stringToLocalTime
 import kotlinx.parcelize.Parcelize
@@ -13,31 +17,36 @@ data class MessageDataModel(
     val uid: String,
     val chatRoomId: String,
     val messageId: String,
-    val message: String,
-    val sendAt: String
+    val message: String?,
+    val imageList: List<ImageDataModel>?,
+    val sendAt: String,
+    val type: MessageViewType
+): Parcelable
+
+@Parcelize
+data class UploadMessageDataModel(
+    val uid: String,
+    val chatRoomId: String,
+    val messageId: String,
+    val message: String?,
+    val imageList: List<Uri>?,
+    val sendAt: String,
+    val type: MessageViewType
 ): Parcelable
 
 fun MessageDataEntity.toModel() = MessageDataModel(
-    uid = uid, chatRoomId = chatRoomId, messageId = messageId, message = message, sendAt = chatTimeFormat(stringToLocalTime(sendAt))
+    uid = uid, chatRoomId = chatRoomId, messageId = messageId, message = message, imageList = imageList?.map { it.toModel() }, sendAt = chatTimeFormat(stringToLocalTime(sendAt)), type = type
 )
 
 fun MessageDataModel.toEntity() = MessageDataEntity(
-    uid = uid, chatRoomId = chatRoomId, messageId = messageId, message = message, sendAt = sendAt
+    uid = uid, chatRoomId = chatRoomId, messageId = messageId, message = message, imageList = imageList?.map { it.toEntity() }, sendAt = sendAt, type = type
 )
 
 fun List<MessageDataEntity>.toMessageListModel(): List<MessageDataModel> {
     return this.map { it.toModel() }
 }
 
-enum class MessageType {
-    CURRENT_USER,
-    OTHER_USER
-}
+fun UploadMessageDataModel.toEntity() = UploadMessageDataEntity(
+    uid, chatRoomId, messageId, message, imageList, sendAt, type
+)
 
-fun MessageModel.toType(): MessageType {
-    return if (this.userData.uid == CurrentUser.userData?.uid) {
-        MessageType.CURRENT_USER
-    } else {
-        MessageType.OTHER_USER
-    }
-}

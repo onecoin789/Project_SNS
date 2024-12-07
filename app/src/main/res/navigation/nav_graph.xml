@@ -114,7 +114,7 @@
     </fragment>
     <fragment
         android:id="@+id/chatListFragment"
-        android:name="com.example.project_sns.ui.view.chat.ChatListFragment"
+        android:name="com.example.project_sns.ui.view.chat.chatlist.ChatListFragment"
         android:label="fragment_chat_list"
         tools:layout="@layout/fragment_chat_list" >
         <action
@@ -123,7 +123,7 @@
     </fragment>
     <fragment
         android:id="@+id/chatRoomFragment"
-        android:name="com.example.project_sns.ui.view.chat.ChatRoomFragment"
+        android:name="com.example.project_sns.ui.view.chat.chatroom.ChatRoomFragment"
         android:label="fragment_chat_room"
         tools:layout="@layout/fragment_chat_room" >
     </fragment>

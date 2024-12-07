@@ -1,5 +1,6 @@
 package com.example.project_sns.domain.repository
 
+import android.net.Uri
 import com.example.project_sns.domain.entity.ChatRoomDataEntity
 import com.example.project_sns.domain.entity.ChatRoomEntity
 import com.example.project_sns.domain.entity.CommentDataEntity
@@ -10,6 +11,7 @@ import com.example.project_sns.domain.entity.PostDataEntity
 import com.example.project_sns.domain.entity.PostEntity
 import com.example.project_sns.domain.entity.ReCommentDataEntity
 import com.example.project_sns.domain.entity.ReCommentEntity
+import com.example.project_sns.domain.entity.UploadMessageDataEntity
 import kotlinx.coroutines.flow.Flow
 
 
@@ -43,9 +45,11 @@ interface DataRepository {
 
     suspend fun getChatRoomData(recipientUid: String): Flow<ChatRoomDataEntity?>
 
-    suspend fun sendFirstMessage(chatRoomId: String, senderUid: String, recipientUid: String, messageData: MessageDataEntity): Flow<Boolean>
+    suspend fun sendFirstMessage(chatRoomId: String, senderUid: String, recipientUid: String, messageData: UploadMessageDataEntity): Flow<Boolean>
 
-    suspend fun sendMessage(chatRoomId: String, messageData: MessageDataEntity): Flow<Boolean>
+    suspend fun sendMessage(chatRoomId: String, messageData: UploadMessageDataEntity): Flow<Boolean>
+
+    suspend fun sendImageMessage(chatRoomId: String, chatImageList: List<Uri>): Flow<Boolean>
 
     suspend fun getChatRoomList(): Flow<List<ChatRoomEntity>>
 

@@ -1,4 +1,4 @@
-package com.example.project_sns.ui.view.chat
+package com.example.project_sns.ui.view.chat.chatroom
 
 import android.net.Uri
 import android.view.LayoutInflater
@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.project_sns.databinding.RvItemChatImageBinding
+import com.example.project_sns.databinding.RvItemChatPickImageBinding
 
 class ChatRoomImageListAdapter(private val onItemClick: ChatRoomImageClickListener) :
     ListAdapter<Uri, ChatRoomImageListAdapter.ChatRoomImageViewHolder>(diffUtil) {
@@ -17,7 +18,7 @@ class ChatRoomImageListAdapter(private val onItemClick: ChatRoomImageClickListen
     }
 
     class ChatRoomImageViewHolder(
-        private val binding: RvItemChatImageBinding,
+        private val binding: RvItemChatPickImageBinding,
         private val onItemClick: ChatRoomImageClickListener
     ) : RecyclerView.ViewHolder(binding.root) {
 
@@ -32,7 +33,7 @@ class ChatRoomImageListAdapter(private val onItemClick: ChatRoomImageClickListen
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChatRoomImageViewHolder {
-        val binding = RvItemChatImageBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding = RvItemChatPickImageBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ChatRoomImageViewHolder(binding, onItemClick)
     }
 
