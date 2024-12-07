@@ -1,4 +1,4 @@
-package com.example.project_sns.ui.view.chat
+package com.example.project_sns.ui.view.chat.chatroom
 
 import android.net.Uri
 import android.os.Bundle
@@ -15,24 +15,22 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.OnScrollListener
-import com.example.project_sns.R
 import com.example.project_sns.databinding.FragmentChatRoomBinding
+import com.example.project_sns.domain.MessageViewType
 import com.example.project_sns.ui.BaseFragment
 import com.example.project_sns.ui.CurrentUser
-import com.example.project_sns.ui.model.MessageDataModel
-import com.example.project_sns.ui.model.toType
+import com.example.project_sns.ui.model.MessageModel
+import com.example.project_sns.ui.model.UploadMessageDataModel
 import com.example.project_sns.ui.util.chatDateFormat
-import com.example.project_sns.ui.util.dateFormat
+import com.example.project_sns.ui.view.chat.ChatSharedViewModel
+import com.example.project_sns.ui.view.chat.ChatViewModel
 import com.example.project_sns.ui.view.main.MainSharedViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import gun0912.tedimagepicker.builder.TedImagePicker
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
-import java.time.LocalDateTime
-import java.util.TimeZone
 import java.util.UUID
 
 @AndroidEntryPoint
@@ -81,13 +79,11 @@ class ChatRoomFragment : BaseFragment<FragmentChatRoomBinding>() {
         }
 
         binding.btnChatTextSend.setOnClickListener {
-            checkMessageState()
+            checkTextMessageState()
         }
 
-        binding.btnChatPhotoSend.setOnClickListener {
+        binding.btnChatPickPhoto.setOnClickListener {
             TedImagePicker.with(requireContext()).imageAndVideo()
-                .buttonBackground(R.color.point)
-                .buttonTextColor(R.color.text)
                 .max(10, "이미지는 최대 10장 입니다.")
                 .startMultiImage { uri ->
 
@@ -98,16 +94,23 @@ class ChatRoomFragment : BaseFragment<FragmentChatRoomBinding>() {
 
                     if (chatImageList == null) {
                         binding.clChatRoomImageList.visibility = View.GONE
+                        binding.clChatRoomSendChat.visibility = View.VISIBLE
                     } else {
                         binding.clChatRoomImageList.visibility = View.VISIBLE
+                        binding.clChatRoomSendChat.visibility = View.GONE
                     }
                 }
+
+            binding.btnChatRoomSendPhoto.setOnClickListener {
+                checkImageMessageState()
+            }
         }
 
 
         binding.tvChatRoomImageCancel.setOnClickListener {
             chatImageList = null
             binding.clChatRoomImageList.visibility = View.GONE
+            binding.clChatRoomSendChat.visibility = View.VISIBLE
             Log.d("image_count", "$chatImageList")
         }
 
@@ -130,6 +133,13 @@ class ChatRoomFragment : BaseFragment<FragmentChatRoomBinding>() {
 
         messageListAdapter =
             MessageListAdapter(object : MessageListAdapter.MessageItemClickListener {
+                override fun onChatImageClickEvent(item: MessageModel) {
+                    val image = item.messageData.imageList
+                    if (image != null) {
+                        val dialog = ChatRoomImageViewerDialog(image)
+                        dialog.show(childFragmentManager, "imageViewer")
+                    }
+                }
 
             })
 
@@ -145,13 +155,18 @@ class ChatRoomFragment : BaseFragment<FragmentChatRoomBinding>() {
                     CoroutineScope(Dispatchers.Main).launch {
                         chatImageList?.remove(item)
                         binding.rvChatRoomImage.visibility = View.GONE
-                        delay(100)
+                        binding.pbChatRoomImage.visibility = View.VISIBLE
+                        delay(300)
                         if (chatImageList?.isEmpty() == true) {
+
                             chatImageList = null
+                            binding.pbChatRoomImage.visibility = View.GONE
                             binding.rvChatRoomImage.visibility = View.VISIBLE
+                            binding.clChatRoomSendChat.visibility = View.VISIBLE
                             binding.clChatRoomImageList.visibility = View.GONE
                         } else {
                             chatRoomImageListAdapter.submitList(chatImageList)
+                            binding.pbChatRoomImage.visibility = View.GONE
                             binding.rvChatRoomImage.visibility = View.VISIBLE
                         }
                         Log.d("chatImageList", "$chatImageList, $item")
@@ -225,14 +240,14 @@ class ChatRoomFragment : BaseFragment<FragmentChatRoomBinding>() {
         }
     }
 
-    private fun checkMessageState() {
+
+    // text message send
+    private fun checkTextMessageState() {
         val currentUser = CurrentUser.userData?.uid ?: throw NullPointerException("User Data Null!")
         val newChatRoomId = UUID.randomUUID().toString()
         val message = binding.etChat.text.toString()
         val messageId = UUID.randomUUID().toString()
         val sendAt = chatDateFormat()
-        Log.d("date", sendAt)
-        // FIXME: localtime 말고 utc로 올리기 시로 변경
 
         chatSharedViewModel.checkChatRoomData.observe(viewLifecycleOwner) { result ->
             if (result == true) {
@@ -241,16 +256,52 @@ class ChatRoomFragment : BaseFragment<FragmentChatRoomBinding>() {
                 sendFirstMessage(
                     newChatRoomId,
                     currentUser,
-                    MessageDataModel(currentUser, newChatRoomId, messageId, message, sendAt)
+                    UploadMessageDataModel(
+                        uid = currentUser,
+                        chatRoomId = newChatRoomId,
+                        messageId = messageId,
+                        message = message,
+                        imageList = null,
+                        sendAt = sendAt,
+                        type = MessageViewType.TEXT_MESSAGE)
                 )
             }
         }
     }
 
+    // image message send
+    private fun checkImageMessageState() {
+        val currentUser = CurrentUser.userData?.uid ?: throw NullPointerException("User Data Null!")
+        val newChatRoomId = UUID.randomUUID().toString()
+        val messageId = UUID.randomUUID().toString()
+        val sendAt = chatDateFormat()
+
+        chatSharedViewModel.checkChatRoomData.observe(viewLifecycleOwner) { result ->
+            if (result == true) {
+                sendImageTypeMessage(currentUser, messageId, sendAt)
+            } else if (result == false) {
+                sendFirstImageTypeMessage(
+                    newChatRoomId,
+                    currentUser,
+                    UploadMessageDataModel(
+                        uid = currentUser,
+                        chatRoomId = newChatRoomId,
+                        messageId = messageId,
+                        message = null,
+                        imageList = chatImageList,
+                        sendAt = sendAt,
+                        type = MessageViewType.TEXT_MESSAGE)
+                )
+            }
+        }
+    }
+
+
+    // text message flow result
     private fun sendFirstMessage(
         chatRoomId: String,
         senderUid: String,
-        messageData: MessageDataModel
+        messageData: UploadMessageDataModel
     ) {
         lifecycleScope.launch {
             mainSharedViewModel.userData.observe(viewLifecycleOwner) { userData ->
@@ -267,18 +318,18 @@ class ChatRoomFragment : BaseFragment<FragmentChatRoomBinding>() {
             Log.d("chatRoomData", "$chatRoom")
             if (chatRoom != null) {
                 val messageData =
-                    MessageDataModel(senderUid, chatRoom.chatRoomId, messageId, message, sendAt)
+                    UploadMessageDataModel(
+                        uid = senderUid,
+                        chatRoomId = chatRoom.chatRoomId,
+                        messageId = messageId,
+                        message = message,
+                        imageList = null,
+                        sendAt = sendAt,
+                        type = MessageViewType.TEXT_MESSAGE
+                    )
                 chatViewModel.sendMessage(chatRoom.chatRoomId, messageData)
                 collectMessageResult()
             }
-        }
-    }
-
-    private fun setChatRoom() {
-        CoroutineScope(Dispatchers.Main).launch {
-            checkChatRoomExist()
-            delay(500)
-            getChatRoomData()
         }
     }
 
@@ -310,6 +361,72 @@ class ChatRoomFragment : BaseFragment<FragmentChatRoomBinding>() {
         }
     }
 
+    // image message flow result
+    private fun sendFirstImageTypeMessage(
+        chatRoomId: String,
+        senderUid: String,
+        messageData: UploadMessageDataModel
+    ) {
+        lifecycleScope.launch {
+            mainSharedViewModel.userData.observe(viewLifecycleOwner) { userData ->
+                if (userData != null) {
+                    chatViewModel.sendFirstMessage(chatRoomId, senderUid, userData.uid, messageData)
+                    collectFirstImageMessageResult()
+                }
+            }
+        }
+    }
+
+    private fun sendImageTypeMessage(senderUid: String, messageId: String, sendAt: String) {
+        chatSharedViewModel.chatRoomData.observe(viewLifecycleOwner) { chatRoom ->
+            if (chatRoom != null) {
+                if (chatImageList != null) {
+                    val messageData =
+                        UploadMessageDataModel(
+                            uid = senderUid,
+                            chatRoomId = chatRoom.chatRoomId,
+                            messageId = messageId,
+                            message = null,
+                            imageList = chatImageList,
+                            sendAt = sendAt,
+                            type = MessageViewType.IMAGE_MESSAGE
+                        )
+                    chatViewModel.sendMessage(chatRoom.chatRoomId, messageData)
+                    collectImageMessageResult()
+                }
+            }
+        }
+    }
+
+    private fun collectFirstImageMessageResult() {
+        lifecycleScope.launch {
+            chatViewModel.sendFirstMessageResult.observe(viewLifecycleOwner) { result ->
+                if (result == true) {
+                    binding.clChatRoomImageList.visibility = View.GONE
+                    binding.clChatRoomSendChat.visibility = View.VISIBLE
+                    setChatRoom()
+                } else if (result == false) {
+                    Toast.makeText(requireContext(), "메세지 보내기 실패", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+
+    private fun collectImageMessageResult() {
+        lifecycleScope.launch {
+            chatViewModel.sendMessageResult.observe(viewLifecycleOwner) { result ->
+                Log.d("chat_result", "$result")
+                if (result == true) {
+                    binding.clChatRoomImageList.visibility = View.GONE
+                    binding.clChatRoomSendChat.visibility = View.VISIBLE
+                    getMessageList()
+                } else if (result == false) {
+                    Toast.makeText(requireContext(), "메세지 보내기 실패", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+
 
     private fun checkMessageDataResult() {
         lifecycleScope.launch {
@@ -321,6 +438,14 @@ class ChatRoomFragment : BaseFragment<FragmentChatRoomBinding>() {
                     Toast.makeText(requireContext(), "메세지 보내기 실패", Toast.LENGTH_SHORT).show()
                 }
             }
+        }
+    }
+
+    private fun setChatRoom() {
+        CoroutineScope(Dispatchers.Main).launch {
+            checkChatRoomExist()
+            delay(500)
+            getChatRoomData()
         }
     }
 
@@ -338,30 +463,30 @@ class ChatRoomFragment : BaseFragment<FragmentChatRoomBinding>() {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
                 if (binding.etChat.text.isEmpty()) {
                     binding.btnChatTextSend.visibility = View.INVISIBLE
-                    binding.btnChatPhotoSend.visibility = View.VISIBLE
+                    binding.btnChatPickPhoto.visibility = View.VISIBLE
                 } else {
                     binding.btnChatTextSend.visibility = View.VISIBLE
-                    binding.btnChatPhotoSend.visibility = View.INVISIBLE
+                    binding.btnChatPickPhoto.visibility = View.INVISIBLE
                 }
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 if (binding.etChat.text.isEmpty()) {
                     binding.btnChatTextSend.visibility = View.INVISIBLE
-                    binding.btnChatPhotoSend.visibility = View.VISIBLE
+                    binding.btnChatPickPhoto.visibility = View.VISIBLE
                 } else {
                     binding.btnChatTextSend.visibility = View.VISIBLE
-                    binding.btnChatPhotoSend.visibility = View.INVISIBLE
+                    binding.btnChatPickPhoto.visibility = View.INVISIBLE
                 }
             }
 
             override fun afterTextChanged(s: Editable?) {
                 if (binding.etChat.text.isEmpty()) {
                     binding.btnChatTextSend.visibility = View.INVISIBLE
-                    binding.btnChatPhotoSend.visibility = View.VISIBLE
+                    binding.btnChatPickPhoto.visibility = View.VISIBLE
                 } else {
                     binding.btnChatTextSend.visibility = View.VISIBLE
-                    binding.btnChatPhotoSend.visibility = View.INVISIBLE
+                    binding.btnChatPickPhoto.visibility = View.INVISIBLE
                 }
             }
 

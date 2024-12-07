@@ -1,4 +1,4 @@
-package com.example.project_sns.ui.view.chat
+package com.example.project_sns.ui.view.chat.chatlist
 
 import android.view.LayoutInflater
 import android.view.ViewGroup

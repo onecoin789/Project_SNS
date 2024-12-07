@@ -17,6 +17,7 @@ import com.example.project_sns.ui.model.ChatRoomDataModel
 import com.example.project_sns.ui.model.ChatRoomModel
 import com.example.project_sns.ui.model.MessageDataModel
 import com.example.project_sns.ui.model.MessageModel
+import com.example.project_sns.ui.model.UploadMessageDataModel
 import com.example.project_sns.ui.model.toEntity
 import com.example.project_sns.ui.model.toModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -110,7 +111,7 @@ class ChatViewModel @Inject constructor(
         }
     }
 
-    fun sendFirstMessage(chatRoomId: String, senderUid: String, recipientUid: String, messageData: MessageDataModel) {
+    fun sendFirstMessage(chatRoomId: String, senderUid: String, recipientUid: String, messageData: UploadMessageDataModel) {
         viewModelScope.launch {
             val messageDataEntity = messageData.toEntity()
             sendFirstMessageUseCase(chatRoomId, senderUid, recipientUid, messageDataEntity).collect { result ->
@@ -119,7 +120,7 @@ class ChatViewModel @Inject constructor(
         }
     }
 
-    fun sendMessage(chatRoomId: String, messageData: MessageDataModel) {
+    fun sendMessage(chatRoomId: String, messageData: UploadMessageDataModel) {
         viewModelScope.launch {
             val messageDataEntity = messageData.toEntity()
             sendMessageUseCase(chatRoomId, messageDataEntity).collect { result ->

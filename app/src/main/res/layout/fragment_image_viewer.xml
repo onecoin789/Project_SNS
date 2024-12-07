@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/black">
+
+    <ImageView
+        android:id="@+id/ivImageViewerClose"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:background="@drawable/ic_close"
+        android:layout_margin="35dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:contentDescription="@string/contentDescription"/>
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/vpImageViewer"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginBottom="30dp"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <TextView
+        android:id="@+id/tvImageViewerSlash"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="@string/slash"
+        android:textColor="@color/text"
+        android:textSize="22sp"
+        app:layout_constraintStart_toStartOf="@+id/vpImageViewer"
+        app:layout_constraintEnd_toEndOf="@id/vpImageViewer"
+        app:layout_constraintTop_toBottomOf="@+id/vpImageViewer"/>
+
+    <TextView
+        android:id="@+id/tvImageViewerCurrentPage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/text"
+        android:textSize="20sp"
+        android:text="@string/number1"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="1dp"
+        app:layout_constraintEnd_toStartOf="@+id/tvImageViewerSlash"
+        app:layout_constraintBottom_toBottomOf="@+id/tvImageViewerSlash"/>
+
+    <TextView
+        android:id="@+id/tvImageViewerListSize"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/text"
+        android:textSize="20sp"
+        android:layout_marginStart="10dp"
+        android:layout_marginBottom="1dp"
+        app:layout_constraintStart_toEndOf="@+id/tvImageViewerSlash"
+        app:layout_constraintBottom_toBottomOf="@+id/tvImageViewerSlash"/>
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

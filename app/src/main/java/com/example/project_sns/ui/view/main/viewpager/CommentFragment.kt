@@ -48,7 +48,6 @@ class CommentFragment : BaseBottomSheet<FragmentCommentBinding>() {
         lifecycleScope.launch {
             mainSharedViewModel.currentPage.observe(viewLifecycleOwner) {
                 binding.vpComment.setCurrentItem(it, true)
-                Log.d("test_vp", "$it")
             }
         }
     }

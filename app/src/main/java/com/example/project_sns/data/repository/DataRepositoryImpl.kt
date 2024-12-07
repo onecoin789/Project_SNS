@@ -1,5 +1,6 @@
 package com.example.project_sns.data.repository
 
+import android.net.Uri
 import android.util.Log
 import androidx.core.net.toUri
 import com.example.project_sns.data.mapper.toCommentListEntity
@@ -26,6 +27,7 @@ import com.example.project_sns.domain.entity.PostDataEntity
 import com.example.project_sns.domain.entity.PostEntity
 import com.example.project_sns.domain.entity.ReCommentDataEntity
 import com.example.project_sns.domain.entity.ReCommentEntity
+import com.example.project_sns.domain.entity.UploadMessageDataEntity
 import com.example.project_sns.domain.repository.DataRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentSnapshot
@@ -78,10 +80,10 @@ class DataRepositoryImpl @Inject constructor(
                                     .child("${currentUser}/${postData.postId}/${postData.createdAt}_${i}")
                             if (imageToUri.pathSegments?.contains("video") == true) {
                                 storageRef.putFile(imageToUri).addOnSuccessListener {
-                                    storageRef.downloadUrl.addOnSuccessListener { downloadUri ->
+                                    storageRef.downloadUrl.addOnSuccessListener { downloadUrl ->
                                         imageList.add(
                                             ImageDataEntity(
-                                                downloadUri.toString(),
+                                                downloadUrl.toString(),
                                                 imageToUri.toString(),
                                                 "video"
                                             )
@@ -94,10 +96,10 @@ class DataRepositoryImpl @Inject constructor(
                                 }
                             } else {
                                 storageRef.putFile(imageToUri).addOnSuccessListener {
-                                    storageRef.downloadUrl.addOnSuccessListener { downloadUri ->
+                                    storageRef.downloadUrl.addOnSuccessListener { downloadUrl ->
                                         imageList.add(
                                             ImageDataEntity(
-                                                downloadUri.toString(),
+                                                downloadUrl.toString(),
                                                 imageToUri.toString(),
                                                 "image"
                                             )
@@ -694,13 +696,12 @@ class DataRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getChatRoomData(recipientUid: String): Flow<ChatRoomDataEntity?> {
-        // FIXME: List가 비었다고 나옴 로직 없애거나 완전 수정 필요
         return callbackFlow {
             val senderUid = auth.currentUser?.uid
             if (senderUid != null) {
-               db.collection(COLLECTION_CHAT)
-                   .whereArrayContains("participant", senderUid)
-                   .whereArrayContains("participant", recipientUid)
+                db.collection(COLLECTION_CHAT)
+                    .whereArrayContains("participant", senderUid)
+                    .whereArrayContains("participant", recipientUid)
                     .addSnapshotListener { chatRoomData, e ->
                         if (e != null) {
                             trySend(null)
@@ -723,7 +724,7 @@ class DataRepositoryImpl @Inject constructor(
         chatRoomId: String,
         senderUid: String,
         recipientUid: String,
-        messageData: MessageDataEntity
+        messageData: UploadMessageDataEntity
     ): Flow<Boolean> {
         return flow {
             try {
@@ -753,15 +754,94 @@ class DataRepositoryImpl @Inject constructor(
 
     override suspend fun sendMessage(
         chatRoomId: String,
-        messageData: MessageDataEntity
+        messageData: UploadMessageDataEntity
+    ): Flow<Boolean> {
+        return flow {
+            try {
+                val imageList: MutableList<ImageDataEntity> = arrayListOf()
+                val chatRoomDB = db.collection(COLLECTION_CHAT).document(chatRoomId)
+                val messageDB =
+                    chatRoomDB.collection(COLLECTION_CHAT_MESSAGE).document(messageData.messageId)
+                if (messageData.message != null) {
+                    messageDB.set(messageData).addOnSuccessListener {
+                        chatRoomDB.update("lastMessage", messageData.message)
+                        chatRoomDB.update("lastSendAt", messageData.sendAt)
+                    }
+                } else if (messageData.imageList != null) {
+                    val message = hashMapOf(
+                        "uid" to messageData.uid,
+                        "chatRoomId" to messageData.chatRoomId,
+                        "messageId" to messageData.messageId,
+                        "message" to null,
+                        "sendAt" to messageData.sendAt,
+                        "type" to messageData.type
+                    )
+                    messageDB.set(message).addOnSuccessListener {
+                        for (i in 0 until messageData.imageList.count()) {
+                            val imageToUri = messageData.imageList[i]
+                            val storageRef = storage.getReference("chat")
+                                .child("${chatRoomId}/${messageData.sendAt}/${i}")
+                            if (imageToUri.pathSegments?.contains("video") == true) {
+                                storageRef.putFile(imageToUri).addOnSuccessListener {
+                                    storageRef.downloadUrl.addOnSuccessListener { downloadUrl ->
+                                        imageList.add(
+                                            ImageDataEntity(
+                                                downloadUrl.toString(),
+                                                imageToUri.toString(),
+                                                "video"
+                                            )
+                                        )
+                                        val imageData =
+                                            mapOf("imageList" to imageList.sortedBy { it.downloadUrl })
+                                        messageDB.update(imageData)
+                                    }
+                                }
+                            } else {
+                                storageRef.putFile(imageToUri).addOnSuccessListener {
+                                    storageRef.downloadUrl.addOnSuccessListener { downloadUrl ->
+                                        imageList.add(
+                                            ImageDataEntity(
+                                                downloadUrl.toString(),
+                                                imageToUri.toString(),
+                                                "image"
+                                            )
+                                        )
+                                        val imageData =
+                                            mapOf("imageList" to imageList.sortedBy { it.downloadUrl })
+                                        messageDB.update(imageData)
+                                    }
+                                }
+                            }
+                        }
+                    }.addOnSuccessListener {
+                        chatRoomDB.update("lastMessage", "이미지 파일")
+                        chatRoomDB.update("lastSendAt", messageData.sendAt)
+                    }
+                }
+                emit(true)
+            } catch (e: Exception) {
+                emit(false)
+            }
+        }
+    }
+
+    override suspend fun sendImageMessage(
+        chatRoomId: String,
+        chatImageList: List<Uri>
     ): Flow<Boolean> {
         return flow {
             try {
                 val chatRoomDB = db.collection(COLLECTION_CHAT).document(chatRoomId)
-                val messageDB = chatRoomDB.collection(COLLECTION_CHAT_MESSAGE).document(messageData.messageId)
-                messageDB.set(messageData).addOnSuccessListener {
-                    chatRoomDB.update("lastMessage", messageData.message)
-                    chatRoomDB.update("lastSendAt", messageData.sendAt)
+                val storage = storage.getReference("chat")
+                for (i in 0..chatImageList.size) {
+                    val storageRef = storage.child("${chatRoomId}/${chatRoomId}_${i}")
+                    storageRef.putFile(chatImageList[i]).addOnSuccessListener {
+                        storage.downloadUrl.addOnSuccessListener { downloadUri ->
+
+                        }
+                    }
+
+
                 }
                 emit(true)
             } catch (e: Exception) {
@@ -775,24 +855,36 @@ class DataRepositoryImpl @Inject constructor(
             val currentUser = auth.currentUser?.uid
             val chatRoomList = mutableListOf<ChatRoomEntity>()
             if (currentUser != null) {
-                db.collection(COLLECTION_CHAT).whereArrayContains("participant", currentUser).get().addOnSuccessListener { snapshot ->
+                db.collection(COLLECTION_CHAT).whereArrayContains("participant", currentUser).get()
+                    .addOnSuccessListener { snapshot ->
 //                    if (e != null) {
 //                        trySend(emptyList())
 //                    }
-                    if (snapshot != null) {
-                        val chatRoomData = snapshot.toObjects(ChatRoomDataResponse::class.java).toChatRoomListEntity()
-                        chatRoomData.map { chatRoomEntity ->
-                            val userData = chatRoomEntity.participant.minus(currentUser).first()
-                            db.collection(COLLECTION_USER).document(userData).get().addOnSuccessListener { userResponse ->
-                                val userEntity = userResponse.toObject(UserDataResponse::class.java)?.toEntity()
-                                if (userEntity != null) {
-                                    chatRoomList.addAll(listOf(ChatRoomEntity(userEntity, chatRoomEntity)))
-                                }
-                                trySend(chatRoomList)
+                        if (snapshot != null) {
+                            val chatRoomData = snapshot.toObjects(ChatRoomDataResponse::class.java)
+                                .toChatRoomListEntity()
+                            chatRoomData.map { chatRoomEntity ->
+                                val userData = chatRoomEntity.participant.minus(currentUser).first()
+                                db.collection(COLLECTION_USER).document(userData).get()
+                                    .addOnSuccessListener { userResponse ->
+                                        val userEntity =
+                                            userResponse.toObject(UserDataResponse::class.java)
+                                                ?.toEntity()
+                                        if (userEntity != null) {
+                                            chatRoomList.addAll(
+                                                listOf(
+                                                    ChatRoomEntity(
+                                                        userEntity,
+                                                        chatRoomEntity
+                                                    )
+                                                )
+                                            )
+                                        }
+                                        trySend(chatRoomList)
+                                    }
                             }
                         }
                     }
-                }
             }
             awaitClose()
         }
@@ -820,7 +912,10 @@ class DataRepositoryImpl @Inject constructor(
     }
 
 
-    override suspend fun getChatMessageData(chatRoomId: String, lastVisibleItem: Flow<Int>): Flow<List<MessageEntity>> {
+    override suspend fun getChatMessageData(
+        chatRoomId: String,
+        lastVisibleItem: Flow<Int>
+    ): Flow<List<MessageEntity>> {
         return callbackFlow {
             val messageList = mutableListOf<MessageEntity>()
             val messageDocuments = mutableListOf<DocumentSnapshot>()
@@ -861,37 +956,39 @@ class DataRepositoryImpl @Inject constructor(
                             }
                         }
 
-                    messageList.size -> query.startAfter(messageDocuments.last()).limit(10).addSnapshotListener { snapshot, e ->
-                        if (e != null) {
-                            trySend(emptyList())
-                        }
-                        if (snapshot != null) {
-                            val documents = snapshot.documents
-                            val messageListEntity =
-                                snapshot.toObjects(MessageDataResponse::class.java)
-                                    .toMessageListEntity()
-                            messageListEntity.map { messageEntity ->
-                                db.collection(COLLECTION_USER).document(messageEntity.uid).get()
-                                    .addOnSuccessListener { userData ->
-                                        val userEntity =
-                                            userData.toObject(UserDataResponse::class.java)
-                                                ?.toEntity()
-                                        if (userEntity != null) {
-                                            messageList.addAll(
-                                                listOf(
-                                                    MessageEntity(
-                                                        userEntity,
-                                                        messageEntity
+                    messageList.size -> query.startAfter(messageDocuments.last()).limit(10)
+                        .addSnapshotListener { snapshot, e ->
+                            if (e != null) {
+                                trySend(emptyList())
+                            }
+                            if (snapshot != null) {
+                                val documents = snapshot.documents
+                                val messageListEntity =
+                                    snapshot.toObjects(MessageDataResponse::class.java)
+                                        .toMessageListEntity()
+                                messageListEntity.map { messageEntity ->
+                                    db.collection(COLLECTION_USER).document(messageEntity.uid).get()
+                                        .addOnSuccessListener { userData ->
+                                            val userEntity =
+                                                userData.toObject(UserDataResponse::class.java)
+                                                    ?.toEntity()
+                                            if (userEntity != null) {
+                                                messageList.addAll(
+                                                    listOf(
+                                                        MessageEntity(
+                                                            userEntity,
+                                                            messageEntity
+                                                        )
                                                     )
                                                 )
-                                            )
+                                            }
+                                            messageDocuments.addAll(documents)
+                                            trySend(messageList)
                                         }
-                                        messageDocuments.addAll(documents)
-                                        trySend(messageList)
-                                    }
+                                }
                             }
                         }
-                    }
+
                     else -> {
                         Log.d("message_else", "message_else")
                     }

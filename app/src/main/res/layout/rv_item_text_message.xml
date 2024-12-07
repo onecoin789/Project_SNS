@@ -12,7 +12,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
-            android:id="@+id/ivItemItemSendProfile"
+            android:id="@+id/ivItemSenderProfile"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:background="@drawable/item_profile"
@@ -33,8 +33,8 @@
             android:paddingStart="17dp"
             android:paddingEnd="16dp"
             android:paddingVertical="13dp"
-            app:layout_constraintStart_toEndOf="@+id/ivItemItemSendProfile"
-            app:layout_constraintTop_toTopOf="@+id/ivItemItemSendProfile">
+            app:layout_constraintStart_toEndOf="@+id/ivItemSenderProfile"
+            app:layout_constraintTop_toTopOf="@+id/ivItemSenderProfile">
 
             <TextView
                 android:id="@+id/tvItemChatSendText"
