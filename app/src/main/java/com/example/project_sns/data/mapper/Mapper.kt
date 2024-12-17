@@ -40,7 +40,8 @@ fun UserDataResponse.toEntity() = UserDataEntity(
     email = email,
     profileImage = profileImage,
     createdAt = createdAt,
-    intro = intro
+    intro = intro,
+    token = token
 )
 
 fun PostDataResponse.toEntity() = PostDataEntity(

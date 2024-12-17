@@ -3,46 +3,50 @@ agp = "8.5.1"
 kotlin = "1.9.0"
 coreKtx = "1.13.1"
 junit = "4.13.2"
-junitVersion = "1.2.0"
-espressoCore = "3.6.0"
+junitVersion = "1.2.1"
+espressoCore = "3.6.1"
 appcompat = "1.7.0"
 material = "1.12.0"
-activity = "1.8.0"
-constraintlayout = "2.1.4"
+activity = "1.9.3"
+constraintlayout = "2.2.0"
 ksp = "1.9.0-1.0.13"
 hiltVersion = "2.51"
-firebaseBom = "33.1.1"
-firebaseAnalytics = "22.0.2"
-firebaseCrashlytics = "19.0.2"
+firebaseBom = "33.7.0"
+firebaseAnalytics = "22.1.2"
+firebaseCrashlytics = "19.3.0"
 navigationFragmentKtx = "2.8.0-beta05"
 navigationUiKtx = "2.8.0-beta05"
 googleServices = "4.4.2"
-firebaseAuth = "23.0.0"
-firebaseFirestore = "25.0.0"
+firebaseAuth = "23.1.0"
+firebaseFirestore = "25.1.1"
 okhttp = "5.0.0-alpha.14"
 retrofit = "2.11.0"
 converterGson = "2.11.0"
 loggingInterceptor = "5.0.0-alpha.14"
 glide = "5.0.0-rc01"
-firebaseStorage = "21.0.0"
+firebaseStorage = "21.0.1"
 nav = "2.7.7"
 dotsindicator = "5.0"
 viewpager2 = "1.1.0"
 googleGmsGoogleServices = "4.4.2"
-firebaseFunctions = "21.0.0"
+firebaseFunctions = "21.1.0"
 kakaoMaps = "2.11.9"
 kakaoSDK = "2.20.3"
 googleServicesLocation = "16.0.0"
 tedImagePicker = "1.6.1"
-exoplayerCore = "2.17.0"
-exoplayerUi = "2.17.0"
+exoplayerCore = "2.19.1"
+exoplayerUi = "2.19.1"
 pagingRuntimeKtx = "3.3.2"
 mediationTestSuite = "3.0.0"
 jsoup = "1.18.1"
 swiperefreshlayout = "1.2.0-alpha01"
 naverMaps = "3.19.1"
-firebaseMessaging = "24.0.3"
+firebaseMessaging = "24.1.0"
 firebaseCrashlyticsPlugin = "2.9.9"
+playServicesMaps = "19.0.0"
+googleAuthOAuth2 = "0.26.0"
+
+
 
 
 
@@ -87,6 +91,8 @@ jsoup = { group = "org.jsoup", name = "jsoup", version.ref = "jsoup" }
 androidx-swiperefreshlayout = { group = "androidx.swiperefreshlayout", name = "swiperefreshlayout", version.ref = "swiperefreshlayout" }
 naver-maps = { group = "com.naver.maps", name = "map-sdk", version.ref = "naverMaps" }
 firebase-messaging = { group = "com.google.firebase", name = "firebase-messaging", version.ref = "firebaseMessaging" }
+play-services-maps = { group = "com.google.android.gms", name = "play-services-maps", version.ref = "playServicesMaps" }
+google-auth-oauth2 = { group = "com.google.auth", name = "google-auth-library-oauth2-http", version.ref = "googleAuthOAuth2" }
 
 
 [plugins]
@@ -96,3 +102,6 @@ ksp = { id = "com.google.devtools.ksp", version.ref = "ksp"}
 googleDaggerHiltAndroid = { id = "com.google.dagger.hilt.android", version.ref = "hiltVersion" }
 googleGmsGoogleServices = { id = "com.google.gms.google-services", version.ref = "googleGmsGoogleServices" }
 firebaseCrashlytics = { id = "com.google.firebase.crashlytics", version.ref = "firebaseCrashlyticsPlugin" }
+
+
+

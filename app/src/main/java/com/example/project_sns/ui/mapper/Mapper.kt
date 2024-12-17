@@ -45,7 +45,8 @@ fun UserDataEntity.toModel() = UserDataModel(
     email = email,
     profileImage = profileImage,
     createdAt = createdAt,
-    intro = intro
+    intro = intro,
+    token = token
 )
 
 fun PostDataEntity.toModel() = PostDataModel(
@@ -106,7 +107,8 @@ fun UserDataModel.toEntity() = UserDataEntity(
     email = email,
     profileImage = profileImage,
     createdAt = createdAt,
-    intro = intro
+    intro = intro,
+    token = token
 )
 
 fun PostDataModel.toEntity() = PostDataEntity(

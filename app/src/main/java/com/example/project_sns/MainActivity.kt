@@ -29,6 +29,7 @@ class MainActivity : AppCompatActivity() {
             WindowInsetsControllerCompat(this, this.decorView).isAppearanceLightStatusBars = false
         }
 
+        FcmUtil.initFcm(this)
 
     }
 }
