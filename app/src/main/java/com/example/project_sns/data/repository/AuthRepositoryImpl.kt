@@ -19,6 +19,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.functions.FirebaseFunctions
 import com.google.firebase.functions.FirebaseFunctionsException
+import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.storage.FirebaseStorage
 import com.kakao.sdk.user.UserApiClient
 import kotlinx.coroutines.channels.awaitClose
@@ -34,12 +35,14 @@ private const val COLLECTION_USER = "user"
 private const val COLLECTION_POST = "post"
 private const val COLLECTION_REQUEST = "request"
 private const val COLLECTION_FRIEND_LIST = "friendList"
+private const val TAG = "AuthRepositoryImpl"
 
 class AuthRepositoryImpl @Inject constructor(
     private val db: FirebaseFirestore,
     private val auth: FirebaseAuth,
     private val storage: FirebaseStorage,
-    private val functions: FirebaseFunctions
+    private val functions: FirebaseFunctions,
+    private val messaging: FirebaseMessaging
 ) : AuthRepository {
     override suspend fun signUp(
         name: String,
@@ -65,7 +68,8 @@ class AuthRepositoryImpl @Inject constructor(
                                 "name" to name,
                                 "email" to email,
                                 "profileImage" to downloadUri,
-                                "createdAt" to createdAt
+                                "createdAt" to createdAt,
+                                "token" to ""
                             )
                             db.collection(COLLECTION_USER).document(user.uid).set(data)
                             db.collection(COLLECTION_FRIEND_LIST).document(user.uid).set(friendData)
@@ -77,7 +81,8 @@ class AuthRepositoryImpl @Inject constructor(
                         "name" to name,
                         "email" to email,
                         "profileImage" to null,
-                        "createdAt" to createdAt
+                        "createdAt" to createdAt,
+                        "token" to ""
                     )
                     db.collection(COLLECTION_USER).document(user.uid).set(data)
                     db.collection(COLLECTION_FRIEND_LIST).document(user.uid).set(friendData)
@@ -97,7 +102,15 @@ class AuthRepositoryImpl @Inject constructor(
 
     override suspend fun logIn(email: String, password: String): Result<String> {
         return try {
-            auth.signInWithEmailAndPassword(email, password).await()
+            auth.signInWithEmailAndPassword(email, password).addOnSuccessListener {
+                val currentUserUid = auth.currentUser?.uid
+                if (currentUserUid != null) {
+                    val userDB = db.collection(COLLECTION_USER).document(currentUserUid)
+                    messaging.token.addOnSuccessListener { fcmToken ->
+                        userDB.update("token", fcmToken)
+                    }
+                }
+            }
             Result.success("success")
         } catch (e: Exception) {
             return Result.failure(Exception("Exception: ${e.message}"))
@@ -294,7 +307,7 @@ class AuthRepositoryImpl @Inject constructor(
                 .getHttpsCallable("kakaoCustomAuth")
                 .call(data)
                 .addOnCompleteListener { task ->
-                    val result = task.result?.data as HashMap<*, *>
+                    val result = task.result?.getData() as HashMap<*, *>
                     var mKey: String? = null
                     for (key in result.keys) {
                         mKey = key.toString()

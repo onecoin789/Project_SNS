@@ -15,20 +15,16 @@ import com.example.project_sns.R
 import com.example.project_sns.databinding.FragmentMainHomeBinding
 import com.example.project_sns.ui.BaseFragment
 import com.example.project_sns.ui.CurrentUser
+import com.example.project_sns.ui.model.PostModel
 import com.example.project_sns.ui.view.main.MainSharedViewModel
 import com.example.project_sns.ui.view.main.MainViewModel
-import com.example.project_sns.ui.view.main.comment.CommentAdapter
-import com.example.project_sns.ui.model.CommentModel
-import com.example.project_sns.ui.model.PostModel
+import com.google.auth.oauth2.GoogleCredentials
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 
 @AndroidEntryPoint
 class MainHomeFragment : BaseFragment<FragmentMainHomeBinding>() {
@@ -58,20 +54,12 @@ class MainHomeFragment : BaseFragment<FragmentMainHomeBinding>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        mainViewModel.pagingData.observe(viewLifecycleOwner) {
-            Log.d("Tag2", "${it.size}")
-        }
-        lifecycleScope.launch {
-            mainViewModel.allPostData.collect {
-                Log.d("Tag1", "${it.size}")
-            }
-        }
-
         refreshRecyclerView()
         navigateView()
         initRv()
         getPostData()
         refreshLayout()
+
 
     }
 

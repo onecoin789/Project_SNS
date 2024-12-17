@@ -6,5 +6,6 @@ data class UserDataResponse(
     val email: String = "",
     val profileImage: String? = null,
     val createdAt : String = "",
-    val intro: String? = ""
+    val intro: String? = "",
+    val token: String = ""
 )

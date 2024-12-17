@@ -16,6 +16,11 @@ android {
     namespace = "com.example.project_sns"
     compileSdk = 34
 
+    packaging {
+        resources.excludes.add("META-INF/DEPENDENCIES")
+        resources.excludes.add("META-INF/INDEX.LIST")
+    }
+
     val properties = Properties()
     properties.load(FileInputStream(rootProject.file("local.properties")))
 
@@ -36,6 +41,7 @@ android {
         resValue("string", "NAVER_CLIENT_ID", properties.getProperty("NAVER_CLIENT_ID"))
 
     }
+
 
     buildTypes {
 
@@ -103,9 +109,9 @@ dependencies {
     implementation(libs.firebase.messaging)
     implementation(libs.firebase.analytics)
     implementation(libs.firebase.auth)
-    implementation(libs.firebase.firestore)
     implementation(libs.firebase.storage)
     implementation(libs.firebase.functions)
+    implementation(libs.firebase.firestore)
 //    implementation(libs.firebase.crashlytics)
 
     // retrofit
@@ -125,9 +131,13 @@ dependencies {
     implementation(libs.kakao.maps)
     implementation(libs.kakao.sdk)
     implementation(libs.google.services.location)
+    implementation(libs.play.services.maps)
 
     // naver
     implementation(libs.naver.maps)
+
+    //oauth2
+    implementation(libs.google.auth.oauth2)
 
 
 

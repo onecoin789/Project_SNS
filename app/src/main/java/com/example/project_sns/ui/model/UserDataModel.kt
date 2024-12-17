@@ -11,5 +11,6 @@ data class UserDataModel(
     val email: String,
     val profileImage: String?,
     val createdAt : String,
-    val intro: String?
+    val intro: String?,
+    val token: String
 ): Parcelable

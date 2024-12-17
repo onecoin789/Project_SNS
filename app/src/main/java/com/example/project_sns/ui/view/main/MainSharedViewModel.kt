@@ -138,6 +138,12 @@ class MainSharedViewModel @Inject constructor(
     val commentLastVisibleItem = MutableStateFlow(0)
 
 
+    // <!-- logoutMethod -->
+    fun logoutData() {
+        _postList.value = emptyList()
+    }
+
+
     // <!-- commentPageSet -->
 
     fun startPage() {

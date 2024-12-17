@@ -15,8 +15,15 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object RetroClient {
 
-    const val KAKAO_MAP_URL = "https://dapi.kakao.com/v2/local/search/"
+    @Qualifier
+    @Retention(AnnotationRetention.BINARY)
+    annotation class KaKaoMapRetroClient
 
+    @Qualifier
+    @Retention(AnnotationRetention.BINARY)
+    annotation class FCMRetroClient
+
+    @Singleton
     @Provides
     fun provideOkHttpClient(): OkHttpClient {
         val loggingInterceptor = HttpLoggingInterceptor()
@@ -29,8 +36,13 @@ object RetroClient {
             .build()
     }
 
+
+    //kakao map retrofit
+    private const val KAKAO_MAP_URL = "https://dapi.kakao.com/v2/local/search/"
+
     @Singleton
     @Provides
+    @KaKaoMapRetroClient
     fun provideRetrofit(client: OkHttpClient): Retrofit {
         return Retrofit.Builder()
             .baseUrl(KAKAO_MAP_URL)
@@ -39,10 +51,34 @@ object RetroClient {
             .build()
     }
 
+    @Singleton
     @Provides
-    fun kakaoMapApiService(retrofit: Retrofit): KakaoMapApiService {
+    @KaKaoMapRetroClient
+    fun kakaoMapApiService(@KaKaoMapRetroClient retrofit: Retrofit): KakaoMapApiService {
         return retrofit.create(KakaoMapApiService::class.java)
     }
 
+
+
+    //fcm retrofit
+    private const val FCM_URL = "https://fcm.googleapis.com/v1/projects/project-sns-58aea/"
+
+    @Singleton
+    @Provides
+    @FCMRetroClient
+    fun provideFCMRetrofit(client: OkHttpClient): Retrofit {
+        return Retrofit.Builder()
+            .baseUrl(FCM_URL)
+            .client(client)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+    }
+
+    @Singleton
+    @Provides
+    @FCMRetroClient
+    fun fcmApiService(@FCMRetroClient retrofit: Retrofit): FCMApiService {
+        return retrofit.create(FCMApiService::class.java)
+    }
 
 }

@@ -7,6 +7,8 @@ import com.example.project_sns.data.mapper.toCommentListEntity
 import com.example.project_sns.data.mapper.toEntity
 import com.example.project_sns.data.mapper.toPostListEntity
 import com.example.project_sns.data.mapper.toReCommentListEntity
+import com.example.project_sns.data.network.FCMApiService
+import com.example.project_sns.data.network.RetroClient
 import com.example.project_sns.data.response.ChatRoomDataResponse
 import com.example.project_sns.data.response.CommentDataResponse
 import com.example.project_sns.data.response.MessageDataResponse
@@ -21,8 +23,11 @@ import com.example.project_sns.domain.entity.ChatRoomEntity
 import com.example.project_sns.domain.entity.CommentDataEntity
 import com.example.project_sns.domain.entity.CommentEntity
 import com.example.project_sns.domain.entity.ImageDataEntity
+import com.example.project_sns.domain.entity.MessageBody
+import com.example.project_sns.domain.entity.MessageBodyEntity
 import com.example.project_sns.domain.entity.MessageDataEntity
 import com.example.project_sns.domain.entity.MessageEntity
+import com.example.project_sns.domain.entity.NotificationData
 import com.example.project_sns.domain.entity.PostDataEntity
 import com.example.project_sns.domain.entity.PostEntity
 import com.example.project_sns.domain.entity.ReCommentDataEntity
@@ -35,10 +40,13 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.storage.FirebaseStorage
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
@@ -55,7 +63,8 @@ class DataRepositoryImpl @Inject constructor(
     private val auth: FirebaseAuth,
     private val db: FirebaseFirestore,
     private val storage: FirebaseStorage,
-    private val messaging: FirebaseMessaging
+    private val messaging: FirebaseMessaging,
+    @RetroClient.FCMRetroClient private val fcmApiService: FCMApiService
 ) : DataRepository {
     override suspend fun uploadPost(postData: PostDataEntity): Flow<Boolean> {
         return flow {
@@ -766,6 +775,17 @@ class DataRepositoryImpl @Inject constructor(
                     messageDB.set(messageData).addOnSuccessListener {
                         chatRoomDB.update("lastMessage", messageData.message)
                         chatRoomDB.update("lastSendAt", messageData.sendAt)
+                    }.addOnSuccessListener {
+                        CoroutineScope(Dispatchers.IO).launch {
+                            fcmApiService.requestFCMQuery(
+                                accessToken = "", messageData = MessageBodyEntity(
+                                    NotificationData(
+                                        "",
+                                        MessageBody("", "")
+                                    )
+                                )
+                            )
+                        }
                     }
                 } else if (messageData.imageList != null) {
                     val message = hashMapOf(
@@ -840,7 +860,6 @@ class DataRepositoryImpl @Inject constructor(
 
                         }
                     }
-
 
                 }
                 emit(true)
