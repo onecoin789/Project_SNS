@@ -1,5 +1,6 @@
 *.iml
-/app/google-services.json
+google-services.json
+/src/main/assets/admin.json
 .gradle
 /local.properties
 /.idea/caches
