@@ -11,6 +11,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.project_sns.FcmUtil
 import com.example.project_sns.R
 import com.example.project_sns.databinding.FragmentMainHomeBinding
 import com.example.project_sns.ui.BaseFragment
@@ -59,10 +60,23 @@ class MainHomeFragment : BaseFragment<FragmentMainHomeBinding>() {
         initRv()
         getPostData()
         refreshLayout()
-
+        getAccessToken()
 
     }
 
+    private fun getAccessToken() {
+        CoroutineScope(Dispatchers.IO).launch {
+            if (FcmUtil.accessToken == null) {
+                val asset = resources.assets.open("service-account.json")
+                val googleCredential = GoogleCredentials.fromStream(asset)
+                    .createScoped(listOf("https://www.googleapis.com/auth/firebase.messaging"))
+                googleCredential.refresh()
+                val accessToken = googleCredential.accessToken.tokenValue
+                Log.d("accessToken", accessToken)
+                FcmUtil.accessToken = accessToken
+            }
+        }
+    }
 
     private fun getPostData() {
         viewLifecycleOwner.lifecycleScope.launch {

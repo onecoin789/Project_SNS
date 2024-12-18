@@ -47,7 +47,7 @@ interface DataRepository {
 
     suspend fun sendFirstMessage(chatRoomId: String, senderUid: String, recipientUid: String, messageData: UploadMessageDataEntity): Flow<Boolean>
 
-    suspend fun sendMessage(chatRoomId: String, messageData: UploadMessageDataEntity): Flow<Boolean>
+    suspend fun sendMessage(chatRoomId: String,token: String, recipientUser: String, accessToken: String, messageData: UploadMessageDataEntity): Flow<Boolean>
 
     suspend fun sendImageMessage(chatRoomId: String, chatImageList: List<Uri>): Flow<Boolean>
 

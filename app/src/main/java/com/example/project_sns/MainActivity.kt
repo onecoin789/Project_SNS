@@ -31,5 +31,7 @@ class MainActivity : AppCompatActivity() {
 
         FcmUtil.initFcm(this)
 
+
+
     }
 }

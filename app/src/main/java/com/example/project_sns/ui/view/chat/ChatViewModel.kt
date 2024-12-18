@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.project_sns.FirebaseMessagingService
 import com.example.project_sns.domain.usecase.CheckChatRoomDataUseCase
 import com.example.project_sns.domain.usecase.CheckMessageDataUseCase
 import com.example.project_sns.domain.usecase.GetChatMessageDataUseCase
@@ -120,10 +121,16 @@ class ChatViewModel @Inject constructor(
         }
     }
 
-    fun sendMessage(chatRoomId: String, messageData: UploadMessageDataModel) {
+    fun sendMessage(chatRoomId: String, token: String, recipientUser: String, accessToken: String, messageData: UploadMessageDataModel) {
         viewModelScope.launch {
             val messageDataEntity = messageData.toEntity()
-            sendMessageUseCase(chatRoomId, messageDataEntity).collect { result ->
+            sendMessageUseCase(
+                chatRoomId = chatRoomId,
+                token = token,
+                recipientUser = recipientUser,
+                accessToken = accessToken,
+                messageData = messageDataEntity
+            ).collect { result ->
                 _sendMessageResult.value = result
             }
         }
