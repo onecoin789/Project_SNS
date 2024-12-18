@@ -10,6 +10,6 @@ data class NotificationData(
 )
 
 data class MessageBody(
-    val body: String,
-    val title: String
+    val title: String,
+    val body: String
 )

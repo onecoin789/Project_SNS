@@ -15,6 +15,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.OnScrollListener
+import com.example.project_sns.FcmUtil
+import com.example.project_sns.FirebaseMessagingService
 import com.example.project_sns.databinding.FragmentChatRoomBinding
 import com.example.project_sns.domain.MessageViewType
 import com.example.project_sns.ui.BaseFragment
@@ -36,6 +38,10 @@ import java.util.UUID
 @AndroidEntryPoint
 class ChatRoomFragment : BaseFragment<FragmentChatRoomBinding>() {
 
+    companion object {
+        private const val TAG: String = "ChatRoomFragment"
+    }
+
     private val chatViewModel: ChatViewModel by viewModels()
 
     private val chatSharedViewModel: ChatSharedViewModel by activityViewModels()
@@ -47,6 +53,11 @@ class ChatRoomFragment : BaseFragment<FragmentChatRoomBinding>() {
     private lateinit var messageListAdapter: MessageListAdapter
 
     private lateinit var chatRoomImageListAdapter: ChatRoomImageListAdapter
+
+    private var recipientUser: String = ""
+
+    private var token: String = ""
+
 
     private var messageListSize: Int = 0
 
@@ -66,6 +77,8 @@ class ChatRoomFragment : BaseFragment<FragmentChatRoomBinding>() {
         checkMessage()
         checkMessageDataResult()
         editTextWatcher()
+
+        Log.d(TAG, "${FcmUtil.accessToken}")
     }
 
 
@@ -75,6 +88,9 @@ class ChatRoomFragment : BaseFragment<FragmentChatRoomBinding>() {
             if (userData != null) {
                 binding.tvChatRoomName.text = userData.name
                 binding.tvChatRoomEmail.text = userData.email
+
+                recipientUser = userData.name
+                token = userData.token
             }
         }
 
@@ -248,10 +264,11 @@ class ChatRoomFragment : BaseFragment<FragmentChatRoomBinding>() {
         val message = binding.etChat.text.toString()
         val messageId = UUID.randomUUID().toString()
         val sendAt = chatDateFormat()
+        val accessToken = FcmUtil.accessToken.toString()
 
         chatSharedViewModel.checkChatRoomData.observe(viewLifecycleOwner) { result ->
             if (result == true) {
-                sendMessage(currentUser, message, messageId, sendAt)
+                sendMessage(currentUser, message, messageId, sendAt, accessToken)
             } else if (result == false) {
                 sendFirstMessage(
                     newChatRoomId,
@@ -275,10 +292,12 @@ class ChatRoomFragment : BaseFragment<FragmentChatRoomBinding>() {
         val newChatRoomId = UUID.randomUUID().toString()
         val messageId = UUID.randomUUID().toString()
         val sendAt = chatDateFormat()
+        val accessToken = FcmUtil.accessToken.toString()
+
 
         chatSharedViewModel.checkChatRoomData.observe(viewLifecycleOwner) { result ->
             if (result == true) {
-                sendImageTypeMessage(currentUser, messageId, sendAt)
+                sendImageTypeMessage(currentUser, messageId, sendAt, accessToken)
             } else if (result == false) {
                 sendFirstImageTypeMessage(
                     newChatRoomId,
@@ -313,7 +332,7 @@ class ChatRoomFragment : BaseFragment<FragmentChatRoomBinding>() {
         }
     }
 
-    private fun sendMessage(senderUid: String, message: String, messageId: String, sendAt: String) {
+    private fun sendMessage(senderUid: String, message: String, messageId: String, sendAt: String, accessToken: String,) {
         chatSharedViewModel.chatRoomData.observe(viewLifecycleOwner) { chatRoom ->
             Log.d("chatRoomData", "$chatRoom")
             if (chatRoom != null) {
@@ -327,7 +346,7 @@ class ChatRoomFragment : BaseFragment<FragmentChatRoomBinding>() {
                         sendAt = sendAt,
                         type = MessageViewType.TEXT_MESSAGE
                     )
-                chatViewModel.sendMessage(chatRoom.chatRoomId, messageData)
+                chatViewModel.sendMessage(chatRoom.chatRoomId, token, recipientUser, accessToken, messageData)
                 collectMessageResult()
             }
         }
@@ -377,7 +396,7 @@ class ChatRoomFragment : BaseFragment<FragmentChatRoomBinding>() {
         }
     }
 
-    private fun sendImageTypeMessage(senderUid: String, messageId: String, sendAt: String) {
+    private fun sendImageTypeMessage(senderUid: String, messageId: String, sendAt: String, accessToken: String,) {
         chatSharedViewModel.chatRoomData.observe(viewLifecycleOwner) { chatRoom ->
             if (chatRoom != null) {
                 if (chatImageList != null) {
@@ -391,7 +410,7 @@ class ChatRoomFragment : BaseFragment<FragmentChatRoomBinding>() {
                             sendAt = sendAt,
                             type = MessageViewType.IMAGE_MESSAGE
                         )
-                    chatViewModel.sendMessage(chatRoom.chatRoomId, messageData)
+                    chatViewModel.sendMessage(chatRoom.chatRoomId, token, recipientUser, accessToken, messageData)
                     collectImageMessageResult()
                 }
             }

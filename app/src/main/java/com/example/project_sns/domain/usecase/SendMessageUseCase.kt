@@ -7,7 +7,13 @@ import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class SendMessageUseCase @Inject constructor(private val dataRepository: DataRepository) {
-    suspend operator fun invoke(chatRoomId: String, messageData: UploadMessageDataEntity): Flow<Boolean> {
-        return dataRepository.sendMessage(chatRoomId, messageData)
+    suspend operator fun invoke(chatRoomId: String, token: String, recipientUser: String, accessToken: String, messageData: UploadMessageDataEntity): Flow<Boolean> {
+        return dataRepository.sendMessage(
+            chatRoomId = chatRoomId,
+            token = token,
+            recipientUser = recipientUser,
+            accessToken = accessToken,
+            messageData = messageData
+        )
     }
 }

@@ -304,21 +304,13 @@ class FirebaseMessagingService : FirebaseMessagingService() {
             }
         })
     }
-
-    fun getAccessToken(): String {
-        val asset = resources.assets.open("admin.json")
-        val googleCredential = GoogleCredentials.fromStream(asset)
-            .createScoped(listOf("https://www.googleapis.com/auth/firebase.messaging"))
-        googleCredential.refresh()
-        val accessToken = googleCredential.accessToken.tokenValue
-        Log.d("accessToken", accessToken)
-        return accessToken
-    }
 }
 
 object FcmUtil {
 
     private const val TAG = "FcmUtil"
+
+    var accessToken: String? = null
 
     fun initFcm(context: Context) {
         FirebaseApp.initializeApp(context)
@@ -340,7 +332,7 @@ object FcmUtil {
                 NotificationCompat.Builder(context, "mwc")
                     .setContentIntent(pendingIntent)
                     .setAutoCancel(true)
-                    .setSmallIcon(R.mipmap.ic_launcher)
+                    .setSmallIcon(R.drawable.ic_main)
                     .setContentTitle(title)
                     .setContentText(body)
                     .setDefaults(Notification.DEFAULT_ALL)
@@ -350,7 +342,7 @@ object FcmUtil {
                 NotificationCompat.Builder(context)
                     .setContentIntent(pendingIntent)
                     .setAutoCancel(true)
-                    .setSmallIcon(R.mipmap.ic_launcher)
+                    .setSmallIcon(R.drawable.ic_main)
                     .setContentTitle(title)
                     .setContentText(body)
                     .setDefaults(Notification.DEFAULT_ALL)

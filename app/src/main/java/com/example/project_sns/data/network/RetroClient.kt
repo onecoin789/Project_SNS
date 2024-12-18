@@ -19,9 +19,9 @@ object RetroClient {
     @Retention(AnnotationRetention.BINARY)
     annotation class KaKaoMapRetroClient
 
-    @Qualifier
-    @Retention(AnnotationRetention.BINARY)
-    annotation class FCMRetroClient
+//    @Qualifier
+//    @Retention(AnnotationRetention.BINARY)
+//    annotation class FCMRetroClient
 
     @Singleton
     @Provides
@@ -60,25 +60,25 @@ object RetroClient {
 
 
 
-    //fcm retrofit
-    private const val FCM_URL = "https://fcm.googleapis.com/v1/projects/project-sns-58aea/"
-
-    @Singleton
-    @Provides
-    @FCMRetroClient
-    fun provideFCMRetrofit(client: OkHttpClient): Retrofit {
-        return Retrofit.Builder()
-            .baseUrl(FCM_URL)
-            .client(client)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-    }
-
-    @Singleton
-    @Provides
-    @FCMRetroClient
-    fun fcmApiService(@FCMRetroClient retrofit: Retrofit): FCMApiService {
-        return retrofit.create(FCMApiService::class.java)
-    }
+//    //fcm retrofit
+//    private const val FCM_URL = "https://fcm.googleapis.com/v1/projects/project-sns-58aea/messages:/"
+//
+//    @Singleton
+//    @Provides
+//    @FCMRetroClient
+//    fun provideFCMRetrofit(client: OkHttpClient): Retrofit {
+//        return Retrofit.Builder()
+//            .baseUrl(FCM_URL)
+//            .client(client)
+//            .addConverterFactory(GsonConverterFactory.create())
+//            .build()
+//    }
+//
+//    @Singleton
+//    @Provides
+//    @FCMRetroClient
+//    fun fcmApiService(@FCMRetroClient retrofit: Retrofit): FCMApiService {
+//        return retrofit.create(FCMApiService::class.java)
+//    }
 
 }

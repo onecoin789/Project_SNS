@@ -16,8 +16,6 @@
 #google-services.json
 #/src/main/assets
 
-# Created by https://www.toptal.com/developers/gitignore/api/android,kotlin
-# Edit at https://www.toptal.com/developers/gitignore?templates=android,kotlin
 
 ### Android ###
 # Gradle files
