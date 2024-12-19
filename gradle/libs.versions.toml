@@ -45,6 +45,7 @@ firebaseMessaging = "24.1.0"
 firebaseCrashlyticsPlugin = "2.9.9"
 playServicesMaps = "19.0.0"
 googleAuthOAuth2 = "0.26.0"
+datastorePreferences = "1.1.1"
 
 
 
@@ -93,6 +94,7 @@ naver-maps = { group = "com.naver.maps", name = "map-sdk", version.ref = "naverM
 firebase-messaging = { group = "com.google.firebase", name = "firebase-messaging", version.ref = "firebaseMessaging" }
 play-services-maps = { group = "com.google.android.gms", name = "play-services-maps", version.ref = "playServicesMaps" }
 google-auth-oauth2 = { group = "com.google.auth", name = "google-auth-library-oauth2-http", version.ref = "googleAuthOAuth2" }
+androidx-datastore-preferences = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastorePreferences" }
 
 
 [plugins]

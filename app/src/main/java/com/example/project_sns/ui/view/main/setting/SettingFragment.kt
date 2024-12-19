@@ -46,7 +46,6 @@ class SettingFragment : BaseFragment<FragmentSettingBinding>() {
 
         binding.clSettingLogout.setOnClickListener {
             logout()
-            findNavController().navigate(R.id.action_settingFragment_to_loginFragment)
         }
     }
 
@@ -54,6 +53,7 @@ class SettingFragment : BaseFragment<FragmentSettingBinding>() {
         viewLifecycleOwner.lifecycleScope.launch {
             settingViewModel.logout()
             mainSharedViewModel.logoutData()
+            mainSharedViewModel.checkLogin(false)
         }
     }
 }

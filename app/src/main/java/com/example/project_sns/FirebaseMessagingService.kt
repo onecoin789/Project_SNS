@@ -1,10 +1,13 @@
 package com.example.project_sns
 
 import android.app.Notification
+import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.media.MediaPlayer
+import android.media.RingtoneManager
 import android.os.Build
 import android.util.Log
 import androidx.core.app.NotificationCompat
@@ -240,18 +243,24 @@ class FirebaseMessagingService : FirebaseMessagingService() {
     }
 
 
-    override fun onMessageReceived(message: RemoteMessage) {
-        super.onMessageReceived(message)
-        val title = message.notification!!.title.toString()
-        val body = message.notification!!.body.toString()
-        val data = message.data
-        Log.d(TAG, "onMessageReceived: title = $title, body = $body, data = $data")
+    override fun onMessageReceived(remoteMessage: RemoteMessage) {
+        super.onMessageReceived(remoteMessage)
 
-        FcmUtil.showNotification(
-            context = applicationContext,
-            title = title,
-            body = body
-        )
+        if (remoteMessage.data.isNotEmpty()) {
+            Log.d(TAG, "Message data payload: ${remoteMessage.data}")
+            sendNotification(
+                remoteMessage.data["title"].toString(),
+                remoteMessage.data["message"].toString()
+            )
+        } else {
+            // 메시지에 알림 페이로드가 포함되어 있는지 확인한다.
+            remoteMessage.notification?.let {
+                sendNotification(
+                    remoteMessage.notification?.title.toString(),
+                    remoteMessage.notification?.body.toString()
+                )
+            }
+        }
     }
 
     override fun onNewToken(token: String) {
@@ -304,6 +313,41 @@ class FirebaseMessagingService : FirebaseMessagingService() {
             }
         })
     }
+
+    private fun sendNotification(title: String, body: String) {
+        val intent = Intent(this, MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            putExtra("Fragment", "eventChatRoomFragment")
+        }
+        val pendingIntent = PendingIntent.getActivity(
+            this, 0, intent,
+            PendingIntent.FLAG_IMMUTABLE
+        )
+
+        val channelId = "fcm_default_channel"
+        val defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
+        val customSoundUri = RingtoneManager.getDefaultUri(R.raw.alert_ring)
+        val notificationBuilder = NotificationCompat.Builder(this, channelId)
+            .setSmallIcon(R.drawable.ic_main)
+            .setContentTitle(title)
+            .setContentText(body)
+            .setAutoCancel(true)
+            .setSound(customSoundUri)
+            .setContentIntent(pendingIntent)
+
+        val notificationManager =
+            getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+        // 오레오 이상에서 알림을 제공하려면 앱의 알림 채널을 시스템에 등록해야 한다.
+        val channel = NotificationChannel(
+            channelId,
+            "Channel human readable title",
+            NotificationManager.IMPORTANCE_DEFAULT
+        )
+        notificationManager.createNotificationChannel(channel)
+
+        notificationManager.notify(0, notificationBuilder.build())
+    }
 }
 
 object FcmUtil {
@@ -326,28 +370,14 @@ object FcmUtil {
             Intent(context, MainActivity::class.java),
             PendingIntent.FLAG_IMMUTABLE
         )
-        val notification: Notification?
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            notification =
-                NotificationCompat.Builder(context, "mwc")
-                    .setContentIntent(pendingIntent)
-                    .setAutoCancel(true)
-                    .setSmallIcon(R.drawable.ic_main)
-                    .setContentTitle(title)
-                    .setContentText(body)
-                    .setDefaults(Notification.DEFAULT_ALL)
-                    .build()
-        } else {
-            notification =
-                NotificationCompat.Builder(context)
-                    .setContentIntent(pendingIntent)
-                    .setAutoCancel(true)
-                    .setSmallIcon(R.drawable.ic_main)
-                    .setContentTitle(title)
-                    .setContentText(body)
-                    .setDefaults(Notification.DEFAULT_ALL)
-                    .build()
-        }
+        val notification: Notification = NotificationCompat.Builder(context, "mwc")
+                .setContentIntent(pendingIntent)
+                .setAutoCancel(true)
+                .setSmallIcon(R.drawable.ic_main)
+                .setContentTitle(title)
+                .setContentText(body)
+                .setDefaults(Notification.DEFAULT_ALL)
+                .build()
 
         val notificationManager =
             context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager

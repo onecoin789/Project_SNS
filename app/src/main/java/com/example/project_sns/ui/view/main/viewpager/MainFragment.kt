@@ -1,6 +1,7 @@
 package com.example.project_sns.ui.view.main.viewpager
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,6 +9,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.widget.ViewPager2
 import com.example.project_sns.R
 import com.example.project_sns.databinding.FragmentMainBinding
@@ -22,6 +24,15 @@ import kotlinx.coroutines.launch
 class MainFragment : BaseFragment<FragmentMainBinding>() {
 
     private val mainViewModel : MainViewModel by viewModels()
+
+    private val mainSharedViewModel: MainSharedViewModel by activityViewModels()
+
+
+    override fun onStart() {
+        super.onStart()
+
+        mainSharedViewModel.getLoginSession()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,8 +53,20 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
 
         initViewPager()
         initBottomBar()
+        checkLoginSession()
     }
 
+
+    private fun checkLoginSession() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            mainSharedViewModel.loginSessionResult.observe(viewLifecycleOwner) { result ->
+                Log.d("LoginSession", "$result")
+                if (result == false) {
+                    findNavController().navigate(R.id.loginFragment)
+                }
+            }
+        }
+    }
 
 
     private fun initViewPager() {

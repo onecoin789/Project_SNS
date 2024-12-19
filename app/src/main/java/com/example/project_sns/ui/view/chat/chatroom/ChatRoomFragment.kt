@@ -84,12 +84,13 @@ class ChatRoomFragment : BaseFragment<FragmentChatRoomBinding>() {
 
     private fun initView() {
 
+        recipientUser = CurrentUser.userData?.name.toString()
+
         mainSharedViewModel.userData.observe(viewLifecycleOwner) { userData ->
             if (userData != null) {
                 binding.tvChatRoomName.text = userData.name
                 binding.tvChatRoomEmail.text = userData.email
 
-                recipientUser = userData.name
                 token = userData.token
             }
         }

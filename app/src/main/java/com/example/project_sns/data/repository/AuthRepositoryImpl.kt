@@ -1,7 +1,16 @@
 package com.example.project_sns.data.repository
 
+import android.content.Context
 import android.util.Log
 import androidx.core.net.toUri
+import androidx.datastore.core.DataStore
+import androidx.datastore.core.IOException
+import androidx.datastore.dataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.emptyPreferences
+import androidx.datastore.preferences.preferencesDataStore
 import com.example.project_sns.data.mapper.toEntity
 import com.example.project_sns.data.mapper.toRequestDataEntity
 import com.example.project_sns.data.response.FriendDataResponse
@@ -22,10 +31,14 @@ import com.google.firebase.functions.FirebaseFunctionsException
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.storage.FirebaseStorage
 import com.kakao.sdk.user.UserApiClient
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.last
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.tasks.await
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -42,8 +55,14 @@ class AuthRepositoryImpl @Inject constructor(
     private val auth: FirebaseAuth,
     private val storage: FirebaseStorage,
     private val functions: FirebaseFunctions,
-    private val messaging: FirebaseMessaging
+    private val messaging: FirebaseMessaging,
+    private val dataStore: DataStore<Preferences>
 ) : AuthRepository {
+
+    private object PreferenceKeys {
+        val LOGIN_CHECK = booleanPreferencesKey("login_check")
+    }
+
     override suspend fun signUp(
         name: String,
         email: String,
@@ -117,6 +136,40 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun logInCheck(checkResult: Boolean): Flow<Boolean> {
+        return flow {
+            try {
+                if (checkResult) {
+                    dataStore.edit { prefs ->
+                        prefs[PreferenceKeys.LOGIN_CHECK] = true
+                    }
+                } else {
+                    dataStore.edit { prefs ->
+                        prefs[PreferenceKeys.LOGIN_CHECK] = false
+                    }
+                }
+                emit(true)
+            } catch (e: Exception) {
+                emit(false)
+            }
+        }
+    }
+
+    override suspend fun getLoginSession(): Flow<Boolean> {
+        return flow {
+            dataStore.data.collect { prefs ->
+                val loginCheck = prefs[PreferenceKeys.LOGIN_CHECK]
+                Log.d("LoginSessionImpl", "$loginCheck")
+
+                if (loginCheck == true) {
+                    emit(true)
+                } else {
+                    emit(false)
+                }
+            }
+        }
+    }
+
     override suspend fun logout(): Result<String> {
         return try {
             auth.signOut()
@@ -131,7 +184,7 @@ class AuthRepositoryImpl @Inject constructor(
             val mAuth = auth.currentUser?.uid
             if (mAuth != null) {
                 val docRef = db.collection(COLLECTION_USER).document(mAuth)
-                val snapshotListener = docRef.addSnapshotListener { snapshot, error ->
+                docRef.addSnapshotListener { snapshot, error ->
                     if (error != null) {
                         trySend(null).isSuccess
                         return@addSnapshotListener
@@ -143,10 +196,8 @@ class AuthRepositoryImpl @Inject constructor(
                         trySend(null).isSuccess
                     }
                 }
-                awaitClose {
-                    snapshotListener.remove()
-                }
             }
+            awaitClose()
         }
     }
 

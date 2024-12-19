@@ -5,6 +5,7 @@
     <string name="test">테스트</string>
     <string name="slash">/</string>
     <string name="number1">1</string>
+    <string name="close">닫기</string>
 
     <!-- Chat -->
     <string name="message">메시지</string>
