@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -17,20 +18,27 @@ import com.example.project_sns.R
 import com.example.project_sns.databinding.FragmentLoginBinding
 import com.example.project_sns.ui.BaseFragment
 import com.example.project_sns.ui.util.CheckLogin
+import com.example.project_sns.ui.util.chatDateFormat
+import com.example.project_sns.ui.view.main.MainSharedViewModel
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.common.model.ClientError
 import com.kakao.sdk.common.model.ClientErrorCause
 import com.kakao.sdk.user.UserApiClient
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import java.util.TimeZone
 
 
 @AndroidEntryPoint
 class LoginFragment : BaseFragment<FragmentLoginBinding>() {
 
+    companion object {
+        private const val TAG = "LoginFragment"
+    }
+
 
     private val loginViewModel: LoginViewModel by viewModels()
+
+    private val mainSharedViewModel: MainSharedViewModel by activityViewModels()
 
 
     override fun getFragmentBinding(
@@ -42,7 +50,18 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         initView()
+        testTime()
+
+
+    }
+
+
+    private fun testTime() {
+        binding.tvLoginTitle.setOnClickListener {
+            Toast.makeText(requireContext(), chatDateFormat(), Toast.LENGTH_LONG).show()
+        }
     }
 
 
@@ -68,6 +87,7 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
         }
     }
 
+
     private fun collectFlow() {
 
         viewLifecycleOwner.lifecycleScope.launch {
@@ -75,12 +95,14 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
                 loginViewModel.loginEvent.collect { checkLogin ->
                     when (checkLogin) {
                         is CheckLogin.LoginSuccess -> {
+                            mainSharedViewModel.checkLogin(true)
                             Toast.makeText(requireContext(), checkLogin.message, Toast.LENGTH_SHORT)
                                 .show()
                             findNavController().navigate(R.id.action_loginFragment_to_mainFragment)
                         }
 
                         is CheckLogin.LoginFail -> {
+                            mainSharedViewModel.checkLogin(false)
                             Toast.makeText(requireContext(), checkLogin.message, Toast.LENGTH_SHORT)
                                 .show()
                         }

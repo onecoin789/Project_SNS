@@ -64,6 +64,7 @@ class MainHomeFragment : BaseFragment<FragmentMainHomeBinding>() {
 
     }
 
+
     private fun getAccessToken() {
         CoroutineScope(Dispatchers.IO).launch {
             if (FcmUtil.accessToken == null) {

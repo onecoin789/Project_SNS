@@ -8,14 +8,17 @@ import dagger.hilt.android.HiltAndroidApp
 
 @HiltAndroidApp
 class ProjectSNS : Application() {
+
     companion object {
         private lateinit var application: ProjectSNS
         fun getInstance() : ProjectSNS = application
     }
 
+
     override fun onCreate() {
         super.onCreate()
         application = this
+
 
         KakaoSdk.init(this, BuildConfig.NATIVE_KEY)
         NaverMapSdk.getInstance(this).client = NaverMapSdk.NaverCloudPlatformClient(BuildConfig.NAVER_CLIENT_ID)

@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.project_sns.domain.usecase.CancelFriendRequestUseCase
 import com.example.project_sns.domain.usecase.CheckFriendRequestUseCase
+import com.example.project_sns.domain.usecase.CheckLoginUseCase
 import com.example.project_sns.domain.usecase.DeleteCommentUseCase
 import com.example.project_sns.domain.usecase.DeleteFriendUseCase
 import com.example.project_sns.domain.usecase.DeletePostUseCase
@@ -17,6 +18,7 @@ import com.example.project_sns.domain.usecase.EditProfileUseCase
 import com.example.project_sns.domain.usecase.GetCommentDataUseCase
 import com.example.project_sns.domain.usecase.GetCurrentUserPostDataUseCase
 import com.example.project_sns.domain.usecase.GetFriendListDataUseCase
+import com.example.project_sns.domain.usecase.GetLoginSessionUseCase
 import com.example.project_sns.domain.usecase.GetPagingPostUseCase
 import com.example.project_sns.domain.usecase.GetReCommentDataUseCase
 import com.example.project_sns.domain.usecase.GetUserByUidUseCase
@@ -72,6 +74,8 @@ class MainSharedViewModel @Inject constructor(
     private val cancelFriendRequestUseCase: CancelFriendRequestUseCase,
     private val getCommentDataUseCase: GetCommentDataUseCase,
     private val deleteCommentUseCase: DeleteCommentUseCase,
+    private val checkLoginUseCase: CheckLoginUseCase,
+    private val getLoginSessionUseCase: GetLoginSessionUseCase
 
     ) : ViewModel() {
 
@@ -132,10 +136,35 @@ class MainSharedViewModel @Inject constructor(
     private val _commentListData = MutableLiveData<List<CommentModel>>(emptyList())
     val commentListData: LiveData<List<CommentModel>> get() = _commentListData
 
+    //로그인 관련
+    private val _loginResult = MutableLiveData<Boolean>()
+    val loginResult: LiveData<Boolean> get() = _loginResult
+
+    private val _loginSessionResult = MutableLiveData<Boolean>()
+    val loginSessionResult: LiveData<Boolean> get() = _loginSessionResult
+
 
     val homePostLastVisibleItem = MutableStateFlow(0)
 
     val commentLastVisibleItem = MutableStateFlow(0)
+
+
+    //로그인 관련
+    fun checkLogin(checkResult: Boolean) {
+        viewModelScope.launch {
+            checkLoginUseCase(checkResult).collect { result ->
+                _loginResult.value = result
+            }
+        }
+    }
+
+    fun getLoginSession() {
+        viewModelScope.launch {
+            getLoginSessionUseCase().collect { session ->
+                _loginSessionResult.value = session
+            }
+        }
+    }
 
 
     // <!-- logoutMethod -->

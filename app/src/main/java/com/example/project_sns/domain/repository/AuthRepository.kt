@@ -11,6 +11,10 @@ interface AuthRepository {
 
     suspend fun logIn(email: String, password: String) : Result<String>
 
+    suspend fun logInCheck(checkResult: Boolean): Flow<Boolean>
+
+    suspend fun getLoginSession(): Flow<Boolean>
+
     suspend fun logout(): Result<String>
 
     suspend fun getCurrentUserData() : Flow<UserDataEntity?>

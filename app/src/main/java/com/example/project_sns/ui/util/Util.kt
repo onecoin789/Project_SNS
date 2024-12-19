@@ -2,7 +2,10 @@ package com.example.project_sns.ui.util
 
 
 import java.text.SimpleDateFormat
+import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.OffsetDateTime
+import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import java.util.Date
 import java.util.Locale
@@ -13,7 +16,7 @@ fun dateFormat(time: LocalDateTime) : String {
 }
 
 fun chatDateFormat() : String {
-    val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS", Locale.KOREA)
+    val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS", Locale.KOREAN)
     formatter.timeZone = TimeZone.getTimeZone("Asia/Seoul")
     return formatter.format(Date().time)
 //    time.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss:SSS"))
