@@ -39,7 +39,7 @@
 
         <TextView
             android:id="@+id/tvItemListMessage"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:textColor="@color/text"
             android:textSize="16sp"
@@ -47,9 +47,11 @@
             android:textStyle="bold"
             android:layout_marginTop="3dp"
             android:layout_marginStart="1dp"
+            android:layout_marginEnd="30dp"
             app:layout_constraintStart_toStartOf="@+id/tvItemListName"
             app:layout_constraintTop_toBottomOf="@+id/tvItemListName"
-            app:layout_constraintBottom_toBottomOf="@+id/ivItemListProfile"/>
+            app:layout_constraintBottom_toBottomOf="@+id/ivItemListProfile"
+            app:layout_constraintEnd_toStartOf="@id/clItemListUnReadMessage"/>
 
         <TextView
             android:id="@+id/tvItemLast"
@@ -72,6 +74,32 @@
             app:layout_constraintStart_toEndOf="@+id/tvItemLast"
             app:layout_constraintTop_toTopOf="@id/tvItemLast"
             app:layout_constraintBottom_toBottomOf="@id/tvItemLast"/>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/clItemListUnReadMessage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/item_circle_radius_100"
+            android:backgroundTint="@color/dialog_point"
+            android:paddingHorizontal="11dp"
+            android:paddingVertical="7dp"
+            android:visibility="gone"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <TextView
+                android:id="@+id/tvItemListUnReadMessage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:textColor="@color/text"
+                android:textSize="15sp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
 
 

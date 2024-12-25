@@ -1,12 +1,16 @@
 package com.example.project_sns.ui.view.chat
 
+import android.util.Log
+import android.util.Printer
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.project_sns.FirebaseMessagingService
 import com.example.project_sns.domain.usecase.CheckChatRoomDataUseCase
+import com.example.project_sns.domain.usecase.CheckChatRoomSessionUseCase
 import com.example.project_sns.domain.usecase.CheckMessageDataUseCase
+import com.example.project_sns.domain.usecase.CheckReadMessageUseCase
 import com.example.project_sns.domain.usecase.GetChatMessageDataUseCase
 import com.example.project_sns.domain.usecase.GetChatRoomDataUseCase
 import com.example.project_sns.domain.usecase.GetChatRoomListUseCase
@@ -25,6 +29,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
+import org.apache.commons.lang3.mutable.Mutable
 import javax.inject.Inject
 
 @HiltViewModel
@@ -35,7 +40,9 @@ class ChatViewModel @Inject constructor(
     private val getChatRoomDataUseCase: GetChatRoomDataUseCase,
     private val getChatRoomListUseCase: GetChatRoomListUseCase,
     private val checkMessageDataUseCase: CheckMessageDataUseCase,
-    private val getChatMessageDataUseCase: GetChatMessageDataUseCase
+    private val getChatMessageDataUseCase: GetChatMessageDataUseCase,
+    private val checkChatRoomSessionUseCase: CheckChatRoomSessionUseCase,
+    private val checkReadMessageUseCase: CheckReadMessageUseCase
 ): ViewModel() {
 
     private val _checkChatRoomData = MutableLiveData<Boolean?>()
@@ -59,12 +66,31 @@ class ChatViewModel @Inject constructor(
     private val _messageList = MutableLiveData<List<MessageModel>>()
     val messageList: LiveData<List<MessageModel>> get() = _messageList
 
+    private val _chatRoomSession = MutableLiveData<Boolean>()
+    val chatRoomSession: LiveData<Boolean> get() = _chatRoomSession
+
     val messageLastVisibleItem = MutableStateFlow<Int>(0)
 
 
     fun clearMessageList() {
         _messageList.value = emptyList()
         messageLastVisibleItem.value = 0
+    }
+
+    fun checkReadMessage(chatRoomId: String, userSession: Boolean) {
+        viewModelScope.launch {
+            checkReadMessageUseCase(chatRoomId, userSession).collect {
+                Log.d("ChatViewModel", "$it")
+            }
+        }
+    }
+
+    fun checkChatRoomSession(chatRoomId: String) {
+        viewModelScope.launch {
+            checkChatRoomSessionUseCase(chatRoomId).collect { session ->
+                _chatRoomSession.value = session
+            }
+        }
     }
 
     fun getChatRoomList() {
@@ -112,23 +138,31 @@ class ChatViewModel @Inject constructor(
         }
     }
 
-    fun sendFirstMessage(chatRoomId: String, senderUid: String, recipientUid: String, messageData: UploadMessageDataModel) {
+    fun sendFirstMessage(chatRoomId: String, token: String, sendUser: String, accessToken: String, senderUid: String, recipientUid: String, messageData: UploadMessageDataModel) {
         viewModelScope.launch {
             val messageDataEntity = messageData.toEntity()
-            sendFirstMessageUseCase(chatRoomId, senderUid, recipientUid, messageDataEntity).collect { result ->
+            sendFirstMessageUseCase(
+                chatRoomId = chatRoomId,
+                token = token,
+                sendUser = sendUser,
+                accessToken = accessToken,
+                senderUid = senderUid,
+                recipientUid = recipientUid,
+                messageData = messageDataEntity).collect { result ->
                 _sendFirstMessageResult.value = result
             }
         }
     }
 
-    fun sendMessage(chatRoomId: String, token: String, recipientUser: String, accessToken: String, messageData: UploadMessageDataModel) {
+    fun sendMessage(chatRoomId: String, token: String, sendUser: String, accessToken: String, recipientUid: String, messageData: UploadMessageDataModel) {
         viewModelScope.launch {
             val messageDataEntity = messageData.toEntity()
             sendMessageUseCase(
                 chatRoomId = chatRoomId,
                 token = token,
-                recipientUser = recipientUser,
+                sendUser = sendUser,
                 accessToken = accessToken,
+                recipientUid = recipientUid,
                 messageData = messageDataEntity
             ).collect { result ->
                 _sendMessageResult.value = result

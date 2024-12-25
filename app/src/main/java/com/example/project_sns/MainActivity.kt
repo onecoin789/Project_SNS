@@ -3,6 +3,7 @@ package com.example.project_sns
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -23,9 +24,12 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
-    private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
+    companion object {
+        private const val REQUEST_CODE_NOTIFICATION_PERMISSION = 1
+        private const val TAG = "MainActivity"
+    }
 
-    private val REQUEST_CODE_NOTIFICATION_PERMISSION = 1
+    private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -83,18 +87,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun navigateFragment() {
-        val targetFragment = intent.getStringExtra("Fragment")
-        if (targetFragment != null) {
-            if (targetFragment == "eventChatRoomFragment") {
-                findNavController(R.id.action_mainFragment_to_chatRoomFragment)
-            }
-        }
-    }
-
-    private fun saveAndChangeFragment() {
-        supportFragmentManager.beginTransaction()
-            .replace(binding.navHostFragment.id, ChatRoomFragment())
-            .addToBackStack(null)
-            .commit()
+        val targetFragment = intent.getStringExtra("chatRoomId")
+        Log.d(TAG, "$targetFragment")
     }
 }

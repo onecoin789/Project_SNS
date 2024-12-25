@@ -20,8 +20,9 @@ data class MessageDataModel(
     val message: String?,
     val imageList: List<ImageDataModel>?,
     val sendAt: String,
+    val read: List<Map<String, Boolean>>,
     val type: MessageViewType
-): Parcelable
+) : Parcelable
 
 @Parcelize
 data class UploadMessageDataModel(
@@ -31,15 +32,30 @@ data class UploadMessageDataModel(
     val message: String?,
     val imageList: List<Uri>?,
     val sendAt: String,
+    val read: List<Map<String, Boolean>>,
     val type: MessageViewType
-): Parcelable
+) : Parcelable
 
 fun MessageDataEntity.toModel() = MessageDataModel(
-    uid = uid, chatRoomId = chatRoomId, messageId = messageId, message = message, imageList = imageList?.map { it.toModel() }, sendAt = chatTimeFormat(stringToLocalTime(sendAt)), type = type
+    uid = uid,
+    chatRoomId = chatRoomId,
+    messageId = messageId,
+    message = message,
+    imageList = imageList?.map { it.toModel() },
+    sendAt = chatTimeFormat(stringToLocalTime(sendAt)),
+    read = read,
+    type = type
 )
 
 fun MessageDataModel.toEntity() = MessageDataEntity(
-    uid = uid, chatRoomId = chatRoomId, messageId = messageId, message = message, imageList = imageList?.map { it.toEntity() }, sendAt = sendAt, type = type
+    uid = uid,
+    chatRoomId = chatRoomId,
+    messageId = messageId,
+    message = message,
+    imageList = imageList?.map { it.toEntity() },
+    sendAt = sendAt,
+    read = read,
+    type = type
 )
 
 fun List<MessageDataEntity>.toMessageListModel(): List<MessageDataModel> {
@@ -47,6 +63,6 @@ fun List<MessageDataEntity>.toMessageListModel(): List<MessageDataModel> {
 }
 
 fun UploadMessageDataModel.toEntity() = UploadMessageDataEntity(
-    uid, chatRoomId, messageId, message, imageList, sendAt, type
+    uid, chatRoomId, messageId, message, imageList, sendAt, read, type
 )
 
