@@ -1,6 +1,7 @@
-package com.example.project_sns.ui.view.chat.chatroom
+package com.example.project_sns.ui.view.chat.chatlist
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -8,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.project_sns.R
 import com.example.project_sns.databinding.RvItemMessageListBinding
+import com.example.project_sns.ui.CurrentUser
 import com.example.project_sns.ui.model.ChatRoomModel
 
 class ChatRoomListAdapter(private val onItemClick: (ChatRoomModel) -> Unit) :
@@ -20,6 +22,7 @@ class ChatRoomListAdapter(private val onItemClick: (ChatRoomModel) -> Unit) :
         fun bind(item: ChatRoomModel) {
             val userData = item.userData
             val chatRoomData = item.chatRoomData
+            val lastMessageData = item.chatRoomData.lastMessageData
 
             binding.ivItemListProfile.clipToOutline = true
             if (userData.profileImage != null) {
@@ -29,8 +32,15 @@ class ChatRoomListAdapter(private val onItemClick: (ChatRoomModel) -> Unit) :
             }
 
             binding.tvItemListName.text = userData.name
-            binding.tvItemListMessage.text = chatRoomData.lastMessage
-            binding.tvItemListTime.text = chatRoomData.lastSendAt
+            binding.tvItemListMessage.text = lastMessageData.lastMessage
+            binding.tvItemListTime.text = lastMessageData.lastSendAt
+
+            if (chatRoomData.unReadMessage == 0) {
+                binding.clItemListUnReadMessage.visibility = View.GONE
+            } else if (lastMessageData.lastMessageSender != CurrentUser.userData?.uid){
+                binding.clItemListUnReadMessage.visibility = View.VISIBLE
+                binding.tvItemListUnReadMessage.text = chatRoomData.unReadMessage.toString()
+            }
 
             //onClick
             binding.clItemList.setOnClickListener {

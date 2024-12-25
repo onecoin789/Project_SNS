@@ -32,12 +32,24 @@ class MessageListAdapter(private val onItemClick: MessageItemClickListener) :
         fun currentUserBind(item: MessageModel) {
             val messageData = item.messageData
 
+            val unreadSize = messageData.read.count {
+                it.containsValue(false)
+            }
+
             binding.tvItemChatReceiveText.text = messageData.message
             binding.tvItemChatReceiveAt.text = messageData.sendAt
 
             binding.ivItemSenderProfile.visibility = View.GONE
             binding.clItemChatSend.visibility = View.GONE
             binding.tvItemChatSendAt.visibility = View.GONE
+
+            if (unreadSize != 0) {
+                binding.tvItemChatReceiveUnRead.visibility = View.VISIBLE
+                binding.tvItemChatReceiveUnRead.text = unreadSize.toString()
+            } else {
+                binding.tvItemChatReceiveUnRead.visibility = View.GONE
+            }
+
         }
 
         fun otherUserBind(item: MessageModel) {
@@ -65,6 +77,10 @@ class MessageListAdapter(private val onItemClick: MessageItemClickListener) :
         fun currentUserBind(item: MessageModel) {
             val messageData = item.messageData
 
+            val unreadSize = messageData.read.count {
+                it.containsValue(false)
+            }
+
             if (messageData.imageList != null) {
                 val imageSize = messageData.imageList.size
                 if (imageSize <= 3) {
@@ -77,6 +93,13 @@ class MessageListAdapter(private val onItemClick: MessageItemClickListener) :
 
             binding.clItemChatSend.visibility = View.GONE
             binding.tvItemChatSendAt.visibility = View.GONE
+
+            if (unreadSize != 0) {
+                binding.tvItemChatReceiveUnRead.visibility = View.VISIBLE
+                binding.tvItemChatReceiveUnRead.text = unreadSize.toString()
+            } else {
+                binding.tvItemChatReceiveUnRead.visibility = View.GONE
+            }
 
             //click event
             binding.clItemChatReceiveClick.setOnClickListener {

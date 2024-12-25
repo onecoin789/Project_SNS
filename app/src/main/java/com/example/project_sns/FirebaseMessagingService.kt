@@ -239,7 +239,7 @@ import java.io.InputStream
 class FirebaseMessagingService : FirebaseMessagingService() {
 
     companion object {
-        private const val TAG = "MyFirebaseMessagingServ"
+        private const val TAG = "MyFirebaseMessagingServe"
     }
 
 
@@ -248,13 +248,17 @@ class FirebaseMessagingService : FirebaseMessagingService() {
 
         if (remoteMessage.data.isNotEmpty()) {
             Log.d(TAG, "Message data payload: ${remoteMessage.data}")
-            sendNotification(
+            Log.d(TAG, "Message data payload: ${remoteMessage.data["chatRoomId"]}, ${remoteMessage.data["uid"]}")
+            sendData(
                 remoteMessage.data["title"].toString(),
-                remoteMessage.data["message"].toString()
+                remoteMessage.data["body"].toString(),
+                remoteMessage.data["chatRoomId"].toString(),
+                remoteMessage.data["uid"].toString()
             )
         } else {
             // 메시지에 알림 페이로드가 포함되어 있는지 확인한다.
             remoteMessage.notification?.let {
+                Log.d(TAG, "Message data payload: null data")
                 sendNotification(
                     remoteMessage.notification?.title.toString(),
                     remoteMessage.notification?.body.toString()
@@ -272,7 +276,9 @@ class FirebaseMessagingService : FirebaseMessagingService() {
         accessToken: String,
         token: String,
         title: String,
-        content: String
+        content: String,
+        chatRoomId: String,
+        uid: String
     ) {
         val api =
             "https://fcm.googleapis.com/v1/projects/project-sns-58aea/messages:send"
@@ -290,13 +296,29 @@ class FirebaseMessagingService : FirebaseMessagingService() {
             })
         }
 
+        val jsonData = JSONObject().apply {
+            put("message", JSONObject().apply {
+                put("token", token)
+                put("data", JSONObject().apply {
+                    put("title", title)
+                    put("body", content)
+                    put("chatRoomId", chatRoomId)
+                    put("uid", uid)
+                })
+            })
+        }
+
+
         val body =
             json.toString().toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
+
+        val data =
+            jsonData.toString().toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
 
 
         val request = Request.Builder()
             .url(url)
-            .post(body)
+            .post(data)
             .addHeader("Authorization", "Bearer $accessToken")
             .addHeader("Content-Type", "application/json")
             .build()
@@ -348,6 +370,43 @@ class FirebaseMessagingService : FirebaseMessagingService() {
 
         notificationManager.notify(0, notificationBuilder.build())
     }
+
+    private fun sendData(title: String, body: String, chatRoomId: String, uid: String) {
+        val intent = Intent(this, MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            putExtra("chatRoomId", chatRoomId)
+            putExtra("uid", uid)
+            FcmUtil.clickState = true
+        }
+        val pendingIntent = PendingIntent.getActivity(
+            this, 0, intent,
+            PendingIntent.FLAG_IMMUTABLE
+        )
+
+        val channelId = "fcm_default_channel"
+        val defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
+        val customSoundUri = RingtoneManager.getDefaultUri(R.raw.alert_ring)
+        val notificationBuilder = NotificationCompat.Builder(this, channelId)
+            .setSmallIcon(R.drawable.ic_main)
+            .setContentTitle(title)
+            .setContentText(body)
+            .setAutoCancel(true)
+            .setSound(customSoundUri)
+            .setContentIntent(pendingIntent)
+
+        val notificationManager =
+            getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+        // 오레오 이상에서 알림을 제공하려면 앱의 알림 채널을 시스템에 등록해야 한다.
+        val channel = NotificationChannel(
+            channelId,
+            "Channel human readable title",
+            NotificationManager.IMPORTANCE_DEFAULT
+        )
+        notificationManager.createNotificationChannel(channel)
+
+        notificationManager.notify(0, notificationBuilder.build())
+    }
 }
 
 object FcmUtil {
@@ -355,6 +414,8 @@ object FcmUtil {
     private const val TAG = "FcmUtil"
 
     var accessToken: String? = null
+
+    var clickState: Boolean? = false
 
     fun initFcm(context: Context) {
         FirebaseApp.initializeApp(context)

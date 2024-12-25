@@ -1,17 +1,17 @@
 package com.example.project_sns.data.repository
 
-import android.net.Uri
 import android.util.Log
 import androidx.core.net.toUri
 import com.example.project_sns.FirebaseMessagingService
 import com.example.project_sns.data.mapper.toCommentListEntity
 import com.example.project_sns.data.mapper.toEntity
+import com.example.project_sns.data.mapper.toMessageListEntity
 import com.example.project_sns.data.mapper.toPostListEntity
 import com.example.project_sns.data.mapper.toReCommentListEntity
-import com.example.project_sns.data.network.RetroClient
 import com.example.project_sns.data.response.ChatRoomDataResponse
 import com.example.project_sns.data.response.CommentDataResponse
 import com.example.project_sns.data.response.MessageDataResponse
+import com.example.project_sns.data.response.MessageResponse
 import com.example.project_sns.data.response.PostDataResponse
 import com.example.project_sns.data.response.ReCommentDataResponse
 import com.example.project_sns.data.response.UserDataResponse
@@ -32,9 +32,9 @@ import com.example.project_sns.domain.entity.UploadMessageDataEntity
 import com.example.project_sns.domain.repository.DataRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
-import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -50,7 +50,7 @@ private const val COLLECTION_RE_COMMENT = "reComment"
 private const val COLLECTION_CHAT = "chat"
 private const val COLLECTION_CHAT_MESSAGE = "message"
 
-private const val TAG = "data_repo_impl"
+private const val TAG = "DataRepositoryImpl"
 
 class DataRepositoryImpl @Inject constructor(
     private val auth: FirebaseAuth,
@@ -722,28 +722,58 @@ class DataRepositoryImpl @Inject constructor(
 
     override suspend fun sendFirstMessage(
         chatRoomId: String,
+        token: String,
+        sendUser: String,
+        accessToken: String,
         senderUid: String,
         recipientUid: String,
         messageData: UploadMessageDataEntity
     ): Flow<Boolean> {
         return flow {
             try {
-                val participant = arrayListOf<String>()
-                participant.add(senderUid)
-                participant.add(recipientUid)
-                val chatRoomData = hashMapOf(
-                    "chatRoomId" to chatRoomId,
-                    "participant" to participant,
-//                    "senderUid" to senderUid,
-//                    "recipientUid" to recipientUid
-                    "lastMessage" to messageData.message,
-                    "lastSendAt" to messageData.sendAt
-                )
-                val chatRoomDB = db.collection(COLLECTION_CHAT).document(chatRoomId)
+                if (messageData.message != null) {
+                    val participant = arrayListOf<String>()
+                    participant.add(senderUid)
+                    participant.add(recipientUid)
+                    val chatRoomSession = hashMapOf(
+                        senderUid to false,
+                        recipientUid to false
+                    )
+                    val lastMessageData = hashMapOf(
+                        "lastMessage" to messageData.message,
+                        "lastSendAt" to messageData.sendAt,
+                        "lastMessageSender" to senderUid
+                    )
+                    val chatRoomData = hashMapOf(
+                        "chatRoomId" to chatRoomId,
+                        "participant" to participant,
+                        "chatRoomSession" to chatRoomSession,
+                        "lastMessageData" to lastMessageData
+                    )
+                    val chatRoomDB = db.collection(COLLECTION_CHAT).document(chatRoomId)
 
-                chatRoomDB.set(chatRoomData).addOnSuccessListener {
-                    chatRoomDB.collection(COLLECTION_CHAT_MESSAGE).document(messageData.messageId)
-                        .set(messageData)
+                    chatRoomDB.set(chatRoomData).addOnSuccessListener {
+                        chatRoomDB.collection(COLLECTION_CHAT_MESSAGE).document(messageData.messageId).set(messageData)
+                            .addOnSuccessListener {
+                            chatRoomDB.collection(COLLECTION_CHAT_MESSAGE)
+                                .whereArrayContains("read", mapOf(recipientUid to false))
+                                .addSnapshotListener { unReadMessage, e ->
+                                    if (e != null) {
+                                        Log.d(TAG, "$e")
+                                    }
+                                    chatRoomDB.update("unReadMessage", unReadMessage?.size())
+                                }
+                        }
+                    }.addOnSuccessListener {
+                        FirebaseMessagingService().sendNotifications(
+                            accessToken = accessToken,
+                            token = token,
+                            title = sendUser,
+                            content = messageData.message,
+                            chatRoomId = chatRoomId,
+                            uid = messageData.uid
+                        )
+                    }
                 }
                 emit(true)
             } catch (e: Exception) {
@@ -755,37 +785,53 @@ class DataRepositoryImpl @Inject constructor(
     override suspend fun sendMessage(
         chatRoomId: String,
         token: String,
-        recipientUser: String,
+        sendUser: String,
         accessToken: String,
+        recipientUid: String,
         messageData: UploadMessageDataEntity
     ): Flow<Boolean> {
         return flow {
             try {
                 val imageList: MutableList<ImageDataEntity> = arrayListOf()
+                val lastMessageSender = auth.currentUser?.uid
                 val chatRoomDB = db.collection(COLLECTION_CHAT).document(chatRoomId)
                 val messageDB =
                     chatRoomDB.collection(COLLECTION_CHAT_MESSAGE).document(messageData.messageId)
                 if (messageData.message != null) {
                     messageDB.set(messageData).addOnSuccessListener {
-                        chatRoomDB.update("lastMessage", messageData.message)
-                        chatRoomDB.update("lastSendAt", messageData.sendAt)
+                        chatRoomDB.collection(COLLECTION_CHAT_MESSAGE)
+                            .whereArrayContains("read", mapOf(recipientUid to false))
+                            .addSnapshotListener { unReadMessage, e ->
+                                if (e != null) {
+                                    Log.d(TAG, "$e")
+                                }
+                                val lastMessageData = hashMapOf(
+                                    "lastMessage" to messageData.message,
+                                    "lastSendAt" to messageData.sendAt,
+                                    "lastMessageSender" to lastMessageSender
+                                )
+                                chatRoomDB.update("lastMessageData", lastMessageData)
+                                chatRoomDB.update("unReadMessage", unReadMessage?.size())
+                            }
                     }.addOnSuccessListener {
-
                         FirebaseMessagingService().sendNotifications(
                             accessToken = accessToken,
                             token = token,
-                            title = recipientUser,
-                            content = messageData.message
+                            title = sendUser,
+                            content = messageData.message,
+                            chatRoomId = chatRoomId,
+                            uid = messageData.uid
                         )
-
                     }
                 } else if (messageData.imageList != null) {
+                    // FIXME: 이미지 파일 완전히 올린 후에 messageDB에 set
                     val message = hashMapOf(
                         "uid" to messageData.uid,
                         "chatRoomId" to messageData.chatRoomId,
                         "messageId" to messageData.messageId,
                         "message" to null,
                         "sendAt" to messageData.sendAt,
+                        "read" to messageData.read,
                         "type" to messageData.type
                     )
                     messageDB.set(message).addOnSuccessListener {
@@ -828,6 +874,16 @@ class DataRepositoryImpl @Inject constructor(
                     }.addOnSuccessListener {
                         chatRoomDB.update("lastMessage", "이미지 파일")
                         chatRoomDB.update("lastSendAt", messageData.sendAt)
+                    }.addOnSuccessListener {
+                        FirebaseMessagingService().sendNotifications(
+                            accessToken = accessToken,
+                            token = token,
+                            title = sendUser,
+                            content = "이미지 파일이 도착했습니다.",
+                            chatRoomId = chatRoomId,
+                            uid = messageData.uid
+                        )
+
                     }
                 }
                 emit(true)
@@ -837,29 +893,77 @@ class DataRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun sendImageMessage(
-        chatRoomId: String,
-        chatImageList: List<Uri>
-    ): Flow<Boolean> {
-        return flow {
-            try {
-                val chatRoomDB = db.collection(COLLECTION_CHAT).document(chatRoomId)
-                val storage = storage.getReference("chat")
-                for (i in 0..chatImageList.size) {
-                    val storageRef = storage.child("${chatRoomId}/${chatRoomId}_${i}")
-                    storageRef.putFile(chatImageList[i]).addOnSuccessListener {
-                        storage.downloadUrl.addOnSuccessListener { downloadUri ->
 
+    override suspend fun checkReadMessage(chatRoomId: String, userSession: Boolean): Flow<Boolean> {
+        // TODO("현재 채팅방 화면에 유저가 있을 경우의 수  추가 필요")
+        return callbackFlow {
+            try {
+                val currentUserUid = auth.currentUser?.uid
+                val chatRef = db.collection(COLLECTION_CHAT).document(chatRoomId)
+                val messageRef = chatRef.collection(COLLECTION_CHAT_MESSAGE)
+                if (userSession) {
+                    db.runTransaction {
+                        it.update(chatRef, "read", FieldValue.arrayRemove(
+                            mapOf(currentUserUid to false)
+                        ))
+                        it.update(chatRef, "read", FieldValue.arrayUnion(
+                            mapOf(currentUserUid to true)
+                        ))
+                    }.await()
+
+                    messageRef.whereArrayContains("read", mapOf(currentUserUid to false)).get().addOnSuccessListener { unReadMessage ->
+                        if (unReadMessage?.documents?.size != 0) {
+                            unReadMessage?.documents?.forEach { unReadMessageDocument ->
+                                db.runTransaction {
+                                    it.update(unReadMessageDocument.reference, "read", FieldValue.arrayRemove(
+                                        mapOf(currentUserUid to false)
+                                    ))
+                                    it.update(unReadMessageDocument.reference, "read", FieldValue.arrayUnion(
+                                        mapOf(currentUserUid to true)
+                                    ))
+                                }.addOnSuccessListener {
+                                    trySend(true)
+                                    Log.d(TAG, "메세지 읽기 성공")
+                                }.addOnFailureListener {
+                                    trySend(false)
+                                    Log.d(TAG, "메세지 읽기 실패")
+                                }
+                            }
+                        } else {
+                            Log.d(TAG, "안읽은 메세지 없음")
                         }
                     }
-
+                } else {
+                    db.runTransaction {
+                        it.update(chatRef, "read", FieldValue.arrayRemove(
+                            mapOf(currentUserUid to true)
+                        ))
+                        it.update(chatRef, "read", FieldValue.arrayUnion(
+                            mapOf(currentUserUid to false)
+                        ))
+                    }.await()
                 }
-                emit(true)
             } catch (e: Exception) {
-                emit(false)
+                trySend(false)
             }
+            awaitClose()
         }
     }
+
+    override suspend fun checkChatRoomSession(chatRoomId: String): Flow<Boolean> {
+        return callbackFlow {
+            val currentUserUid = auth.currentUser?.uid
+            val chatRoomDB = db.collection(COLLECTION_CHAT).document(chatRoomId)
+            chatRoomDB.collection(COLLECTION_CHAT_MESSAGE)
+                .whereEqualTo("chatRoomId", chatRoomId)
+                .get().addOnSuccessListener { chatRoomMessage ->
+
+                    trySend(true)
+                }
+            awaitClose()
+        }
+    }
+
 
     override suspend fun getChatRoomList(): Flow<List<ChatRoomEntity>> {
         return callbackFlow {
@@ -1008,4 +1112,5 @@ class DataRepositoryImpl @Inject constructor(
             awaitClose()
         }
     }
+
 }

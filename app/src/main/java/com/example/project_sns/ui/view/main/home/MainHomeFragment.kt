@@ -12,11 +12,13 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.project_sns.FcmUtil
+import com.example.project_sns.MainActivity
 import com.example.project_sns.R
 import com.example.project_sns.databinding.FragmentMainHomeBinding
 import com.example.project_sns.ui.BaseFragment
 import com.example.project_sns.ui.CurrentUser
 import com.example.project_sns.ui.model.PostModel
+import com.example.project_sns.ui.view.chat.ChatSharedViewModel
 import com.example.project_sns.ui.view.main.MainSharedViewModel
 import com.example.project_sns.ui.view.main.MainViewModel
 import com.google.auth.oauth2.GoogleCredentials
@@ -30,11 +32,17 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class MainHomeFragment : BaseFragment<FragmentMainHomeBinding>() {
 
+    companion object {
+        private const val TAG = "MainHomeFragment"
+    }
+
     private lateinit var auth: FirebaseAuth
 
     private val mainViewModel: MainViewModel by viewModels()
 
     private val mainSharedViewModel: MainSharedViewModel by activityViewModels()
+
+    private val chatSharedViewModel: ChatSharedViewModel by activityViewModels()
 
     private var postList: MutableList<PostModel?> = mutableListOf()
 
@@ -62,6 +70,24 @@ class MainHomeFragment : BaseFragment<FragmentMainHomeBinding>() {
         refreshLayout()
         getAccessToken()
 
+        navigateFragment()
+    }
+
+    private fun navigateFragment() {
+        val getChatRoomId = requireActivity().intent.getStringExtra("chatRoomId")
+        val getUid = requireActivity().intent.getStringExtra("uid")
+
+        Log.d(TAG, "$getChatRoomId, $getUid")
+
+        if (FcmUtil.clickState == true) {
+            if (getChatRoomId != null && getUid != null) {
+                chatSharedViewModel.getChatRoomId(getChatRoomId)
+                chatSharedViewModel.getChatRoomData(getUid)
+                chatSharedViewModel.checkChatRoomExist(getUid)
+                mainSharedViewModel.getUserData(getUid)
+            }
+            findNavController().navigate(R.id.chatRoomFragment)
+        }
     }
 
 

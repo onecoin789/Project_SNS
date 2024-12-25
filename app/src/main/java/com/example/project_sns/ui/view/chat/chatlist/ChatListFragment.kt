@@ -14,7 +14,6 @@ import com.example.project_sns.R
 import com.example.project_sns.databinding.FragmentChatListBinding
 import com.example.project_sns.ui.BaseFragment
 import com.example.project_sns.ui.model.UserDataModel
-import com.example.project_sns.ui.view.chat.chatroom.ChatRoomListAdapter
 import com.example.project_sns.ui.view.chat.ChatSharedViewModel
 import com.example.project_sns.ui.view.chat.ChatViewModel
 import com.example.project_sns.ui.view.main.MainSharedViewModel

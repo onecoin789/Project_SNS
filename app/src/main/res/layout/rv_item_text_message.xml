@@ -98,6 +98,19 @@
             app:layout_constraintEnd_toStartOf="@+id/clItemChatReceive"
             app:layout_constraintBottom_toBottomOf="@+id/clItemChatReceive"/>
 
+        <TextView
+            android:id="@+id/tvItemChatReceiveUnRead"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/test"
+            android:textSize="14sp"
+            android:textColor="#FFEB3B"
+            android:layout_marginEnd="7dp"
+            android:layout_marginBottom="2dp"
+            android:visibility="gone"
+            app:layout_constraintEnd_toStartOf="@+id/tvItemChatReceiveAt"
+            app:layout_constraintBottom_toBottomOf="@+id/clItemChatReceive"/>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
