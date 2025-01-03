@@ -23,6 +23,7 @@
         android:textColorHint="@color/hint"
         android:autofillHints="no"
         android:inputType="text"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
 
     <ImageView
@@ -30,83 +31,132 @@
         android:layout_width="27dp"
         android:layout_height="27dp"
         android:layout_marginEnd="15dp"
+        android:visibility="gone"
         android:background="@drawable/ic_x_circle"
         app:layout_constraintTop_toTopOf="@+id/etSearch"
         app:layout_constraintBottom_toBottomOf="@+id/etSearch"
-        app:layout_constraintEnd_toEndOf="@+id/etSearch"
+        app:layout_constraintEnd_toEndOf="@id/etSearch"
         android:contentDescription="@string/contentDescription"/>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/clSearchShow"
+<!--    <ImageView-->
+<!--        android:id="@+id/ivSearch"-->
+<!--        android:layout_width="0dp"-->
+<!--        android:layout_height="0dp"-->
+<!--        android:background="@drawable/ic_search"-->
+<!--        android:backgroundTint="@color/hint"-->
+<!--        app:layout_constraintDimensionRatio="1:1"-->
+<!--        android:layout_marginEnd="5dp"-->
+<!--        app:layout_constraintTop_toTopOf="@+id/etSearch"-->
+<!--        app:layout_constraintBottom_toBottomOf="@+id/etSearch"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        android:layout_marginVertical="8dp"-->
+<!--        android:contentDescription="@string/contentDescription"/>-->
+
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tlSearchCategory"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="15dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginStart="5dp"
-        android:layout_marginEnd="5dp"
-        android:background="@drawable/item_list"
-        android:visibility="gone"
-        app:layout_constraintTop_toBottomOf="@id/etSearch">
+        android:layout_height="60dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginHorizontal="1dp"
+        android:background="@color/bg"
+        app:tabBackground="@drawable/item_search_tab_background"
+        app:tabIndicatorHeight="0dp"
+        app:layout_constraintTop_toBottomOf="@id/etSearch"
+        app:tabRippleColor="@android:color/transparent">
 
-        <ImageView
-            android:id="@+id/ivSearchFrame"
-            android:layout_width="55dp"
-            android:layout_height="55dp"
-            android:background="@drawable/item_btn_back"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:contentDescription="@string/contentDescription"/>
-
-        <ImageView
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:background="@drawable/ic_search"
-            app:layout_constraintBottom_toBottomOf="@+id/ivSearchFrame"
-            app:layout_constraintEnd_toEndOf="@+id/ivSearchFrame"
-            app:layout_constraintStart_toStartOf="@+id/ivSearchFrame"
-            app:layout_constraintTop_toTopOf="@+id/ivSearchFrame"
-            android:contentDescription="@string/contentDescription"/>
-
-        <TextView
-            android:id="@+id/tvSearchWord"
+        <com.google.android.material.tabs.TabItem
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/text"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:layout_marginStart="20dp"
-            app:layout_constraintStart_toEndOf="@id/ivSearchFrame"
-            app:layout_constraintTop_toTopOf="@+id/ivSearchFrame"
-            app:layout_constraintBottom_toBottomOf="@+id/ivSearchFrame" />
+            android:layout_height="wrap_content" />
 
-        <TextView
+        <com.google.android.material.tabs.TabItem
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/search_text2"
-            android:textColor="@color/text"
-            android:textSize="18sp"
-            android:layout_marginStart="5dp"
-            app:layout_constraintStart_toEndOf="@+id/tvSearchWord"
-            app:layout_constraintTop_toTopOf="@+id/tvSearchWord"
-            app:layout_constraintBottom_toBottomOf="@+id/tvSearchWord"/>
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            android:layout_height="wrap_content" />
 
-    <FrameLayout
+    </com.google.android.material.tabs.TabLayout>
+
+<!--    <androidx.constraintlayout.widget.ConstraintLayout-->
+<!--        android:id="@+id/clSearchShow"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:padding="15dp"-->
+<!--        android:layout_marginTop="20dp"-->
+<!--        android:layout_marginStart="5dp"-->
+<!--        android:layout_marginEnd="5dp"-->
+<!--        android:background="@drawable/item_list"-->
+<!--        android:visibility="visible"-->
+<!--        app:layout_constraintTop_toBottomOf="@id/etSearch">-->
+
+<!--        <ImageView-->
+<!--            android:id="@+id/ivSearchFrame"-->
+<!--            android:layout_width="55dp"-->
+<!--            android:layout_height="55dp"-->
+<!--            android:background="@drawable/item_btn_back"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toTopOf="parent"-->
+<!--            android:contentDescription="@string/contentDescription"/>-->
+
+<!--        <ImageView-->
+<!--            android:layout_width="30dp"-->
+<!--            android:layout_height="30dp"-->
+<!--            android:background="@drawable/ic_search"-->
+<!--            app:layout_constraintBottom_toBottomOf="@+id/ivSearchFrame"-->
+<!--            app:layout_constraintEnd_toEndOf="@+id/ivSearchFrame"-->
+<!--            app:layout_constraintStart_toStartOf="@+id/ivSearchFrame"-->
+<!--            app:layout_constraintTop_toTopOf="@+id/ivSearchFrame"-->
+<!--            android:contentDescription="@string/contentDescription"/>-->
+
+<!--        <TextView-->
+<!--            android:id="@+id/tvSearchWord"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:textColor="@color/text"-->
+<!--            android:textSize="18sp"-->
+<!--            android:textStyle="bold"-->
+<!--            android:layout_marginStart="20dp"-->
+<!--            app:layout_constraintStart_toEndOf="@id/ivSearchFrame"-->
+<!--            app:layout_constraintTop_toTopOf="@+id/ivSearchFrame"-->
+<!--            app:layout_constraintBottom_toBottomOf="@+id/ivSearchFrame" />-->
+
+<!--        <TextView-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="@string/search_text2"-->
+<!--            android:textColor="@color/text"-->
+<!--            android:textSize="18sp"-->
+<!--            android:layout_marginStart="5dp"-->
+<!--            app:layout_constraintStart_toEndOf="@+id/tvSearchWord"-->
+<!--            app:layout_constraintTop_toTopOf="@+id/tvSearchWord"-->
+<!--            app:layout_constraintBottom_toBottomOf="@+id/tvSearchWord"/>-->
+<!--    </androidx.constraintlayout.widget.ConstraintLayout>-->
+
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="10dp"
         android:layout_marginStart="5dp"
         android:layout_marginEnd="5dp"
         android:layout_marginBottom="5dp"
-        app:layout_constraintTop_toBottomOf="@+id/clSearchShow"
+        app:layout_constraintTop_toBottomOf="@+id/tlSearchCategory"
         app:layout_constraintBottom_toBottomOf="parent">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvSearch"
+        <TextView
+            android:id="@+id/tvSearchNone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/search_text_none"
+            android:textSize="20sp"
+            android:textColor="@color/hint"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/vpSearchTab"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:listitem="@layout/rv_item_friend"/>
-    </FrameLayout>
+            android:visibility="gone"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -160,11 +160,11 @@ class MessageListAdapter(private val onItemClick: MessageItemClickListener) :
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when(viewType) {
-            MessageViewType.TEXT_MESSAGE.viewType -> {
+            MessageViewType.TEXT_MESSAGE.messageType -> {
                 val binding = RvItemTextMessageBinding.inflate(LayoutInflater.from(parent.context), parent, false)
                 TextMessageViewHolder(binding, onItemClick)
             }
-            MessageViewType.IMAGE_MESSAGE.viewType -> {
+            MessageViewType.IMAGE_MESSAGE.messageType -> {
                 val binding = RvItemImageMessageBinding.inflate(LayoutInflater.from(parent.context), parent, false)
                 ImageMessageViewHolder(binding, onItemClick)
             }
@@ -176,22 +176,22 @@ class MessageListAdapter(private val onItemClick: MessageItemClickListener) :
         val item = getItem(position)
         if (item.userData.uid == CurrentUser.userData?.uid) {
             when(holder.itemViewType) {
-                MessageViewType.TEXT_MESSAGE.viewType -> {
+                MessageViewType.TEXT_MESSAGE.messageType -> {
                     val textMessageType = holder as TextMessageViewHolder
                     textMessageType.currentUserBind(item)
                 }
-                MessageViewType.IMAGE_MESSAGE.viewType -> {
+                MessageViewType.IMAGE_MESSAGE.messageType -> {
                     val imageMessageType = holder as ImageMessageViewHolder
                     imageMessageType.currentUserBind(item)
                 }
             }
         } else {
             when(holder.itemViewType) {
-                MessageViewType.TEXT_MESSAGE.viewType -> {
+                MessageViewType.TEXT_MESSAGE.messageType -> {
                     val textMessageType = holder as TextMessageViewHolder
                     textMessageType.otherUserBind(item)
                 }
-                MessageViewType.IMAGE_MESSAGE.viewType -> {
+                MessageViewType.IMAGE_MESSAGE.messageType -> {
                     val imageMessageType = holder as ImageMessageViewHolder
                     imageMessageType.otherUserBind(item)
                 }
@@ -200,9 +200,9 @@ class MessageListAdapter(private val onItemClick: MessageItemClickListener) :
     }
 
     override fun getItemViewType(position: Int): Int {
-        return when(getItem(position).messageData.type.viewType) {
-            0 -> MessageViewType.TEXT_MESSAGE.viewType
-            1 -> MessageViewType.IMAGE_MESSAGE.viewType
+        return when(getItem(position).messageData.type.messageType) {
+            0 -> MessageViewType.TEXT_MESSAGE.messageType
+            1 -> MessageViewType.IMAGE_MESSAGE.messageType
             else -> throw IllegalArgumentException("$position")
         }
     }

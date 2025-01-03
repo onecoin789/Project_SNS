@@ -121,6 +121,10 @@ fun MessageResponse.toEntity() = MessageEntity(
     messageData = messageData.toEntity()
 )
 
+fun List<UserDataResponse>.toUserListEntity(): List<UserDataEntity> {
+    return this.map { it.toEntity() }
+}
+
 fun List<PostDataResponse>.toPostListEntity(): List<PostDataEntity> {
     return this.map { it.toEntity() }
 }
