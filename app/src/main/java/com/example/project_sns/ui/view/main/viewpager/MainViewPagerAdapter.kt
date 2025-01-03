@@ -21,6 +21,4 @@ class MainViewPagerAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) 
     override fun createFragment(position: Int): Fragment {
         return fragmentList[position]
     }
-
-
 }

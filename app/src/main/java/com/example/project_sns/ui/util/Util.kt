@@ -1,6 +1,14 @@
 package com.example.project_sns.ui.util
 
 
+import android.text.Editable
+import android.text.TextWatcher
+import android.view.View
+import android.widget.EditText
+import android.widget.ImageView
+import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
+import androidx.viewpager2.widget.ViewPager2
 import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -32,6 +40,70 @@ fun chatTimeFormat(time: LocalDateTime): String {
 
 fun chatListDateFormat(time: LocalDateTime): String {
     return time.format(DateTimeFormatter.ofPattern("a hh:mm"))
+}
+
+fun textWatcher(text: TextView, editText: EditText, viewPager: ViewPager2) {
+    editText.addTextChangedListener(object : TextWatcher {
+        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+            if (editText.text.isEmpty()) {
+                viewPager.visibility = View.GONE
+                text.visibility = View.VISIBLE
+            } else {
+                viewPager.visibility = View.VISIBLE
+                text.visibility = View.GONE
+            }
+        }
+
+        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+            if (editText.text.isEmpty()) {
+                viewPager.visibility = View.GONE
+                text.visibility = View.VISIBLE
+            } else {
+                viewPager.visibility = View.VISIBLE
+                text.visibility = View.GONE
+            }
+        }
+
+        override fun afterTextChanged(s: Editable?) {
+            if (editText.text.isEmpty()) {
+                viewPager.visibility = View.GONE
+                text.visibility = View.VISIBLE
+            } else {
+                viewPager.visibility = View.VISIBLE
+                text.visibility = View.GONE
+            }
+        }
+
+    })
+}
+
+fun deleteTextWatcher(editText: EditText, deleteButton: ImageView) {
+    editText.addTextChangedListener(object : TextWatcher {
+        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+            if (editText.text.isEmpty()) {
+                deleteButton.visibility = View.GONE
+            } else {
+                deleteButton.visibility = View.VISIBLE
+            }
+        }
+
+        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+            if (editText.text.isEmpty()) {
+                deleteButton.visibility = View.GONE
+            } else {
+                deleteButton.visibility = View.VISIBLE
+            }
+        }
+
+        override fun afterTextChanged(s: Editable?) {
+            if (editText.text.isEmpty()) {
+                deleteButton.visibility = View.GONE
+            } else {
+                deleteButton.visibility = View.VISIBLE
+            }
+        }
+
+    })
 }
 
 

@@ -83,6 +83,7 @@
     <!-- Search -->
     <string name="search_text">이메일 or 키워드를 입력해주세요.</string>
     <string name="search_text2">에 대한 검색</string>
+    <string name="search_text_none">유저를 검색해보세요!</string>
 
     <!-- Setting -->
     <string name="setting">설정</string>

@@ -5,13 +5,12 @@ import androidx.core.net.toUri
 import com.example.project_sns.FirebaseMessagingService
 import com.example.project_sns.data.mapper.toCommentListEntity
 import com.example.project_sns.data.mapper.toEntity
-import com.example.project_sns.data.mapper.toMessageListEntity
 import com.example.project_sns.data.mapper.toPostListEntity
 import com.example.project_sns.data.mapper.toReCommentListEntity
+import com.example.project_sns.data.mapper.toUserListEntity
 import com.example.project_sns.data.response.ChatRoomDataResponse
 import com.example.project_sns.data.response.CommentDataResponse
 import com.example.project_sns.data.response.MessageDataResponse
-import com.example.project_sns.data.response.MessageResponse
 import com.example.project_sns.data.response.PostDataResponse
 import com.example.project_sns.data.response.ReCommentDataResponse
 import com.example.project_sns.data.response.UserDataResponse
@@ -29,12 +28,15 @@ import com.example.project_sns.domain.entity.PostEntity
 import com.example.project_sns.domain.entity.ReCommentDataEntity
 import com.example.project_sns.domain.entity.ReCommentEntity
 import com.example.project_sns.domain.entity.UploadMessageDataEntity
+import com.example.project_sns.domain.entity.UserDataEntity
 import com.example.project_sns.domain.repository.DataRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.toObject
+import com.google.firebase.firestore.toObjects
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -753,17 +755,18 @@ class DataRepositoryImpl @Inject constructor(
                     val chatRoomDB = db.collection(COLLECTION_CHAT).document(chatRoomId)
 
                     chatRoomDB.set(chatRoomData).addOnSuccessListener {
-                        chatRoomDB.collection(COLLECTION_CHAT_MESSAGE).document(messageData.messageId).set(messageData)
+                        chatRoomDB.collection(COLLECTION_CHAT_MESSAGE)
+                            .document(messageData.messageId).set(messageData)
                             .addOnSuccessListener {
-                            chatRoomDB.collection(COLLECTION_CHAT_MESSAGE)
-                                .whereArrayContains("read", mapOf(recipientUid to false))
-                                .addSnapshotListener { unReadMessage, e ->
-                                    if (e != null) {
-                                        Log.d(TAG, "$e")
+                                chatRoomDB.collection(COLLECTION_CHAT_MESSAGE)
+                                    .whereArrayContains("read", mapOf(recipientUid to false))
+                                    .addSnapshotListener { unReadMessage, e ->
+                                        if (e != null) {
+                                            Log.d(TAG, "$e")
+                                        }
+                                        chatRoomDB.update("unReadMessage", unReadMessage?.size())
                                     }
-                                    chatRoomDB.update("unReadMessage", unReadMessage?.size())
-                                }
-                        }
+                            }
                     }.addOnSuccessListener {
                         FirebaseMessagingService().sendNotifications(
                             accessToken = accessToken,
@@ -903,44 +906,61 @@ class DataRepositoryImpl @Inject constructor(
                 val messageRef = chatRef.collection(COLLECTION_CHAT_MESSAGE)
                 if (userSession) {
                     db.runTransaction {
-                        it.update(chatRef, "read", FieldValue.arrayRemove(
-                            mapOf(currentUserUid to false)
-                        ))
-                        it.update(chatRef, "read", FieldValue.arrayUnion(
-                            mapOf(currentUserUid to true)
-                        ))
+                        it.update(
+                            chatRef, "chatRoomSession", FieldValue.arrayRemove(
+                                mapOf(currentUserUid to false)
+                            )
+                        )
+                        it.update(
+                            chatRef, "chatRoomSession", FieldValue.arrayUnion(
+                                mapOf(currentUserUid to true)
+                            )
+                        )
                     }.await()
 
-                    messageRef.whereArrayContains("read", mapOf(currentUserUid to false)).get().addOnSuccessListener { unReadMessage ->
-                        if (unReadMessage?.documents?.size != 0) {
-                            unReadMessage?.documents?.forEach { unReadMessageDocument ->
-                                db.runTransaction {
-                                    it.update(unReadMessageDocument.reference, "read", FieldValue.arrayRemove(
-                                        mapOf(currentUserUid to false)
-                                    ))
-                                    it.update(unReadMessageDocument.reference, "read", FieldValue.arrayUnion(
-                                        mapOf(currentUserUid to true)
-                                    ))
-                                }.addOnSuccessListener {
-                                    trySend(true)
-                                    Log.d(TAG, "메세지 읽기 성공")
-                                }.addOnFailureListener {
-                                    trySend(false)
-                                    Log.d(TAG, "메세지 읽기 실패")
+                    messageRef.whereArrayContains("read", mapOf(currentUserUid to false)).get()
+                        .addOnSuccessListener { unReadMessage ->
+                            if (unReadMessage?.documents?.size != 0) {
+                                unReadMessage?.documents?.forEach { unReadMessageDocument ->
+                                    db.runTransaction {
+                                        it.update(
+                                            unReadMessageDocument.reference,
+                                            "read",
+                                            FieldValue.arrayRemove(
+                                                mapOf(currentUserUid to false)
+                                            )
+                                        )
+                                        it.update(
+                                            unReadMessageDocument.reference,
+                                            "read",
+                                            FieldValue.arrayUnion(
+                                                mapOf(currentUserUid to true)
+                                            )
+                                        )
+                                    }.addOnSuccessListener {
+                                        trySend(true)
+                                        Log.d(TAG, "메세지 읽기 성공")
+                                    }.addOnFailureListener {
+                                        trySend(false)
+                                        Log.d(TAG, "메세지 읽기 실패")
+                                    }
                                 }
+                            } else {
+                                Log.d(TAG, "안읽은 메세지 없음")
                             }
-                        } else {
-                            Log.d(TAG, "안읽은 메세지 없음")
                         }
-                    }
                 } else {
                     db.runTransaction {
-                        it.update(chatRef, "read", FieldValue.arrayRemove(
-                            mapOf(currentUserUid to true)
-                        ))
-                        it.update(chatRef, "read", FieldValue.arrayUnion(
-                            mapOf(currentUserUid to false)
-                        ))
+                        it.update(
+                            chatRef, "read", FieldValue.arrayRemove(
+                                mapOf(currentUserUid to true)
+                            )
+                        )
+                        it.update(
+                            chatRef, "read", FieldValue.arrayUnion(
+                                mapOf(currentUserUid to false)
+                            )
+                        )
                     }.await()
                 }
             } catch (e: Exception) {
@@ -1109,6 +1129,59 @@ class DataRepositoryImpl @Inject constructor(
                     }
                 }
             }
+            awaitClose()
+        }
+    }
+
+    override suspend fun searchUserData(query: String): Flow<List<UserDataEntity>> {
+        return callbackFlow {
+            val userDataList: ArrayList<UserDataEntity> = arrayListOf()
+            db.collection(COLLECTION_USER)
+                .addSnapshotListener { querySnapShot, e ->
+                    if (e != null) {
+                        trySend(emptyList())
+                    }
+                    if (querySnapShot != null) {
+                        val userData =
+                            querySnapShot.toObjects(UserDataResponse::class.java).toUserListEntity()
+                        userData.map {
+                            if (it.name.contains(query)) {
+                                userDataList.add(it)
+                            }
+                        }
+//                        for (snapshot in userData) {
+//                            if (snapshot.name.contains(keyword)) {
+//                                userDataList.add(snapshot)
+//                                Log.d("searchUserData", "$snapshot")
+//                            }
+//                        }
+                        trySend(userDataList)
+                    }
+                }
+            awaitClose()
+        }
+    }
+
+    override suspend fun searchPostData(query: String): Flow<List<PostDataEntity>> {
+        return callbackFlow {
+            val postDataList: ArrayList<PostDataEntity> = arrayListOf()
+            db.collection(COLLECTION_POST)
+                .addSnapshotListener { querySnapShot, e ->
+                    if (e != null) {
+                        trySend(emptyList())
+                    }
+                    if (querySnapShot != null) {
+                        val postData =
+                            querySnapShot.toObjects(PostDataResponse::class.java).toPostListEntity()
+                        postData.map {
+                            val postText = it.postText ?: throw NullPointerException("postTextNull")
+                            if (postText.contains(query)) {
+                                postDataList.add(it)
+                            }
+                        }
+                        trySend(postDataList.sortedBy { it.createdAt })
+                    }
+                }
             awaitClose()
         }
     }

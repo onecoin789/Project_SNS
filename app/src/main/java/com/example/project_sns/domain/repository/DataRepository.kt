@@ -10,6 +10,7 @@ import com.example.project_sns.domain.entity.PostEntity
 import com.example.project_sns.domain.entity.ReCommentDataEntity
 import com.example.project_sns.domain.entity.ReCommentEntity
 import com.example.project_sns.domain.entity.UploadMessageDataEntity
+import com.example.project_sns.domain.entity.UserDataEntity
 import kotlinx.coroutines.flow.Flow
 
 
@@ -56,5 +57,9 @@ interface DataRepository {
     suspend fun checkMessageData(chatRoomId: String): Flow<Boolean>
 
     suspend fun getChatMessageData(chatRoomId: String, lastVisibleItem: Flow<Int>): Flow<List<MessageEntity>>
+
+    suspend fun searchUserData(query: String): Flow<List<UserDataEntity>>
+
+    suspend fun searchPostData(query: String): Flow<List<PostDataEntity>>
 
 }
