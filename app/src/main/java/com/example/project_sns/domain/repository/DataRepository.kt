@@ -48,9 +48,11 @@ interface DataRepository {
 
     suspend fun sendMessage(chatRoomId: String,token: String, sendUser: String, accessToken: String, recipientUid: String, messageData: UploadMessageDataEntity): Flow<Boolean>
 
+    suspend fun getUserSession(recipientUid: String, chatRoomId: String): Flow<Boolean>
+
     suspend fun checkReadMessage(chatRoomId: String, userSession: Boolean): Flow<Boolean>
 
-    suspend fun checkChatRoomSession(chatRoomId: String): Flow<Boolean>
+    suspend fun checkChatRoomList(): Flow<Boolean>
 
     suspend fun getChatRoomList(): Flow<List<ChatRoomEntity>>
 

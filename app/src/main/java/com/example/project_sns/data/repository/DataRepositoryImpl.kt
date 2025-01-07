@@ -9,6 +9,7 @@ import com.example.project_sns.data.mapper.toPostListEntity
 import com.example.project_sns.data.mapper.toReCommentListEntity
 import com.example.project_sns.data.mapper.toUserListEntity
 import com.example.project_sns.data.response.ChatRoomDataResponse
+import com.example.project_sns.data.response.ChatRoomResponse
 import com.example.project_sns.data.response.CommentDataResponse
 import com.example.project_sns.data.response.MessageDataResponse
 import com.example.project_sns.data.response.PostDataResponse
@@ -737,9 +738,9 @@ class DataRepositoryImpl @Inject constructor(
                     val participant = arrayListOf<String>()
                     participant.add(senderUid)
                     participant.add(recipientUid)
-                    val chatRoomSession = hashMapOf(
-                        senderUid to false,
-                        recipientUid to false
+                    val chatRoomSession = arrayListOf(
+                        mapOf(senderUid to true),
+                        mapOf(recipientUid to false)
                     )
                     val lastMessageData = hashMapOf(
                         "lastMessage" to messageData.message,
@@ -817,14 +818,17 @@ class DataRepositoryImpl @Inject constructor(
                                 chatRoomDB.update("unReadMessage", unReadMessage?.size())
                             }
                     }.addOnSuccessListener {
-                        FirebaseMessagingService().sendNotifications(
-                            accessToken = accessToken,
-                            token = token,
-                            title = sendUser,
-                            content = messageData.message,
-                            chatRoomId = chatRoomId,
-                            uid = messageData.uid
-                        )
+                        if (messageData.read.contains(mapOf(recipientUid to false))) {
+                            Log.d(TAG, "FCM 보내기 완료")
+                            FirebaseMessagingService().sendNotifications(
+                                accessToken = accessToken,
+                                token = token,
+                                title = sendUser,
+                                content = messageData.message,
+                                chatRoomId = chatRoomId,
+                                uid = messageData.uid
+                            )
+                        }
                     }
                 } else if (messageData.imageList != null) {
                     // FIXME: 이미지 파일 완전히 올린 후에 messageDB에 set
@@ -878,21 +882,47 @@ class DataRepositoryImpl @Inject constructor(
                         chatRoomDB.update("lastMessage", "이미지 파일")
                         chatRoomDB.update("lastSendAt", messageData.sendAt)
                     }.addOnSuccessListener {
-                        FirebaseMessagingService().sendNotifications(
-                            accessToken = accessToken,
-                            token = token,
-                            title = sendUser,
-                            content = "이미지 파일이 도착했습니다.",
-                            chatRoomId = chatRoomId,
-                            uid = messageData.uid
-                        )
-
+                        if (messageData.read.contains(mapOf(recipientUid to false))) {
+                            FirebaseMessagingService().sendNotifications(
+                                accessToken = accessToken,
+                                token = token,
+                                title = sendUser,
+                                content = "이미지 파일이 도착했습니다.",
+                                chatRoomId = chatRoomId,
+                                uid = messageData.uid
+                            )
+                        }
                     }
                 }
                 emit(true)
             } catch (e: Exception) {
                 emit(false)
             }
+        }
+    }
+
+    override suspend fun getUserSession(recipientUid: String, chatRoomId: String): Flow<Boolean> {
+        return callbackFlow {
+            val chatRef = db.collection(COLLECTION_CHAT).document(chatRoomId)
+            Log.d("ChatRoomFragment1", "$recipientUid, $chatRoomId")
+
+            chatRef.addSnapshotListener { snapshot, e ->
+                if (e != null) {
+                    trySend(false)
+                }
+                if (snapshot != null) {
+                    Log.d("ChatRoomFragment1", "$snapshot")
+                    val session =
+                        snapshot.toObject(ChatRoomDataResponse::class.java)?.chatRoomSession
+                            ?: throw NullPointerException("Null Session")
+                    if (session.contains(mapOf(recipientUid to true))) {
+                        trySend(true)
+                    } else if (session.contains(mapOf(recipientUid to false))) {
+                        trySend(false)
+                    }
+                }
+            }
+            awaitClose()
         }
     }
 
@@ -904,6 +934,8 @@ class DataRepositoryImpl @Inject constructor(
                 val currentUserUid = auth.currentUser?.uid
                 val chatRef = db.collection(COLLECTION_CHAT).document(chatRoomId)
                 val messageRef = chatRef.collection(COLLECTION_CHAT_MESSAGE)
+                Log.d(TAG, "$userSession")
+
                 if (userSession) {
                     db.runTransaction {
                         it.update(
@@ -916,6 +948,8 @@ class DataRepositoryImpl @Inject constructor(
                                 mapOf(currentUserUid to true)
                             )
                         )
+                    }.addOnSuccessListener {
+                        trySend(true)
                     }.await()
 
                     messageRef.whereArrayContains("read", mapOf(currentUserUid to false)).get()
@@ -937,12 +971,6 @@ class DataRepositoryImpl @Inject constructor(
                                                 mapOf(currentUserUid to true)
                                             )
                                         )
-                                    }.addOnSuccessListener {
-                                        trySend(true)
-                                        Log.d(TAG, "메세지 읽기 성공")
-                                    }.addOnFailureListener {
-                                        trySend(false)
-                                        Log.d(TAG, "메세지 읽기 실패")
                                     }
                                 }
                             } else {
@@ -952,34 +980,45 @@ class DataRepositoryImpl @Inject constructor(
                 } else {
                     db.runTransaction {
                         it.update(
-                            chatRef, "read", FieldValue.arrayRemove(
+                            chatRef, "chatRoomSession", FieldValue.arrayRemove(
                                 mapOf(currentUserUid to true)
                             )
                         )
                         it.update(
-                            chatRef, "read", FieldValue.arrayUnion(
+                            chatRef, "chatRoomSession", FieldValue.arrayUnion(
                                 mapOf(currentUserUid to false)
                             )
                         )
-                    }.await()
+                    }.addOnSuccessListener {
+                        trySend(false)
+                    }
                 }
             } catch (e: Exception) {
-                trySend(false)
+                Log.d(TAG, "$e")
             }
             awaitClose()
         }
     }
 
-    override suspend fun checkChatRoomSession(chatRoomId: String): Flow<Boolean> {
+    override suspend fun checkChatRoomList(): Flow<Boolean> {
         return callbackFlow {
-            val currentUserUid = auth.currentUser?.uid
-            val chatRoomDB = db.collection(COLLECTION_CHAT).document(chatRoomId)
-            chatRoomDB.collection(COLLECTION_CHAT_MESSAGE)
-                .whereEqualTo("chatRoomId", chatRoomId)
-                .get().addOnSuccessListener { chatRoomMessage ->
-
-                    trySend(true)
-                }
+            val currentUser = auth.currentUser?.uid
+            if (currentUser != null) {
+                db.collection(COLLECTION_CHAT).whereArrayContains("participant", currentUser)
+                    .addSnapshotListener { snapshot, e ->
+                        if (e != null) {
+                            trySend(false)
+                        }
+                        if (snapshot != null) {
+                            val document = snapshot.documents.size
+                            if (document != 0) {
+                                trySend(true)
+                            } else {
+                                trySend(false)
+                            }
+                        }
+                    }
+            }
             awaitClose()
         }
     }

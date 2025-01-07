@@ -4,8 +4,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.OnItemTouchListener
 import com.bumptech.glide.Glide
 import com.example.project_sns.R
 import com.example.project_sns.databinding.RvItemMessageListBinding
@@ -75,5 +77,35 @@ class ChatRoomListAdapter(private val onItemClick: (ChatRoomModel) -> Unit) :
 
         }
     }
+}
+
+class ItemTouchHelperCallback(
+    private val itemMoveListener: OnItemTouchListener
+): ItemTouchHelper.Callback() {
+
+    interface OnItemTouchListener {
+        fun onSwipeListener()
+    }
+    override fun getMovementFlags(
+        recyclerView: RecyclerView,
+        viewHolder: RecyclerView.ViewHolder
+    ): Int {
+        return makeMovementFlags(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT)
+    }
+
+    override fun onMove(
+        recyclerView: RecyclerView,
+        viewHolder: RecyclerView.ViewHolder,
+        target: RecyclerView.ViewHolder
+    ): Boolean {
+        return false
+    }
+
+    override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+        if (direction == ItemTouchHelper.LEFT) {
+            itemMoveListener.onSwipeListener()
+        }
+    }
+
 
 }

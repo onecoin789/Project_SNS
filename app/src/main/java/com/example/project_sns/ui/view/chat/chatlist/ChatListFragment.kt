@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -13,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.project_sns.R
 import com.example.project_sns.databinding.FragmentChatListBinding
 import com.example.project_sns.ui.BaseFragment
+import com.example.project_sns.ui.BaseSnackBar
 import com.example.project_sns.ui.model.UserDataModel
 import com.example.project_sns.ui.view.chat.ChatSharedViewModel
 import com.example.project_sns.ui.view.chat.ChatViewModel
@@ -49,8 +51,29 @@ class ChatListFragment : BaseFragment<FragmentChatListBinding>() {
 
         initRv()
         initView()
-        getChatList()
+        checkChatRoomList()
+        collectCheckChatRoomList()
 
+
+    }
+
+
+    private fun checkChatRoomList() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            chatViewModel.checkChatRoomList()
+        }
+    }
+
+    private fun collectCheckChatRoomList() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            chatViewModel.checkChatRoomList.observe(viewLifecycleOwner) { result ->
+                if (result == true) {
+                    getChatList()
+                } else {
+                    BaseSnackBar(binding.root, "채팅 리스트 갱신 실패")
+                }
+            }
+        }
     }
 
     private fun getChatList() {
