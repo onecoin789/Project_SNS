@@ -2,6 +2,7 @@ package com.example.project_sns.ui.view.chat.chatroom
 
 import android.net.Uri
 import android.os.Bundle
+import android.os.IBinder.DeathRecipient
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
@@ -81,18 +82,12 @@ class ChatRoomFragment : BaseFragment<FragmentChatRoomBinding>() {
         checkMessageDataResult()
         editTextWatcher()
         collectChatRoomSession()
-
-        readMessage(true)
-
-    }
+        readMessage()
 
 
-    private fun readMessage(userSession: Boolean) {
-        chatSharedViewModel.chatRoomId.observe(viewLifecycleOwner) { chatRoomId ->
-            if (chatRoomId != null) {
-                chatViewModel.checkReadMessage(chatRoomId, userSession)
-            }
-        }
+        sendUserSession(true)
+
+
     }
 
 
@@ -107,12 +102,16 @@ class ChatRoomFragment : BaseFragment<FragmentChatRoomBinding>() {
 
                 recipientUid = userData.uid
                 token = userData.token
+                checkRecipientSession(recipientUid)
+                checkTextMessageState(recipientUid)
+                checkImageMessageState(recipientUid)
             }
         }
 
-        binding.btnChatTextSend.setOnClickListener {
-            checkTextMessageState()
-        }
+
+//        binding.btnChatTextSend.setOnClickListener {
+//            checkTextMessageState()
+//        }
 
         binding.btnChatPickPhoto.setOnClickListener {
             TedImagePicker.with(requireContext()).imageAndVideo()
@@ -133,9 +132,9 @@ class ChatRoomFragment : BaseFragment<FragmentChatRoomBinding>() {
                     }
                 }
 
-            binding.btnChatRoomSendPhoto.setOnClickListener {
-                checkImageMessageState()
-            }
+//            binding.btnChatRoomSendPhoto.setOnClickListener {
+//                checkImageMessageState()
+//            }
         }
 
 
@@ -151,20 +150,17 @@ class ChatRoomFragment : BaseFragment<FragmentChatRoomBinding>() {
                 chatSharedViewModel.clearChatRoomId()
                 chatSharedViewModel.clearCheckData()
                 FcmUtil.clickState = false
-                readMessage(false)
+                sendUserSession(false)
                 backToMain()
             }
         } else {
             binding.ivChatRoomBack.setOnClickListener {
                 chatSharedViewModel.clearChatRoomId()
                 chatSharedViewModel.clearCheckData()
-                readMessage(false)
+                sendUserSession(false)
                 backButton()
             }
         }
-
-
-
     }
 
     private fun initRv() {
@@ -225,6 +221,30 @@ class ChatRoomFragment : BaseFragment<FragmentChatRoomBinding>() {
         }
     }
 
+    private fun sendUserSession(value: Boolean) {
+        chatViewModel.getUserSession(value)
+    }
+
+
+    private fun readMessage() {
+        chatSharedViewModel.chatRoomId.observe(viewLifecycleOwner) { chatRoomId ->
+            if (chatRoomId != null) {
+                chatViewModel.userSession.observe(viewLifecycleOwner) { userSession ->
+                    chatViewModel.checkReadMessage(chatRoomId, userSession)
+                }
+            }
+        }
+    }
+
+    private fun checkRecipientSession(recipientUid: String) {
+        chatSharedViewModel.chatRoomId.observe(viewLifecycleOwner) { chatRoomId ->
+            if (chatRoomId != null) {
+                chatViewModel.getChatRoomRecipientSession(recipientUid, chatRoomId)
+            }
+        }
+    }
+
+
     private fun checkMessage() {
         chatSharedViewModel.chatRoomId.observe(viewLifecycleOwner) { chatRoomId ->
             if (chatRoomId != null) {
@@ -266,8 +286,17 @@ class ChatRoomFragment : BaseFragment<FragmentChatRoomBinding>() {
             }
             delay(500)
             chatViewModel.chatRoomData.observe(viewLifecycleOwner) {
-                if (it != null)
+                if (it != null) {
                     chatSharedViewModel.getChatRoomId(it.chatRoomId)
+                    initRv()
+                    initView()
+                    checkChatRoomData()
+                    checkMessage()
+                    checkMessageDataResult()
+                    editTextWatcher()
+                    collectChatRoomSession()
+                    readMessage()
+                }
             }
         }
     }
@@ -286,10 +315,9 @@ class ChatRoomFragment : BaseFragment<FragmentChatRoomBinding>() {
 
 
     // text message send
-    private fun checkTextMessageState() {
+    private fun checkTextMessageState(recipientUid: String) {
         val currentUser = CurrentUser.userData?.uid ?: throw NullPointerException("User Data Null!")
         val newChatRoomId = UUID.randomUUID().toString()
-        val message = binding.etChat.text.toString()
         val messageId = UUID.randomUUID().toString()
         val sendAt = chatDateFormat()
         val accessToken = FcmUtil.accessToken.toString()
@@ -297,28 +325,49 @@ class ChatRoomFragment : BaseFragment<FragmentChatRoomBinding>() {
 
         chatSharedViewModel.checkChatRoomData.observe(viewLifecycleOwner) { result ->
             if (result == true) {
-                sendMessage(currentUser, message, messageId, sendAt, accessToken)
+                chatViewModel.chatRoomRecipientSession.observe(viewLifecycleOwner) { session ->
+                    if (session == true) {
+                        sendTextMessageBySession(currentUser, accessToken, true)
+                    } else {
+                        sendTextMessageBySession(currentUser, accessToken, false)
+                    }
+                }
             } else if (result == false) {
-                sendFirstMessage(
-                    newChatRoomId,
-                    currentUser,
-                    accessToken,
-                    UploadMessageDataModel(
-                        uid = currentUser,
-                        chatRoomId = newChatRoomId,
-                        messageId = messageId,
-                        message = message,
-                        imageList = null,
-                        sendAt = sendAt,
-                        read = readUser,
-                        type = MessageViewType.TEXT_MESSAGE)
-                )
+                binding.btnChatTextSend.setOnClickListener {
+                    val message = binding.etChat.text.toString()
+                    sendFirstMessage(
+                        newChatRoomId,
+                        currentUser,
+                        accessToken,
+                        UploadMessageDataModel(
+                            uid = currentUser,
+                            chatRoomId = newChatRoomId,
+                            messageId = messageId,
+                            message = message,
+                            imageList = null,
+                            sendAt = sendAt,
+                            read = readUser,
+                            type = MessageViewType.TEXT_MESSAGE
+                        )
+                    )
+                }
             }
         }
     }
 
+    private fun sendTextMessageBySession(senderUid: String, accessToken: String, session: Boolean) {
+
+        binding.btnChatTextSend.setOnClickListener {
+            val message = binding.etChat.text.toString()
+            val messageId = UUID.randomUUID().toString()
+            val sendAt = chatDateFormat()
+
+            sendMessage(senderUid, message, messageId, sendAt, accessToken, session)
+        }
+    }
+
     // image message send
-    private fun checkImageMessageState() {
+    private fun checkImageMessageState(recipientUid: String) {
         val currentUser = CurrentUser.userData?.uid ?: throw NullPointerException("User Data Null!")
         val newChatRoomId = UUID.randomUUID().toString()
         val messageId = UUID.randomUUID().toString()
@@ -327,10 +376,15 @@ class ChatRoomFragment : BaseFragment<FragmentChatRoomBinding>() {
         val readUser = arrayListOf(mapOf(currentUser to true), mapOf(recipientUid to false))
 
 
-
         chatSharedViewModel.checkChatRoomData.observe(viewLifecycleOwner) { result ->
             if (result == true) {
-                sendImageTypeMessage(currentUser, messageId, sendAt, accessToken)
+                chatViewModel.chatRoomRecipientSession.observe(viewLifecycleOwner) { session ->
+                    if (session == true) {
+                        sendImageMessageBySession(currentUser, accessToken, true)
+                    } else {
+                        sendImageMessageBySession(currentUser, accessToken, false)
+                    }
+                }
             } else if (result == false) {
                 sendFirstImageTypeMessage(
                     newChatRoomId,
@@ -344,9 +398,24 @@ class ChatRoomFragment : BaseFragment<FragmentChatRoomBinding>() {
                         imageList = chatImageList,
                         sendAt = sendAt,
                         read = readUser,
-                        type = MessageViewType.TEXT_MESSAGE)
+                        type = MessageViewType.TEXT_MESSAGE
+                    )
                 )
             }
+        }
+    }
+
+    private fun sendImageMessageBySession(
+        senderUid: String,
+        accessToken: String,
+        session: Boolean
+    ) {
+
+        binding.btnChatRoomSendPhoto.setOnClickListener {
+            val messageId = UUID.randomUUID().toString()
+            val sendAt = chatDateFormat()
+
+            sendImageTypeMessage(senderUid, messageId, sendAt, accessToken, session)
         }
     }
 
@@ -361,18 +430,33 @@ class ChatRoomFragment : BaseFragment<FragmentChatRoomBinding>() {
         lifecycleScope.launch {
             mainSharedViewModel.userData.observe(viewLifecycleOwner) { userData ->
                 if (userData != null) {
-                    chatViewModel.sendFirstMessage(chatRoomId, token, sendUser, accessToken, senderUid, userData.uid, messageData)
+                    chatViewModel.sendFirstMessage(
+                        chatRoomId,
+                        token,
+                        sendUser,
+                        accessToken,
+                        senderUid,
+                        userData.uid,
+                        messageData
+                    )
                     collectFirstMessageResult()
                 }
             }
         }
     }
 
-    private fun sendMessage(senderUid: String, message: String, messageId: String, sendAt: String, accessToken: String,) {
+    private fun sendMessage(
+        senderUid: String,
+        message: String,
+        messageId: String,
+        sendAt: String,
+        accessToken: String,
+        session: Boolean
+    ) {
         chatSharedViewModel.chatRoomData.observe(viewLifecycleOwner) { chatRoom ->
             Log.d("chatRoomData", "$chatRoom")
             if (chatRoom != null) {
-                val readUser = arrayListOf(mapOf(senderUid to true), mapOf(recipientUid to false))
+                val readUser = arrayListOf(mapOf(senderUid to true), mapOf(recipientUid to session))
                 val messageData =
                     UploadMessageDataModel(
                         uid = senderUid,
@@ -384,7 +468,14 @@ class ChatRoomFragment : BaseFragment<FragmentChatRoomBinding>() {
                         read = readUser,
                         type = MessageViewType.TEXT_MESSAGE
                     )
-                chatViewModel.sendMessage(chatRoom.chatRoomId, token, sendUser, accessToken, recipientUid, messageData)
+                chatViewModel.sendMessage(
+                    chatRoom.chatRoomId,
+                    token,
+                    sendUser,
+                    accessToken,
+                    recipientUid,
+                    messageData
+                )
                 collectMessageResult()
             }
         }
@@ -441,18 +532,33 @@ class ChatRoomFragment : BaseFragment<FragmentChatRoomBinding>() {
         lifecycleScope.launch {
             mainSharedViewModel.userData.observe(viewLifecycleOwner) { userData ->
                 if (userData != null) {
-                    chatViewModel.sendFirstMessage(chatRoomId, token, sendUser, accessToken, senderUid, userData.uid, messageData)
+                    chatViewModel.sendFirstMessage(
+                        chatRoomId,
+                        token,
+                        sendUser,
+                        accessToken,
+                        senderUid,
+                        userData.uid,
+                        messageData
+                    )
                     collectFirstImageMessageResult()
                 }
             }
         }
     }
 
-    private fun sendImageTypeMessage(senderUid: String, messageId: String, sendAt: String, accessToken: String,) {
+    private fun sendImageTypeMessage(
+        senderUid: String,
+        messageId: String,
+        sendAt: String,
+        accessToken: String,
+        session: Boolean
+    ) {
         chatSharedViewModel.chatRoomData.observe(viewLifecycleOwner) { chatRoom ->
             if (chatRoom != null) {
                 if (chatImageList != null) {
-                    val readUser = arrayListOf(mapOf(senderUid to true), mapOf(recipientUid to false))
+                    val readUser =
+                        arrayListOf(mapOf(senderUid to true), mapOf(recipientUid to session))
                     val messageData =
                         UploadMessageDataModel(
                             uid = senderUid,
@@ -464,7 +570,14 @@ class ChatRoomFragment : BaseFragment<FragmentChatRoomBinding>() {
                             read = readUser,
                             type = MessageViewType.IMAGE_MESSAGE
                         )
-                    chatViewModel.sendMessage(chatRoom.chatRoomId, token, sendUser, accessToken, recipientUid, messageData)
+                    chatViewModel.sendMessage(
+                        chatRoom.chatRoomId,
+                        token,
+                        sendUser,
+                        accessToken,
+                        recipientUid,
+                        messageData
+                    )
                     collectImageMessageResult()
                 }
             }
@@ -563,6 +676,11 @@ class ChatRoomFragment : BaseFragment<FragmentChatRoomBinding>() {
             }
 
         })
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        sendUserSession(false)
     }
 
 }

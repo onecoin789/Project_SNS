@@ -49,6 +49,9 @@ class MainSearchFragment : BaseFragment<FragmentMainSearchBinding>() {
         initView()
         textWatcher()
 
+        Log.d("MainSearchFragment", "$searchViewType")
+
+
 
     }
 
@@ -152,6 +155,8 @@ class MainSearchFragment : BaseFragment<FragmentMainSearchBinding>() {
     }
 
     private fun getSearch(editText: EditText) {
+
+        // FIXME: 바로 게시글 검색하면 검색 결과가 나오지 않는 문제 있음. 
 
         val viewPager = binding.vpSearchTab
         val text = binding.tvSearchNone

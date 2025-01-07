@@ -12,6 +12,8 @@
     <string name="chat_text">메세지를 입력해주세요</string>
     <string name="chat_room_none">이전에 나눈 메세지가 없습니다!</string>
     <string name="chat_room_image">이미지 미리보기</string>
+    <string name="chat_list_start">친구와 채팅 시작하기</string>
+    <string name="chat_list">채팅 목록</string>
 
     <!-- Dialog -->
     <string name="cancel">취소</string>

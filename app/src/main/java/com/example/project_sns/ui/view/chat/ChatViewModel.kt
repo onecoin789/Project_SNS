@@ -8,12 +8,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.project_sns.FirebaseMessagingService
 import com.example.project_sns.domain.usecase.CheckChatRoomDataUseCase
+import com.example.project_sns.domain.usecase.CheckChatRoomListUseCase
 import com.example.project_sns.domain.usecase.CheckChatRoomSessionUseCase
 import com.example.project_sns.domain.usecase.CheckMessageDataUseCase
 import com.example.project_sns.domain.usecase.CheckReadMessageUseCase
 import com.example.project_sns.domain.usecase.GetChatMessageDataUseCase
 import com.example.project_sns.domain.usecase.GetChatRoomDataUseCase
 import com.example.project_sns.domain.usecase.GetChatRoomListUseCase
+import com.example.project_sns.domain.usecase.GetUserSessionUseCase
 import com.example.project_sns.domain.usecase.SendFirstMessageUseCase
 import com.example.project_sns.domain.usecase.SendMessageUseCase
 import com.example.project_sns.ui.mapper.toChatRoomListModel
@@ -38,11 +40,13 @@ class ChatViewModel @Inject constructor(
     private val sendMessageUseCase: SendMessageUseCase,
     private val sendFirstMessageUseCase: SendFirstMessageUseCase,
     private val getChatRoomDataUseCase: GetChatRoomDataUseCase,
+    private val checkChatRoomListUseCase: CheckChatRoomListUseCase,
     private val getChatRoomListUseCase: GetChatRoomListUseCase,
     private val checkMessageDataUseCase: CheckMessageDataUseCase,
     private val getChatMessageDataUseCase: GetChatMessageDataUseCase,
     private val checkChatRoomSessionUseCase: CheckChatRoomSessionUseCase,
-    private val checkReadMessageUseCase: CheckReadMessageUseCase
+    private val checkReadMessageUseCase: CheckReadMessageUseCase,
+    private val getUserSessionUseCase: GetUserSessionUseCase
 ): ViewModel() {
 
     private val _checkChatRoomData = MutableLiveData<Boolean?>()
@@ -57,6 +61,9 @@ class ChatViewModel @Inject constructor(
     private val _chatRoomData = MutableLiveData<ChatRoomDataModel?>()
     val chatRoomData: LiveData<ChatRoomDataModel?> get() = _chatRoomData
 
+    private val _checkChatRoomList = MutableLiveData<Boolean>()
+    val checkChatRoomList: LiveData<Boolean> get() = _checkChatRoomList
+
     private val _chatRoomList = MutableLiveData<List<ChatRoomModel>>()
     val chatRoomList: LiveData<List<ChatRoomModel>> get() = _chatRoomList
 
@@ -69,12 +76,33 @@ class ChatViewModel @Inject constructor(
     private val _chatRoomSession = MutableLiveData<Boolean>()
     val chatRoomSession: LiveData<Boolean> get() = _chatRoomSession
 
+    private val _userSession = MutableLiveData<Boolean>()
+    val userSession: LiveData<Boolean> get() = _userSession
+
+    private val _chatRoomRecipientSession = MutableLiveData<Boolean>()
+    val chatRoomRecipientSession: LiveData<Boolean> get() = _chatRoomRecipientSession
+
     val messageLastVisibleItem = MutableStateFlow<Int>(0)
 
 
     fun clearMessageList() {
         _messageList.value = emptyList()
         messageLastVisibleItem.value = 0
+    }
+
+    // 상대방이 접속했는지 확인용
+    fun getChatRoomRecipientSession(recipientUid: String, chatRoomId: String) {
+        viewModelScope.launch {
+            getUserSessionUseCase(recipientUid, chatRoomId).collect { session ->
+                _chatRoomRecipientSession.value = session
+            }
+        }
+    }
+
+    fun getUserSession(sessionValue: Boolean) {
+        viewModelScope.launch {
+            _userSession.value = sessionValue
+        }
     }
 
     fun checkReadMessage(chatRoomId: String, userSession: Boolean) {
@@ -89,6 +117,14 @@ class ChatViewModel @Inject constructor(
         viewModelScope.launch {
             checkChatRoomSessionUseCase(chatRoomId).collect { session ->
                 _chatRoomSession.value = session
+            }
+        }
+    }
+
+    fun checkChatRoomList() {
+        viewModelScope.launch {
+            checkChatRoomListUseCase().collect { result ->
+                _checkChatRoomList.value = result
             }
         }
     }

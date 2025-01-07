@@ -31,6 +31,7 @@ class ChatSharedViewModel @Inject constructor(
 
     fun getChatRoomId(id: String) {
         _chatRoomId.value = id
+        Log.d("CSVM", "${_chatRoomId.value}")
     }
 
     fun clearChatRoomId() {
