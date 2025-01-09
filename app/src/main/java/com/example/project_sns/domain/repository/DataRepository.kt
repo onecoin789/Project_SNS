@@ -56,6 +56,8 @@ interface DataRepository {
 
     suspend fun getChatRoomList(): Flow<List<ChatRoomEntity>>
 
+    suspend fun deleteChatRoom(chatRoomId: String): Flow<Boolean>
+
     suspend fun checkMessageData(chatRoomId: String): Flow<Boolean>
 
     suspend fun getChatMessageData(chatRoomId: String, lastVisibleItem: Flow<Int>): Flow<List<MessageEntity>>

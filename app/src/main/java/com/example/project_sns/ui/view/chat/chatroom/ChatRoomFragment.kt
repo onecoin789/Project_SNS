@@ -14,6 +14,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.OnScrollListener
@@ -29,6 +30,7 @@ import com.example.project_sns.ui.model.UploadMessageDataModel
 import com.example.project_sns.ui.util.chatDateFormat
 import com.example.project_sns.ui.view.chat.ChatSharedViewModel
 import com.example.project_sns.ui.view.chat.ChatViewModel
+import com.example.project_sns.ui.view.chat.chatlist.ItemTouchHelperCallback
 import com.example.project_sns.ui.view.main.MainSharedViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import gun0912.tedimagepicker.builder.TedImagePicker
@@ -65,6 +67,8 @@ class ChatRoomFragment : BaseFragment<FragmentChatRoomBinding>() {
 
     private var messageListSize: Int = 0
 
+
+
     override fun getFragmentBinding(
         inflater: LayoutInflater,
         container: ViewGroup?
@@ -81,7 +85,6 @@ class ChatRoomFragment : BaseFragment<FragmentChatRoomBinding>() {
         checkMessage()
         checkMessageDataResult()
         editTextWatcher()
-        collectChatRoomSession()
         readMessage()
 
 
@@ -281,23 +284,18 @@ class ChatRoomFragment : BaseFragment<FragmentChatRoomBinding>() {
         CoroutineScope(Dispatchers.Main).launch {
             mainSharedViewModel.userData.observe(viewLifecycleOwner) { userData ->
                 if (userData != null) {
-                    chatViewModel.getChatRoomData(userData.uid)
+                    chatSharedViewModel.getChatRoomData(userData.uid)
                 }
             }
             delay(500)
-            chatViewModel.chatRoomData.observe(viewLifecycleOwner) {
+            chatSharedViewModel.chatRoomData.observe(viewLifecycleOwner) {
                 if (it != null) {
                     chatSharedViewModel.getChatRoomId(it.chatRoomId)
-                    initRv()
-                    initView()
-                    checkChatRoomData()
-                    checkMessage()
-                    checkMessageDataResult()
-                    editTextWatcher()
-                    collectChatRoomSession()
-                    readMessage()
+                    checkChatRoomExist()
                 }
             }
+            delay(500)
+            getMessageList()
         }
     }
 
@@ -482,17 +480,17 @@ class ChatRoomFragment : BaseFragment<FragmentChatRoomBinding>() {
     }
 
 
-    private fun collectChatRoomSession() {
-        lifecycleScope.launch {
-            chatViewModel.chatRoomSession.observe(viewLifecycleOwner) { session ->
-                if (session == true) {
-                    Toast.makeText(requireContext(), "채팅방 들어옴", Toast.LENGTH_SHORT).show()
-                } else {
-                    Toast.makeText(requireContext(), "채팅방 나감", Toast.LENGTH_SHORT).show()
-                }
-            }
-        }
-    }
+//    private fun collectChatRoomSession() {
+//        lifecycleScope.launch {
+//            chatViewModel.chatRoomSession.observe(viewLifecycleOwner) { session ->
+//                if (session == true) {
+//                    Toast.makeText(requireContext(), "채팅방 들어옴", Toast.LENGTH_SHORT).show()
+//                } else {
+//                    Toast.makeText(requireContext(), "채팅방 나감", Toast.LENGTH_SHORT).show()
+//                }
+//            }
+//        }
+//    }
 
     private fun collectFirstMessageResult() {
         lifecycleScope.launch {
@@ -628,7 +626,6 @@ class ChatRoomFragment : BaseFragment<FragmentChatRoomBinding>() {
 
     private fun setChatRoom() {
         CoroutineScope(Dispatchers.Main).launch {
-            checkChatRoomExist()
             delay(500)
             getChatRoomData()
         }

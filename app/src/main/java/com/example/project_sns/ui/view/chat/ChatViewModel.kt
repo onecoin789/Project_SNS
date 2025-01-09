@@ -12,6 +12,7 @@ import com.example.project_sns.domain.usecase.CheckChatRoomListUseCase
 import com.example.project_sns.domain.usecase.CheckChatRoomSessionUseCase
 import com.example.project_sns.domain.usecase.CheckMessageDataUseCase
 import com.example.project_sns.domain.usecase.CheckReadMessageUseCase
+import com.example.project_sns.domain.usecase.DeleteChatRoomUseCase
 import com.example.project_sns.domain.usecase.GetChatMessageDataUseCase
 import com.example.project_sns.domain.usecase.GetChatRoomDataUseCase
 import com.example.project_sns.domain.usecase.GetChatRoomListUseCase
@@ -46,7 +47,8 @@ class ChatViewModel @Inject constructor(
     private val getChatMessageDataUseCase: GetChatMessageDataUseCase,
     private val checkChatRoomSessionUseCase: CheckChatRoomSessionUseCase,
     private val checkReadMessageUseCase: CheckReadMessageUseCase,
-    private val getUserSessionUseCase: GetUserSessionUseCase
+    private val getUserSessionUseCase: GetUserSessionUseCase,
+    private val deleteChatRoomUseCase: DeleteChatRoomUseCase
 ): ViewModel() {
 
     private val _checkChatRoomData = MutableLiveData<Boolean?>()
@@ -82,12 +84,25 @@ class ChatViewModel @Inject constructor(
     private val _chatRoomRecipientSession = MutableLiveData<Boolean>()
     val chatRoomRecipientSession: LiveData<Boolean> get() = _chatRoomRecipientSession
 
+    private val _deleteChatRoomResult = MutableLiveData<Boolean>()
+    val deleteChatRoomResult: LiveData<Boolean> get() = _deleteChatRoomResult
+
     val messageLastVisibleItem = MutableStateFlow<Int>(0)
 
 
     fun clearMessageList() {
         _messageList.value = emptyList()
         messageLastVisibleItem.value = 0
+    }
+
+
+    // 채팅방 삭제
+    fun deleteChatRoom(chatRoomId: String) {
+        viewModelScope.launch {
+            deleteChatRoomUseCase(chatRoomId).collect { result ->
+                _deleteChatRoomResult.value = result
+            }
+        }
     }
 
     // 상대방이 접속했는지 확인용
