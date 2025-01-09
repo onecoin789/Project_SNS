@@ -12,6 +12,7 @@
     <color name="hint">#7E7E7E</color>
     <color name="text">#FFFFFFFF</color>
     <color name="check_text">#FF0000</color>
+    <color name="swipe_delete">#FF3636</color>
 
     <!--dialog-->
     <color name="dialog_bg">#2B2B33</color>

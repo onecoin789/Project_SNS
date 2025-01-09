@@ -914,10 +914,13 @@ class DataRepositoryImpl @Inject constructor(
                     Log.d("ChatRoomFragment1", "$snapshot")
                     val session =
                         snapshot.toObject(ChatRoomDataResponse::class.java)?.chatRoomSession
-                            ?: throw NullPointerException("Null Session")
-                    if (session.contains(mapOf(recipientUid to true))) {
-                        trySend(true)
-                    } else if (session.contains(mapOf(recipientUid to false))) {
+                    if (session != null) {
+                        if (session.contains(mapOf(recipientUid to true))) {
+                            trySend(true)
+                        } else if (session.contains(mapOf(recipientUid to false))) {
+                            trySend(false)
+                        }
+                    } else {
                         trySend(false)
                     }
                 }
@@ -1059,6 +1062,29 @@ class DataRepositoryImpl @Inject constructor(
                             }
                         }
                     }
+            }
+            awaitClose()
+        }
+    }
+
+    override suspend fun deleteChatRoom(chatRoomId: String): Flow<Boolean> {
+        return callbackFlow {
+            val chatRef = db.collection(COLLECTION_CHAT).document(chatRoomId)
+            val messageRef = chatRef.collection(COLLECTION_CHAT_MESSAGE)
+            messageRef.whereEqualTo("chatRoomId", chatRoomId).get().addOnSuccessListener { documents ->
+                documents.toObjects(MessageDataResponse::class.java).map { messageData ->
+                    for (i in 0 until documents.size()) {
+                        messageRef.document(messageData.messageId).delete()
+                    }
+                }
+            }.addOnSuccessListener {
+                chatRef.delete()
+            }.addOnCompleteListener { result ->
+                if (result.isSuccessful) {
+                    trySend(true)
+                } else {
+                    trySend(false)
+                }
             }
             awaitClose()
         }
