@@ -134,13 +134,8 @@ class CommentListFragment : BaseFragment<FragmentCommentListBinding>() {
                 override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                     super.onScrollStateChanged(recyclerView, newState)
                     val lastVisible = linearLayoutManager.findLastVisibleItemPosition().plus(1)
-                    val totalCount = listAdapter.itemCount
                     if (!binding.rvComment.canScrollVertically(1) && newState == RecyclerView.SCROLL_STATE_IDLE) {
                         moreItem(lastVisible)
-                        Log.d(
-                            "test_comment",
-                            "${mainSharedViewModel.commentLastVisibleItem.value}, $lastVisible, $totalCount"
-                        )
                     }
                 }
             })

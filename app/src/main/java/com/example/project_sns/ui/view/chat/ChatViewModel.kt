@@ -120,9 +120,9 @@ class ChatViewModel @Inject constructor(
         }
     }
 
-    fun checkReadMessage(chatRoomId: String, userSession: Boolean) {
+    fun checkReadMessage(chatRoomId: String, userSession: Boolean, recipientUid: String) {
         viewModelScope.launch {
-            checkReadMessageUseCase(chatRoomId, userSession).collect {
+            checkReadMessageUseCase(chatRoomId, userSession, recipientUid).collect {
                 Log.d("ChatViewModel", "$it")
             }
         }

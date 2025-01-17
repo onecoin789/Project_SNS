@@ -1,6 +1,7 @@
 package com.example.project_sns.ui.model
 
 import android.os.Parcelable
+import androidx.room.Entity
 import com.example.project_sns.domain.entity.MessageDataEntity
 import com.example.project_sns.domain.entity.UserDataEntity
 import kotlinx.parcelize.Parcelize

@@ -1,12 +1,15 @@
 package com.example.project_sns.ui.util
 
 
+import android.content.Context
+import android.content.Intent
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import java.text.SimpleDateFormat
@@ -28,6 +31,12 @@ fun chatDateFormat() : String {
     formatter.timeZone = TimeZone.getTimeZone("Asia/Seoul")
     return formatter.format(Date().time)
 //    time.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss:SSS"))
+}
+
+fun postDateFormat() : String {
+    val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.KOREAN)
+    formatter.timeZone = TimeZone.getTimeZone("Asia/Seoul")
+    return formatter.format(Date().time)
 }
 
 fun stringToLocalTime(time: String): LocalDateTime {
@@ -104,6 +113,19 @@ fun deleteTextWatcher(editText: EditText, deleteButton: ImageView) {
         }
 
     })
+}
+
+fun sendToast(context: Context, message: String) {
+    Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+}
+
+fun sharePost(url: String): Intent {
+    val intent = Intent(Intent.ACTION_SEND_MULTIPLE)
+    intent.type = "text/plain"
+    val intro = "친구에게 게시물 공유하기"
+    val content = "친구가 게시물 링크를 공유했어요!"
+    intent.putExtra(Intent.EXTRA_TEXT, "$url\n\n$content")
+    return Intent.createChooser(intent, intro)
 }
 
 

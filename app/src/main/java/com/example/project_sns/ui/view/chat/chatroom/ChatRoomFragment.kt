@@ -2,25 +2,19 @@ package com.example.project_sns.ui.view.chat.chatroom
 
 import android.net.Uri
 import android.os.Bundle
-import android.os.IBinder.DeathRecipient
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.OnScrollListener
 import com.example.project_sns.FcmUtil
-import com.example.project_sns.FirebaseMessagingService
-import com.example.project_sns.R
 import com.example.project_sns.databinding.FragmentChatRoomBinding
 import com.example.project_sns.domain.MessageViewType
 import com.example.project_sns.ui.BaseFragment
@@ -30,7 +24,6 @@ import com.example.project_sns.ui.model.UploadMessageDataModel
 import com.example.project_sns.ui.util.chatDateFormat
 import com.example.project_sns.ui.view.chat.ChatSharedViewModel
 import com.example.project_sns.ui.view.chat.ChatViewModel
-import com.example.project_sns.ui.view.chat.chatlist.ItemTouchHelperCallback
 import com.example.project_sns.ui.view.main.MainSharedViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import gun0912.tedimagepicker.builder.TedImagePicker
@@ -231,9 +224,13 @@ class ChatRoomFragment : BaseFragment<FragmentChatRoomBinding>() {
 
     private fun readMessage() {
         chatSharedViewModel.chatRoomId.observe(viewLifecycleOwner) { chatRoomId ->
-            if (chatRoomId != null) {
-                chatViewModel.userSession.observe(viewLifecycleOwner) { userSession ->
-                    chatViewModel.checkReadMessage(chatRoomId, userSession)
+            mainSharedViewModel.userData.observe(viewLifecycleOwner) { userData ->
+                if (chatRoomId != null) {
+                    if (userData != null) {
+                        chatViewModel.userSession.observe(viewLifecycleOwner) { userSession ->
+                            chatViewModel.checkReadMessage(chatRoomId, userSession, userData.uid)
+                        }
+                    }
                 }
             }
         }
@@ -499,7 +496,7 @@ class ChatRoomFragment : BaseFragment<FragmentChatRoomBinding>() {
                     binding.etChat.text.clear()
                     setChatRoom()
                 } else if (result == false) {
-                    Toast.makeText(requireContext(), "첫 메세지 보내기 실패", Toast.LENGTH_SHORT).show()
+                    Log.d(TAG, "첫 메세지 보내기 실패")
                 }
             }
         }
@@ -514,7 +511,7 @@ class ChatRoomFragment : BaseFragment<FragmentChatRoomBinding>() {
                     getMessageList()
                     Log.d("messageSize", "$messageListSize")
                 } else if (result == false) {
-                    Toast.makeText(requireContext(), "메세지 보내기 실패", Toast.LENGTH_SHORT).show()
+                    Log.d(TAG, "메세지 보내기 실패")
                 }
             }
         }
@@ -590,7 +587,7 @@ class ChatRoomFragment : BaseFragment<FragmentChatRoomBinding>() {
                     binding.clChatRoomSendChat.visibility = View.VISIBLE
                     setChatRoom()
                 } else if (result == false) {
-                    Toast.makeText(requireContext(), "메세지 보내기 실패", Toast.LENGTH_SHORT).show()
+                    Log.d(TAG, "메세지 보내기 실패")
                 }
             }
         }
@@ -605,7 +602,7 @@ class ChatRoomFragment : BaseFragment<FragmentChatRoomBinding>() {
                     binding.clChatRoomSendChat.visibility = View.VISIBLE
                     getMessageList()
                 } else if (result == false) {
-                    Toast.makeText(requireContext(), "메세지 보내기 실패", Toast.LENGTH_SHORT).show()
+                    Log.d(TAG, "메세지 보내기 실패")
                 }
             }
         }
@@ -618,7 +615,7 @@ class ChatRoomFragment : BaseFragment<FragmentChatRoomBinding>() {
                 if (result == true) {
                     getMessageList()
                 } else {
-                    Toast.makeText(requireContext(), "메세지 받기 실패", Toast.LENGTH_SHORT).show()
+                    Log.d(TAG, "메세지 받기 실패")
                 }
             }
         }

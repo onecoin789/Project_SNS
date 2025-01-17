@@ -67,11 +67,27 @@ class MainHomeFragment : BaseFragment<FragmentMainHomeBinding>() {
         navigateView()
         initRv()
         getPostData()
-        refreshLayout()
         getAccessToken()
+        refreshLayout()
 
         navigateFragment()
+
+        mainSharedViewModel.loginSessionResult.observe(viewLifecycleOwner) { result ->
+            if (result == false) {
+                binding.clHomeToolbar.visibility = View.GONE
+            }
+        }
+//        checkLogin()
     }
+
+//    private fun checkLogin() {
+//        mainSharedViewModel.loginResult.observe(viewLifecycleOwner) { result ->
+//            if (result == false) {
+//                backButton()
+//                findNavController().navigate(R.id.loginFragment)
+//            }
+//        }
+//    }
 
     private fun navigateFragment() {
         val getChatRoomId = requireActivity().intent.getStringExtra("chatRoomId")
@@ -115,7 +131,6 @@ class MainHomeFragment : BaseFragment<FragmentMainHomeBinding>() {
     private fun refreshLayout() {
         binding.refreshLayoutHome.setOnRefreshListener {
             CoroutineScope(Dispatchers.Main).launch {
-                binding.clHomeItemMore.visibility = View.GONE
                 binding.rvHome.visibility = View.GONE
                 refreshRecyclerView()
                 delay(500)
@@ -124,7 +139,6 @@ class MainHomeFragment : BaseFragment<FragmentMainHomeBinding>() {
                 initRv()
                 delay(1000)
                 binding.rvHome.visibility = View.VISIBLE
-                binding.clHomeItemMore.visibility = View.VISIBLE
                 binding.refreshLayoutHome.isRefreshing = false
             }
             // FIXME: 새로고침 후 more item 안됨
@@ -159,16 +173,11 @@ class MainHomeFragment : BaseFragment<FragmentMainHomeBinding>() {
             adapter = postAdapter
 
             addOnScrollListener(object : RecyclerView.OnScrollListener() {
-                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                    super.onScrolled(recyclerView, dx, dy)
+                override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                    super.onScrollStateChanged(recyclerView, newState)
                     val lastVisible = linearLayoutManager.findLastVisibleItemPosition().plus(1)
-                    if (!binding.rvHome.canScrollVertically(1)) {
-                        binding.clHomeItemMore.setOnClickListener {
-                            lifecycleScope.launch {
-                                moreItem(lastVisible)
-                                // FIXME: 하단에 위치하면 계속해서 more item 하는 버그있음 수정필요
-                            }
-                        }
+                    if (!binding.rvHome.canScrollVertically(1) && newState == RecyclerView.SCROLL_STATE_IDLE) {
+                        moreItem(lastVisible)
                     }
                 }
             })
@@ -194,6 +203,7 @@ class MainHomeFragment : BaseFragment<FragmentMainHomeBinding>() {
         mRecyclerView.post(runnable)
 
         CoroutineScope(Dispatchers.Main).launch {
+            binding.rvHome.isNestedScrollingEnabled = false
             delay(1000)
             val runnableMore = kotlinx.coroutines.Runnable {
                 postList.removeAt(postList.size - 1)
@@ -202,21 +212,13 @@ class MainHomeFragment : BaseFragment<FragmentMainHomeBinding>() {
 //                mainViewModel.postLastVisibleItem.value = lastVisible
             }
             delay(500)
+            binding.rvHome.isNestedScrollingEnabled = true
             runnableMore.run()
         }
     }
 
 
     private fun navigateView() {
-        binding.clHomeLow.setOnClickListener {
-            findNavController().navigate(R.id.action_mainFragment_to_recommendFragment)
-        }
-        binding.clHomeMiddle.setOnClickListener {
-            findNavController().navigate(R.id.action_mainFragment_to_recommendFragment)
-        }
-        binding.clHomeHigh.setOnClickListener {
-            findNavController().navigate(R.id.action_mainFragment_to_recommendFragment)
-        }
         binding.ivHomeDM.setOnClickListener {
             getFriendList()
             findNavController().navigate(R.id.action_mainFragment_to_chatListFragment)

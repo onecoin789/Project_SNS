@@ -56,7 +56,8 @@ fun PostDataEntity.toModel() = PostDataModel(
     postText = postText,
     createdAt = createdAt,
     editedAt = editedAt,
-    mapData = mapData?.toModel()
+    mapData = mapData?.toModel(),
+    likePost = likePost
 )
 
 fun ImageDataEntity.toModel() = ImageDataModel(
@@ -118,7 +119,8 @@ fun PostDataModel.toEntity() = PostDataEntity(
     postText = postText,
     createdAt = createdAt,
     editedAt = editedAt,
-    mapData = mapData?.toEntity()
+    mapData = mapData?.toEntity(),
+    likePost = likePost
 )
 
 fun ImageDataModel.toEntity() = ImageDataEntity(

@@ -80,52 +80,52 @@
                     app:layout_constraintEnd_toEndOf="parent"/>
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/clMoreSave"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@color/stroke"
-                    app:layout_constraintTop_toBottomOf="@+id/clMoreEdit">
+<!--                <androidx.constraintlayout.widget.ConstraintLayout-->
+<!--                    android:id="@+id/clMoreSave"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:background="@color/stroke"-->
+<!--                    app:layout_constraintTop_toBottomOf="@+id/clMoreEdit">-->
 
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="2dp"
-                        android:background="@color/chat"
-                        app:layout_constraintTop_toTopOf="parent"/>
+<!--                    <View-->
+<!--                        android:layout_width="match_parent"-->
+<!--                        android:layout_height="2dp"-->
+<!--                        android:background="@color/chat"-->
+<!--                        app:layout_constraintTop_toTopOf="parent"/>-->
 
-                    <ImageView
-                        android:id="@+id/ivMoreSave"
-                        android:layout_width="35dp"
-                        android:layout_height="0dp"
-                        android:layout_marginStart="15dp"
-                        android:layout_marginVertical="15dp"
-                        app:layout_constraintDimensionRatio="1:1"
-                        android:background="@drawable/ic_save"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        android:contentDescription="@string/contentDescription"/>
-                    <TextView
-                        android:id="@+id/tvItemSave"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:text="@string/bottom_save"
-                        android:textSize="16sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/text"
-                        android:layout_marginHorizontal="17dp"
-                        app:layout_constraintStart_toEndOf="@+id/ivMoreSave"
-                        app:layout_constraintTop_toTopOf="@+id/ivMoreSave"
-                        app:layout_constraintBottom_toBottomOf="@+id/ivMoreSave"
-                        app:layout_constraintEnd_toEndOf="parent"/>
-                </androidx.constraintlayout.widget.ConstraintLayout>
+<!--                    <ImageView-->
+<!--                        android:id="@+id/ivMoreSave"-->
+<!--                        android:layout_width="35dp"-->
+<!--                        android:layout_height="0dp"-->
+<!--                        android:layout_marginStart="15dp"-->
+<!--                        android:layout_marginVertical="15dp"-->
+<!--                        app:layout_constraintDimensionRatio="1:1"-->
+<!--                        android:background="@drawable/ic_save"-->
+<!--                        app:layout_constraintStart_toStartOf="parent"-->
+<!--                        app:layout_constraintTop_toTopOf="parent"-->
+<!--                        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--                        android:contentDescription="@string/contentDescription"/>-->
+<!--                    <TextView-->
+<!--                        android:id="@+id/tvItemSave"-->
+<!--                        android:layout_width="0dp"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:text="@string/bottom_save"-->
+<!--                        android:textSize="16sp"-->
+<!--                        android:textStyle="bold"-->
+<!--                        android:textColor="@color/text"-->
+<!--                        android:layout_marginHorizontal="17dp"-->
+<!--                        app:layout_constraintStart_toEndOf="@+id/ivMoreSave"-->
+<!--                        app:layout_constraintTop_toTopOf="@+id/ivMoreSave"-->
+<!--                        app:layout_constraintBottom_toBottomOf="@+id/ivMoreSave"-->
+<!--                        app:layout_constraintEnd_toEndOf="parent"/>-->
+<!--                </androidx.constraintlayout.widget.ConstraintLayout>-->
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/clMoreLocation"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@color/stroke"
-                    app:layout_constraintTop_toBottomOf="@+id/clMoreSave">
+                    app:layout_constraintTop_toBottomOf="@+id/clMoreEdit">
 
                     <View
                         android:layout_width="match_parent"

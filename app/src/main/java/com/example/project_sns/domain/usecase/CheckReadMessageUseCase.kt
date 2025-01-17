@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class CheckReadMessageUseCase @Inject constructor(private val dataRepository: DataRepository) {
-    suspend operator fun invoke(chatRoomId: String, userSession: Boolean): Flow<Boolean> {
-        return dataRepository.checkReadMessage(chatRoomId, userSession)
+    suspend operator fun invoke(chatRoomId: String, userSession: Boolean, recipientUid: String): Flow<Boolean> {
+        return dataRepository.checkReadMessage(chatRoomId, userSession, recipientUid)
     }
 }

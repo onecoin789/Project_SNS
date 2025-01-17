@@ -13,6 +13,7 @@ import com.example.project_sns.data.response.ChatRoomResponse
 import com.example.project_sns.data.response.CommentDataResponse
 import com.example.project_sns.data.response.MessageDataResponse
 import com.example.project_sns.data.response.PostDataResponse
+import com.example.project_sns.data.response.PostResponse
 import com.example.project_sns.data.response.ReCommentDataResponse
 import com.example.project_sns.data.response.UserDataResponse
 import com.example.project_sns.data.response.toChatRoomListEntity
@@ -72,7 +73,8 @@ class DataRepositoryImpl @Inject constructor(
                         "postText" to postData.postText,
                         "mapData" to postData.mapData,
                         "createdAt" to postData.createdAt,
-                        "editedAt" to postData.editedAt
+                        "editedAt" to postData.editedAt,
+                        "likePost" to postData.likePost
                     )
                     db.collection(COLLECTION_POST).document(postData.postId).set(data).await()
                     if (postData.imageList != null) {
@@ -930,8 +932,7 @@ class DataRepositoryImpl @Inject constructor(
     }
 
 
-    override suspend fun checkReadMessage(chatRoomId: String, userSession: Boolean): Flow<Boolean> {
-        // TODO("현재 채팅방 화면에 유저가 있을 경우의 수  추가 필요")
+    override suspend fun checkReadMessage(chatRoomId: String, userSession: Boolean, recipientUid: String): Flow<Boolean> {
         return callbackFlow {
             try {
                 val currentUserUid = auth.currentUser?.uid
@@ -952,6 +953,14 @@ class DataRepositoryImpl @Inject constructor(
                             )
                         )
                     }.addOnSuccessListener {
+                        chatRef.collection(COLLECTION_CHAT_MESSAGE)
+                            .whereArrayContains("read", mapOf(recipientUid to false))
+                            .addSnapshotListener { unReadMessage, e ->
+                                if (e != null) {
+                                    Log.d(TAG, "$e")
+                                }
+                                chatRef.update("unReadMessage", unReadMessage?.size())
+                            }
                         trySend(true)
                     }.await()
 
@@ -1247,6 +1256,47 @@ class DataRepositoryImpl @Inject constructor(
                         trySend(postDataList.sortedBy { it.createdAt })
                     }
                 }
+            awaitClose()
+        }
+    }
+
+    override suspend fun getPostByPostId(postId: String): Flow<PostEntity?> {
+        return callbackFlow {
+            val postRef = db.collection(COLLECTION_POST).document(postId)
+            postRef.addSnapshotListener { snapshot, e ->
+                if (e != null) {
+                    trySend(null)
+                }
+                if (snapshot != null) {
+                    val postDataEntity = snapshot.toObject(PostDataResponse::class.java)?.toEntity()
+                    val uid = postDataEntity?.uid
+                    if (uid != null) {
+                        db.collection(COLLECTION_USER).document(uid).get().addOnSuccessListener { userData ->
+                            val userDataEntity = userData.toObject(UserDataResponse::class.java)?.toEntity()
+                            if (userDataEntity != null) {
+                                trySend(PostEntity(userDataEntity, postDataEntity))
+                            } else {
+                                trySend(null)
+                            }
+                        }
+                    }
+                }
+            }
+            awaitClose()
+        }
+    }
+
+    override suspend fun updateLike(postId: String, likeValue: Boolean): Flow<Boolean> {
+        return callbackFlow {
+            val currentUser = auth.currentUser?.uid
+            val postRef = db.collection(COLLECTION_POST).document(postId)
+            db.runTransaction { transaction ->
+                if (likeValue) {
+                    transaction.update(postRef, "likePost", FieldValue.arrayUnion(currentUser))
+                } else {
+                    transaction.update(postRef, "likePost", FieldValue.arrayRemove(currentUser))
+                }
+            }
             awaitClose()
         }
     }

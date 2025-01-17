@@ -22,6 +22,8 @@ import com.example.project_sns.ui.view.main.profile.detail.PostRadiusImageAdapte
 import com.example.project_sns.ui.model.ImageDataModel
 import com.example.project_sns.ui.model.MapDataModel
 import com.example.project_sns.ui.model.PostDataModel
+import com.example.project_sns.ui.util.chatDateFormat
+import com.example.project_sns.ui.util.postDateFormat
 import dagger.hilt.android.AndroidEntryPoint
 import gun0912.tedimagepicker.builder.TedImagePicker
 import kotlinx.coroutines.launch
@@ -171,7 +173,8 @@ class MyProfileMakePostFragment : Fragment() {
         val auth = CurrentUser.userData
         val uid = auth?.uid.toString()
         val postText = binding.etMakeText.text.toString()
-        val time = LocalDateTime.now()
+        val time = postDateFormat()
+        val likeList = arrayListOf<String>()
 
 
         val data = PostDataModel(
@@ -180,8 +183,9 @@ class MyProfileMakePostFragment : Fragment() {
             imageList = imageList,
             postText = postText,
             mapData = MapDataModel(placeName, placeUrl, addressName, lat?.toDouble(), lng?.toDouble()),
-            createdAt = dateFormat(time),
-            editedAt = null
+            createdAt = time,
+            editedAt = null,
+            likePost = likeList
         )
 
         viewLifecycleOwner.lifecycleScope.launch {

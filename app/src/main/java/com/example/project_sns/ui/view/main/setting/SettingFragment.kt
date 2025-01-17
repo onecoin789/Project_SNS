@@ -4,13 +4,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.project_sns.R
 import com.example.project_sns.databinding.FragmentSettingBinding
+import com.example.project_sns.ui.BaseDialog
 import com.example.project_sns.ui.BaseFragment
 import com.example.project_sns.ui.view.main.MainSharedViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -44,8 +44,18 @@ class SettingFragment : BaseFragment<FragmentSettingBinding>() {
             findNavController().popBackStack()
         }
 
+        binding.clCancelAccount.setOnClickListener {
+            findNavController().navigate(R.id.cancelAccountFragment)
+        }
+
         binding.clSettingLogout.setOnClickListener {
-            logout()
+            val dialog = BaseDialog("로그아웃", "로그아웃 하시겠습니까?")
+            dialog.setButtonClickListener(object : BaseDialog.DialogClickEvent {
+                override fun onClickConfirm() {
+                    logout()
+                }
+            })
+            dialog.show(childFragmentManager, "LogoutDialog")
         }
     }
 
@@ -54,6 +64,8 @@ class SettingFragment : BaseFragment<FragmentSettingBinding>() {
             settingViewModel.logout()
             mainSharedViewModel.logoutData()
             mainSharedViewModel.checkLogin(false)
+            backButton()
+            findNavController().navigate(R.id.loginFragment)
         }
     }
 }

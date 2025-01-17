@@ -43,4 +43,6 @@ interface AuthRepository {
 
     suspend fun deleteFriend(fromUid: String, toUid: String): Flow<Boolean>
 
+    suspend fun cancelAccount(uid: String, confirmEmail: String): Flow<Boolean>
+
 }

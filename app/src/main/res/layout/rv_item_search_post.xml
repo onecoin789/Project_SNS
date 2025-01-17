@@ -6,6 +6,7 @@
     android:padding="3dp">
 
     <androidx.cardview.widget.CardView
+        android:id="@+id/cvItemSearch"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:cardCornerRadius="5dp"

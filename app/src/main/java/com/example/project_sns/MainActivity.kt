@@ -5,14 +5,24 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import androidx.navigation.NavGraph
+import androidx.navigation.NavGraphNavigator
+import androidx.navigation.NavigatorProvider
+import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.navigation
 import com.example.project_sns.databinding.ActivityMainBinding
 import com.example.project_sns.ui.BaseSnackBar
+import com.example.project_sns.ui.view.login.LoginFragment
+import com.example.project_sns.ui.view.main.MainSharedViewModel
+import com.example.project_sns.ui.view.main.home.MainHomeFragment
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -24,6 +34,16 @@ class MainActivity : AppCompatActivity() {
     }
 
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
+
+    private val mainSharedViewModel: MainSharedViewModel by viewModels()
+
+    override fun onStart() {
+        super.onStart()
+
+        mainSharedViewModel.getLoginSession()
+
+    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -84,4 +104,5 @@ class MainActivity : AppCompatActivity() {
         val targetFragment = intent.getStringExtra("chatRoomId")
         Log.d(TAG, "$targetFragment")
     }
+
 }

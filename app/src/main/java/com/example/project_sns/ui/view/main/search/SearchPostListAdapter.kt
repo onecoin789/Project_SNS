@@ -23,6 +23,13 @@ class SearchPostListAdapter(private val onItemClick: (PostDataModel) -> Unit) :
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: PostDataModel) {
+            binding.epItemSearchVideo.setOnClickListener {
+                onItemClick(item)
+            }
+            binding.clItemSearchImageFrame.setOnClickListener {
+                onItemClick(item)
+            }
+
             if (!item.imageList.isNullOrEmpty()) {
                 val firstImage = item.imageList[0]
                 if (firstImage.imageType == "image") {
