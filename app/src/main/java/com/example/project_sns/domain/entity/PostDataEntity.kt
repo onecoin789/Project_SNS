@@ -7,7 +7,8 @@ data class PostDataEntity(
     val postText: String?,
     val createdAt: String,
     val editedAt: String?,
-    val mapData: MapDataEntity?
+    val mapData: MapDataEntity?,
+    val likePost: List<String>
 )
 
 data class ImageDataEntity(

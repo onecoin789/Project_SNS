@@ -1,6 +1,9 @@
 package com.example.project_sns.ui.view.main.profile.detail
 
+import android.content.Intent
 import android.os.Bundle
+import android.text.method.HideReturnsTransformationMethod
+import android.text.method.PasswordTransformationMethod
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -18,14 +21,18 @@ import com.example.project_sns.ui.mapper.toViewType
 import com.example.project_sns.ui.view.main.MainSharedViewModel
 import com.example.project_sns.ui.view.main.MainViewModel
 import com.example.project_sns.ui.model.PostDataModel
+import com.example.project_sns.ui.util.postDateFormat
+import com.example.project_sns.ui.util.sharePost
+import com.example.project_sns.ui.view.main.profile.PostViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class PostDetailFragment : BaseFragment<FragmentPostDetailBinding>() {
 
-    private val mainSharedViewModel: MainSharedViewModel by activityViewModels()
+    private val postViewModel: PostViewModel by viewModels()
 
+    private val mainSharedViewModel: MainSharedViewModel by activityViewModels()
 
 
     override fun getFragmentBinding(
@@ -38,66 +45,114 @@ class PostDetailFragment : BaseFragment<FragmentPostDetailBinding>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        lifecycleScope.launch {
-            mainSharedViewModel.postList.collect {
-                Log.d("Tag2", "${it.size}")
-            }
-        }
-
         initView()
+        initLike()
     }
+
 
     private fun initView() {
         val currentUser = CurrentUser.userData
         val profile = binding.ivPDUser
 
+
+        binding.ivPDHeart.setOnClickListener {
+            initLike()
+        }
+
         viewLifecycleOwner.lifecycleScope.launch {
             mainSharedViewModel.postData.observe(viewLifecycleOwner) { postData ->
-
                 if (postData != null) {
-                    if (currentUser?.profileImage != null) {
-                        profile.clipToOutline = true
-                        Glide.with(requireContext()).load(currentUser.profileImage).into(profile)
-                    } else {
-                        Glide.with(requireContext()).load(R.drawable.ic_user_fill).into(profile)
+                    postViewModel.getPostDataByPostId(postData.postId)
+                }
+            }
+        }
+
+        postViewModel.postData.observe(viewLifecycleOwner) { postData ->
+            if (postData != null) {
+                val user = postData.userData
+                val post = postData.postData
+
+                if (post.likePost.isNotEmpty()) {
+                    binding.tvPDHeartCount.text = post.likePost.size.toString()
+                    binding.tvPDHeartCount.visibility = View.VISIBLE
+                } else {
+                    binding.tvPDHeartCount.visibility = View.GONE
+                }
+
+                if (post.likePost.contains(currentUser?.uid)) {
+                    binding.ivPDHeart.tag = "1"
+                } else {
+                    binding.ivPDHeart.tag = "0"
+                }
+
+                if (currentUser?.profileImage != null) {
+                    profile.clipToOutline = true
+                    Glide.with(requireContext()).load(user.profileImage).into(profile)
+                } else {
+                    Glide.with(requireContext()).load(R.drawable.ic_user_fill).into(profile)
+                }
+
+                if (post.mapData?.placeName != null) {
+                    binding.tvPDLocation.text = post.mapData.placeName
+                }
+
+                binding.tvPDName.text = user.name
+                binding.tvPDEmail.text = user.email
+                binding.tvPDPostText.text = post.postText
+
+                if (post.editedAt != null) {
+                    binding.tvPDEdit.visibility = View.VISIBLE
+                } else {
+                    binding.tvPDEdit.visibility = View.GONE
+                }
+
+                initRv(post)
+
+                if (post.imageList?.size == 1) {
+                    binding.idcPD.visibility = View.INVISIBLE
+                } else {
+                    binding.idcPD.visibility = View.VISIBLE
+                }
+
+                binding.ivPDShare.setOnClickListener {
+                    startActivity(sharePost(post.postText.toString()))
+                }
+
+                binding.ivPDBack.setOnClickListener {
+                    backButton()
+                }
+
+                binding.ivPDMore.setOnClickListener {
+                    findNavController().navigate(R.id.action_postDetailFragment_to_postDetailSelectBottomFragment)
+                }
+
+                binding.tvPDComment.setOnClickListener {
+                    findNavController().navigate(R.id.commentFragment)
+                }
+            }
+        }
+    }
+
+    private fun initLike() {
+        val likeButton = binding.ivPDHeart
+
+        when (likeButton.tag) {
+            "0" -> {
+                binding.ivPDHeart.tag = "1"
+                binding.ivPDHeart.setImageResource(R.drawable.ic_heart_fill)
+                mainSharedViewModel.postData.observe(viewLifecycleOwner) {
+                    if (it != null) {
+                        postViewModel.updateLike(it.postId, true)
                     }
+                }
+            }
 
-                    if (postData.mapData?.placeName != null) {
-                        binding.tvPDLocation.text = postData.mapData.placeName
-                    }
-
-                    binding.tvPDName.text = currentUser?.name
-                    binding.tvPDEmail.text = currentUser?.email
-                    binding.tvPDPostText.text = postData.postText
-
-                    if (postData.editedAt != null) {
-                        binding.tvPDEdit.visibility = View.VISIBLE
-                    } else {
-                        binding.tvPDEdit.visibility = View.GONE
-                    }
-
-                    initRv(postData)
-
-                    if (postData.imageList?.size == 1) {
-                        binding.idcPD.visibility = View.INVISIBLE
-                    } else {
-                        binding.idcPD.visibility = View.VISIBLE
-                    }
-
-                    binding.ivPDBack.setOnClickListener {
-                        backButton()
-                    }
-
-                    binding.ivPDMore.setOnClickListener {
-                        findNavController().navigate(R.id.action_postDetailFragment_to_postDetailSelectBottomFragment)
-                    }
-
-                    binding.ivPDHeart.setOnClickListener {
-
-                    }
-
-                    binding.tvPDComment.setOnClickListener {
-                        findNavController().navigate(R.id.commentFragment)
+            "1" -> {
+                binding.ivPDHeart.tag = "0"
+                binding.ivPDHeart.setImageResource(R.drawable.ic_heart)
+                mainSharedViewModel.postData.observe(viewLifecycleOwner) {
+                    if (it != null) {
+                        postViewModel.updateLike(it.postId, false)
                     }
                 }
             }
@@ -116,4 +171,5 @@ class PostDetailFragment : BaseFragment<FragmentPostDetailBinding>() {
         imageAdapter.submitList(listViewType)
     }
 }
+
 

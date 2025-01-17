@@ -2,9 +2,9 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    app:startDestination="@id/mainFragment"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/mainFragment">
-
+    >
     <fragment
         android:id="@+id/loginFragment"
         android:name="com.example.project_sns.ui.view.login.LoginFragment"
@@ -49,9 +49,7 @@
             app:destination="@id/commentFragment" />
 
         <!-- Home -->
-        <action
-            android:id="@+id/action_mainFragment_to_recommendFragment"
-            app:destination="@id/recommendFragment" />
+
         <action
             android:id="@+id/action_mainFragment_to_chatListFragment"
             app:destination="@id/chatListFragment" />
@@ -170,11 +168,7 @@
             android:id="@+id/action_postDetailFragment_to_postDetailSelectBottomFragment"
             app:destination="@id/postDetailSelectBottomFragment" />
     </fragment>
-    <fragment
-        android:id="@+id/recommendFragment"
-        android:name="com.example.project_sns.ui.view.main.recommend.RecommendFragment"
-        android:label="fragment_recommend"
-        tools:layout="@layout/fragment_recommend" />
+
     <dialog
         android:id="@+id/deleteDialogFragment"
         android:name="com.example.project_sns.ui.view.main.profile.dialog.DeleteDialogFragment"
@@ -255,6 +249,11 @@
         android:id="@+id/baseDialog"
         android:name="com.example.project_sns.ui.BaseDialog"
         android:label="BaseDialog" />
+    <fragment
+        android:id="@+id/cancelAccountFragment"
+        android:name="com.example.project_sns.ui.view.main.setting.CancelAccountFragment"
+        android:label="fragment_cancel_account"
+        tools:layout="@layout/fragment_cancel_account" />
 
 
 </navigation>

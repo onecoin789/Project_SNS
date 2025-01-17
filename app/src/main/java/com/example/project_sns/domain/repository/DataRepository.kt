@@ -50,7 +50,7 @@ interface DataRepository {
 
     suspend fun getUserSession(recipientUid: String, chatRoomId: String): Flow<Boolean>
 
-    suspend fun checkReadMessage(chatRoomId: String, userSession: Boolean): Flow<Boolean>
+    suspend fun checkReadMessage(chatRoomId: String, userSession: Boolean, recipientUid: String): Flow<Boolean>
 
     suspend fun checkChatRoomList(): Flow<Boolean>
 
@@ -65,5 +65,9 @@ interface DataRepository {
     suspend fun searchUserData(query: String): Flow<List<UserDataEntity>>
 
     suspend fun searchPostData(query: String): Flow<List<PostDataEntity>>
+
+    suspend fun getPostByPostId(postId: String): Flow<PostEntity?>
+
+    suspend fun updateLike(postId: String, likeValue: Boolean): Flow<Boolean>
 
 }

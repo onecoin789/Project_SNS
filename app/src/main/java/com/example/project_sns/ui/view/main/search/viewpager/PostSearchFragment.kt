@@ -8,16 +8,22 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.project_sns.R
 import com.example.project_sns.databinding.FragmentPostSearchBinding
 import com.example.project_sns.ui.BaseFragment
+import com.example.project_sns.ui.view.main.MainSharedViewModel
+import com.example.project_sns.ui.view.main.profile.PostViewModel
 import com.example.project_sns.ui.view.main.search.SearchPostListAdapter
 import com.example.project_sns.ui.view.main.search.SearchViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class PostSearchFragment : BaseFragment<FragmentPostSearchBinding>() {
+
+    private val mainSharedViewModel: MainSharedViewModel by activityViewModels()
 
     private val searchViewModel: SearchViewModel by activityViewModels()
 
@@ -45,7 +51,8 @@ class PostSearchFragment : BaseFragment<FragmentPostSearchBinding>() {
 
     private fun initRecyclerview() {
         val searchPostListAdapter = SearchPostListAdapter { item ->
-            Toast.makeText(requireContext(), item.postId, Toast.LENGTH_SHORT).show()
+            mainSharedViewModel.getPostData(item)
+            findNavController().navigate(R.id.postDetailFragment)
         }
         with(binding.rvSearchPost) {
             adapter = searchPostListAdapter

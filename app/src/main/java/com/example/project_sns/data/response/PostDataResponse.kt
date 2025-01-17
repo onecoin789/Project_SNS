@@ -7,7 +7,8 @@ data class PostDataResponse(
     val postText: String? = null,
     val createdAt: String = "",
     val editedAt: String? = null,
-    val mapData: MapDataResponse? = null
+    val mapData: MapDataResponse? = null,
+    val likePost: List<String> = emptyList()
 )
 
 data class ImageDataResponse(

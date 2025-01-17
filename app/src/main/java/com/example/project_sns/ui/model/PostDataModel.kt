@@ -12,7 +12,8 @@ data class PostDataModel(
     val postText: String?,
     val createdAt: String,
     val editedAt: String?,
-    val mapData: MapDataModel?
+    val mapData: MapDataModel?,
+    val likePost: List<String>
 ) : Parcelable
 
 @Parcelize

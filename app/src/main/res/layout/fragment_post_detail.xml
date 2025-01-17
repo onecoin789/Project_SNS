@@ -49,8 +49,8 @@
 
                 <ImageView
                     android:id="@+id/ivPDUser"
-                    android:layout_width="65dp"
-                    android:layout_height="65dp"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
                     android:layout_margin="10dp"
                     android:background="@drawable/item_profile"
                     android:contentDescription="@string/contentDescription"
@@ -62,11 +62,12 @@
                     android:id="@+id/tvPDName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
+                    android:layout_marginStart="15dp"
                     android:textColor="@color/text"
                     android:textSize="20sp"
                     android:textStyle="bold"
-                    android:layout_marginBottom="5dp"
+                    android:text="@string/test"
+                    android:layout_marginBottom="15dp"
                     app:layout_constraintStart_toEndOf="@id/ivPDUser"
                     app:layout_constraintTop_toTopOf="@id/ivPDUser"
                     app:layout_constraintBottom_toBottomOf="@+id/ivPDUser"/>
@@ -78,6 +79,8 @@
                     android:textColor="@color/hint"
                     android:textSize="15sp"
                     android:textStyle="bold"
+                    android:text="@string/test"
+                    android:layout_marginStart="3dp"
                     app:layout_constraintStart_toStartOf="@id/tvPDName"
                     app:layout_constraintTop_toBottomOf="@+id/tvPDName" />
 
@@ -133,24 +136,39 @@
 
                 <ImageView
                     android:id="@+id/ivPDHeart"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
                     android:layout_marginStart="10dp"
                     android:layout_marginTop="20dp"
                     android:background="@drawable/ic_heart"
+                    android:tag="0"
                     android:contentDescription="@string/contentDescription"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/idcPD" />
 
+                <TextView
+                    android:id="@+id/tvPDHeartCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/text"
+                    android:contentDescription="@string/contentDescription"
+                    app:layout_constraintStart_toEndOf="@+id/ivPDHeart"
+                    app:layout_constraintBottom_toBottomOf="@id/ivPDHeart"
+                    app:layout_constraintTop_toTopOf="@+id/ivPDHeart"/>
+
+
                 <ImageView
                     android:id="@+id/ivPDShare"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
                     android:layout_marginStart="10dp"
                     android:background="@drawable/ic_share"
                     android:contentDescription="@string/contentDescription"
                     app:layout_constraintBottom_toBottomOf="@+id/ivPDHeart"
-                    app:layout_constraintStart_toEndOf="@id/ivPDHeart"
+                    app:layout_constraintStart_toEndOf="@id/tvPDHeartCount"
                     app:layout_constraintTop_toTopOf="@id/ivPDHeart" />
 
                 <TextView

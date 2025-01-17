@@ -138,8 +138,14 @@ dependencies {
     // naver
     implementation(libs.naver.maps)
 
-    //oauth2
+    // oauth2
     implementation(libs.google.auth.oauth2)
+
+    // room
+    implementation(libs.androidx.room.runtime)
+    ksp(libs.androidx.room.compiler)
+    annotationProcessor(libs.androidx.room.compiler)
+    implementation(libs.androidx.room.ktx)
 
 
 

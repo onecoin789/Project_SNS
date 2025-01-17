@@ -56,9 +56,12 @@ class MyProfilePostAdapter(private val onItemClick: (PostDataModel) -> Unit) :
                 }).into(binding.ivItemMyPost)
             }
 
-            if (item.imageList?.size != 1) {
+            if (item.imageList?.size == 1) {
+                binding.ivItemMyPostMultiple.visibility = View.GONE
+            } else {
                 binding.ivItemMyPostMultiple.visibility = View.VISIBLE
             }
+
             binding.ivItemMyPost.setOnClickListener {
                 onItemClick(item)
             }

@@ -23,16 +23,10 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class MainFragment : BaseFragment<FragmentMainBinding>() {
 
-    private val mainViewModel : MainViewModel by viewModels()
+    private val mainViewModel: MainViewModel by viewModels()
 
     private val mainSharedViewModel: MainSharedViewModel by activityViewModels()
 
-
-    override fun onStart() {
-        super.onStart()
-
-        mainSharedViewModel.getLoginSession()
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,16 +48,20 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
         initViewPager()
         initBottomBar()
         checkLoginSession()
+
+        mainSharedViewModel.loginSessionResult.observe(viewLifecycleOwner) { result ->
+            if (result == false) {
+                binding.tlMainBottom.visibility = View.GONE
+            }
+        }
     }
 
 
     private fun checkLoginSession() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            mainSharedViewModel.loginSessionResult.observe(viewLifecycleOwner) { result ->
-                Log.d("LoginSession", "$result")
-                if (result == false) {
-                    findNavController().navigate(R.id.loginFragment)
-                }
+        mainSharedViewModel.loginSessionResult.observe(viewLifecycleOwner) { result ->
+            Log.d("LoginSession", "$result")
+            if (result == false) {
+                findNavController().navigate(R.id.loginFragment)
             }
         }
     }

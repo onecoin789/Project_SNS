@@ -10,6 +10,7 @@ import com.example.project_sns.data.response.KakaoMetaResponse
 import com.example.project_sns.data.response.MapDataResponse
 import com.example.project_sns.data.response.MessageResponse
 import com.example.project_sns.data.response.PostDataResponse
+import com.example.project_sns.data.response.PostResponse
 import com.example.project_sns.data.response.ReCommentDataResponse
 import com.example.project_sns.data.response.ReCommentResponse
 import com.example.project_sns.data.response.RequestDataResponse
@@ -26,6 +27,7 @@ import com.example.project_sns.domain.entity.KakaoMetaEntity
 import com.example.project_sns.domain.entity.MapDataEntity
 import com.example.project_sns.domain.entity.MessageEntity
 import com.example.project_sns.domain.entity.PostDataEntity
+import com.example.project_sns.domain.entity.PostEntity
 import com.example.project_sns.domain.entity.ReCommentDataEntity
 import com.example.project_sns.domain.entity.ReCommentEntity
 import com.example.project_sns.domain.entity.RequestDataEntity
@@ -51,7 +53,8 @@ fun PostDataResponse.toEntity() = PostDataEntity(
     postText = postText,
     createdAt = createdAt,
     editedAt = editedAt,
-    mapData = mapData?.toEntity()
+    mapData = mapData?.toEntity(),
+    likePost = likePost
 )
 
 fun ImageDataResponse.toEntity() = ImageDataEntity(
@@ -94,6 +97,11 @@ fun RequestDataResponse.toEntity() = RequestDataEntity(
 )
 
 // <!---------- Multi Data ---------->
+
+fun PostResponse.toEntity() = PostEntity(
+    userData = userData.toEntity(),
+    postData = postData.toEntity()
+)
 
 fun CommentResponse.toEntity() = CommentEntity(
     userData = userData.toEntity(),

@@ -1,16 +1,11 @@
 package com.example.project_sns.data.repository
 
-import android.content.Context
 import android.util.Log
 import androidx.core.net.toUri
 import androidx.datastore.core.DataStore
-import androidx.datastore.core.IOException
-import androidx.datastore.dataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.emptyPreferences
-import androidx.datastore.preferences.preferencesDataStore
 import com.example.project_sns.data.mapper.toEntity
 import com.example.project_sns.data.mapper.toRequestDataEntity
 import com.example.project_sns.data.response.FriendDataResponse
@@ -31,14 +26,11 @@ import com.google.firebase.functions.FirebaseFunctionsException
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.storage.FirebaseStorage
 import com.kakao.sdk.user.UserApiClient
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.last
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.tasks.await
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -48,6 +40,8 @@ private const val COLLECTION_USER = "user"
 private const val COLLECTION_POST = "post"
 private const val COLLECTION_REQUEST = "request"
 private const val COLLECTION_FRIEND_LIST = "friendList"
+private const val COLLECTION_COMMENT = "comment"
+private const val COLLECTION_RE_COMMENT = "reComment"
 private const val TAG = "AuthRepositoryImpl"
 
 class AuthRepositoryImpl @Inject constructor(
@@ -156,17 +150,18 @@ class AuthRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getLoginSession(): Flow<Boolean> {
-        return flow {
+        return callbackFlow {
             dataStore.data.collect { prefs ->
                 val loginCheck = prefs[PreferenceKeys.LOGIN_CHECK]
                 Log.d("LoginSessionImpl", "$loginCheck")
 
                 if (loginCheck == true) {
-                    emit(true)
+                    trySend(true)
                 } else {
-                    emit(false)
+                    trySend(false)
                 }
             }
+            awaitClose()
         }
     }
 
@@ -411,19 +406,20 @@ class AuthRepositoryImpl @Inject constructor(
     override suspend fun checkRequestList(): Flow<Boolean> {
         return callbackFlow {
             val currentUser = auth.currentUser?.uid
-            db.collection(COLLECTION_REQUEST).whereEqualTo("toUid", currentUser).addSnapshotListener { snapshot, e ->
-                if (e != null) {
-                    trySend(false)
-                }
-                if (snapshot != null) {
-                   val document = snapshot.documents.size
-                    if (document != 0) {
-                        trySend(true)
-                    } else {
+            db.collection(COLLECTION_REQUEST).whereEqualTo("toUid", currentUser)
+                .addSnapshotListener { snapshot, e ->
+                    if (e != null) {
                         trySend(false)
                     }
+                    if (snapshot != null) {
+                        val document = snapshot.documents.size
+                        if (document != 0) {
+                            trySend(true)
+                        } else {
+                            trySend(false)
+                        }
+                    }
                 }
-            }
             awaitClose()
         }
     }
@@ -494,39 +490,42 @@ class AuthRepositoryImpl @Inject constructor(
                     }
 
                     requestList.size -> {
-                        requestByUid.startAfter(requestDocuments.last()).limit(10).addSnapshotListener { requestData, e ->
-                            if (e != null) {
-                                trySend(emptyList())
-                            } else if (requestData != null) {
-                                val documents = requestData.documents
-                                val requestResponse =
-                                    requestData.toObjects(RequestDataResponse::class.java)
-                                        .toRequestDataEntity()
-                                requestResponse.map { requestEntity ->
-                                    db.collection(COLLECTION_USER).document(requestEntity.fromUid)
-                                        .get()
-                                        .addOnSuccessListener { userData ->
-                                            val userEntity =
-                                                userData.toObject(UserDataResponse::class.java)
-                                                    ?.toEntity()
-                                            if (userEntity != null) {
-                                                requestList.addAll(
-                                                    listOf(
-                                                        RequestEntity(
-                                                            requestId = requestEntity.requestId,
-                                                            fromUid = userEntity,
-                                                            toUid = requestEntity.toUid
+                        requestByUid.startAfter(requestDocuments.last()).limit(10)
+                            .addSnapshotListener { requestData, e ->
+                                if (e != null) {
+                                    trySend(emptyList())
+                                } else if (requestData != null) {
+                                    val documents = requestData.documents
+                                    val requestResponse =
+                                        requestData.toObjects(RequestDataResponse::class.java)
+                                            .toRequestDataEntity()
+                                    requestResponse.map { requestEntity ->
+                                        db.collection(COLLECTION_USER)
+                                            .document(requestEntity.fromUid)
+                                            .get()
+                                            .addOnSuccessListener { userData ->
+                                                val userEntity =
+                                                    userData.toObject(UserDataResponse::class.java)
+                                                        ?.toEntity()
+                                                if (userEntity != null) {
+                                                    requestList.addAll(
+                                                        listOf(
+                                                            RequestEntity(
+                                                                requestId = requestEntity.requestId,
+                                                                fromUid = userEntity,
+                                                                toUid = requestEntity.toUid
+                                                            )
                                                         )
                                                     )
-                                                )
+                                                }
+                                                requestDocuments.addAll(documents)
+                                                trySend(requestList)
                                             }
-                                            requestDocuments.addAll(documents)
-                                            trySend(requestList)
-                                        }
+                                    }
                                 }
                             }
-                        }
                     }
+
                     else -> {
                         Log.d("request_else", "request_else")
                     }
@@ -681,6 +680,98 @@ class AuthRepositoryImpl @Inject constructor(
             } catch (e: Exception) {
                 emit(false)
             }
+        }
+    }
+
+    override suspend fun cancelAccount(uid: String, confirmEmail: String): Flow<Boolean> {
+        return callbackFlow {
+            if (auth.currentUser != null) {
+                val currentUser = auth.currentUser
+                val currentUserEmail = currentUser?.email
+                if (currentUserEmail == confirmEmail) {
+
+                    db.collection(COLLECTION_USER).whereEqualTo("uid", uid).get()
+                        .addOnSuccessListener { userData ->
+                            if (userData.size() != 0) {
+                                userData.documents.forEach {
+                                    it.reference.delete()
+                                    Log.d(TAG, "userData : ${it.reference}")
+                                }
+                            }
+                        }.addOnSuccessListener {
+                            db.collection(COLLECTION_POST).whereEqualTo("uid", uid).get()
+                                .addOnSuccessListener { postData ->
+                                    if (postData.size() != 0) {
+                                        postData.documents.forEach {
+                                            it.reference.delete()
+                                            Log.d(TAG, "postData : ${it.reference}")
+                                        }
+                                    }
+                                }
+                        }.addOnSuccessListener {
+                            db.collection(COLLECTION_COMMENT).whereEqualTo("uid", uid).get()
+                                .addOnSuccessListener { commentData ->
+                                    if (commentData.size() != 0) {
+                                        commentData.documents.forEach {
+                                            it.reference.delete()
+                                            Log.d(TAG, "commentData : ${it.reference}")
+                                        }
+                                    }
+                                }
+                        }.addOnSuccessListener {
+                            db.collection(COLLECTION_RE_COMMENT).whereEqualTo("uid", uid).get()
+                                .addOnSuccessListener { reCommentData ->
+                                    if (reCommentData.size() != 0) {
+                                        reCommentData.documents.forEach {
+                                            it.reference.delete()
+                                            Log.d(TAG, "reCommentData : ${it.reference}")
+                                        }
+                                    }
+                                }
+                        }.addOnSuccessListener {
+                            db.collection(COLLECTION_REQUEST).whereEqualTo("toUid", uid).get()
+                                .addOnSuccessListener { requestData ->
+                                    if (requestData.size() != 0) {
+                                        requestData.documents.forEach {
+                                            it.reference.delete()
+                                            Log.d(TAG, "requestData : ${it.reference}")
+                                        }
+                                    }
+                                }
+                        }.addOnSuccessListener {
+                            db.collection(COLLECTION_REQUEST).whereEqualTo("fromUid", uid).get()
+                                .addOnSuccessListener { requestData ->
+                                    if (requestData.size() != 0) {
+                                        requestData.documents.forEach {
+                                            it.reference.delete()
+                                            Log.d(TAG, "requestData : ${it.reference}")
+                                        }
+                                    }
+                                }
+                        }.addOnSuccessListener {
+                            db.collection(COLLECTION_FRIEND_LIST)
+                                .whereArrayContains("friendList", uid)
+                                .get().addOnSuccessListener { friendData ->
+                                    if (friendData.size() != 0) {
+                                        friendData.documents.forEach {
+                                            db.runTransaction { transaction ->
+                                                transaction.update(it.reference, "friendList", FieldValue.arrayRemove(uid))
+                                                Log.d(TAG, "friendList : ${it.reference}")
+                                            }
+                                        }
+                                    }
+                                }.addOnSuccessListener {
+                                    db.collection(COLLECTION_FRIEND_LIST).document(currentUser.uid).delete()
+                                }
+                        }.addOnSuccessListener {
+                            auth.currentUser?.delete()
+                            trySend(true)
+                        }
+                } else {
+                    trySend(false)
+                }
+            }
+            awaitClose()
         }
     }
 }
