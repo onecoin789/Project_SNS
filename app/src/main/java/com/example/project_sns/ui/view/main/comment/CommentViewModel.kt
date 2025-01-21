@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.project_sns.domain.usecase.CheckCommentChangeUseCase
 import com.example.project_sns.domain.usecase.DeleteReCommentUseCase
 import com.example.project_sns.domain.usecase.GetReCommentDataUseCase
 import com.example.project_sns.ui.mapper.toReCommentListModel
@@ -17,16 +18,27 @@ import javax.inject.Inject
 @HiltViewModel
 class CommentViewModel @Inject constructor(
     private val getReCommentDataUseCase: GetReCommentDataUseCase,
-    private val deleteReCommentUseCase: DeleteReCommentUseCase
+    private val deleteReCommentUseCase: DeleteReCommentUseCase,
+    private val checkCommentChangeUseCase: CheckCommentChangeUseCase
 ): ViewModel() {
 
     private val _reCommentListData = MutableLiveData<List<ReCommentModel>>(emptyList())
     val reCommentListData: LiveData<List<ReCommentModel>> get() = _reCommentListData
 
+    private val _commentChangeResult = MutableLiveData<Boolean>()
+    val commentChangeResult: LiveData<Boolean> get() = _commentChangeResult
 
     val reCommentLastVisibleItem = MutableStateFlow(0)
 
 
+
+    fun getCommentChangeResult(postId: String) {
+        viewModelScope.launch {
+            checkCommentChangeUseCase(postId).collect { result ->
+                _commentChangeResult.value = result
+            }
+        }
+    }
 
     fun clearReCommentData() {
         viewModelScope.launch {

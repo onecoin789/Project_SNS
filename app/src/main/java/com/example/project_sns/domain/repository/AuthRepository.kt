@@ -9,7 +9,7 @@ interface AuthRepository {
 
     suspend fun signUp(name: String, email: String, password: String, profileImage: String?, createdAt: String) : Result<String>
 
-    suspend fun logIn(email: String, password: String) : Result<String>
+    suspend fun logIn(email: String, password: String) : Flow<String>
 
     suspend fun logInCheck(checkResult: Boolean): Flow<Boolean>
 
@@ -19,7 +19,7 @@ interface AuthRepository {
 
     suspend fun getCurrentUserData() : Flow<UserDataEntity?>
 
-    suspend fun getUserByUid(uid: String): Flow<UserDataEntity?>
+    suspend fun getUserByUid(uid: String?): Flow<UserDataEntity?>
 
     suspend fun editProfile(uid: String, name: String, email: String, newProfile: String?, beforeProfile: String?, intro: String?, createdAt: String): Result<String>
 

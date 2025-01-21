@@ -34,12 +34,12 @@ class LoginViewModel @Inject constructor(
 
     fun login(email: String, password: String) {
         viewModelScope.launch {
-            val loginData = logInUseCase(email = email, password = password)
-            if (loginData.isSuccess) {
-                _loginEvent.send(CheckLogin.LoginSuccess("환영합니다! ${email}님\uD83D\uDC4D"))
-
-            } else {
-                _loginEvent.send(CheckLogin.LoginFail("이메일 및 비밀번호를 확인해주세요."))
+            logInUseCase(email = email, password = password).collect { loginResult ->
+                if (loginResult == "success") {
+                    _loginEvent.send(CheckLogin.LoginSuccess("환영합니다! ${email}님\uD83D\uDC4D"))
+                } else if (loginResult == "fail") {
+                    _loginEvent.send(CheckLogin.LoginFail("이메일 및 비밀번호를 확인해주세요."))
+                }
             }
         }
     }

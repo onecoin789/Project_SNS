@@ -83,7 +83,7 @@ class ChatRoomFragment : BaseFragment<FragmentChatRoomBinding>() {
 
         sendUserSession(true)
 
-
+        getMessageList()
     }
 
 
@@ -265,13 +265,24 @@ class ChatRoomFragment : BaseFragment<FragmentChatRoomBinding>() {
     private fun checkChatRoomData() {
         chatSharedViewModel.checkChatRoomData.observe(viewLifecycleOwner) { result ->
             Log.d("checkData", "$result")
-            if (result == true) {
-                binding.tvChatRoomNone.visibility = View.GONE
-                binding.rvChat.visibility = View.VISIBLE
-                getMessageList()
-            } else if (result == false) {
-                binding.tvChatRoomNone.visibility = View.VISIBLE
-                binding.rvChat.visibility = View.GONE
+            when (result) {
+                true -> {
+                    binding.tvChatRoomNone.visibility = View.GONE
+                    binding.rvChat.visibility = View.VISIBLE
+                    getMessageList()
+                }
+                false -> {
+                    binding.tvChatRoomNone.visibility = View.VISIBLE
+                    binding.rvChat.visibility = View.GONE
+                }
+                null -> {
+                    binding.tvChatRoomNone.visibility = View.GONE
+                    binding.rvChat.visibility = View.VISIBLE
+                    binding.etChat.visibility = View.GONE
+                    binding.tvChatRoomEmail.visibility = View.GONE
+                    binding.tvChatRoomName.text = "탈퇴한 유저입니다."
+                    getMessageList()
+                }
             }
         }
     }

@@ -33,6 +33,7 @@ import com.example.project_sns.ui.mapper.toCommentListModel
 import com.example.project_sns.ui.mapper.toEntity
 import com.example.project_sns.ui.mapper.toKakaoListEntity
 import com.example.project_sns.ui.mapper.toModel
+import com.example.project_sns.ui.mapper.toPostDataListModel
 import com.example.project_sns.ui.mapper.toPostListModel
 import com.example.project_sns.ui.mapper.toReCommentListModel
 import com.example.project_sns.ui.mapper.toUserDataListModel
@@ -124,9 +125,6 @@ class MainSharedViewModel @Inject constructor(
     private val _deleteFriendResult = MutableStateFlow<Boolean?>(null)
     val deleteFriendResult: StateFlow<Boolean?> get() = _deleteFriendResult
 
-    private val _pagingData = MutableLiveData<List<PostModel>>(emptyList())
-    val pagingData: LiveData<List<PostModel>> get() = _pagingData
-
     private val _checkFriendRequest = MutableStateFlow<Boolean?>(null)
     val checkFriendRequest: StateFlow<Boolean?> get() = _checkFriendRequest
 
@@ -135,6 +133,37 @@ class MainSharedViewModel @Inject constructor(
 
     private val _commentListData = MutableLiveData<List<CommentModel>>(emptyList())
     val commentListData: LiveData<List<CommentModel>> get() = _commentListData
+
+
+    //main post 관련
+
+    private val _pagingData = MutableLiveData<List<PostModel>>(emptyList())
+    val pagingData: LiveData<List<PostModel>> get() = _pagingData
+
+    private val _postLastVisibleItem = MutableStateFlow<Int>(0)
+    val postLastVisibleItem: StateFlow<Int> get() = _postLastVisibleItem
+
+
+    fun getPagingData(lastVisibleItem: Flow<Int>) {
+        viewModelScope.launch {
+            getPagingPostUseCase(lastVisibleItem).collect { data ->
+                _pagingData.value = data?.toPostDataListModel()
+            }
+        }
+    }
+
+    fun postLastVisibleItem(lastVisibleItem: Int) {
+        viewModelScope.launch {
+            _postLastVisibleItem.value = lastVisibleItem
+        }
+    }
+
+    fun resetPagingData() {
+        viewModelScope.launch {
+            _pagingData.value = emptyList()
+        }
+    }
+
 
     //로그인 관련
     private val _loginResult = MutableLiveData<Boolean>()
@@ -322,11 +351,13 @@ class MainSharedViewModel @Inject constructor(
         }
     }
 
-    fun getUserData(uid: String) {
+    fun getUserData(uid: String?) {
         viewModelScope.launch {
-            getUserByUidUseCase(uid).collect { data ->
-                if (data != null) {
-                    _userData.value = data.toModel()
+            if (uid != null) {
+                getUserByUidUseCase(uid).collect { data ->
+                    if (data != null) {
+                        _userData.value = data.toModel()
+                    }
                 }
             }
         }

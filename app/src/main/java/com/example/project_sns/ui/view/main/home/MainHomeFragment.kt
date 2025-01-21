@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -18,6 +19,8 @@ import com.example.project_sns.databinding.FragmentMainHomeBinding
 import com.example.project_sns.ui.BaseFragment
 import com.example.project_sns.ui.CurrentUser
 import com.example.project_sns.ui.model.PostModel
+import com.example.project_sns.ui.util.notTouch
+import com.example.project_sns.ui.util.touch
 import com.example.project_sns.ui.view.chat.ChatSharedViewModel
 import com.example.project_sns.ui.view.main.MainSharedViewModel
 import com.example.project_sns.ui.view.main.MainViewModel
@@ -63,12 +66,12 @@ class MainHomeFragment : BaseFragment<FragmentMainHomeBinding>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        refreshRecyclerView()
         navigateView()
         initRv()
         getPostData()
         getAccessToken()
         refreshLayout()
+        refreshRecyclerView()
 
         navigateFragment()
 
@@ -77,17 +80,8 @@ class MainHomeFragment : BaseFragment<FragmentMainHomeBinding>() {
                 binding.clHomeToolbar.visibility = View.GONE
             }
         }
-//        checkLogin()
     }
 
-//    private fun checkLogin() {
-//        mainSharedViewModel.loginResult.observe(viewLifecycleOwner) { result ->
-//            if (result == false) {
-//                backButton()
-//                findNavController().navigate(R.id.loginFragment)
-//            }
-//        }
-//    }
 
     private fun navigateFragment() {
         val getChatRoomId = requireActivity().intent.getStringExtra("chatRoomId")
@@ -123,27 +117,30 @@ class MainHomeFragment : BaseFragment<FragmentMainHomeBinding>() {
 
     private fun getPostData() {
         viewLifecycleOwner.lifecycleScope.launch {
-            val lastVisible = mainViewModel.postLastVisibleItem
-            mainViewModel.getPagingData(lastVisible)
+            val lastVisible = mainSharedViewModel.postLastVisibleItem
+            mainSharedViewModel.getPagingData(lastVisible)
         }
     }
 
     private fun refreshLayout() {
         binding.refreshLayoutHome.setOnRefreshListener {
             CoroutineScope(Dispatchers.Main).launch {
+                notTouch(activity)
                 binding.rvHome.visibility = View.GONE
                 refreshRecyclerView()
                 delay(500)
                 getPostData()
-                mainViewModel.postLastVisibleItem(0)
+                mainSharedViewModel.postLastVisibleItem(0)
                 initRv()
                 delay(1000)
+                touch(activity)
                 binding.rvHome.visibility = View.VISIBLE
                 binding.refreshLayoutHome.isRefreshing = false
             }
             // FIXME: 새로고침 후 more item 안됨
         }
     }
+
 
 
     private fun initRv() {
@@ -183,7 +180,7 @@ class MainHomeFragment : BaseFragment<FragmentMainHomeBinding>() {
             })
         }
 
-        mainViewModel.pagingData.observe(viewLifecycleOwner) { data ->
+        mainSharedViewModel.pagingData.observe(viewLifecycleOwner) { data ->
             val dataByCreatedAt = data.sortedByDescending { it.postData.createdAt }
 
             postList = dataByCreatedAt.toMutableList()
@@ -208,7 +205,7 @@ class MainHomeFragment : BaseFragment<FragmentMainHomeBinding>() {
             val runnableMore = kotlinx.coroutines.Runnable {
                 postList.removeAt(postList.size - 1)
                 postAdapter.notifyItemRemoved(postList.size)
-                mainViewModel.postLastVisibleItem(lastVisible)
+                mainSharedViewModel.postLastVisibleItem(lastVisible)
 //                mainViewModel.postLastVisibleItem.value = lastVisible
             }
             delay(500)
@@ -230,8 +227,8 @@ class MainHomeFragment : BaseFragment<FragmentMainHomeBinding>() {
     }
 
     private fun refreshRecyclerView() {
-        mainViewModel.postLastVisibleItem(0)
-        mainViewModel.resetPagingData()
+        mainSharedViewModel.postLastVisibleItem(0)
+        mainSharedViewModel.resetPagingData()
     }
 
     private fun getDataByUid(item: PostModel) {

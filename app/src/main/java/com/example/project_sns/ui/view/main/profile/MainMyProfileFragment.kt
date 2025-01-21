@@ -40,15 +40,9 @@ class MainMyProfileFragment : BaseFragment<FragmentMainMyProfileBinding>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        lifecycleScope.launch {
-            mainSharedViewModel.postList.collect {
-                Log.d("Tag2", "${it.size}")
-            }
-        }
         initView()
         navigateView()
         initRv()
-        getPostList()
     }
 
     private fun getFriendList() {
@@ -60,8 +54,7 @@ class MainMyProfileFragment : BaseFragment<FragmentMainMyProfileBinding>() {
         }
     }
 
-    private fun getPostList() {
-        val currentUser = CurrentUser.userData?.uid
+    private fun getPostList(currentUser: String?) {
         viewLifecycleOwner.lifecycleScope.launch {
             if (currentUser != null) {
                 mainSharedViewModel.getUserPost(currentUser)
@@ -75,6 +68,7 @@ class MainMyProfileFragment : BaseFragment<FragmentMainMyProfileBinding>() {
             mainViewModel.getCurrentUserData()
             mainViewModel.currentUserData.collect { userData ->
                 if (userData != null) {
+                    getPostList(userData.uid)
                     binding.tvMyName.text = userData.name
                     binding.tvMyEmail.text = userData.email
                     if (userData.profileImage != null) {

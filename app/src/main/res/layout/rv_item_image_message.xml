@@ -22,20 +22,32 @@
             app:layout_constraintTop_toTopOf="parent"
             android:contentDescription="@string/contentDescription"/>
 
+        <TextView
+            android:id="@+id/tvItemSenderName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/test"
+            android:textColor="@color/text"
+            android:textSize="14sp"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="3dp"
+            app:layout_constraintStart_toStartOf="@+id/clItemChatSend"
+            app:layout_constraintTop_toTopOf="@+id/ivItemSenderProfile"/>
+
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/clItemChatSend"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="5dp"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="3dp"
             android:background="@drawable/item_edittext_radius"
             android:backgroundTint="@color/chat"
             android:paddingStart="8dp"
             android:paddingEnd="7dp"
             android:paddingVertical="8dp"
             app:layout_constraintStart_toEndOf="@+id/ivItemSenderProfile"
-            app:layout_constraintTop_toTopOf="@+id/ivItemSenderProfile">
+            app:layout_constraintTop_toBottomOf="@+id/tvItemSenderName">
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvItemChatSendImage"
@@ -49,17 +61,6 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 tools:listitem="@layout/rv_item_chat_image"/>
-
-            <ProgressBar
-                android:id="@+id/pbItemChatSend"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="20dp"
-                android:visibility="gone"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -111,17 +112,6 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 tools:listitem="@layout/rv_item_chat_image"/>
-
-            <ProgressBar
-                android:id="@+id/pbItemChatReceive"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="20dp"
-                android:visibility="gone"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

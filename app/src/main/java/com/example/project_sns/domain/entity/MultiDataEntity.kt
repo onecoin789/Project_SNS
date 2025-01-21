@@ -1,8 +1,5 @@
 package com.example.project_sns.domain.entity
 
-import com.example.project_sns.data.response.ChatRoomDataResponse
-import com.example.project_sns.data.response.UserDataResponse
-
 data class PostEntity (
     val userData: UserDataEntity,
     val postData: PostDataEntity
@@ -25,11 +22,11 @@ data class RequestEntity(
 )
 
 data class ChatRoomEntity(
-    val userData: UserDataEntity,
+    val userData: UserDataEntity?,
     val chatRoomData: ChatRoomDataEntity
 )
 
 data class MessageEntity(
-    val userData: UserDataEntity,
+    val userData: UserDataEntity?,
     val messageData: MessageDataEntity
 )

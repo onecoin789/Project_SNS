@@ -33,12 +33,12 @@ data class RequestModel(
 
 @Parcelize
 data class ChatRoomModel(
-    val userData: UserDataModel,
+    val userData: UserDataModel?,
     val chatRoomData: ChatRoomDataModel
 ): Parcelable
 
 @Parcelize
 data class MessageModel(
-    val userData: UserDataModel,
+    val userData: UserDataModel?,
     val messageData: MessageDataModel
 ): Parcelable

@@ -120,12 +120,12 @@ fun RequestResponse.toEntity() = RequestEntity(
 )
 
 fun ChatRoomResponse.toEntity() = ChatRoomEntity(
-    userData = userData.toEntity(),
+    userData = userData?.toEntity(),
     chatRoomData = chatRoomData.toEntity()
 )
 
 fun MessageResponse.toEntity() = MessageEntity(
-    userData = userData.toEntity(),
+    userData = userData?.toEntity(),
     messageData = messageData.toEntity()
 )
 

@@ -199,12 +199,12 @@ fun FriendDataEntity.toModel() = FriendDataModel(
 )
 
 fun ChatRoomEntity.toModel() = ChatRoomModel(
-    userData = userData.toModel(),
+    userData = userData?.toModel(),
     chatRoomData = chatRoomData.toModel()
 )
 
 fun MessageEntity.toModel() = MessageModel(
-    userData = userData.toModel(),
+    userData = userData?.toModel(),
     messageData = messageData.toModel()
 )
 
