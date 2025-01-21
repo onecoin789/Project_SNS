@@ -42,6 +42,7 @@ class MessageListAdapter(private val onItemClick: MessageItemClickListener) :
             binding.ivItemSenderProfile.visibility = View.GONE
             binding.clItemChatSend.visibility = View.GONE
             binding.tvItemChatSendAt.visibility = View.GONE
+            binding.tvItemSenderName.visibility = View.GONE
 
             if (unreadSize != 0) {
                 binding.tvItemChatReceiveUnRead.visibility = View.VISIBLE
@@ -56,17 +57,29 @@ class MessageListAdapter(private val onItemClick: MessageItemClickListener) :
             val userData = item.userData
             val messageData = item.messageData
 
-            if (userData.profileImage != null) {
-                Glide.with(binding.root).load(userData.profileImage).into(binding.ivItemSenderProfile)
-            } else {
+            if (userData == null) {
                 Glide.with(binding.root).load(R.drawable.ic_user_fill).into(binding.ivItemSenderProfile)
-            }
-            binding.ivItemSenderProfile.clipToOutline = true
-            binding.tvItemChatSendText.text = messageData.message
-            binding.tvItemChatSendAt.text = messageData.sendAt
+                binding.tvItemSenderName.text = "탈퇴한 사용자"
+                binding.tvItemChatSendText.text = messageData.message
+                binding.tvItemChatSendAt.text = messageData.sendAt
+                binding.clItemChatReceive.visibility = View.GONE
+                binding.tvItemChatReceiveAt.visibility = View.GONE
+            } else {
+                if (userData.profileImage != null) {
+                    Glide.with(binding.root).load(userData.profileImage).into(binding.ivItemSenderProfile)
+                } else {
+                    Glide.with(binding.root).load(R.drawable.ic_user_fill).into(binding.ivItemSenderProfile)
+                }
+                binding.ivItemSenderProfile.clipToOutline = true
 
-            binding.clItemChatReceive.visibility = View.GONE
-            binding.tvItemChatReceiveAt.visibility = View.GONE
+                binding.tvItemSenderName.text = userData.name
+                binding.tvItemChatSendText.text = messageData.message
+                binding.tvItemChatSendAt.text = messageData.sendAt
+
+                binding.clItemChatReceive.visibility = View.GONE
+                binding.tvItemChatReceiveAt.visibility = View.GONE
+            }
+
         }
     }
 
@@ -93,6 +106,7 @@ class MessageListAdapter(private val onItemClick: MessageItemClickListener) :
 
             binding.clItemChatSend.visibility = View.GONE
             binding.tvItemChatSendAt.visibility = View.GONE
+            binding.tvItemSenderName.visibility = View.GONE
 
             if (unreadSize != 0) {
                 binding.tvItemChatReceiveUnRead.visibility = View.VISIBLE
@@ -112,25 +126,34 @@ class MessageListAdapter(private val onItemClick: MessageItemClickListener) :
             val userData = item.userData
             val messageData = item.messageData
 
-            if (userData.profileImage != null) {
+            if (userData?.profileImage != null) {
                 Glide.with(binding.root).load(userData.profileImage).into(binding.ivItemSenderProfile)
             } else {
                 Glide.with(binding.root).load(R.drawable.ic_user_fill).into(binding.ivItemSenderProfile)
             }
             binding.ivItemSenderProfile.clipToOutline = true
 
-            if (messageData.imageList != null) {
-                val imageSize = messageData.imageList.size
-                if (messageData.imageList.size <= 3) {
-                    initOtherUserRv(messageData.imageList, imageSize)
-                } else {
-                    initOtherUserRv(messageData.imageList, 3)
+            if (userData == null) {
+                binding.tvItemSenderName.text = "탈퇴한 사용자"
+                binding.tvItemChatSendAt.text = messageData.sendAt
+                binding.clItemChatReceive.visibility = View.GONE
+                binding.tvItemChatReceiveAt.visibility = View.GONE
+            } else {
+                if (messageData.imageList != null) {
+                    val imageSize = messageData.imageList.size
+                    if (messageData.imageList.size <= 3) {
+                        initOtherUserRv(messageData.imageList, imageSize)
+                    } else {
+                        initOtherUserRv(messageData.imageList, 3)
+                    }
                 }
-            }
-            binding.tvItemChatSendAt.text = messageData.sendAt
+                binding.tvItemSenderName.text = userData.name
+                binding.tvItemChatSendAt.text = messageData.sendAt
 
-            binding.clItemChatReceive.visibility = View.GONE
-            binding.tvItemChatReceiveAt.visibility = View.GONE
+                binding.clItemChatReceive.visibility = View.GONE
+                binding.tvItemChatReceiveAt.visibility = View.GONE
+            }
+
 
             //click event
             binding.clItemChatSendClick.setOnClickListener {
@@ -174,7 +197,7 @@ class MessageListAdapter(private val onItemClick: MessageItemClickListener) :
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val item = getItem(position)
-        if (item.userData.uid == CurrentUser.userData?.uid) {
+        if (item.userData?.uid == CurrentUser.userData?.uid) {
             when(holder.itemViewType) {
                 MessageViewType.TEXT_MESSAGE.messageType -> {
                     val textMessageType = holder as TextMessageViewHolder

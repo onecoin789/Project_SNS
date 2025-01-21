@@ -9,6 +9,7 @@
     tools:context=".ui.view.main.home.MainHomeFragment">
 
     <androidx.core.widget.NestedScrollView
+        android:id="@+id/nsHome"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"

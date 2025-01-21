@@ -21,20 +21,32 @@
             app:layout_constraintTop_toTopOf="parent"
             android:contentDescription="@string/contentDescription"/>
 
+        <TextView
+            android:id="@+id/tvItemSenderName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/test"
+            android:textColor="@color/text"
+            android:textSize="14sp"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="3dp"
+            app:layout_constraintStart_toStartOf="@+id/clItemChatSend"
+            app:layout_constraintTop_toTopOf="@+id/ivItemSenderProfile"/>
+
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/clItemChatSend"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="5dp"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="3dp"
             android:background="@drawable/item_edittext_radius"
             android:backgroundTint="@color/chat"
             android:paddingStart="17dp"
             android:paddingEnd="16dp"
             android:paddingVertical="13dp"
             app:layout_constraintStart_toEndOf="@+id/ivItemSenderProfile"
-            app:layout_constraintTop_toTopOf="@+id/ivItemSenderProfile">
+            app:layout_constraintTop_toBottomOf="@+id/tvItemSenderName">
 
             <TextView
                 android:id="@+id/tvItemChatSendText"

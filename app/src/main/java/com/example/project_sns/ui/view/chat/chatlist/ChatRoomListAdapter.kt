@@ -2,6 +2,7 @@ package com.example.project_sns.ui.view.chat.chatlist
 
 import android.content.ClipData.Item
 import android.graphics.Canvas
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -37,19 +38,28 @@ class ChatRoomListAdapter(private val onItemClick: ChatRoomListClickListener) :
             val chatRoomData = item.chatRoomData
             val lastMessageData = item.chatRoomData.lastMessageData
 
-            binding.ivItemListProfile.clipToOutline = true
-            if (userData.profileImage != null) {
-                Glide.with(binding.root).load(userData.profileImage).into(binding.ivItemListProfile)
+            if (userData == null) {
+                Glide.with(binding.root).load(R.drawable.ic_user_fill).into(binding.ivItemListProfile)
+                binding.tvItemListName.text = "탈퇴한 사용자"
+                binding.tvItemListMessage.text = lastMessageData.lastMessage
+                binding.tvItemListTime.text = lastMessageData.lastSendAt
             } else {
-                Glide.with(binding.root).load(R.drawable.ic_user_fill)
-                    .into(binding.ivItemListProfile)
+                if (userData.profileImage != null) {
+                    Glide.with(binding.root).load(userData.profileImage).into(binding.ivItemListProfile)
+                } else {
+                    Glide.with(binding.root).load(R.drawable.ic_user_fill)
+                        .into(binding.ivItemListProfile)
+                }
+
+                binding.tvItemListName.text = userData.name
+                binding.tvItemListMessage.text = lastMessageData.lastMessage
+                binding.tvItemListTime.text = lastMessageData.lastSendAt
             }
+
+            binding.ivItemListProfile.clipToOutline = true
 
             binding.clItemList.translationX = 0f
 
-            binding.tvItemListName.text = userData.name
-            binding.tvItemListMessage.text = lastMessageData.lastMessage
-            binding.tvItemListTime.text = lastMessageData.lastSendAt
 
             if (chatRoomData.unReadMessage == 0) {
                 binding.clItemListUnReadMessage.visibility = View.GONE

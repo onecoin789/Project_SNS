@@ -41,25 +41,25 @@ class MainViewModel @Inject constructor(
     val postLastVisibleItem: StateFlow<Int> get() = _postLastVisibleItem
 
 
-    fun getPagingData(lastVisibleItem: Flow<Int>) {
-        viewModelScope.launch {
-            getPagingPostUseCase(lastVisibleItem).collect { data ->
-                _pagingData.value = data?.toPostDataListModel()
-            }
-        }
-    }
-
-    fun postLastVisibleItem(lastVisibleItem: Int) {
-        viewModelScope.launch {
-            _postLastVisibleItem.value = lastVisibleItem
-        }
-    }
-
-    fun resetPagingData() {
-        viewModelScope.launch {
-            _pagingData.value = emptyList()
-        }
-    }
+//    fun getPagingData(lastVisibleItem: Flow<Int>) {
+//        viewModelScope.launch {
+//            getPagingPostUseCase(lastVisibleItem).collect { data ->
+//                _pagingData.value = data?.toPostDataListModel()
+//            }
+//        }
+//    }
+//
+//    fun postLastVisibleItem(lastVisibleItem: Int) {
+//        viewModelScope.launch {
+//            _postLastVisibleItem.value = lastVisibleItem
+//        }
+//    }
+//
+//    fun resetPagingData() {
+//        viewModelScope.launch {
+//            _pagingData.value = emptyList()
+//        }
+//    }
 
 
     fun getCurrentUserData() {

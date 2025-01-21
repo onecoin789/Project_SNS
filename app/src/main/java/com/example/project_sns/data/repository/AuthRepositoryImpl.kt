@@ -113,8 +113,8 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun logIn(email: String, password: String): Result<String> {
-        return try {
+    override suspend fun logIn(email: String, password: String): Flow<String> {
+        return callbackFlow {
             auth.signInWithEmailAndPassword(email, password).addOnSuccessListener {
                 val currentUserUid = auth.currentUser?.uid
                 if (currentUserUid != null) {
@@ -123,10 +123,11 @@ class AuthRepositoryImpl @Inject constructor(
                         userDB.update("token", fcmToken)
                     }
                 }
+                trySend("success")
+            }.addOnFailureListener {
+                trySend("fail")
             }
-            Result.success("success")
-        } catch (e: Exception) {
-            return Result.failure(Exception("Exception: ${e.message}"))
+            awaitClose()
         }
     }
 
@@ -196,23 +197,27 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getUserByUid(uid: String): Flow<UserDataEntity?> {
+    override suspend fun getUserByUid(uid: String?): Flow<UserDataEntity?> {
         return callbackFlow {
-            val docRef = db.collection(COLLECTION_USER).document(uid)
-            val snapshotListener = docRef.addSnapshotListener { snapshot, error ->
-                if (error != null) {
-                    trySend(null).isSuccess
-                    return@addSnapshotListener
+            if (uid != null) {
+                val docRef = db.collection(COLLECTION_USER).document(uid)
+                val snapshotListener = docRef.addSnapshotListener { snapshot, error ->
+                    if (error != null) {
+                        trySend(null).isSuccess
+                        return@addSnapshotListener
+                    }
+                    if (snapshot != null) {
+                        val userResponse = snapshot.toObject(UserDataResponse::class.java)
+                        trySend(userResponse?.toEntity()).isSuccess
+                    } else {
+                        trySend(null).isSuccess
+                    }
                 }
-                if (snapshot != null) {
-                    val userResponse = snapshot.toObject(UserDataResponse::class.java)
-                    trySend(userResponse?.toEntity()).isSuccess
-                } else {
-                    trySend(null).isSuccess
+                awaitClose {
+                    snapshotListener.remove()
                 }
-            }
-            awaitClose {
-                snapshotListener.remove()
+            } else {
+                trySend(null)
             }
         }
     }

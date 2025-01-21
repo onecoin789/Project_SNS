@@ -271,6 +271,25 @@ class DataRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun checkCommentChange(postId: String): Flow<Boolean> {
+        return callbackFlow {
+            db.collection(COLLECTION_COMMENT).whereEqualTo("postId", postId).addSnapshotListener { snapshot, e ->
+                if (e != null) {
+                    trySend(false)
+                }
+                if (snapshot != null) {
+                    val documents = snapshot.documents
+                    if (documents.size != 0) {
+                        trySend(true)
+                    } else {
+                        trySend(false)
+                    }
+                }
+            }
+            awaitClose()
+        }
+    }
+
     override suspend fun getComment(
         postId: String,
         lastVisibleItem: Flow<Int>
@@ -286,10 +305,8 @@ class DataRepositoryImpl @Inject constructor(
                         Log.d("test_comment_impl2", "0")
                         db.collection(COLLECTION_COMMENT).whereEqualTo("postId", postId)
                             .orderBy("commentAt", Query.Direction.DESCENDING).limit(2)
-                            .addSnapshotListener { commentData, e ->
-                                if (e != null) {
-                                    trySend(emptyList())
-                                } else if (commentData != null) {
+                            .get().addOnSuccessListener { commentData ->
+                                if (commentData != null) {
                                     val documents = commentData.documents
                                     val commentResponse =
                                         commentData.toObjects(CommentDataResponse::class.java)
@@ -325,10 +342,8 @@ class DataRepositoryImpl @Inject constructor(
                         db.collection(COLLECTION_COMMENT).whereEqualTo("postId", postId)
                             .orderBy("commentAt", Query.Direction.DESCENDING)
                             .startAfter(commentDocuments.last()).limit(2)
-                            .addSnapshotListener { commentData, e ->
-                                if (e != null) {
-                                    trySend(emptyList())
-                                } else if (commentData != null) {
+                            .get().addOnSuccessListener { commentData ->
+                                if (commentData != null) {
                                     val documents = commentData.documents
                                     val commentResponse =
                                         commentData.toObjects(CommentDataResponse::class.java)
@@ -365,10 +380,8 @@ class DataRepositoryImpl @Inject constructor(
                         db.collection(COLLECTION_COMMENT).whereEqualTo("postId", postId)
                             .orderBy("commentAt", Query.Direction.DESCENDING)
                             .limit(lastVisibleItem.toLong())
-                            .addSnapshotListener { commentData, e ->
-                                if (e != null) {
-                                    trySend(emptyList())
-                                } else if (commentData != null) {
+                            .get().addOnSuccessListener { commentData ->
+                                if (commentData != null) {
                                     val documents = commentData.documents
                                     val commentResponse =
                                         commentData.toObjects(CommentDataResponse::class.java)
@@ -457,6 +470,7 @@ class DataRepositoryImpl @Inject constructor(
             }
         }
     }
+
 
     override suspend fun getReComment(
         commentId: String,
@@ -679,11 +693,11 @@ class DataRepositoryImpl @Inject constructor(
             if (senderUid != null) {
                 db.collection(COLLECTION_CHAT)
                     .whereArrayContainsAny("participant", listOf(senderUid, recipientUid))
-                    .get().addOnSuccessListener { snapshot ->
-//                        if (e != null) {
-//                            Log.d("check_chat2", "${e.message}")
-//                            trySend(false)
-//                        }
+                    .addSnapshotListener { snapshot, e ->
+                        if (e != null) {
+                            Log.d("check_chat2", "${e.message}")
+                            trySend(false)
+                        }
                         if (snapshot != null) {
                             val document = snapshot.documents
                             if (document.size != 0) {
@@ -932,7 +946,11 @@ class DataRepositoryImpl @Inject constructor(
     }
 
 
-    override suspend fun checkReadMessage(chatRoomId: String, userSession: Boolean, recipientUid: String): Flow<Boolean> {
+    override suspend fun checkReadMessage(
+        chatRoomId: String,
+        userSession: Boolean,
+        recipientUid: String
+    ): Flow<Boolean> {
         return callbackFlow {
             try {
                 val currentUserUid = auth.currentUser?.uid
@@ -1065,6 +1083,15 @@ class DataRepositoryImpl @Inject constructor(
                                                     )
                                                 )
                                             )
+                                        } else {
+                                            chatRoomList.addAll(
+                                                listOf(
+                                                    ChatRoomEntity(
+                                                        null,
+                                                        chatRoomEntity
+                                                    )
+                                                )
+                                            )
                                         }
                                         trySend(chatRoomList)
                                     }
@@ -1080,13 +1107,14 @@ class DataRepositoryImpl @Inject constructor(
         return callbackFlow {
             val chatRef = db.collection(COLLECTION_CHAT).document(chatRoomId)
             val messageRef = chatRef.collection(COLLECTION_CHAT_MESSAGE)
-            messageRef.whereEqualTo("chatRoomId", chatRoomId).get().addOnSuccessListener { documents ->
-                documents.toObjects(MessageDataResponse::class.java).map { messageData ->
-                    for (i in 0 until documents.size()) {
-                        messageRef.document(messageData.messageId).delete()
+            messageRef.whereEqualTo("chatRoomId", chatRoomId).get()
+                .addOnSuccessListener { documents ->
+                    documents.toObjects(MessageDataResponse::class.java).map { messageData ->
+                        for (i in 0 until documents.size()) {
+                            messageRef.document(messageData.messageId).delete()
+                        }
                     }
-                }
-            }.addOnSuccessListener {
+                }.addOnSuccessListener {
                 chatRef.delete()
             }.addOnCompleteListener { result ->
                 if (result.isSuccessful) {
@@ -1135,7 +1163,7 @@ class DataRepositoryImpl @Inject constructor(
 
             lastVisibleItem.collect { lastVisibleItem ->
                 when (lastVisibleItem) {
-                    0 -> query
+                    0 -> query.limit(50)
                         .get().addOnSuccessListener { snapshot ->
                             if (snapshot != null) {
                                 val documents = snapshot.documents
@@ -1157,8 +1185,18 @@ class DataRepositoryImpl @Inject constructor(
                                                         )
                                                     )
                                                 )
+                                                messageDocuments.addAll(documents)
+                                            } else {
+                                                messageList.addAll(
+                                                    listOf(
+                                                        MessageEntity(
+                                                            null,
+                                                            messageEntity
+                                                        )
+                                                    )
+                                                )
+                                                messageDocuments.addAll(documents)
                                             }
-                                            messageDocuments.addAll(documents)
                                             trySend(messageList)
                                         }
                                 }
@@ -1271,14 +1309,16 @@ class DataRepositoryImpl @Inject constructor(
                     val postDataEntity = snapshot.toObject(PostDataResponse::class.java)?.toEntity()
                     val uid = postDataEntity?.uid
                     if (uid != null) {
-                        db.collection(COLLECTION_USER).document(uid).get().addOnSuccessListener { userData ->
-                            val userDataEntity = userData.toObject(UserDataResponse::class.java)?.toEntity()
-                            if (userDataEntity != null) {
-                                trySend(PostEntity(userDataEntity, postDataEntity))
-                            } else {
-                                trySend(null)
+                        db.collection(COLLECTION_USER).document(uid).get()
+                            .addOnSuccessListener { userData ->
+                                val userDataEntity =
+                                    userData.toObject(UserDataResponse::class.java)?.toEntity()
+                                if (userDataEntity != null) {
+                                    trySend(PostEntity(userDataEntity, postDataEntity))
+                                } else {
+                                    trySend(null)
+                                }
                             }
-                        }
                     }
                 }
             }

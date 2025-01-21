@@ -54,22 +54,40 @@ class CommentListFragment : BaseFragment<FragmentCommentListBinding>() {
         super.onViewCreated(view, savedInstanceState)
 
 
-        getCommentData()
         initComment()
         initRv()
+        checkCommentData()
+        collectCommentChangeResult()
 
+    }
+
+    private fun checkCommentData() {
+        mainSharedViewModel.postData.observe(viewLifecycleOwner) { postData ->
+            if (postData != null) {
+                commentViewModel.getCommentChangeResult(postData.postId)
+            }
+        }
+    }
+
+    private fun collectCommentChangeResult() {
+        commentViewModel.commentChangeResult.observe(viewLifecycleOwner) { result ->
+            if (result == true) {
+                Toast.makeText(requireContext(), "변화 감지", Toast.LENGTH_SHORT).show()
+                getCommentData()
+            } else {
+                Toast.makeText(requireContext(), "변화 감지 실패ㅅ", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
 
     private fun getCommentData() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            mainSharedViewModel.postData.observe(viewLifecycleOwner) { postData ->
-                if (postData != null) {
-                    mainSharedViewModel.getComment(
-                        postData.postId,
-                        mainSharedViewModel.commentLastVisibleItem
-                    )
-                }
+        mainSharedViewModel.postData.observe(viewLifecycleOwner) { postData ->
+            if (postData != null) {
+                mainSharedViewModel.getComment(
+                    postData.postId,
+                    mainSharedViewModel.commentLastVisibleItem
+                )
             }
         }
     }
@@ -168,12 +186,14 @@ class CommentListFragment : BaseFragment<FragmentCommentListBinding>() {
         mRecyclerView.post(runnable)
 
         CoroutineScope(Dispatchers.Main).launch {
+            binding.rvComment.isNestedScrollingEnabled = false
             val runnableMore = kotlinx.coroutines.Runnable {
                 commentList.removeAt(commentList.size - 1)
                 listAdapter.notifyItemRemoved(commentList.size)
                 mainSharedViewModel.commentLastVisibleItem.value = lastVisible
             }
             delay(1000)
+            binding.rvComment.isNestedScrollingEnabled = true
             runnableMore.run()
         }
     }

@@ -1,11 +1,13 @@
 package com.example.project_sns.ui.util
 
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
+import android.view.WindowManager
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
@@ -128,6 +130,15 @@ fun sharePost(url: String): Intent {
     return Intent.createChooser(intent, intro)
 }
 
+fun notTouch(activity: Activity?) {
+    activity?.window?.setFlags(
+        WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+        WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+}
+
+fun touch(activity: Activity?) {
+    activity?.window?.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+}
 
 val charSet = ('0'..'9') + ('a'..'z') + ('A'..'Z')
 

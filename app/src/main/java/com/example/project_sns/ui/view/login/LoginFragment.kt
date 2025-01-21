@@ -52,23 +52,15 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
         super.onViewCreated(view, savedInstanceState)
 
         initView()
-        testTime()
+        collectLoginFlow()
 
-
-    }
-
-
-    private fun testTime() {
-        binding.tvLoginTitle.setOnClickListener {
-            Toast.makeText(requireContext(), chatDateFormat(), Toast.LENGTH_LONG).show()
-        }
     }
 
 
     private fun initView() {
 
         binding.tvLoginSignUp.setOnClickListener {
-            findNavController().navigate(R.id.action_loginFragment_to_signUpFragment)
+            findNavController().navigate(R.id.signUpFragment)
         }
 
         binding.btnLogin.setOnClickListener {
@@ -87,25 +79,30 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
         }
     }
 
+    private fun collectLoginFlow() {
+        mainSharedViewModel.loginSessionResult.observe(viewLifecycleOwner) { result ->
+            if (result == true) {
+                findNavController().navigate(R.id.mainFragment)
+            }
+        }
+    }
+
 
     private fun collectFlow() {
 
         viewLifecycleOwner.lifecycleScope.launch {
-            repeatOnLifecycle(state = Lifecycle.State.STARTED) {
-                loginViewModel.loginEvent.collect { checkLogin ->
-                    when (checkLogin) {
-                        is CheckLogin.LoginSuccess -> {
-                            mainSharedViewModel.checkLogin(true)
-                            Toast.makeText(requireContext(), checkLogin.message, Toast.LENGTH_SHORT)
-                                .show()
-                            findNavController().navigate(R.id.action_loginFragment_to_mainFragment)
-                        }
+            loginViewModel.loginEvent.collect { checkLogin ->
+                Log.d("LoginFragment", "$checkLogin")
+                when (checkLogin) {
+                    is CheckLogin.LoginSuccess -> {
+                        Toast.makeText(requireContext(), checkLogin.message, Toast.LENGTH_SHORT)
+                            .show()
+                        mainSharedViewModel.checkLogin(true)
+                    }
 
-                        is CheckLogin.LoginFail -> {
-                            mainSharedViewModel.checkLogin(false)
-                            Toast.makeText(requireContext(), checkLogin.message, Toast.LENGTH_SHORT)
-                                .show()
-                        }
+                    is CheckLogin.LoginFail -> {
+                        Toast.makeText(requireContext(), checkLogin.message, Toast.LENGTH_SHORT)
+                            .show()
                     }
                 }
             }
@@ -121,7 +118,7 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
                             Toast.makeText(requireContext(), checkLogin.message, Toast.LENGTH_SHORT)
                                 .show()
                             Thread.sleep(3000)
-                            findNavController().navigate(R.id.action_loginFragment_to_mainFragment)
+                            findNavController().navigate(R.id.mainFragment)
                         }
 
                         is CheckLogin.LoginFail -> {

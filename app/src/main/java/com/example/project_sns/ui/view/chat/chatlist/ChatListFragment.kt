@@ -75,6 +75,7 @@ class ChatListFragment : BaseFragment<FragmentChatListBinding>() {
     private fun collectCheckChatRoomList() {
         viewLifecycleOwner.lifecycleScope.launch {
             chatViewModel.checkChatRoomList.observe(viewLifecycleOwner) { result ->
+                Log.d("ChatListFragment", "$result")
                 if (result == true) {
                     binding.tvChatListNone.visibility = View.GONE
                     binding.tvChatList.visibility = View.VISIBLE
@@ -136,28 +137,38 @@ class ChatListFragment : BaseFragment<FragmentChatListBinding>() {
 
         itemTouchHelper.attachToRecyclerView(binding.rvChatList)
 
-        chatRoomListAdapter = ChatRoomListAdapter(object : ChatRoomListAdapter.ChatRoomListClickListener {
-            override fun onListClickListener(data: ChatRoomModel) {
-                val userData = data.userData
-                val chatRoomId = data.chatRoomData.chatRoomId
+        chatRoomListAdapter =
+            ChatRoomListAdapter(object : ChatRoomListAdapter.ChatRoomListClickListener {
+                override fun onListClickListener(data: ChatRoomModel) {
+                    val userData = data.userData
+                    val chatRoomId = data.chatRoomData.chatRoomId
 
-                chatSharedViewModel.getChatRoomId(chatRoomId)
-                chatSharedViewModel.getChatRoomData(userData.uid)
-                chatSharedViewModel.checkChatRoomExist(userData.uid)
-                onClickFriendList(userData)
-            }
+                    Log.d("ChatListFragment", "$userData, $chatRoomId")
 
-            override fun onListDeleteClickListener(data: ChatRoomModel) {
-                val chatRoomId = data.chatRoomData.chatRoomId
-                val dialog = BaseDialog("채팅방 나가기", "삭제시 복구가 불가능 합니다.")
-                dialog.setButtonClickListener(object : BaseDialog.DialogClickEvent {
-                    override fun onClickConfirm() {
-                        chatViewModel.deleteChatRoom(chatRoomId)
+                    if (userData != null) {
+                        chatSharedViewModel.getChatRoomId(chatRoomId)
+                        chatSharedViewModel.getChatRoomData(userData.uid)
+                        chatSharedViewModel.checkChatRoomExist(userData.uid)
+                        onClickFriendList(userData)
+                    } else {
+                        chatSharedViewModel.getChatRoomId(chatRoomId)
+                        chatSharedViewModel.clearCheckData()
+                        onClickFriendList(null)
                     }
-                })
-                dialog.show(childFragmentManager, "chatListDialog")
-            }
-        })
+                }
+
+                override fun onListDeleteClickListener(data: ChatRoomModel) {
+                    val chatRoomId = data.chatRoomData.chatRoomId
+                    val dialog = BaseDialog("채팅방 나가기", "삭제시 복구가 불가능 합니다.")
+                    dialog.setButtonClickListener(object : BaseDialog.DialogClickEvent {
+                        override fun onClickConfirm() {
+                            chatSharedViewModel.clearChatRoomId()
+                            chatViewModel.deleteChatRoom(chatRoomId)
+                        }
+                    })
+                    dialog.show(childFragmentManager, "chatListDialog")
+                }
+            })
 
         val linearLayoutManager = LinearLayoutManager(requireContext())
         with(binding.rvChatList) {
@@ -166,19 +177,15 @@ class ChatListFragment : BaseFragment<FragmentChatListBinding>() {
         }
     }
 
-//    private fun getNewList(data: ChatRoomModel) {
-//        CoroutineScope(Dispatchers.Main).launch {
-//            binding.rvChatList.visibility = View.GONE
-//            chatViewModel.deleteChatRoom(data.chatRoomData.chatRoomId)
-//            delay(200)
-//            chatViewModel.checkChatRoomList
-//
-//        }
-//    }
+    private fun onClickFriendList(friendData: UserDataModel?) {
+        if (friendData != null) {
+            mainSharedViewModel.getUserData(friendData.uid)
+            findNavController().navigate(R.id.chatRoomFragment)
+        } else {
+            mainSharedViewModel.getUserData(null)
+            findNavController().navigate(R.id.chatRoomFragment)
 
-    private fun onClickFriendList(friendData: UserDataModel) {
-        mainSharedViewModel.getUserData(friendData.uid)
-        findNavController().navigate(R.id.chatRoomFragment)
+        }
     }
 
     private fun checkFirst(userData: UserDataModel) {
@@ -208,7 +215,6 @@ class ChatListFragment : BaseFragment<FragmentChatListBinding>() {
             }
         }
     }
-
 
 
 }

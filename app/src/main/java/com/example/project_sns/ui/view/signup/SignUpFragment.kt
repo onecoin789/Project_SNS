@@ -90,7 +90,7 @@ class SignUpFragment : BaseFragment<FragmentSignUpBinding>() {
                     when (checkSignUp) {
                         is CheckSignUp.SignUpSuccess -> {
                             Toast.makeText(requireContext(), "회원가입 성공!!", Toast.LENGTH_SHORT).show()
-                            findNavController().popBackStack()
+                            backButton()
                         }
 
                         is CheckSignUp.SignUpFail -> {
