@@ -16,3 +16,7 @@ object CurrentUser {
 object CurrentPost {
     var postData: PostDataModel? = null
 }
+
+object ChatUser {
+    var userData: UserDataModel? = null
+}

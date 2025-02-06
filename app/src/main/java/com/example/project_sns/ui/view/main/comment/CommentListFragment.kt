@@ -72,10 +72,13 @@ class CommentListFragment : BaseFragment<FragmentCommentListBinding>() {
     private fun collectCommentChangeResult() {
         commentViewModel.commentChangeResult.observe(viewLifecycleOwner) { result ->
             if (result == true) {
-                Toast.makeText(requireContext(), "변화 감지", Toast.LENGTH_SHORT).show()
+                mainSharedViewModel.clearCommentData()
                 getCommentData()
             } else {
-                Toast.makeText(requireContext(), "변화 감지 실패ㅅ", Toast.LENGTH_SHORT).show()
+                binding.tvCommentNone.visibility = View.VISIBLE
+                binding.tvCommentSuggest.visibility = View.VISIBLE
+                binding.clCommentRvItem.visibility = View.GONE
+                binding.pbComment.visibility = View.GONE
             }
         }
     }
@@ -165,11 +168,7 @@ class CommentListFragment : BaseFragment<FragmentCommentListBinding>() {
             commentList = dataSet.toMutableList()
             listAdapter.submitList(commentList)
 
-            if (data.isEmpty()) {
-                binding.tvCommentNone.visibility = View.VISIBLE
-                binding.tvCommentSuggest.visibility = View.VISIBLE
-                binding.clCommentRvItem.visibility = View.GONE
-            } else {
+            if (data.isNotEmpty()) {
                 binding.clCommentRvItem.visibility = View.VISIBLE
                 binding.tvCommentNone.visibility = View.INVISIBLE
                 binding.tvCommentSuggest.visibility = View.INVISIBLE
@@ -179,20 +178,20 @@ class CommentListFragment : BaseFragment<FragmentCommentListBinding>() {
 
     private fun moreItem(lastVisible: Int) {
         val mRecyclerView = binding.rvComment
-        val runnable = kotlinx.coroutines.Runnable {
-            commentList.add(null)
-            listAdapter.notifyItemInserted(commentList.size - 1)
-        }
-        mRecyclerView.post(runnable)
+//        val runnable = kotlinx.coroutines.Runnable {
+//            commentList.add(null)
+//            listAdapter.notifyItemInserted(commentList.size - 1)
+//        }
+//        mRecyclerView.post(runnable)
 
         CoroutineScope(Dispatchers.Main).launch {
             binding.rvComment.isNestedScrollingEnabled = false
             val runnableMore = kotlinx.coroutines.Runnable {
-                commentList.removeAt(commentList.size - 1)
-                listAdapter.notifyItemRemoved(commentList.size)
+//                commentList.removeAt(commentList.size - 1)
+//                listAdapter.notifyItemRemoved(commentList.size)
                 mainSharedViewModel.commentLastVisibleItem.value = lastVisible
             }
-            delay(1000)
+            delay(300)
             binding.rvComment.isNestedScrollingEnabled = true
             runnableMore.run()
         }

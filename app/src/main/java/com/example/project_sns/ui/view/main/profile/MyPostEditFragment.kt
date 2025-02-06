@@ -11,6 +11,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import com.example.project_sns.R
 import com.example.project_sns.databinding.FragmentMyProfileMakePostBinding
 import com.example.project_sns.ui.BaseFragment
@@ -54,6 +55,7 @@ class MyPostEditFragment : BaseFragment<FragmentMyProfileMakePostBinding>() {
         super.onViewCreated(view, savedInstanceState)
         initView()
         getMapData()
+        collectFlow()
     }
 
     private fun initView() {
@@ -101,7 +103,6 @@ class MyPostEditFragment : BaseFragment<FragmentMyProfileMakePostBinding>() {
         }
 
         binding.btnMakeConfirm.setOnClickListener {
-            collectFlow()
             initData()
         }
 
@@ -115,7 +116,7 @@ class MyPostEditFragment : BaseFragment<FragmentMyProfileMakePostBinding>() {
         viewLifecycleOwner.lifecycleScope.launch {
             mainSharedViewModel.postEditResult.collect {
                 if (it == true) {
-                    Toast.makeText(requireContext(), "게시물 수정 성공", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "게시물 수정 완료", Toast.LENGTH_SHORT).show()
                     backToMain()
                 } else if (it == false) {
                     Toast.makeText(requireContext(), "게시물 수정 실패", Toast.LENGTH_SHORT).show()
@@ -134,7 +135,6 @@ class MyPostEditFragment : BaseFragment<FragmentMyProfileMakePostBinding>() {
                 imageList.clear()
                 for (i in 0 until uri.count()) {
                     val imageToUri = uri[i]
-                    Log.d("fuck", "${imageToUri}")
                     if (imageToUri.pathSegments.contains("video") || imageToUri.toString().contains("video", ignoreCase = true)) {
                         imageList.add(ImageDataModel(imageToUri.toString(), imageToUri.toString(), "video"))
                     } else {
@@ -155,9 +155,25 @@ class MyPostEditFragment : BaseFragment<FragmentMyProfileMakePostBinding>() {
             binding.vpMakeImageList.visibility = View.VISIBLE
             binding.ivMakePlusPhoto.visibility = View.VISIBLE
             binding.ivMakePhoto.visibility = View.INVISIBLE
+
+            binding.tvMakePhotoNumber.visibility = View.VISIBLE
+            binding.tvMakePhotoSlash.visibility = View.VISIBLE
+            binding.tvMakePhotoCurrentNumber.visibility = View.VISIBLE
+            binding.tvMakePhotoNumber.text = imageList.size.toString()
+            binding.vpMakeImageList.registerOnPageChangeCallback(object : OnPageChangeCallback() {
+                override fun onPageSelected(position: Int) {
+                    super.onPageSelected(position)
+                    val number = position + 1
+                    binding.tvMakePhotoCurrentNumber.text = number.toString()
+                }
+            })
         } else {
             binding.vpMakeImageList.visibility = View.GONE
             binding.ivMakePlusPhoto.visibility = View.GONE
+
+            binding.tvMakePhotoNumber.visibility = View.GONE
+            binding.tvMakePhotoSlash.visibility = View.GONE
+            binding.tvMakePhotoCurrentNumber.visibility = View.GONE
         }
     }
 
@@ -209,7 +225,11 @@ class MyPostEditFragment : BaseFragment<FragmentMyProfileMakePostBinding>() {
                 likePost = likeList
             )
 
-            viewLifecycleOwner.lifecycleScope.launch {
+            if (imageList.isEmpty()) {
+                Toast.makeText(requireActivity(), "사진 선택 필요", Toast.LENGTH_SHORT).show()
+            } else if (postText.isEmpty()) {
+                Toast.makeText(requireActivity(), "글 작성 필요", Toast.LENGTH_SHORT).show()
+            } else {
                 mainSharedViewModel.editPost(data)
             }
         }

@@ -6,15 +6,19 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.viewbinding.ViewBinding
 import com.example.project_sns.R
+import com.example.project_sns.ui.view.chat.ChatSharedViewModel
+import com.example.project_sns.ui.view.chat.ChatViewModel
 import com.example.project_sns.ui.view.main.MainSharedViewModel
 
 abstract class BaseFragment<T : ViewBinding>: Fragment() {
 
     private var _binding: T? = null
     val binding get() = _binding!!
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,

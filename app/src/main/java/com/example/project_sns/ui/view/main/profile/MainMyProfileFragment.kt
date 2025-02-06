@@ -73,8 +73,11 @@ class MainMyProfileFragment : BaseFragment<FragmentMainMyProfileBinding>() {
                     binding.tvMyEmail.text = userData.email
                     if (userData.profileImage != null) {
                         binding.ivMyProfile.clipToOutline = true
+                        binding.ivMyProfile.visibility = View.VISIBLE
                         Glide.with(requireContext()).load(userData.profileImage)
                             .into(binding.ivMyProfile)
+                    } else {
+                        binding.ivMyProfile.visibility = View.GONE
                     }
                     if (userData.intro == "") {
                         binding.tvMyIntro.text = "한줄 소개"
@@ -145,7 +148,7 @@ class MainMyProfileFragment : BaseFragment<FragmentMainMyProfileBinding>() {
         }
 
         binding.ivMyAdd.setOnClickListener {
-            findNavController().navigate(R.id.action_mainFragment_to_makePostFragment)
+            findNavController().navigate(R.id.makePostFragment)
         }
 
     }

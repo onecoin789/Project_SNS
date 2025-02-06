@@ -8,13 +8,19 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
+import androidx.activity.OnBackPressedCallback
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.OnScrollListener
 import com.example.project_sns.FcmUtil
+import com.example.project_sns.R
 import com.example.project_sns.databinding.FragmentChatRoomBinding
 import com.example.project_sns.domain.MessageViewType
 import com.example.project_sns.ui.BaseFragment
@@ -61,7 +67,6 @@ class ChatRoomFragment : BaseFragment<FragmentChatRoomBinding>() {
     private var messageListSize: Int = 0
 
 
-
     override fun getFragmentBinding(
         inflater: LayoutInflater,
         container: ViewGroup?
@@ -72,6 +77,7 @@ class ChatRoomFragment : BaseFragment<FragmentChatRoomBinding>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+
         initRv()
         initView()
         checkChatRoomData()
@@ -79,11 +85,14 @@ class ChatRoomFragment : BaseFragment<FragmentChatRoomBinding>() {
         checkMessageDataResult()
         editTextWatcher()
         readMessage()
+        backButtonListener()
 
 
-        sendUserSession(true)
+        sendUserSession()
 
         getMessageList()
+
+        binding.rvChat.smoothScrollToPosition(messageListSize)
     }
 
 
@@ -146,15 +155,13 @@ class ChatRoomFragment : BaseFragment<FragmentChatRoomBinding>() {
                 chatSharedViewModel.clearChatRoomId()
                 chatSharedViewModel.clearCheckData()
                 FcmUtil.clickState = false
-                sendUserSession(false)
-                backToMain()
+                chatBackToMain()
             }
         } else {
             binding.ivChatRoomBack.setOnClickListener {
                 chatSharedViewModel.clearChatRoomId()
                 chatSharedViewModel.clearCheckData()
-                sendUserSession(false)
-                backButton()
+                chatBackButton()
             }
         }
     }
@@ -217,8 +224,8 @@ class ChatRoomFragment : BaseFragment<FragmentChatRoomBinding>() {
         }
     }
 
-    private fun sendUserSession(value: Boolean) {
-        chatViewModel.getUserSession(value)
+    private fun sendUserSession() {
+        chatViewModel.getUserSession(true)
     }
 
 
@@ -271,10 +278,12 @@ class ChatRoomFragment : BaseFragment<FragmentChatRoomBinding>() {
                     binding.rvChat.visibility = View.VISIBLE
                     getMessageList()
                 }
+
                 false -> {
                     binding.tvChatRoomNone.visibility = View.VISIBLE
                     binding.rvChat.visibility = View.GONE
                 }
+
                 null -> {
                     binding.tvChatRoomNone.visibility = View.GONE
                     binding.rvChat.visibility = View.VISIBLE
@@ -316,6 +325,7 @@ class ChatRoomFragment : BaseFragment<FragmentChatRoomBinding>() {
                     chatViewModel.getMessageList(chatRoomId, lastVisibleItem)
                 }
             }
+            binding.rvChat.smoothScrollToPosition(messageListSize)
         }
     }
 
@@ -683,9 +693,35 @@ class ChatRoomFragment : BaseFragment<FragmentChatRoomBinding>() {
         })
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        sendUserSession(false)
+    private fun backButtonListener() {
+        val callback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (FcmUtil.clickState == true) {
+                    chatSharedViewModel.clearChatRoomId()
+                    chatSharedViewModel.clearCheckData()
+                    FcmUtil.clickState = false
+                    chatBackToMain()
+                } else {
+                    chatSharedViewModel.clearChatRoomId()
+                    chatSharedViewModel.clearCheckData()
+                    chatBackButton()
+                }
+            }
+        }
+        requireActivity().onBackPressedDispatcher.addCallback(
+            this.viewLifecycleOwner,
+            onBackPressedCallback = callback
+        )
+    }
+
+    fun chatBackButton() {
+        chatViewModel.getUserSession(false)
+        findNavController().popBackStack()
+    }
+
+    fun chatBackToMain() {
+        chatViewModel.getUserSession(false)
+        findNavController().popBackStack(R.id.mainFragment, false)
     }
 
 }

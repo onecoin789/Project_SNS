@@ -79,10 +79,7 @@ class RequestPageFragment : BaseFragment<FragmentRequestPageBinding>() {
             repeatOnLifecycle(state = Lifecycle.State.STARTED) {
                 notificationViewModel.acceptResult.collect { acceptResult ->
                     if (acceptResult == true) {
-                        Toast.makeText(requireContext(), "성공", Toast.LENGTH_SHORT).show()
                         getRefreshItem()
-                    } else if (acceptResult == false) {
-                        Toast.makeText(requireContext(), "실패", Toast.LENGTH_SHORT).show()
                     }
                 }
             }
@@ -94,10 +91,7 @@ class RequestPageFragment : BaseFragment<FragmentRequestPageBinding>() {
             repeatOnLifecycle(state = Lifecycle.State.STARTED) {
                 notificationViewModel.rejectResult.collect { rejectResult ->
                     if (rejectResult == true) {
-                        Toast.makeText(requireContext(), "성공", Toast.LENGTH_SHORT).show()
                         getRefreshItem()
-                    } else if (rejectResult == false) {
-                        Toast.makeText(requireContext(), "실패", Toast.LENGTH_SHORT).show()
                     }
                 }
             }
@@ -150,7 +144,6 @@ class RequestPageFragment : BaseFragment<FragmentRequestPageBinding>() {
             requestList = data.toMutableList()
             requestListAdapter.submitList(requestList)
 
-            Log.d("request_list", "$requestList")
 
             if (data.isNotEmpty()) {
                 binding.rvRequest.visibility = View.VISIBLE

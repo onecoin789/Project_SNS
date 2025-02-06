@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.net.toUri
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -41,7 +42,9 @@ class MyProfileEditFragment : BaseFragment<FragmentMyProfileEditBinding>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         initView()
+        collectFlow()
 
     }
 
@@ -56,15 +59,24 @@ class MyProfileEditFragment : BaseFragment<FragmentMyProfileEditBinding>() {
 
         binding.btnEditConfirm.setOnClickListener {
             initData()
-            collectFlow()
         }
 
         binding.clEditPhotoFrame.setOnClickListener {
             getPhoto()
         }
+        binding.ivEditPhotoNull.setOnClickListener {
+            uri = null
+            binding.ivEditPhotoNull.visibility = View.GONE
+            binding.ivEditPhoto.visibility = View.GONE
+        }
 
         if (userData != null) {
-            Glide.with(requireContext()).load(userData.profileImage).into(binding.ivEditPhoto)
+            if (userData.profileImage != null) {
+                uri = userData.profileImage.toUri()
+                Glide.with(requireContext()).load(uri).into(binding.ivEditPhoto)
+                binding.ivEditPhoto.visibility = View.VISIBLE
+                binding.ivEditPhotoNull.visibility = View.VISIBLE
+            }
             binding.etEditName.setText(userData.name)
             binding.etEditEmail.setText(userData.email)
             binding.etEditIntro.setText(userData.intro)
@@ -76,6 +88,8 @@ class MyProfileEditFragment : BaseFragment<FragmentMyProfileEditBinding>() {
         TedImagePicker.with(requireContext()).start {
             uri = it
             binding.ivEditPhoto.clipToOutline = true
+            binding.ivEditPhotoNull.visibility = View.VISIBLE
+            binding.ivEditPhoto.visibility = View.VISIBLE
             Glide.with(requireContext()).load(it).into(binding.ivEditPhoto)
         }
     }

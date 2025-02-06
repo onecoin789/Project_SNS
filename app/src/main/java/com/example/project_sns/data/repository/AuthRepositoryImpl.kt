@@ -246,56 +246,6 @@ class AuthRepositoryImpl @Inject constructor(
                             "createdAt" to createdAt
                         )
                         db.collection(COLLECTION_USER).document(uid).set(data)
-                        db.collection(COLLECTION_POST).whereEqualTo("uid", uid).get()
-                            .addOnSuccessListener { post ->
-                                post.documents.forEach { document ->
-                                    db.runTransaction { trans ->
-                                        trans.update(
-                                            document.reference,
-                                            "profileImage",
-                                            downloadUri
-                                        )
-                                        trans.update(document.reference, "name", name)
-                                    }
-
-                                    document.reference.collection("comment")
-                                        .whereEqualTo("uid", uid).get()
-                                        .addOnSuccessListener { comment ->
-                                            comment.documents.forEach { commentDocument ->
-                                                db.runTransaction { commentTrans ->
-                                                    commentTrans.update(
-                                                        commentDocument.reference,
-                                                        "profileImage",
-                                                        downloadUri
-                                                    )
-                                                    commentTrans.update(
-                                                        commentDocument.reference,
-                                                        "name",
-                                                        name
-                                                    )
-                                                }
-                                                commentDocument.reference.collection("reComment")
-                                                    .whereEqualTo("uid", uid).get()
-                                                    .addOnSuccessListener { reComment ->
-                                                        reComment.documents.forEach { reCommentDocument ->
-                                                            db.runTransaction { reCommentTrans ->
-                                                                reCommentTrans.update(
-                                                                    reCommentDocument.reference,
-                                                                    "profileImage",
-                                                                    downloadUri
-                                                                )
-                                                                reCommentTrans.update(
-                                                                    reCommentDocument.reference,
-                                                                    "name",
-                                                                    name
-                                                                )
-                                                            }
-                                                        }
-                                                    }
-                                            }
-                                        }
-                                }
-                            }
                     }
                 }
             } else {
@@ -304,43 +254,10 @@ class AuthRepositoryImpl @Inject constructor(
                     "name" to name,
                     "email" to email,
                     "intro" to intro,
-                    "profileImage" to beforeProfile,
+                    "profileImage" to null,
                     "createdAt" to createdAt
                 )
                 db.collection(COLLECTION_USER).document(uid).set(data)
-                db.collection(COLLECTION_POST).whereEqualTo("uid", uid).get()
-                    .addOnSuccessListener { post ->
-                        post.documents.forEach { document ->
-                            db.runTransaction { trans ->
-                                trans.update(document.reference, "name", name)
-                            }
-                            document.reference.collection("comment").whereEqualTo("uid", uid).get()
-                                .addOnSuccessListener { comment ->
-                                    comment.documents.forEach { commentDocument ->
-                                        db.runTransaction { commentTrans ->
-                                            commentTrans.update(
-                                                commentDocument.reference,
-                                                "name",
-                                                name
-                                            )
-                                        }
-                                        commentDocument.reference.collection("reComment")
-                                            .whereEqualTo("uid", uid).get()
-                                            .addOnSuccessListener { reComment ->
-                                                reComment.documents.forEach { reCommentDocument ->
-                                                    db.runTransaction { reCommentTrans ->
-                                                        reCommentTrans.update(
-                                                            reCommentDocument.reference,
-                                                            "name",
-                                                            name
-                                                        )
-                                                    }
-                                                }
-                                            }
-                                    }
-                                }
-                        }
-                    }
             }
             Result.success("success")
         } catch (e: Exception) {
