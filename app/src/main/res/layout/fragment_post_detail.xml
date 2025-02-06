@@ -44,8 +44,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="30dp"
                 android:background="@color/bg"
-                app:layout_constraintTop_toBottomOf="@+id/ivPDBack"
-                app:layout_constraintBottom_toBottomOf="parent">
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/ivPDBack">
 
                 <ImageView
                     android:id="@+id/ivPDUser"
@@ -63,26 +63,27 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="15dp"
+                    android:text="@string/test"
                     android:textColor="@color/text"
                     android:textSize="20sp"
                     android:textStyle="bold"
-                    android:text="@string/test"
-                    android:layout_marginBottom="15dp"
+                    app:layout_constraintBottom_toTopOf="@id/tvPDLocation"
                     app:layout_constraintStart_toEndOf="@id/ivPDUser"
-                    app:layout_constraintTop_toTopOf="@id/ivPDUser"
-                    app:layout_constraintBottom_toBottomOf="@+id/ivPDUser"/>
+                    app:layout_constraintTop_toTopOf="@id/ivPDUser" />
 
                 <TextView
                     android:id="@+id/tvPDLocation"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="1dp"
+                    android:text="@string/test"
                     android:textColor="@color/hint"
                     android:textSize="15sp"
                     android:textStyle="bold"
-                    android:text="@string/test"
-                    android:layout_marginStart="3dp"
+                    android:visibility="visible"
                     app:layout_constraintStart_toStartOf="@id/tvPDName"
-                    app:layout_constraintTop_toBottomOf="@+id/tvPDName" />
+                    app:layout_constraintTop_toBottomOf="@+id/tvPDName"
+                    app:layout_constraintBottom_toBottomOf="@id/ivPDUser"/>
 
                 <ImageView
                     android:id="@+id/ivPDMore"
@@ -92,18 +93,18 @@
                     android:layout_marginEnd="15dp"
                     android:background="@drawable/ic_more"
                     android:contentDescription="@string/contentDescription"
+                    app:layout_constraintBottom_toBottomOf="@+id/ivPDUser"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@id/ivPDUser"
-                    app:layout_constraintBottom_toBottomOf="@+id/ivPDUser"/>
+                    app:layout_constraintTop_toTopOf="@id/ivPDUser" />
 
                 <TextView
                     android:id="@+id/tvPDEdit"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:text="@string/home_edit"
                     android:textColor="@color/hint"
                     android:textSize="15sp"
                     android:textStyle="bold"
-                    android:text="@string/home_edit"
                     android:visibility="gone"
                     app:layout_constraintEnd_toEndOf="@+id/ivPDMore"
                     app:layout_constraintTop_toBottomOf="@+id/ivPDMore" />
@@ -122,17 +123,17 @@
                     android:id="@+id/idcPD"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:visibility="invisible"
                     app:dotsColor="@color/point"
-                    app:dotsStrokeColor="@color/stroke"
                     app:dotsCornerRadius="8dp"
                     app:dotsSize="16dp"
                     app:dotsSpacing="4dp"
+                    app:dotsStrokeColor="@color/stroke"
                     app:dotsStrokeWidth="2dp"
-                    android:layout_marginTop="10dp"
-                    android:visibility="visible"
-                    app:layout_constraintTop_toBottomOf="@id/vpPDPostImage"
+                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"/>
+                    app:layout_constraintTop_toBottomOf="@id/vpPDPostImage" />
 
                 <ImageView
                     android:id="@+id/ivPDHeart"
@@ -141,8 +142,8 @@
                     android:layout_marginStart="10dp"
                     android:layout_marginTop="20dp"
                     android:background="@drawable/ic_heart"
-                    android:tag="0"
                     android:contentDescription="@string/contentDescription"
+                    android:tag="0"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/idcPD" />
 
@@ -151,13 +152,13 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
+                    android:contentDescription="@string/contentDescription"
+                    android:textColor="@color/text"
                     android:textSize="20sp"
                     android:textStyle="bold"
-                    android:textColor="@color/text"
-                    android:contentDescription="@string/contentDescription"
-                    app:layout_constraintStart_toEndOf="@+id/ivPDHeart"
                     app:layout_constraintBottom_toBottomOf="@id/ivPDHeart"
-                    app:layout_constraintTop_toTopOf="@+id/ivPDHeart"/>
+                    app:layout_constraintStart_toEndOf="@+id/ivPDHeart"
+                    app:layout_constraintTop_toTopOf="@+id/ivPDHeart" />
 
 
                 <ImageView
@@ -203,7 +204,6 @@
                     android:textSize="16sp"
                     app:layout_constraintStart_toStartOf="@+id/tvPDPostText"
                     app:layout_constraintTop_toBottomOf="@+id/tvPDPostText" />
-
 
 
             </androidx.constraintlayout.widget.ConstraintLayout>

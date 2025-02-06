@@ -193,5 +193,3 @@ fun KakaoMetaResponse.toEntity() = KakaoMetaEntity(
     pageableCount = pageableCount,
     totalCount = totalCount
 )
-
-

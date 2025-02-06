@@ -66,13 +66,6 @@ class PostDetailSelectBottomFragment : BaseBottomSheet<FragmentPostDetailSelectB
             }
         }
 
-//        postViewModel.postData.observe(viewLifecycleOwner) { postData ->
-//            if (postData != null) {
-//                binding.clMoreSave.setOnClickListener {
-//                    initRoom(postData)
-//                }
-//            }
-//        }
 
         binding.clMoreDelete.setOnClickListener {
             inflateDialog("정말 삭제하시겠어요?", "삭제하시면 복구하실 수 없습니다.")

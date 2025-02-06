@@ -35,7 +35,7 @@ import java.util.UUID
 
 @AndroidEntryPoint
 class ReCommentListFragment : BaseFragment<FragmentReCommentListBinding>() {
-
+    // FIXME: reComment 다시 확인 필요
     private val mainSharedViewModel: MainSharedViewModel by activityViewModels()
 
     private val commentViewModel: CommentViewModel by viewModels()
@@ -116,8 +116,8 @@ class ReCommentListFragment : BaseFragment<FragmentReCommentListBinding>() {
             }
         }
         binding.ivReCommentBack.setOnClickListener {
-            getCommentData()
             commentViewModel.clearReCommentData()
+            mainSharedViewModel.clearCommentData()
             mainSharedViewModel.prevPage()
         }
     }

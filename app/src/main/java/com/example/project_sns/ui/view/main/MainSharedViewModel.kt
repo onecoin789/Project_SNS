@@ -27,7 +27,9 @@ import com.example.project_sns.domain.usecase.SendFriendRequestUseCase
 import com.example.project_sns.domain.usecase.UploadCommentUseCase
 import com.example.project_sns.domain.usecase.UploadPostUseCase
 import com.example.project_sns.domain.usecase.UploadReCommentUseCase
+import com.example.project_sns.ui.ChatUser
 import com.example.project_sns.ui.CurrentPost
+import com.example.project_sns.ui.CurrentUser
 import com.example.project_sns.ui.mapper.toCommentListEntity
 import com.example.project_sns.ui.mapper.toCommentListModel
 import com.example.project_sns.ui.mapper.toEntity
@@ -78,7 +80,7 @@ class MainSharedViewModel @Inject constructor(
     private val checkLoginUseCase: CheckLoginUseCase,
     private val getLoginSessionUseCase: GetLoginSessionUseCase
 
-    ) : ViewModel() {
+) : ViewModel() {
 
     private val _postUpLoadResult = MutableStateFlow<Boolean?>(null)
     val postUpLoadResult: StateFlow<Boolean?> get() = _postUpLoadResult
@@ -135,34 +137,6 @@ class MainSharedViewModel @Inject constructor(
     val commentListData: LiveData<List<CommentModel>> get() = _commentListData
 
 
-    //main post 관련
-
-    private val _pagingData = MutableLiveData<List<PostModel>>(emptyList())
-    val pagingData: LiveData<List<PostModel>> get() = _pagingData
-
-    private val _postLastVisibleItem = MutableStateFlow<Int>(0)
-    val postLastVisibleItem: StateFlow<Int> get() = _postLastVisibleItem
-
-
-    fun getPagingData(lastVisibleItem: Flow<Int>) {
-        viewModelScope.launch {
-            getPagingPostUseCase(lastVisibleItem).collect { data ->
-                _pagingData.value = data?.toPostDataListModel()
-            }
-        }
-    }
-
-    fun postLastVisibleItem(lastVisibleItem: Int) {
-        viewModelScope.launch {
-            _postLastVisibleItem.value = lastVisibleItem
-        }
-    }
-
-    fun resetPagingData() {
-        viewModelScope.launch {
-            _pagingData.value = emptyList()
-        }
-    }
 
 
     //로그인 관련
@@ -357,6 +331,7 @@ class MainSharedViewModel @Inject constructor(
                 getUserByUidUseCase(uid).collect { data ->
                     if (data != null) {
                         _userData.value = data.toModel()
+                        ChatUser.userData = data.toModel()
                     }
                 }
             }

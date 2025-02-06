@@ -17,7 +17,8 @@
             android:id="@+id/rvSearchUser"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:listitem="@layout/rv_item_friend" />
+            tools:listitem="@layout/rv_item_friend"
+            android:layout_marginBottom="60dp"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

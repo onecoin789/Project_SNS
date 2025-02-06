@@ -85,7 +85,6 @@ class ChatListFragment : BaseFragment<FragmentChatListBinding>() {
                     binding.tvChatListNone.visibility = View.VISIBLE
                     binding.tvChatList.visibility = View.GONE
                     binding.rvChatList.visibility = View.GONE
-                    Toast.makeText(requireContext(), "채팅방 없음", Toast.LENGTH_SHORT).show()
                 }
             }
         }
@@ -128,10 +127,6 @@ class ChatListFragment : BaseFragment<FragmentChatListBinding>() {
         with(binding.rvChatListFriend) {
             LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
             adapter = friendListAdapter
-            setOnTouchListener { _, _ ->
-                itemTouchSimpleCallback.removePreviousClamp(binding.rvChatList)
-                false
-            }
         }
 
 
@@ -174,10 +169,15 @@ class ChatListFragment : BaseFragment<FragmentChatListBinding>() {
         with(binding.rvChatList) {
             layoutManager = linearLayoutManager
             adapter = chatRoomListAdapter
+            setOnTouchListener { _, _ ->
+                itemTouchSimpleCallback.removePreviousClamp(binding.rvChatList)
+                false
+            }
         }
     }
 
     private fun onClickFriendList(friendData: UserDataModel?) {
+        Log.d("ChatListFragment", "$friendData")
         if (friendData != null) {
             mainSharedViewModel.getUserData(friendData.uid)
             findNavController().navigate(R.id.chatRoomFragment)
@@ -198,11 +198,14 @@ class ChatListFragment : BaseFragment<FragmentChatListBinding>() {
 
     private fun checkChatRoomExist(userData: UserDataModel) {
         CoroutineScope(Dispatchers.Main).launch {
+            Log.d("ChatListFragment_userData", "$userData")
             checkFirst(userData)
             delay(200)
             chatSharedViewModel.checkChatRoomData.observe(viewLifecycleOwner) { result ->
+                Log.d("ChatListFragment", "$result")
                 if (result == true) {
                     getChatRoomData(userData)
+                    Log.d("ChatListFragment", "1")
                     chatViewModel.chatRoomData.observe(viewLifecycleOwner) { data ->
                         if (data != null) {
                             chatSharedViewModel.getChatRoomId(data.chatRoomId)
@@ -211,6 +214,7 @@ class ChatListFragment : BaseFragment<FragmentChatListBinding>() {
                     }
                 } else if (result == false) {
                     onClickFriendList(userData)
+                    Log.d("ChatListFragment", "2")
                 }
             }
         }

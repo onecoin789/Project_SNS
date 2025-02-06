@@ -1,10 +1,6 @@
 package com.example.project_sns.ui.view.main.profile.detail
 
-import android.content.Intent
 import android.os.Bundle
-import android.text.method.HideReturnsTransformationMethod
-import android.text.method.PasswordTransformationMethod
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,11 +14,9 @@ import com.example.project_sns.databinding.FragmentPostDetailBinding
 import com.example.project_sns.ui.BaseFragment
 import com.example.project_sns.ui.CurrentUser
 import com.example.project_sns.ui.mapper.toViewType
-import com.example.project_sns.ui.view.main.MainSharedViewModel
-import com.example.project_sns.ui.view.main.MainViewModel
 import com.example.project_sns.ui.model.PostDataModel
-import com.example.project_sns.ui.util.postDateFormat
 import com.example.project_sns.ui.util.sharePost
+import com.example.project_sns.ui.view.main.MainSharedViewModel
 import com.example.project_sns.ui.view.main.profile.PostViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -46,13 +40,13 @@ class PostDetailFragment : BaseFragment<FragmentPostDetailBinding>() {
         super.onViewCreated(view, savedInstanceState)
 
         initView()
-        initLike()
     }
 
 
     private fun initView() {
         val currentUser = CurrentUser.userData
         val profile = binding.ivPDUser
+        val likeButton = binding.ivPDHeart
 
 
         binding.ivPDHeart.setOnClickListener {
@@ -85,6 +79,15 @@ class PostDetailFragment : BaseFragment<FragmentPostDetailBinding>() {
                     binding.ivPDHeart.tag = "0"
                 }
 
+                when(likeButton.tag) {
+                    "0" -> {
+                        likeButton.setImageResource(R.drawable.ic_heart)
+                    }
+                    "1" -> {
+                        likeButton.setImageResource(R.drawable.ic_heart_fill)
+                    }
+                }
+
                 if (currentUser?.profileImage != null) {
                     profile.clipToOutline = true
                     Glide.with(requireContext()).load(user.profileImage).into(profile)
@@ -94,6 +97,8 @@ class PostDetailFragment : BaseFragment<FragmentPostDetailBinding>() {
 
                 if (post.mapData?.placeName != null) {
                     binding.tvPDLocation.text = post.mapData.placeName
+                } else {
+                    binding.tvPDLocation.visibility = View.GONE
                 }
 
                 binding.tvPDName.text = user.name
@@ -109,7 +114,7 @@ class PostDetailFragment : BaseFragment<FragmentPostDetailBinding>() {
                 initRv(post)
 
                 if (post.imageList?.size == 1) {
-                    binding.idcPD.visibility = View.INVISIBLE
+                    binding.idcPD.visibility = View.GONE
                 } else {
                     binding.idcPD.visibility = View.VISIBLE
                 }

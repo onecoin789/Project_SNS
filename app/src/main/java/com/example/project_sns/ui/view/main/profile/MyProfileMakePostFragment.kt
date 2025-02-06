@@ -12,8 +12,10 @@ import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import com.example.project_sns.R
 import com.example.project_sns.databinding.FragmentMyProfileMakePostBinding
+import com.example.project_sns.ui.BaseFragment
 import com.example.project_sns.ui.CurrentUser
 import com.example.project_sns.ui.mapper.toViewType
 import com.example.project_sns.ui.util.dateFormat
@@ -31,12 +33,10 @@ import java.time.LocalDateTime
 import java.util.UUID
 
 @AndroidEntryPoint
-class MyProfileMakePostFragment : Fragment() {
+class MyProfileMakePostFragment : BaseFragment<FragmentMyProfileMakePostBinding>() {
 
-    private var _binding: FragmentMyProfileMakePostBinding? = null
-    private val binding get() = _binding!!
 
-    private var imageList: ArrayList<ImageDataModel>? = arrayListOf()
+    private var imageList: ArrayList<ImageDataModel> = arrayListOf()
 
     private var placeName: String? = null
     private var placeUrl: String? = null
@@ -46,14 +46,11 @@ class MyProfileMakePostFragment : Fragment() {
 
     private val mainSharedViewModel: MainSharedViewModel by viewModels()
 
-
-    override fun onCreateView(
+    override fun getFragmentBinding(
         inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        _binding = FragmentMyProfileMakePostBinding.inflate(inflater, container, false)
-        return binding.root
+        container: ViewGroup?
+    ): FragmentMyProfileMakePostBinding {
+        return FragmentMyProfileMakePostBinding.inflate(inflater, container, false)
     }
 
 
@@ -62,6 +59,7 @@ class MyProfileMakePostFragment : Fragment() {
 
         initView()
         getMapData()
+        collectFlow()
     }
 
     private fun initView() {
@@ -70,7 +68,6 @@ class MyProfileMakePostFragment : Fragment() {
         }
 
         binding.btnMakeConfirm.setOnClickListener {
-            collectFlow()
             initData()
         }
 
@@ -89,35 +86,63 @@ class MyProfileMakePostFragment : Fragment() {
 
     private fun initViewPager() {
         val imageAdapter = PostRadiusImageAdapter()
-        val listViewType = imageList?.map { it.toViewType("video") }
+        val listViewType = imageList.map { it.toViewType("video") }
         imageAdapter.submitList(listViewType)
         binding.vpMakeImageList.adapter = imageAdapter
 
-        if (imageList != null) {
+        if (imageList.isNotEmpty()) {
             binding.vpMakeImageList.visibility = View.VISIBLE
             binding.ivMakePlusPhoto.visibility = View.VISIBLE
             binding.ivMakePhoto.visibility = View.INVISIBLE
+
+            binding.tvMakePhotoNumber.visibility = View.VISIBLE
+            binding.tvMakePhotoSlash.visibility = View.VISIBLE
+            binding.tvMakePhotoCurrentNumber.visibility = View.VISIBLE
+            binding.tvMakePhotoNumber.text = imageList.size.toString()
+            binding.vpMakeImageList.registerOnPageChangeCallback(object : OnPageChangeCallback() {
+                override fun onPageSelected(position: Int) {
+                    super.onPageSelected(position)
+                    val number = position + 1
+                    binding.tvMakePhotoCurrentNumber.text = number.toString()
+                }
+            })
         } else {
             binding.vpMakeImageList.visibility = View.GONE
             binding.ivMakePhoto.visibility = View.GONE
+
+            binding.tvMakePhotoNumber.visibility = View.GONE
+            binding.tvMakePhotoSlash.visibility = View.GONE
+            binding.tvMakePhotoCurrentNumber.visibility = View.GONE
         }
     }
 
     private fun getPhoto() {
-        val selectedList = imageList?.map { it.imageUri.toUri() }
+        val selectedList = imageList.map { it.imageUri.toUri() }
         TedImagePicker.with(requireContext())
             .max(10, "이미지는 최대 10장까지 첨부할 수 있습니다")
             .imageAndVideo()
             .selectedUri(selectedList)
             .startMultiImage { uri ->
                 val getUriList = uri.map { it.toString() }
-                imageList?.clear()
+                imageList.clear()
                 for (i in 0 until getUriList.count()) {
                     val imageToUri = getUriList[i].toUri()
                     if (imageToUri.pathSegments.contains("video")) {
-                        imageList?.add(ImageDataModel(imageToUri.toString(), imageToUri.toString(), "video"))
+                        imageList.add(
+                            ImageDataModel(
+                                imageToUri.toString(),
+                                imageToUri.toString(),
+                                "video"
+                            )
+                        )
                     } else {
-                        imageList?.add(ImageDataModel(imageToUri.toString(), imageToUri.toString(),"image"))
+                        imageList.add(
+                            ImageDataModel(
+                                imageToUri.toString(),
+                                imageToUri.toString(),
+                                "image"
+                            )
+                        )
                     }
                 }
                 initViewPager()
@@ -157,9 +182,10 @@ class MyProfileMakePostFragment : Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             mainSharedViewModel.postUpLoadResult.collect {
+                Log.d("PostResult", "$it")
                 if (it == true) {
                     Toast.makeText(requireActivity(), "게시물을 생성 완료.", Toast.LENGTH_SHORT).show()
-                    findNavController().popBackStack()
+                    backButton()
                 } else if (it == false) {
                     Toast.makeText(requireActivity(), "게시물을 생성하지 못했습니다.", Toast.LENGTH_SHORT)
                         .show()
@@ -182,24 +208,24 @@ class MyProfileMakePostFragment : Fragment() {
             postId = UUID.randomUUID().toString(),
             imageList = imageList,
             postText = postText,
-            mapData = MapDataModel(placeName, placeUrl, addressName, lat?.toDouble(), lng?.toDouble()),
+            mapData = MapDataModel(
+                placeName,
+                placeUrl,
+                addressName,
+                lat?.toDouble(),
+                lng?.toDouble()
+            ),
             createdAt = time,
             editedAt = null,
             likePost = likeList
         )
 
-        viewLifecycleOwner.lifecycleScope.launch {
-            if (imageList != null) {
-                mainSharedViewModel.uploadPostData(data)
-            } else {
-                Toast.makeText(requireActivity(), "사진 선택 필요", Toast.LENGTH_SHORT).show()
-            }
+        if (imageList.isEmpty()) {
+            Toast.makeText(requireActivity(), "사진 선택 필요", Toast.LENGTH_SHORT).show()
+        } else if (postText.isEmpty()) {
+            Toast.makeText(requireActivity(), "글 작성 필요", Toast.LENGTH_SHORT).show()
+        } else {
+            mainSharedViewModel.uploadPostData(data)
         }
     }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
-
 }
