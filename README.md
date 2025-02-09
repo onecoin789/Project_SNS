@@ -1,1 +1,2 @@
-## <center>Project_SNS</center>
+## <div align="center">Project_SNS</div>
+
