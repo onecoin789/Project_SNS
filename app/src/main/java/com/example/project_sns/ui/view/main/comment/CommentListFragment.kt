@@ -1,16 +1,13 @@
 package com.example.project_sns.ui.view.main.comment
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.project_sns.databinding.FragmentCommentListBinding
@@ -20,6 +17,8 @@ import com.example.project_sns.ui.CurrentUser
 import com.example.project_sns.ui.model.CommentDataModel
 import com.example.project_sns.ui.model.CommentModel
 import com.example.project_sns.ui.util.dateFormat
+import com.example.project_sns.ui.util.notTouch
+import com.example.project_sns.ui.util.touch
 import com.example.project_sns.ui.view.main.MainSharedViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -58,6 +57,7 @@ class CommentListFragment : BaseFragment<FragmentCommentListBinding>() {
         initRv()
         checkCommentData()
         collectCommentChangeResult()
+
 
     }
 
@@ -143,7 +143,6 @@ class CommentListFragment : BaseFragment<FragmentCommentListBinding>() {
             override fun onClickReCommentList(item: CommentModel) {
                 mainSharedViewModel.getSelectCommentData(item)
                 mainSharedViewModel.nextPage()
-                Log.d("test_comment", "${mainSharedViewModel.selectedCommentData.value}")
             }
         })
         val linearLayoutManager = LinearLayoutManager(requireContext())
@@ -185,14 +184,14 @@ class CommentListFragment : BaseFragment<FragmentCommentListBinding>() {
 //        mRecyclerView.post(runnable)
 
         CoroutineScope(Dispatchers.Main).launch {
-            binding.rvComment.isNestedScrollingEnabled = false
+            notTouch(activity)
             val runnableMore = kotlinx.coroutines.Runnable {
 //                commentList.removeAt(commentList.size - 1)
 //                listAdapter.notifyItemRemoved(commentList.size)
                 mainSharedViewModel.commentLastVisibleItem.value = lastVisible
             }
             delay(300)
-            binding.rvComment.isNestedScrollingEnabled = true
+            touch(activity)
             runnableMore.run()
         }
     }
@@ -227,15 +226,13 @@ class CommentListFragment : BaseFragment<FragmentCommentListBinding>() {
 
     private fun collectCommentFlow() {
         viewLifecycleOwner.lifecycleScope.launch {
-            repeatOnLifecycle(state = Lifecycle.State.STARTED) {
-                mainSharedViewModel.commentData.collect {
-                    if (it == true) {
-                        binding.etComment.text.clear()
-                        getCommentData()
-                    } else if (it == false) {
-                        Toast.makeText(requireContext(), "잠시 후 다시 시도해주세요", Toast.LENGTH_SHORT)
-                            .show()
-                    }
+            mainSharedViewModel.commentData.collect {
+                if (it == true) {
+                    binding.etComment.text.clear()
+                    getCommentData()
+                } else if (it == false) {
+                    Toast.makeText(requireContext(), "잠시 후 다시 시도해주세요", Toast.LENGTH_SHORT)
+                        .show()
                 }
             }
         }
@@ -243,17 +240,15 @@ class CommentListFragment : BaseFragment<FragmentCommentListBinding>() {
 
     private fun collectEditCommentFlow() {
         viewLifecycleOwner.lifecycleScope.launch {
-            repeatOnLifecycle(state = Lifecycle.State.STARTED) {
-                mainSharedViewModel.commentData.collect {
-                    if (it == true) {
-                        binding.etComment.text.clear()
-                        getCommentData()
-                        Toast.makeText(requireContext(), "댓글이 수정되었습니다.", Toast.LENGTH_SHORT)
-                            .show()
-                    } else if (it == false) {
-                        Toast.makeText(requireContext(), "잠시 후 다시 시도해주세요", Toast.LENGTH_SHORT)
-                            .show()
-                    }
+            mainSharedViewModel.commentData.collect {
+                if (it == true) {
+                    binding.etComment.text.clear()
+                    getCommentData()
+                    Toast.makeText(requireContext(), "댓글이 수정되었습니다.", Toast.LENGTH_SHORT)
+                        .show()
+                } else if (it == false) {
+                    Toast.makeText(requireContext(), "잠시 후 다시 시도해주세요", Toast.LENGTH_SHORT)
+                        .show()
                 }
             }
         }

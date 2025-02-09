@@ -112,8 +112,8 @@ class MainSharedViewModel @Inject constructor(
     private val _commentData = MutableStateFlow<Boolean?>(null)
     val commentData: StateFlow<Boolean?> get() = _commentData
 
-    private val _reCommentData = MutableStateFlow<Boolean?>(null)
-    val reCommentData: StateFlow<Boolean?> get() = _reCommentData
+//    private val _reCommentData = MutableStateFlow<Boolean?>(null)
+//    val reCommentData: StateFlow<Boolean?> get() = _reCommentData
 
     private val _currentPage = MutableLiveData<Int>(0)
     val currentPage: LiveData<Int> get() = _currentPage
@@ -248,19 +248,26 @@ class MainSharedViewModel @Inject constructor(
         }
     }
 
+    fun clearSelectCommentData() {
+        viewModelScope.launch {
+            _selectedCommentData.value = null
+        }
+    }
+
 
     // <!-- reCommentLine -->
 
 
-    fun uploadReComment(reCommentData: ReCommentDataModel?) {
-        viewModelScope.launch {
-            if (reCommentData != null) {
-                uploadReCommentUseCase(reCommentData.toEntity()).collect { result ->
-                    _reCommentData.value = result
-                }
-            }
-        }
-    }
+//    fun uploadReComment(reCommentData: ReCommentDataModel?) {
+//        viewModelScope.launch {
+//            if (reCommentData != null) {
+//                uploadReCommentUseCase(reCommentData.toEntity()).collect { result ->
+//                    _reCommentData.value = result
+//                }
+//            }
+//        }
+//    }
+
 
     fun getSelectReCommentData(data: ReCommentDataModel?) {
         viewModelScope.launch {
