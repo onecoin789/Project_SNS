@@ -370,6 +370,7 @@ class DataRepositoryImpl @Inject constructor(
                                 }
                             }
                     }
+
                     else -> {
                         Log.d("test_comment_impl4", "$lastVisibleItem, ${commentList.size}")
                     }
@@ -406,6 +407,26 @@ class DataRepositoryImpl @Inject constructor(
             Result.success("success")
         } catch (e: Exception) {
             Result.failure(Exception("exception: $e"))
+        }
+    }
+
+    override suspend fun checkReCommentChange(commentId: String): Flow<Boolean> {
+        return callbackFlow {
+            db.collection(COLLECTION_RE_COMMENT).whereEqualTo("commentId", commentId)
+                .addSnapshotListener { snapshot, e ->
+                    if (e != null) {
+                        trySend(false)
+                    }
+                    if (snapshot != null) {
+                        val documents = snapshot.documents
+                        if (documents.size != 0) {
+                            trySend(true)
+                        } else {
+                            trySend(false)
+                        }
+                    }
+                }
+            awaitClose()
         }
     }
 
@@ -517,7 +538,8 @@ class DataRepositoryImpl @Inject constructor(
                     }
 
                     else -> {
-                        trySend(emptyList())
+                        reCommentList.clear()
+                        Log.d(TAG, "else -> $lastVisibleItem")
                     }
                 }
             }
@@ -687,6 +709,12 @@ class DataRepositoryImpl @Inject constructor(
     ): Flow<Boolean> {
         return flow {
             try {
+                val chatRoomDB = db.collection(COLLECTION_CHAT).document(chatRoomId)
+                val messageDB = chatRoomDB.collection(COLLECTION_CHAT_MESSAGE)
+                    .document(messageData.messageId)
+                val imageList: MutableList<ImageDataEntity> = arrayListOf()
+
+
                 if (messageData.message != null) {
                     val participant = arrayListOf<String>()
                     participant.add(senderUid)
@@ -706,7 +734,6 @@ class DataRepositoryImpl @Inject constructor(
                         "chatRoomSession" to chatRoomSession,
                         "lastMessageData" to lastMessageData
                     )
-                    val chatRoomDB = db.collection(COLLECTION_CHAT).document(chatRoomId)
 
                     chatRoomDB.set(chatRoomData).addOnSuccessListener {
                         chatRoomDB.collection(COLLECTION_CHAT_MESSAGE)
@@ -730,6 +757,86 @@ class DataRepositoryImpl @Inject constructor(
                             chatRoomId = chatRoomId,
                             uid = messageData.uid
                         )
+                    }
+                } else if (messageData.imageList != null) {
+                    val participant = arrayListOf<String>()
+                    participant.add(senderUid)
+                    participant.add(recipientUid)
+                    val chatRoomSession = arrayListOf(
+                        mapOf(senderUid to true),
+                        mapOf(recipientUid to false)
+                    )
+                    val lastMessageData = hashMapOf(
+                        "lastMessage" to "이미지 파일",
+                        "lastSendAt" to messageData.sendAt,
+                        "lastMessageSender" to senderUid
+                    )
+                    val chatRoomData = hashMapOf(
+                        "chatRoomId" to chatRoomId,
+                        "participant" to participant,
+                        "chatRoomSession" to chatRoomSession,
+                        "lastMessageData" to lastMessageData
+                    )
+                    val message = hashMapOf(
+                        "uid" to messageData.uid,
+                        "chatRoomId" to messageData.chatRoomId,
+                        "messageId" to messageData.messageId,
+                        "message" to null,
+                        "imageList" to ImageDataEntity("", "", "loading"),
+                        "sendAt" to messageData.sendAt,
+                        "read" to messageData.read,
+                        "type" to messageData.type
+                    )
+                    chatRoomDB.set(chatRoomData).addOnSuccessListener {
+                        messageDB.set(message)
+                    }.addOnSuccessListener {
+                        for (i in 0 until messageData.imageList.count()) {
+                            val imageToUri = messageData.imageList[i]
+                            val storageRef = storage.getReference("chat")
+                                .child("${chatRoomId}/${messageData.sendAt}/${i}")
+                            if (imageToUri.pathSegments?.contains("video") == true) {
+                                storageRef.putFile(imageToUri).addOnSuccessListener {
+                                    storageRef.downloadUrl.addOnSuccessListener { downloadUrl ->
+                                        imageList.add(
+                                            ImageDataEntity(
+                                                downloadUrl.toString(),
+                                                imageToUri.toString(),
+                                                "video"
+                                            )
+                                        )
+                                        val imageData =
+                                            mapOf("imageList" to imageList.sortedBy { it.downloadUrl })
+                                        messageDB.update(imageData)
+                                    }
+                                }
+                            } else {
+                                storageRef.putFile(imageToUri).addOnSuccessListener {
+                                    storageRef.downloadUrl.addOnSuccessListener { downloadUrl ->
+                                        imageList.add(
+                                            ImageDataEntity(
+                                                downloadUrl.toString(),
+                                                imageToUri.toString(),
+                                                "image"
+                                            )
+                                        )
+                                        val imageData =
+                                            mapOf("imageList" to imageList.sortedBy { it.downloadUrl })
+                                        messageDB.update(imageData)
+                                    }
+                                }
+                            }
+                        }
+                    }.addOnSuccessListener {
+                        if (messageData.read.contains(mapOf(recipientUid to false))) {
+                            FirebaseMessagingService().sendNotifications(
+                                accessToken = accessToken,
+                                token = token,
+                                title = sendUser,
+                                content = "이미지 파일이 도착했습니다.",
+                                chatRoomId = chatRoomId,
+                                uid = messageData.uid
+                            )
+                        }
                     }
                 }
                 emit(true)
@@ -769,7 +876,10 @@ class DataRepositoryImpl @Inject constructor(
                                 )
                                 chatRoomDB.update("lastMessageData", lastMessageData)
                                 chatRoomDB.update("unReadMessage", unReadMessage?.size())
-                                chatRoomDB.update("participant", listOf(lastMessageSender, recipientUid))
+                                chatRoomDB.update(
+                                    "participant",
+                                    listOf(lastMessageSender, recipientUid)
+                                )
                             }
                     }.addOnSuccessListener {
                         if (messageData.read.contains(mapOf(recipientUid to false))) {
@@ -795,7 +905,6 @@ class DataRepositoryImpl @Inject constructor(
                         "read" to messageData.read,
                         "type" to messageData.type
                     )
-                    messageDB.set(message).addOnSuccessListener {
                         for (i in 0 until messageData.imageList.count()) {
                             val imageToUri = messageData.imageList[i]
                             val storageRef = storage.getReference("chat")
@@ -832,7 +941,7 @@ class DataRepositoryImpl @Inject constructor(
                                 }
                             }
                         }
-                    }.addOnSuccessListener {
+                    messageDB.set(message).addOnSuccessListener {
                         chatRoomDB.update("lastMessage", "이미지 파일")
                         chatRoomDB.update("lastSendAt", messageData.sendAt)
                     }.addOnSuccessListener {

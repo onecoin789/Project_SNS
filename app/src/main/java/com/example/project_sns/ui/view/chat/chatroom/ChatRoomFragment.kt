@@ -152,16 +152,16 @@ class ChatRoomFragment : BaseFragment<FragmentChatRoomBinding>() {
 
         if (FcmUtil.clickState == true) {
             binding.ivChatRoomBack.setOnClickListener {
-                chatSharedViewModel.clearChatRoomId()
-                chatSharedViewModel.clearCheckData()
                 FcmUtil.clickState = false
                 chatBackToMain()
+                chatSharedViewModel.clearChatRoomId()
+                chatSharedViewModel.clearCheckData()
             }
         } else {
             binding.ivChatRoomBack.setOnClickListener {
+                chatBackButton()
                 chatSharedViewModel.clearChatRoomId()
                 chatSharedViewModel.clearCheckData()
-                chatBackButton()
             }
         }
     }
