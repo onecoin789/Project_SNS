@@ -1,10 +1,7 @@
 # <div align="center">Cube SNS</div>
 
----
-
 **Cube SNS**는 유저들이 사진을 통해 일상 공유를 하고 서로 direct message를 통해 연락을 할 수 있도록 Firebase를 기반으로 만든 커뮤니티 앱 입니다.
 
----
 >### 목차
 > 1. 앱 기능 소개
 > 2. 기술 스택
