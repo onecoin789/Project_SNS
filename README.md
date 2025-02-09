@@ -1,2 +1,2 @@
-## <div align="center">Project_SNS</div>
+# <div align="center">Project_SNS</div>
 
