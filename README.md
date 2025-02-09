@@ -1,3 +1,3 @@
-<div align="center">
-  #Project_SNS
-</div>
+##<center>
+  Project_SNS
+</center>
