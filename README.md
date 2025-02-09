@@ -1,3 +1,1 @@
-##<center>
-  Project_SNS
-</center>
+## <center>Project_SNS</center>
