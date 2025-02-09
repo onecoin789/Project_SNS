@@ -85,10 +85,7 @@
 
 
 
-## 기술 스택
-
-- kotlin 언어를 사용하여 Coroutine + Flow를 활용하여 비동기 처리 작업을 진행하였습니다.
- 
+## 기술 스택 
 
 - Jetpack
   - ViewModel
@@ -96,33 +93,40 @@
   - Hilt
   - ViewPager2
   - SwipeRefreshLayout
-  
 
+  
 - Architecture
-  - MVVM Architecture
+  - Clean Architecture
   - Domain Layer
   - Repository Pattern
-  
 
+  
 - Firebase
   - Firebase Firestore
   - Firebase Authentication
   - Firebase Functions
   - Firebase Cloud Messaging
 
-- Retrofit2 및 OkHttp3
-- Glide
-- ExoPlayer
-- Kakao Maps Api
-- Naver Maps Api
-- OAuth2
 
+- Library
+  - Retrofit2 및 OkHttp3
+  - Glide
+  - ExoPlayer
+  - Naver Maps Api
+  - Kakao Maps Api
+  - kakao login api
+  - OAuth2
+
+- 비동기
+  - Async
+  - Flow
+  - Coroutine
 
 
 
 ## Architecture
 
-**Cube SNS**는 MVVM 아키텍처를 기반으로 하고 있습니다.
+**Cube SNS**는 Clean Architecture를 기반으로 하고 있습니다.
 
 사진 첨부
 
