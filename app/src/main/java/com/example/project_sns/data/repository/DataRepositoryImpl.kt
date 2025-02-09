@@ -37,6 +37,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flow
@@ -905,45 +906,50 @@ class DataRepositoryImpl @Inject constructor(
                         "read" to messageData.read,
                         "type" to messageData.type
                     )
-                        for (i in 0 until messageData.imageList.count()) {
-                            val imageToUri = messageData.imageList[i]
-                            val storageRef = storage.getReference("chat")
-                                .child("${chatRoomId}/${messageData.sendAt}/${i}")
-                            if (imageToUri.pathSegments?.contains("video") == true) {
-                                storageRef.putFile(imageToUri).addOnSuccessListener {
-                                    storageRef.downloadUrl.addOnSuccessListener { downloadUrl ->
-                                        imageList.add(
-                                            ImageDataEntity(
-                                                downloadUrl.toString(),
-                                                imageToUri.toString(),
-                                                "video"
-                                            )
+                    for (i in 0 until messageData.imageList.count()) {
+                        val imageToUri = messageData.imageList[i]
+                        val storageRef = storage.getReference("chat")
+                            .child("${chatRoomId}/${messageData.sendAt}/${i}")
+                        if (imageToUri.pathSegments?.contains("video") == true) {
+                            storageRef.putFile(imageToUri).addOnSuccessListener {
+                                storageRef.downloadUrl.addOnSuccessListener { downloadUrl ->
+                                    imageList.add(
+                                        ImageDataEntity(
+                                            downloadUrl.toString(),
+                                            imageToUri.toString(),
+                                            "video"
                                         )
-                                        val imageData =
-                                            mapOf("imageList" to imageList.sortedBy { it.downloadUrl })
-                                        messageDB.update(imageData)
-                                    }
+                                    )
+                                    val imageData =
+                                        mapOf("imageList" to imageList.sortedBy { it.downloadUrl })
+                                    messageDB.update(imageData)
                                 }
-                            } else {
-                                storageRef.putFile(imageToUri).addOnSuccessListener {
-                                    storageRef.downloadUrl.addOnSuccessListener { downloadUrl ->
-                                        imageList.add(
-                                            ImageDataEntity(
-                                                downloadUrl.toString(),
-                                                imageToUri.toString(),
-                                                "image"
-                                            )
+                            }
+                        } else {
+                            storageRef.putFile(imageToUri).addOnSuccessListener {
+                                storageRef.downloadUrl.addOnSuccessListener { downloadUrl ->
+                                    imageList.add(
+                                        ImageDataEntity(
+                                            downloadUrl.toString(),
+                                            imageToUri.toString(),
+                                            "image"
                                         )
-                                        val imageData =
-                                            mapOf("imageList" to imageList.sortedBy { it.downloadUrl })
-                                        messageDB.update(imageData)
-                                    }
+                                    )
+                                    val imageData =
+                                        mapOf("imageList" to imageList.sortedBy { it.downloadUrl })
+                                    messageDB.update(imageData)
                                 }
                             }
                         }
+                    }
+                    delay(1500)
                     messageDB.set(message).addOnSuccessListener {
-                        chatRoomDB.update("lastMessage", "이미지 파일")
-                        chatRoomDB.update("lastSendAt", messageData.sendAt)
+                        val lastMessageData = hashMapOf(
+                            "lastMessage" to "이미지 파일",
+                            "lastSendAt" to messageData.sendAt,
+                            "lastMessageSender" to lastMessageSender
+                        )
+                        chatRoomDB.update("lastMessageData", lastMessageData)
                     }.addOnSuccessListener {
                         if (messageData.read.contains(mapOf(recipientUid to false))) {
                             FirebaseMessagingService().sendNotifications(
