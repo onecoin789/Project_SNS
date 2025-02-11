@@ -1,6 +1,11 @@
-# <div align="center">Cube SNS</div>
+# <div align="center">![Image](https://github.com/user-attachments/assets/e3a01b87-5b8f-452e-a0d2-1b5ce68784f0)<br/>Cube SNS</div>
 
-**Cube SNS**는 유저들이 사진을 통해 일상 공유를 하고 서로 direct message를 통해 연락을 할 수 있도록 Firebase를 기반으로 만든 커뮤니티 앱 입니다.
+test image
+<p align="center">
+ <img src="https://github.com/user-attachments/assets/5f66c905-70ac-4e12-a89d-2ad39819917d">
+</p>
+
+- **Cube SNS**는 유저들이 사진을 통해 일상 공유를 하고 서로 direct message를 통해 연락을 할 수 있도록 Firebase를 기반으로 만든 커뮤니티 앱 입니다.
 
 
 ㅤ
