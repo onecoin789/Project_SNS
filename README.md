@@ -34,7 +34,7 @@
  
 ![Image](https://github.com/user-attachments/assets/98eeb31d-8de6-48b5-8924-58821800308a)
  
--  이메일을 통해서 계정을 생성할 수 있습니다.
+-  이메일을 통해서 계정을 생성할 수 있습니다.<br/>프로필 사진과 이름도 설정할 수 있습니다.
 
 
 ㅤ
@@ -73,7 +73,7 @@
 
 ![Image](https://github.com/user-attachments/assets/e93cc2da-35a5-4828-820b-b2834f1402d9)
 
-- 게시글을 수정할 수 있습니다.<br />수정하면 오른쪽 상단에 수정된 게시글이라고 나타납니다.
+- 게시글을 수정할 수 있습니다.<br />수정하시면 오른쪽 상단에 수정된 게시글(수정됨) 이라고 나타납니다.
 
 
 ㅤ
@@ -99,7 +99,7 @@
 
 ![Image](https://github.com/user-attachments/assets/46156cca-ffe3-426a-952d-4b7cc2ebd080)
 
-- 게시글에 댓글을 남기고 대댓글을 작성할 수 있습니다.
+- 게시글에 댓글을 남기고 대댓글을 작성할 수 있습니다.<br/>댓글과 대댓글을 삭제하거나 수정도 가능합니다.
 
 
 ㅤ
@@ -138,7 +138,7 @@
 
 ![Image](https://github.com/user-attachments/assets/c265891a-ff4a-4132-b7f4-0ad8af2a8b34)
 
-- 친구를 요청하고 알림에서 수락을 할 수 있습니다.
+- 친구를 요청하고 알림에서 친구 요청을 수락 할 수 있습니다.
 
 
 ㅤ
