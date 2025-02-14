@@ -1,4 +1,4 @@
-package com.example.project_sns.data.di
+package com.example.project_sns.di
 
 import android.content.Context
 import androidx.datastore.core.DataStore

@@ -42,42 +42,43 @@
         app:layout_constraintStart_toEndOf="@id/ivFriendBack"
         app:layout_constraintTop_toTopOf="@id/ivFriendBack" />
 
-    <EditText
-        android:id="@+id/etFriendSearch"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginEnd="10dp"
-        android:background="@drawable/item_edittext"
-        android:hint="@string/friend_text"
-        android:paddingVertical="15dp"
-        android:paddingStart="20dp"
-        android:paddingEnd="0dp"
-        android:textColor="@color/text"
-        android:textColorHint="@color/hint"
-        android:textSize="15sp"
-        android:autofillHints="no"
-        android:inputType="text"
-        app:layout_constraintTop_toBottomOf="@id/tvFriendTitle" />
+<!--    <EditText-->
+<!--        android:id="@+id/etFriendSearch"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginStart="10dp"-->
+<!--        android:layout_marginTop="20dp"-->
+<!--        android:layout_marginEnd="10dp"-->
+<!--        android:background="@drawable/item_edittext"-->
+<!--        android:hint="@string/friend_text"-->
+<!--        android:paddingVertical="15dp"-->
+<!--        android:paddingStart="20dp"-->
+<!--        android:paddingEnd="0dp"-->
+<!--        android:textColor="@color/text"-->
+<!--        android:textColorHint="@color/hint"-->
+<!--        android:textSize="15sp"-->
+<!--        android:autofillHints="no"-->
+<!--        android:inputType="text"-->
+<!--        app:layout_constraintTop_toBottomOf="@id/tvFriendTitle" />-->
 
-    <ImageView
-        android:id="@+id/ivFriendClear"
-        android:layout_width="27dp"
-        android:layout_height="27dp"
-        android:layout_marginEnd="15dp"
-        android:background="@drawable/ic_x_circle"
-        app:layout_constraintBottom_toBottomOf="@+id/etFriendSearch"
-        app:layout_constraintEnd_toEndOf="@+id/etFriendSearch"
-        app:layout_constraintTop_toTopOf="@+id/etFriendSearch"
-        android:contentDescription="@string/contentDescription"/>
+<!--    <ImageView-->
+<!--        android:id="@+id/ivFriendClear"-->
+<!--        android:layout_width="27dp"-->
+<!--        android:layout_height="27dp"-->
+<!--        android:layout_marginEnd="15dp"-->
+<!--        android:background="@drawable/ic_x_circle"-->
+<!--        app:layout_constraintBottom_toBottomOf="@+id/etFriendSearch"-->
+<!--        app:layout_constraintEnd_toEndOf="@+id/etFriendSearch"-->
+<!--        app:layout_constraintTop_toTopOf="@+id/etFriendSearch"-->
+<!--        android:contentDescription="@string/contentDescription"/>-->
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:padding="10dp"
+        android:layout_marginTop="20dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/etFriendSearch">
+        app:layout_constraintTop_toBottomOf="@id/tvFriendTitle">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvFriend"

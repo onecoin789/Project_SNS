@@ -106,8 +106,8 @@ class MainSharedViewModel @Inject constructor(
     private val _selectedReCommentData = MutableLiveData<ReCommentDataModel?>()
     val selectedReCommentData: LiveData<ReCommentDataModel?> get() = _selectedReCommentData
 
-    private val _postEditResult = MutableStateFlow<Boolean?>(null)
-    val postEditResult: StateFlow<Boolean?> get() = _postEditResult
+//    private val _postEditResult = MutableStateFlow<Boolean?>(null)
+//    val postEditResult: StateFlow<Boolean?> get() = _postEditResult
 
     private val _commentData = MutableStateFlow<Boolean?>(null)
     val commentData: StateFlow<Boolean?> get() = _commentData
@@ -413,7 +413,7 @@ class MainSharedViewModel @Inject constructor(
 
     fun searchMapList(query: String) {
         viewModelScope.launch {
-            searchKakaoMapUseCase(query = query, size = 10, page = 5).collect { data ->
+            searchKakaoMapUseCase(query = query, size = 10, page = 10).collect { data ->
                 if (data != null) {
                     _mapList.value = data.documents.toKakaoListEntity()
                 }
@@ -437,13 +437,13 @@ class MainSharedViewModel @Inject constructor(
         }
     }
 
-    fun editPost(postData: PostDataModel?) {
-        viewModelScope.launch {
-            editPostUseCase(postData?.toEntity()).collect { result ->
-                _postEditResult.value = result
-            }
-        }
-    }
+//    fun editPost(postData: PostDataModel?) {
+//        viewModelScope.launch {
+//            editPostUseCase(postData?.toEntity()).collect { result ->
+//                _postEditResult.value = result
+//            }
+//        }
+//    }
 
 
 }

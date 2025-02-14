@@ -4,10 +4,12 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.project_sns.domain.usecase.EditPostUseCase
 import com.example.project_sns.domain.usecase.GetAllPostUseCase
 import com.example.project_sns.domain.usecase.GetCurrentUserDataUseCase
 import com.example.project_sns.domain.usecase.GetPagingPostUseCase
 import com.example.project_sns.ui.CurrentUser
+import com.example.project_sns.ui.mapper.toEntity
 import com.example.project_sns.ui.mapper.toModel
 import com.example.project_sns.ui.mapper.toPostDataListModel
 import com.example.project_sns.ui.mapper.toPostListModel
@@ -25,6 +27,7 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
     private val getCurrentUserDataUseCase: GetCurrentUserDataUseCase,
     private val getAllPostUseCase: GetAllPostUseCase,
+    private val editPostUseCase: EditPostUseCase,
     private val getPagingPostUseCase: GetPagingPostUseCase
 ) : ViewModel() {
 
@@ -44,6 +47,12 @@ class MainViewModel @Inject constructor(
     val postLastVisibleItem: StateFlow<Int> get() = _postLastVisibleItem
 
 
+    //edit post
+
+    private val _postEditResult = MutableStateFlow<Boolean?>(null)
+    val postEditResult: StateFlow<Boolean?> get() = _postEditResult
+
+
     fun getPagingData(lastVisibleItem: Flow<Int>) {
         viewModelScope.launch {
             getPagingPostUseCase(lastVisibleItem).collect { data ->
@@ -61,6 +70,14 @@ class MainViewModel @Inject constructor(
     fun resetPagingData() {
         viewModelScope.launch {
             _pagingData.value = emptyList()
+        }
+    }
+
+    fun editPost(postData: PostDataModel?) {
+        viewModelScope.launch {
+            editPostUseCase(postData?.toEntity()).collect { result ->
+                _postEditResult.value = result
+            }
         }
     }
 

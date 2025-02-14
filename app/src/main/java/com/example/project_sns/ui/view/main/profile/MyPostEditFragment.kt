@@ -9,6 +9,7 @@ import android.widget.Toast
 import androidx.core.net.toUri
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResultListener
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
@@ -23,6 +24,7 @@ import com.example.project_sns.ui.model.ImageDataModel
 import com.example.project_sns.ui.model.MapDataModel
 import com.example.project_sns.ui.model.PostDataModel
 import com.example.project_sns.ui.util.postDateFormat
+import com.example.project_sns.ui.view.main.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import gun0912.tedimagepicker.builder.TedImagePicker
 import kotlinx.coroutines.launch
@@ -38,6 +40,8 @@ class MyPostEditFragment : BaseFragment<FragmentMyProfileMakePostBinding>() {
     private var imageList: ArrayList<ImageDataModel> = arrayListOf()
 
     private var getMapData: MapDataModel? = null
+
+    private val mainViewModel: MainViewModel by viewModels()
 
     private val mainSharedViewModel: MainSharedViewModel by activityViewModels()
 
@@ -114,7 +118,7 @@ class MyPostEditFragment : BaseFragment<FragmentMyProfileMakePostBinding>() {
 
     private fun collectFlow() {
         viewLifecycleOwner.lifecycleScope.launch {
-            mainSharedViewModel.postEditResult.collect {
+            mainViewModel.postEditResult.collect {
                 if (it == true) {
                     Toast.makeText(requireContext(), "게시물 수정 완료", Toast.LENGTH_SHORT).show()
                     backToMain()
@@ -230,7 +234,7 @@ class MyPostEditFragment : BaseFragment<FragmentMyProfileMakePostBinding>() {
             } else if (postText.isEmpty()) {
                 Toast.makeText(requireActivity(), "글 작성 필요", Toast.LENGTH_SHORT).show()
             } else {
-                mainSharedViewModel.editPost(data)
+                mainViewModel.editPost(data)
             }
         }
     }

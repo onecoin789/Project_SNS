@@ -24,6 +24,7 @@ import com.example.project_sns.ui.view.main.MainSharedViewModel
 import com.example.project_sns.ui.model.CommentModel
 import com.example.project_sns.ui.model.ReCommentDataModel
 import com.example.project_sns.ui.model.ReCommentModel
+import com.example.project_sns.ui.util.hideKeyboard
 import com.example.project_sns.ui.util.notTouch
 import com.example.project_sns.ui.util.touch
 import dagger.hilt.android.AndroidEntryPoint
@@ -127,13 +128,13 @@ class ReCommentListFragment : BaseFragment<FragmentReCommentListBinding>() {
                 binding.tvReCommentCommentEmail.text = commentData.userData.email
                 binding.tvReCommentComment.text = commentData.commentData.comment
 
-                if (commentData.userData.uid == CurrentUser.userData?.uid) {
-                    binding.tvReCommentCommentEdit.visibility = View.INVISIBLE
-                    binding.tvReCommentCommentDelete.visibility = View.INVISIBLE
-                } else {
-                    binding.tvReCommentCommentEdit.visibility = View.INVISIBLE
-                    binding.tvReCommentCommentDelete.visibility = View.INVISIBLE
-                }
+//                if (commentData.userData.uid == CurrentUser.userData?.uid) {
+//                    binding.tvReCommentCommentEdit.visibility = View.INVISIBLE
+//                    binding.tvReCommentCommentDelete.visibility = View.INVISIBLE
+//                } else {
+//                    binding.tvReCommentCommentEdit.visibility = View.INVISIBLE
+//                    binding.tvReCommentCommentDelete.visibility = View.INVISIBLE
+//                }
             }
         }
         binding.ivReCommentBack.setOnClickListener {
@@ -279,6 +280,7 @@ class ReCommentListFragment : BaseFragment<FragmentReCommentListBinding>() {
             if (binding.etReComment.text.isEmpty()) {
                 Toast.makeText(requireContext(), "댓글을 입력해주세요!", Toast.LENGTH_SHORT).show()
             } else {
+                this.hideKeyboard()
                 initReCommentData()
                 collectReCommentFlow()
                 reCommentData = null
@@ -291,6 +293,7 @@ class ReCommentListFragment : BaseFragment<FragmentReCommentListBinding>() {
             if (binding.etReComment.text.isEmpty()) {
                 Toast.makeText(requireContext(), "댓글을 입력해주세요!", Toast.LENGTH_SHORT).show()
             } else {
+                this.hideKeyboard()
                 initEditReCommentData(item)
                 collectEditReCommentFlow()
                 reCommentData = null

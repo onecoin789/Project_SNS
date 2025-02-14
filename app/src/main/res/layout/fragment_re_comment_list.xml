@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/item"
+    android:fitsSystemWindows="true"
     tools:context=".ui.view.main.comment.ReCommentListFragment">
 
     <TextView
@@ -83,7 +84,9 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
         android:background="@drawable/item_list_point"
-        android:padding="10dp"
+        android:paddingTop="10dp"
+        android:paddingHorizontal="10dp"
+        android:paddingBottom="20dp"
         android:visibility="visible"
         app:layout_constraintTop_toBottomOf="@+id/clReCommentTop">
 
@@ -157,7 +160,7 @@
             android:text="@string/item_comment_edit"
             android:textColor="@color/hint"
             android:textSize="14sp"
-            android:visibility="invisible"
+            android:visibility="gone"
             app:layout_constraintStart_toStartOf="@id/tvReCommentComment"
             app:layout_constraintTop_toBottomOf="@id/tvReCommentComment" />
 
@@ -169,7 +172,7 @@
             android:text="@string/item_comment_delete"
             android:textColor="@color/hint"
             android:textSize="14sp"
-            android:visibility="invisible"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="@id/tvReCommentCommentEdit"
             app:layout_constraintStart_toEndOf="@id/tvReCommentCommentEdit"
             app:layout_constraintTop_toTopOf="@id/tvReCommentCommentEdit" />

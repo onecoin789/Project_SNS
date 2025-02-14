@@ -86,10 +86,8 @@ class FriendDetailFragment : BaseFragment<FragmentFriendDetailBinding>() {
                         binding.btnFDEditProfile.visibility = View.VISIBLE
                         binding.btnFDFriendList.visibility = View.VISIBLE
                         binding.btnFDFriendRequest.visibility = View.INVISIBLE
-                        binding.btnFDSendDM.visibility = View.INVISIBLE
                     } else {
                         binding.btnFDFriendRequest.visibility = View.VISIBLE
-                        binding.btnFDSendDM.visibility = View.VISIBLE
                         binding.btnFDEditProfile.visibility = View.INVISIBLE
                         binding.btnFDFriendList.visibility = View.INVISIBLE
                     }
@@ -99,7 +97,6 @@ class FriendDetailFragment : BaseFragment<FragmentFriendDetailBinding>() {
                 binding.btnFDFriendCancel.setOnClickListener {
                     if (currentUserUid != null && receiveUid != null) {
                         mainSharedViewModel.cancelFriendRequest(currentUserUid, receiveUid)
-                        collectCancelFlow()
                     }
                 }
 
@@ -107,7 +104,6 @@ class FriendDetailFragment : BaseFragment<FragmentFriendDetailBinding>() {
                     val requestId = UUID.randomUUID().toString()
                     if (currentUserUid != null && receiveUid != null) {
                         mainSharedViewModel.requestFriend(requestId, currentUserUid, receiveUid)
-                        collectAcceptFlow()
                     }
                 }
                 binding.btnFDFriendDelete.setOnClickListener {
@@ -159,9 +155,9 @@ class FriendDetailFragment : BaseFragment<FragmentFriendDetailBinding>() {
         viewLifecycleOwner.lifecycleScope.launch {
             mainSharedViewModel.cancelFriendRequest.collect { result ->
                 if (result == true) {
-                    Toast.makeText(requireActivity(), "요청 삭제 성공!", Toast.LENGTH_SHORT).show()
+
                 } else if (result == false) {
-                    Toast.makeText(requireActivity(), "요청 삭제 실패", Toast.LENGTH_SHORT).show()
+
                 }
             }
         }
@@ -171,9 +167,9 @@ class FriendDetailFragment : BaseFragment<FragmentFriendDetailBinding>() {
         viewLifecycleOwner.lifecycleScope.launch {
             mainSharedViewModel.requestFriendResult.collect { result ->
                 if (result == true) {
-                    Toast.makeText(requireActivity(), "친구 요청 성공!", Toast.LENGTH_SHORT).show()
+
                 } else if (result == false){
-                    Toast.makeText(requireActivity(), "친구 요청 실패", Toast.LENGTH_SHORT).show()
+
                 }
             }
         }
@@ -183,7 +179,6 @@ class FriendDetailFragment : BaseFragment<FragmentFriendDetailBinding>() {
         viewLifecycleOwner.lifecycleScope.launch {
             mainSharedViewModel.deleteFriendResult.collect { result ->
                 if (result == true) {
-                    Toast.makeText(requireActivity(), "친구 삭제 성공!", Toast.LENGTH_SHORT).show()
                     getFriendList()
                 } else if (result == false){
                     Toast.makeText(requireActivity(), "친구 삭제 실패", Toast.LENGTH_SHORT).show()

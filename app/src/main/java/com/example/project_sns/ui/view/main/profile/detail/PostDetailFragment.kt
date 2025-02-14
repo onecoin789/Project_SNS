@@ -16,6 +16,7 @@ import com.example.project_sns.ui.CurrentUser
 import com.example.project_sns.ui.mapper.toViewType
 import com.example.project_sns.ui.model.PostDataModel
 import com.example.project_sns.ui.util.sharePost
+import com.example.project_sns.ui.util.visibleBottomBar
 import com.example.project_sns.ui.view.main.MainSharedViewModel
 import com.example.project_sns.ui.view.main.profile.PostViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -38,7 +39,7 @@ class PostDetailFragment : BaseFragment<FragmentPostDetailBinding>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        visibleBottomBar(binding.clPD)
         initView()
     }
 
