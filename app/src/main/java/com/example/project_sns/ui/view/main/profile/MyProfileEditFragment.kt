@@ -21,6 +21,7 @@ import com.example.project_sns.ui.CurrentPost
 import com.example.project_sns.ui.CurrentUser
 import com.example.project_sns.ui.util.CheckEditProfile
 import com.example.project_sns.ui.view.main.MainSharedViewModel
+import com.example.project_sns.ui.view.main.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import gun0912.tedimagepicker.builder.TedImagePicker
 import kotlinx.coroutines.launch
@@ -130,7 +131,6 @@ class MyProfileEditFragment : BaseFragment<FragmentMyProfileEditBinding>() {
         val email = CurrentUser.userData?.email.toString()
         val createdAt = CurrentUser.userData?.createdAt.toString()
         val nameCheck = binding.tvEditNameCheck
-        Log.d("data" ,"${name}, ${intro}")
 
 
         viewLifecycleOwner.lifecycleScope.launch {

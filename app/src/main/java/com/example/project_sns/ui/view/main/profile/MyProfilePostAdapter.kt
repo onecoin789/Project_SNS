@@ -1,6 +1,7 @@
 package com.example.project_sns.ui.view.main.profile
 
 import android.graphics.drawable.Drawable
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -37,7 +38,7 @@ class MyProfilePostAdapter(private val onItemClick: (PostDataModel) -> Unit) :
                         target: Target<Drawable>,
                         isFirstResource: Boolean
                     ): Boolean {
-                        binding.pbItemMyPost.visibility = View.GONE
+                        binding.clItemMyPostLoading.visibility = View.GONE
                         return false
                     }
 
@@ -48,7 +49,7 @@ class MyProfilePostAdapter(private val onItemClick: (PostDataModel) -> Unit) :
                         dataSource: DataSource,
                         isFirstResource: Boolean
                     ): Boolean {
-                        binding.pbItemMyPost.visibility = View.GONE
+                        binding.clItemMyPostLoading.visibility = View.GONE
                         return false
                     }
 

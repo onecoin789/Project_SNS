@@ -111,6 +111,7 @@ class MainHomeFragment : BaseFragment<FragmentMainHomeBinding>() {
                 delay(1000)
                 touch(activity)
                 binding.rvHome.visibility = View.VISIBLE
+                binding.rvHome.scrollToPosition(-1)
                 binding.refreshLayoutHome.isRefreshing = false
             }
         }
@@ -181,6 +182,16 @@ class MainHomeFragment : BaseFragment<FragmentMainHomeBinding>() {
             postList = dataByCreatedAt.toMutableList()
             postAdapter.submitList(postList)
             postAdapter.notifyItemInserted(data.size - 1)
+
+            if (data.isNotEmpty()) {
+                binding.rvHome.visibility = View.VISIBLE
+//                binding.tvHomeNull.visibility = View.GONE
+                binding.ivHomeContour.visibility = View.GONE
+            } else {
+                binding.rvHome.visibility = View.GONE
+//                binding.tvHomeNull.visibility = View.VISIBLE
+                binding.ivHomeContour.visibility = View.VISIBLE
+            }
         }
     }
 

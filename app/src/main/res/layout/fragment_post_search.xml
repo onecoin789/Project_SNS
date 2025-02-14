@@ -18,7 +18,7 @@
             android:layout_height="match_parent"
             tools:listitem="@layout/rv_item_search_post"
             app:spanCount="3"
-            android:layout_marginBottom="60dp"
+            android:layout_marginBottom="70dp"
             app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>

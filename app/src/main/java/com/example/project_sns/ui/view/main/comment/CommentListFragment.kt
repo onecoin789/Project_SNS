@@ -16,8 +16,9 @@ import com.example.project_sns.ui.BaseFragment
 import com.example.project_sns.ui.CurrentUser
 import com.example.project_sns.ui.model.CommentDataModel
 import com.example.project_sns.ui.model.CommentModel
-import com.example.project_sns.ui.util.dateFormat
+import com.example.project_sns.ui.util.hideKeyboard
 import com.example.project_sns.ui.util.notTouch
+import com.example.project_sns.ui.util.postDateFormat
 import com.example.project_sns.ui.util.touch
 import com.example.project_sns.ui.view.main.MainSharedViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -25,7 +26,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.time.LocalDateTime
 import java.util.UUID
 
 @AndroidEntryPoint
@@ -101,6 +101,7 @@ class CommentListFragment : BaseFragment<FragmentCommentListBinding>() {
             if (binding.etComment.text.isEmpty()) {
                 Toast.makeText(requireContext(), "댓글을 입력해주세요!", Toast.LENGTH_SHORT).show()
             } else {
+                this.hideKeyboard()
                 initCommentData()
                 collectCommentFlow()
             }
@@ -112,6 +113,7 @@ class CommentListFragment : BaseFragment<FragmentCommentListBinding>() {
             if (binding.etComment.text.isEmpty()) {
                 Toast.makeText(requireContext(), "댓글을 입력해주세요!", Toast.LENGTH_SHORT).show()
             } else {
+                this.hideKeyboard()
                 initEditCommentData(item)
                 collectEditCommentFlow()
             }
@@ -197,21 +199,18 @@ class CommentListFragment : BaseFragment<FragmentCommentListBinding>() {
     }
 
     private fun getNewItem(item: CommentModel) {
+        binding.pbComment.visibility = View.VISIBLE
+        deleteCommentData(item)
+        mainSharedViewModel.clearCommentData()
         CoroutineScope(Dispatchers.Main).launch {
-            binding.rvComment.visibility = View.GONE
-            binding.pbComment.visibility = View.VISIBLE
-            deleteCommentData(item)
-            delay(300)
-            mainSharedViewModel.clearCommentData()
             binding.tvCommentNone.visibility = View.GONE
             binding.tvCommentSuggest.visibility = View.GONE
-            delay(300)
             val runnableRefresh = kotlinx.coroutines.Runnable {
                 getCommentData()
             }
+            delay(200)
             runnableRefresh.run()
             delay(300)
-            binding.rvComment.visibility = View.VISIBLE
             binding.pbComment.visibility = View.GONE
             mainSharedViewModel.setNullData()
         }
@@ -260,8 +259,8 @@ class CommentListFragment : BaseFragment<FragmentCommentListBinding>() {
             val commentId = UUID.randomUUID().toString()
             val uid = currentUser.uid
             val comment = binding.etComment.text.toString()
-            val time = LocalDateTime.now()
-            val commentAt = dateFormat(time)
+            val commentAt = postDateFormat()
+
 
             viewLifecycleOwner.lifecycleScope.launch {
                 mainSharedViewModel.postData.observe(viewLifecycleOwner) { postData ->
@@ -285,7 +284,7 @@ class CommentListFragment : BaseFragment<FragmentCommentListBinding>() {
 
     private fun initEditCommentData(item: CommentDataModel) {
         val editComment = binding.etComment.text.toString()
-        val time = dateFormat(LocalDateTime.now())
+        val time = postDateFormat()
 
         commentData = CommentDataModel(
             uid = item.uid,

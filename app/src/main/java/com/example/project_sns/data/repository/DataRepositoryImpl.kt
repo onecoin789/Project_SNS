@@ -577,7 +577,7 @@ class DataRepositoryImpl @Inject constructor(
                         Log.d(TAG, "0 -> 0")
                         db.collection(COLLECTION_POST)
                             .orderBy("createdAt", Query.Direction.DESCENDING)
-                            .limit(3).get().addOnSuccessListener { postData ->
+                            .limit(20).get().addOnSuccessListener { postData ->
                                 val documents = postData.documents
                                 val postResponse = postData.toObjects(PostDataResponse::class.java)
                                     .toPostListEntity()
@@ -607,7 +607,7 @@ class DataRepositoryImpl @Inject constructor(
                         Log.d(TAG, "postList.size -> $lastVisibleItem")
                         db.collection(COLLECTION_POST)
                             .orderBy("createdAt", Query.Direction.DESCENDING)
-                            .startAfter(postDocuments.last()).limit(3)
+                            .startAfter(postDocuments.last()).limit(20)
                             .get().addOnSuccessListener { postData ->
                                 val documents = postData.documents
                                 val postResponse =

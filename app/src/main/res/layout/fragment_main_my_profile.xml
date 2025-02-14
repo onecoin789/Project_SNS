@@ -57,6 +57,19 @@
                     android:background="@drawable/item_btn_point"
                     android:backgroundTint="@android:color/transparent"
                     android:contentDescription="@string/contentDescription"/>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/clMyProfileLoading"
+                    android:layout_width="match_parent"
+                    android:background="@color/item"
+                    android:layout_height="match_parent">
+                    <ProgressBar
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_margin="20dp"/>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <TextView

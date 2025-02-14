@@ -56,8 +56,10 @@ class CommentAdapter(private val onClick: CommentItemClickListener) :
 
             if (userData.uid == CurrentUser.userData?.uid) {
                 binding.tvItemCommentDelete.visibility = View.VISIBLE
+                binding.tvItemCommentEdit.visibility = View.VISIBLE
             } else {
-                binding.tvItemCommentDelete.visibility = View.INVISIBLE
+                binding.tvItemCommentDelete.visibility = View.GONE
+                binding.tvItemCommentEdit.visibility = View.GONE
             }
 
             if (commentData.reCommentSize != 0) {

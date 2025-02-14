@@ -8,10 +8,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowManager
 import androidx.activity.OnBackPressedCallback
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -76,7 +73,6 @@ class ChatRoomFragment : BaseFragment<FragmentChatRoomBinding>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
 
         initRv()
         initView()
@@ -154,14 +150,14 @@ class ChatRoomFragment : BaseFragment<FragmentChatRoomBinding>() {
             binding.ivChatRoomBack.setOnClickListener {
                 FcmUtil.clickState = false
                 chatBackToMain()
-                chatSharedViewModel.clearChatRoomId()
-                chatSharedViewModel.clearCheckData()
+//                chatSharedViewModel.clearChatRoomId()
+//                chatSharedViewModel.clearCheckData()
             }
         } else {
             binding.ivChatRoomBack.setOnClickListener {
                 chatBackButton()
-                chatSharedViewModel.clearChatRoomId()
-                chatSharedViewModel.clearCheckData()
+//                chatSharedViewModel.clearChatRoomId()
+//                chatSharedViewModel.clearCheckData()
             }
         }
     }

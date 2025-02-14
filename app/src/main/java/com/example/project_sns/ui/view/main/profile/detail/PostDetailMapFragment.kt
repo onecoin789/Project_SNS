@@ -15,6 +15,7 @@ import com.example.project_sns.R
 import com.example.project_sns.databinding.FragmentPostDetailMapBinding
 import com.example.project_sns.ui.BaseFragment
 import com.example.project_sns.ui.util.OgTagParser
+import com.example.project_sns.ui.util.visibleBottomBar
 import com.example.project_sns.ui.view.main.MainSharedViewModel
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.naver.maps.geometry.LatLng
@@ -45,7 +46,7 @@ class PostDetailMapFragment : BaseFragment<FragmentPostDetailMapBinding>(), OnMa
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        visibleBottomBar(binding.clMap)
         initMapView()
         initView()
 

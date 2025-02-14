@@ -1,24 +1,18 @@
 package com.example.project_sns.ui.view.signup
 
-import android.app.Activity
-import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.provider.MediaStore
 import android.text.method.HideReturnsTransformationMethod
 import android.text.method.PasswordTransformationMethod
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.example.project_sns.R
 import com.example.project_sns.databinding.FragmentSignUpBinding
@@ -46,6 +40,7 @@ class SignUpFragment : BaseFragment<FragmentSignUpBinding>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         initView()
     }
 
@@ -66,6 +61,12 @@ class SignUpFragment : BaseFragment<FragmentSignUpBinding>() {
             showPassword()
         }
 
+        binding.ivSignUpPhotoNull.setOnClickListener {
+            uri = null
+            binding.ivSignUpPhotoNull.visibility = View.GONE
+            binding.ivSignUpPhoto.visibility = View.GONE
+        }
+
         binding.clSignUpPhotoFrame.setOnClickListener {
             getPhoto()
         }
@@ -78,6 +79,7 @@ class SignUpFragment : BaseFragment<FragmentSignUpBinding>() {
         TedImagePicker.with(requireContext()).start {
             uri = it
             binding.ivSignUpPhoto.clipToOutline = true
+            binding.ivSignUpPhotoNull.visibility = View.VISIBLE
             Glide.with(requireContext()).load(it).into(binding.ivSignUpPhoto)
         }
     }

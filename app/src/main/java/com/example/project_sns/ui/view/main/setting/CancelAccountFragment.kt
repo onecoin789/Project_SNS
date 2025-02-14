@@ -17,6 +17,7 @@ import com.example.project_sns.ui.BaseFragment
 import com.example.project_sns.ui.BaseSnackBar
 import com.example.project_sns.ui.CurrentUser
 import com.example.project_sns.ui.util.sendToast
+import com.example.project_sns.ui.util.visibleBottomBar
 import com.example.project_sns.ui.view.main.MainSharedViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -42,6 +43,8 @@ class CancelAccountFragment : BaseFragment<FragmentCancelAccountBinding>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        visibleBottomBar(binding.clCancelAccount)
 
         initView()
         collectCancelAccountResult()

@@ -1,5 +1,6 @@
 package com.example.project_sns.ui.view.main.profile
 
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -11,6 +12,10 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.Target
 import com.example.project_sns.R
 import com.example.project_sns.databinding.FragmentMainMyProfileBinding
 import com.example.project_sns.ui.BaseFragment
@@ -33,7 +38,7 @@ class MainMyProfileFragment : BaseFragment<FragmentMainMyProfileBinding>() {
         inflater: LayoutInflater,
         container: ViewGroup?
     ): FragmentMainMyProfileBinding {
-       return FragmentMainMyProfileBinding.inflate(inflater, container, false)
+        return FragmentMainMyProfileBinding.inflate(inflater, container, false)
     }
 
 
@@ -75,6 +80,29 @@ class MainMyProfileFragment : BaseFragment<FragmentMainMyProfileBinding>() {
                         binding.ivMyProfile.clipToOutline = true
                         binding.ivMyProfile.visibility = View.VISIBLE
                         Glide.with(requireContext()).load(userData.profileImage)
+                            .listener(object : RequestListener<Drawable> {
+                                override fun onLoadFailed(
+                                    e: GlideException?,
+                                    model: Any?,
+                                    target: Target<Drawable>,
+                                    isFirstResource: Boolean
+                                ): Boolean {
+                                    binding.clMyProfileLoading.visibility = View.GONE
+                                    return false
+                                }
+
+                                override fun onResourceReady(
+                                    resource: Drawable,
+                                    model: Any,
+                                    target: Target<Drawable>?,
+                                    dataSource: DataSource,
+                                    isFirstResource: Boolean
+                                ): Boolean {
+                                    binding.clMyProfileLoading.visibility = View.GONE
+                                    return false
+                                }
+
+                            })
                             .into(binding.ivMyProfile)
                     } else {
                         binding.ivMyProfile.visibility = View.GONE

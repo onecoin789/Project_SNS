@@ -1,4 +1,4 @@
-package com.example.project_sns.data.di
+package com.example.project_sns.di
 
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore

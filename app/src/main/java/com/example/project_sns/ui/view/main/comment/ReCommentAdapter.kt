@@ -1,6 +1,7 @@
 package com.example.project_sns.ui.view.main.comment
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -9,6 +10,7 @@ import com.bumptech.glide.Glide
 import com.example.project_sns.R
 import com.example.project_sns.databinding.RvItemProgressGrayBinding
 import com.example.project_sns.databinding.RvItemReCommentBinding
+import com.example.project_sns.ui.CurrentUser
 import com.example.project_sns.ui.model.ReCommentModel
 
 class ReCommentAdapter(private val onClick: ReCommentItemClick) :
@@ -33,6 +35,14 @@ class ReCommentAdapter(private val onClick: ReCommentItemClick) :
                 Glide.with(binding.root).load(userData.profileImage).into(binding.ivReComment)
             } else {
                 Glide.with(binding.root).load(R.drawable.ic_user_fill).into(binding.ivReComment)
+            }
+
+            if (CurrentUser.userData?.uid == userData.uid) {
+                binding.tvItemReCommentEdit.visibility = View.VISIBLE
+                binding.tvItemReCommentDelete.visibility = View.VISIBLE
+            } else {
+                binding.tvItemReCommentEdit.visibility = View.GONE
+                binding.tvItemReCommentDelete.visibility = View.GONE
             }
 
             binding.tvItemReCommentName.text = userData.name

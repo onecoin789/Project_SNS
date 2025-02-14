@@ -26,6 +26,7 @@ import com.example.project_sns.ui.model.MapDataModel
 import com.example.project_sns.ui.model.PostDataModel
 import com.example.project_sns.ui.util.chatDateFormat
 import com.example.project_sns.ui.util.postDateFormat
+import com.example.project_sns.ui.util.visibleBottomBar
 import dagger.hilt.android.AndroidEntryPoint
 import gun0912.tedimagepicker.builder.TedImagePicker
 import kotlinx.coroutines.launch
