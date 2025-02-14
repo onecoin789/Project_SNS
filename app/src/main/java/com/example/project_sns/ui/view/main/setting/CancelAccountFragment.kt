@@ -104,7 +104,7 @@ class CancelAccountFragment : BaseFragment<FragmentCancelAccountBinding>() {
     private fun logout() {
         viewLifecycleOwner.lifecycleScope.launch {
             settingViewModel.logout()
-            mainSharedViewModel.logoutData()
+//            mainSharedViewModel.logoutData()
             mainSharedViewModel.checkLogin(false)
         }
     }

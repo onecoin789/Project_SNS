@@ -43,24 +43,67 @@ class FriendDetailFragment : BaseFragment<FragmentFriendDetailBinding>() {
         return FragmentFriendDetailBinding.inflate(inflater, container, false)
     }
 
+    override fun onStart() {
+        super.onStart()
+        mainViewModel.getCurrentUserData()
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-
-        getFriendList()
+        getPost()
+        checkFriendList()
         initView()
         initRv()
 
     }
 
-    private fun getFriendList() {
-        val currentUser = CurrentUser.userData?.uid
-        viewLifecycleOwner.lifecycleScope.launch {
-            if (currentUser != null) {
-                mainSharedViewModel.getFriendList(currentUser)
+    private fun checkFriendList() {
+        mainViewModel.checkFriendList()
+    }
+
+    private fun collectFriendListResult(userData: UserDataModel) {
+        mainViewModel.checkFriendListResult.observe(viewLifecycleOwner) { result ->
+            Log.d("test123123", "$result")
+            if (result == true) {
+                checkFriendRequest(userData)
+                getFriendList()
+            } else {
+                viewLifecycleOwner.lifecycleScope.launch {
+                    mainSharedViewModel.checkFriendRequest.collect { result ->
+                        Log.d("request_result", "$result")
+                        if (result == true) {
+                            binding.btnFDFriendCancel.visibility = View.VISIBLE
+                            binding.btnFDFriendRequest.visibility = View.INVISIBLE
+                            binding.btnFDFriendDelete.visibility = View.INVISIBLE
+                        } else if (result == false) {
+                            binding.btnFDFriendCancel.visibility = View.INVISIBLE
+                            binding.btnFDFriendRequest.visibility = View.VISIBLE
+                            binding.btnFDFriendDelete.visibility = View.INVISIBLE
+                        }
+                    }
+                }
             }
         }
     }
+
+    private fun getFriendList() {
+        val currentUser = CurrentUser.userData?.uid
+        if (currentUser != null) {
+            mainViewModel.getFriendList(currentUser)
+        }
+    }
+
+    private fun getPost() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            mainSharedViewModel.userData.observe(viewLifecycleOwner) { userData ->
+                if (userData != null) {
+                    mainViewModel.getUserPost(userData.uid)
+                }
+            }
+        }
+    }
+
 
     private fun initView() {
 
@@ -82,16 +125,16 @@ class FriendDetailFragment : BaseFragment<FragmentFriendDetailBinding>() {
                         Glide.with(requireContext()).load(userData.profileImage)
                             .into(binding.ivFDProfile)
                     }
-                    if (userData.uid == currentUserUid) {
+                    if (receiveUid == currentUserUid) {
                         binding.btnFDEditProfile.visibility = View.VISIBLE
                         binding.btnFDFriendList.visibility = View.VISIBLE
                         binding.btnFDFriendRequest.visibility = View.INVISIBLE
                     } else {
-                        binding.btnFDFriendRequest.visibility = View.VISIBLE
                         binding.btnFDEditProfile.visibility = View.INVISIBLE
                         binding.btnFDFriendList.visibility = View.INVISIBLE
+                        binding.btnFDFriendRequest.visibility = View.VISIBLE
                     }
-                    checkFriendRequest(userData)
+                    collectFriendListResult(userData)
                 }
 
                 binding.btnFDFriendCancel.setOnClickListener {
@@ -120,18 +163,22 @@ class FriendDetailFragment : BaseFragment<FragmentFriendDetailBinding>() {
     }
 
     private fun checkFriend(userData: UserDataModel) {
-        viewLifecycleOwner.lifecycleScope.launch {
-            mainSharedViewModel.friendList.collect { friendList ->
-                Log.d("friend_result", "$friendList")
-                if (friendList.contains(userData)) {
-                    binding.btnFDFriendDelete.visibility = View.VISIBLE
-                    binding.btnFDFriendRequest.visibility = View.INVISIBLE
-                    binding.btnFDFriendCancel.visibility = View.INVISIBLE
-                } else {
-                    binding.btnFDFriendRequest.visibility = View.VISIBLE
-                    binding.btnFDFriendDelete.visibility = View.INVISIBLE
-                    binding.btnFDFriendCancel.visibility = View.INVISIBLE
-                }
+        val currentUser = CurrentUser.userData
+        mainViewModel.friendList.observe(viewLifecycleOwner) { friendList ->
+            if (currentUser?.uid == userData.uid) {
+                Log.d("test123123", "1")
+                binding.btnFDEditProfile.visibility = View.VISIBLE
+                binding.btnFDFriendList.visibility = View.VISIBLE
+            } else if (friendList.contains(userData)) {
+                Log.d("test123123", "2")
+                binding.btnFDFriendDelete.visibility = View.VISIBLE
+                binding.btnFDFriendRequest.visibility = View.INVISIBLE
+                binding.btnFDFriendCancel.visibility = View.INVISIBLE
+            } else {
+                Log.d("test123123", "3")
+                binding.btnFDFriendRequest.visibility = View.VISIBLE
+                binding.btnFDFriendDelete.visibility = View.INVISIBLE
+                binding.btnFDFriendCancel.visibility = View.INVISIBLE
             }
         }
     }
@@ -145,42 +192,43 @@ class FriendDetailFragment : BaseFragment<FragmentFriendDetailBinding>() {
                     binding.btnFDFriendRequest.visibility = View.INVISIBLE
                     binding.btnFDFriendDelete.visibility = View.INVISIBLE
                 } else if (result == false) {
+                    Log.d("request_result", userData.name)
                     checkFriend(userData)
                 }
             }
         }
     }
 
-    private fun collectCancelFlow() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            mainSharedViewModel.cancelFriendRequest.collect { result ->
-                if (result == true) {
-
-                } else if (result == false) {
-
-                }
-            }
-        }
-    }
-
-    private fun collectAcceptFlow() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            mainSharedViewModel.requestFriendResult.collect { result ->
-                if (result == true) {
-
-                } else if (result == false){
-
-                }
-            }
-        }
-    }
+//    private fun collectCancelFlow() {
+//        viewLifecycleOwner.lifecycleScope.launch {
+//            mainSharedViewModel.cancelFriendRequest.collect { result ->
+//                if (result == true) {
+//
+//                } else if (result == false) {
+//
+//                }
+//            }
+//        }
+//    }
+//
+//    private fun collectAcceptFlow() {
+//        viewLifecycleOwner.lifecycleScope.launch {
+//            mainSharedViewModel.requestFriendResult.collect { result ->
+//                if (result == true) {
+//
+//                } else if (result == false) {
+//
+//                }
+//            }
+//        }
+//    }
 
     private fun collectDeleteFlow() {
         viewLifecycleOwner.lifecycleScope.launch {
             mainSharedViewModel.deleteFriendResult.collect { result ->
                 if (result == true) {
                     getFriendList()
-                } else if (result == false){
+                } else if (result == false) {
                     Toast.makeText(requireActivity(), "친구 삭제 실패", Toast.LENGTH_SHORT).show()
                 }
             }
@@ -192,7 +240,7 @@ class FriendDetailFragment : BaseFragment<FragmentFriendDetailBinding>() {
             sendData(data)
         }
         viewLifecycleOwner.lifecycleScope.launch {
-            mainSharedViewModel.postList.collect { postData ->
+            mainViewModel.postList.observe(viewLifecycleOwner) { postData ->
                 val postNumber = postData.size
                 val postByCreatedAt = postData.sortedByDescending { it.createdAt }
 

@@ -40,17 +40,36 @@ class MyProfileFriendFragment : BaseFragment<FragmentMyProfileFriendBinding>() {
         initView()
         initRv()
         getFriendList()
+        checkFriendList()
+        collectFriendListResult()
+        getCurrentUser()
     }
 
-    private fun getFriendList() {
-        val currentUser = CurrentUser.userData?.uid
-        viewLifecycleOwner.lifecycleScope.launch {
-            if (currentUser != null) {
-                mainSharedViewModel.getFriendList(currentUser)
+    private fun checkFriendList() {
+        mainViewModel.checkFriendList()
+    }
+
+    private fun collectFriendListResult() {
+        mainViewModel.checkFriendListResult.observe(viewLifecycleOwner) { result ->
+            if (result == true) {
+                getFriendList()
             }
         }
     }
 
+    private fun getCurrentUser() {
+        mainViewModel.getCurrentUserData()
+    }
+
+    private fun getFriendList() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            mainViewModel.currentUserData.observe(viewLifecycleOwner) { currentUser ->
+                if (currentUser != null) {
+                    mainViewModel.getFriendList(currentUser.uid)
+                }
+            }
+        }
+    }
 
     private fun initView() {
         binding.ivFriendBack.setOnClickListener {
@@ -83,7 +102,7 @@ class MyProfileFriendFragment : BaseFragment<FragmentMyProfileFriendBinding>() {
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
-            mainSharedViewModel.friendList.collect { friendData ->
+            mainViewModel.friendList.observe(viewLifecycleOwner) { friendData ->
                 friendListAdapter.submitList(friendData)
             }
         }
@@ -92,7 +111,6 @@ class MyProfileFriendFragment : BaseFragment<FragmentMyProfileFriendBinding>() {
     private fun navigateFriendDetail(item: UserDataModel) {
         viewLifecycleOwner.lifecycleScope.launch {
             mainSharedViewModel.getUserData(item.uid)
-            mainSharedViewModel.getUserPost(item.uid)
             mainSharedViewModel.checkFriendRequest(item.uid)
         }
         findNavController().navigate(R.id.friendDetailFragment)

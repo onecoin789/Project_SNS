@@ -51,10 +51,17 @@ class MainMyProfileFragment : BaseFragment<FragmentMainMyProfileBinding>() {
     }
 
     private fun getFriendList() {
-        val currentUser = CurrentUser.userData?.uid
+//        val currentUser = CurrentUser.userData?.uid
+//        viewLifecycleOwner.lifecycleScope.launch {
+//            if (currentUser != null) {
+//                mainSharedViewModel.getFriendList(currentUser)
+//            }
+//        }
         viewLifecycleOwner.lifecycleScope.launch {
-            if (currentUser != null) {
-                mainSharedViewModel.getFriendList(currentUser)
+            mainViewModel.currentUserData.observe(viewLifecycleOwner) { data ->
+                if (data != null) {
+                    mainSharedViewModel.getCurrentUserData(data.uid)
+                }
             }
         }
     }
@@ -62,7 +69,7 @@ class MainMyProfileFragment : BaseFragment<FragmentMainMyProfileBinding>() {
     private fun getPostList(currentUser: String?) {
         viewLifecycleOwner.lifecycleScope.launch {
             if (currentUser != null) {
-                mainSharedViewModel.getUserPost(currentUser)
+                mainViewModel.getUserPost(currentUser)
             }
         }
     }
@@ -71,7 +78,7 @@ class MainMyProfileFragment : BaseFragment<FragmentMainMyProfileBinding>() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             mainViewModel.getCurrentUserData()
-            mainViewModel.currentUserData.collect { userData ->
+            mainViewModel.currentUserData.observe(viewLifecycleOwner) { userData ->
                 if (userData != null) {
                     getPostList(userData.uid)
                     binding.tvMyName.text = userData.name
@@ -128,7 +135,7 @@ class MainMyProfileFragment : BaseFragment<FragmentMainMyProfileBinding>() {
             sendData(data)
         }
         viewLifecycleOwner.lifecycleScope.launch {
-            mainSharedViewModel.postList.collect { data ->
+            mainViewModel.postList.observe(viewLifecycleOwner) { data ->
                 val postNumber = data.size
                 binding.tvMyNumber.text = postNumber.toString()
                 listAdapter.submitList(data.sortedByDescending { it.createdAt })

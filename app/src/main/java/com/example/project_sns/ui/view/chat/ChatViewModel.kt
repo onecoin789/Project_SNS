@@ -16,16 +16,19 @@ import com.example.project_sns.domain.usecase.DeleteChatRoomUseCase
 import com.example.project_sns.domain.usecase.GetChatMessageDataUseCase
 import com.example.project_sns.domain.usecase.GetChatRoomDataUseCase
 import com.example.project_sns.domain.usecase.GetChatRoomListUseCase
+import com.example.project_sns.domain.usecase.GetFriendListDataUseCase
 import com.example.project_sns.domain.usecase.GetUserSessionUseCase
 import com.example.project_sns.domain.usecase.SendFirstMessageUseCase
 import com.example.project_sns.domain.usecase.SendMessageUseCase
 import com.example.project_sns.ui.mapper.toChatRoomListModel
 import com.example.project_sns.ui.mapper.toMessageListModel
+import com.example.project_sns.ui.mapper.toUserDataListModel
 import com.example.project_sns.ui.model.ChatRoomDataModel
 import com.example.project_sns.ui.model.ChatRoomModel
 import com.example.project_sns.ui.model.MessageDataModel
 import com.example.project_sns.ui.model.MessageModel
 import com.example.project_sns.ui.model.UploadMessageDataModel
+import com.example.project_sns.ui.model.UserDataModel
 import com.example.project_sns.ui.model.toEntity
 import com.example.project_sns.ui.model.toModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -48,6 +51,7 @@ class ChatViewModel @Inject constructor(
     private val checkChatRoomSessionUseCase: CheckChatRoomSessionUseCase,
     private val checkReadMessageUseCase: CheckReadMessageUseCase,
     private val getUserSessionUseCase: GetUserSessionUseCase,
+    private val getFriendListDataUseCase: GetFriendListDataUseCase,
     private val deleteChatRoomUseCase: DeleteChatRoomUseCase
 ): ViewModel() {
 
@@ -87,12 +91,24 @@ class ChatViewModel @Inject constructor(
     private val _deleteChatRoomResult = MutableLiveData<Boolean>()
     val deleteChatRoomResult: LiveData<Boolean> get() = _deleteChatRoomResult
 
+    private val _friendList = MutableLiveData<List<UserDataModel>>()
+    val friendList: LiveData<List<UserDataModel>> get() = _friendList
+
     val messageLastVisibleItem = MutableStateFlow<Int>(0)
 
 
     fun clearMessageList() {
         _messageList.value = emptyList()
         messageLastVisibleItem.value = 0
+    }
+
+    fun getFriendList(uid: String) {
+//        _friendList.value = emptyList()
+        viewModelScope.launch {
+            getFriendListDataUseCase(uid).collect { data ->
+                _friendList.value = data.toUserDataListModel()
+            }
+        }
     }
 
 

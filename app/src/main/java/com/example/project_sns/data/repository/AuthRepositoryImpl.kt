@@ -550,15 +550,40 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun checkFriendList(): Flow<Boolean> {
+        return callbackFlow {
+            val uid = auth.currentUser?.uid
+            if (uid != null) {
+                db.collection(COLLECTION_FRIEND_LIST).document(uid).addSnapshotListener { snapshot, e ->
+                    if (e != null) {
+                        trySend(false)
+                    }
+                    if (snapshot != null) {
+                        val data = snapshot.toObject(FriendDataResponse::class.java)
+                        if (data != null){
+                            if (data.friendList.isNotEmpty()) {
+                                trySend(true)
+                            } else {
+                                trySend(false)
+                            }
+                        }
+
+                    }
+                }
+            }
+            awaitClose()
+        }
+    }
+
 
     override suspend fun getFriendList(uid: String): Flow<List<UserDataEntity>> {
         return callbackFlow {
             val friendList = mutableListOf<UserDataEntity>()
             db.collection(COLLECTION_FRIEND_LIST).document(uid)
-                .addSnapshotListener { friendResponse, error ->
-                    if (error != null) {
-                        trySend(emptyList())
-                    }
+                .get().addOnSuccessListener { friendResponse ->
+//                    if (error != null) {
+//                        trySend(emptyList())
+//                    }
                     if (friendResponse != null) {
                         val friendEntity =
                             friendResponse.toObject(FriendDataResponse::class.java)?.toEntity()

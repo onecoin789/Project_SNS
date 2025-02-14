@@ -62,7 +62,7 @@ class SettingFragment : BaseFragment<FragmentSettingBinding>() {
     private fun logout() {
         viewLifecycleOwner.lifecycleScope.launch {
             settingViewModel.logout()
-            mainSharedViewModel.logoutData()
+//            mainSharedViewModel.logoutData()
             mainSharedViewModel.checkLogin(false)
             backButton()
             findNavController().navigate(R.id.loginFragment)

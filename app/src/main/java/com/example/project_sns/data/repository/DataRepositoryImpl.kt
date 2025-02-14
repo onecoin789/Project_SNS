@@ -901,11 +901,12 @@ class DataRepositoryImpl @Inject constructor(
                         "uid" to messageData.uid,
                         "chatRoomId" to messageData.chatRoomId,
                         "messageId" to messageData.messageId,
-                        "message" to null,
+                        "message" to "imageListLoading",
                         "sendAt" to messageData.sendAt,
                         "read" to messageData.read,
                         "type" to messageData.type
                     )
+
                     for (i in 0 until messageData.imageList.count()) {
                         val imageToUri = messageData.imageList[i]
                         val storageRef = storage.getReference("chat")
@@ -922,7 +923,9 @@ class DataRepositoryImpl @Inject constructor(
                                     )
                                     val imageData =
                                         mapOf("imageList" to imageList.sortedBy { it.downloadUrl })
-                                    messageDB.update(imageData)
+                                    messageDB.update(imageData).addOnSuccessListener {
+                                        messageDB.update(mapOf("message" to null))
+                                    }
                                 }
                             }
                         } else {
@@ -937,12 +940,13 @@ class DataRepositoryImpl @Inject constructor(
                                     )
                                     val imageData =
                                         mapOf("imageList" to imageList.sortedBy { it.downloadUrl })
-                                    messageDB.update(imageData)
+                                    messageDB.update(imageData).addOnSuccessListener {
+                                        messageDB.update(mapOf("message" to null))
+                                    }
                                 }
                             }
                         }
                     }
-                    delay(1500)
                     messageDB.set(message).addOnSuccessListener {
                         val lastMessageData = hashMapOf(
                             "lastMessage" to "이미지 파일",

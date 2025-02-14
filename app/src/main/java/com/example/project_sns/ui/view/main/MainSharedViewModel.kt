@@ -12,7 +12,6 @@ import com.example.project_sns.domain.usecase.CheckLoginUseCase
 import com.example.project_sns.domain.usecase.DeleteCommentUseCase
 import com.example.project_sns.domain.usecase.DeleteFriendUseCase
 import com.example.project_sns.domain.usecase.DeletePostUseCase
-import com.example.project_sns.domain.usecase.DeleteReCommentUseCase
 import com.example.project_sns.domain.usecase.EditPostUseCase
 import com.example.project_sns.domain.usecase.EditProfileUseCase
 import com.example.project_sns.domain.usecase.GetCommentDataUseCase
@@ -20,7 +19,6 @@ import com.example.project_sns.domain.usecase.GetCurrentUserPostDataUseCase
 import com.example.project_sns.domain.usecase.GetFriendListDataUseCase
 import com.example.project_sns.domain.usecase.GetLoginSessionUseCase
 import com.example.project_sns.domain.usecase.GetPagingPostUseCase
-import com.example.project_sns.domain.usecase.GetReCommentDataUseCase
 import com.example.project_sns.domain.usecase.GetUserByUidUseCase
 import com.example.project_sns.domain.usecase.SearchKakaoMapUseCase
 import com.example.project_sns.domain.usecase.SendFriendRequestUseCase
@@ -29,23 +27,18 @@ import com.example.project_sns.domain.usecase.UploadPostUseCase
 import com.example.project_sns.domain.usecase.UploadReCommentUseCase
 import com.example.project_sns.ui.ChatUser
 import com.example.project_sns.ui.CurrentPost
-import com.example.project_sns.ui.CurrentUser
 import com.example.project_sns.ui.mapper.toCommentListEntity
 import com.example.project_sns.ui.mapper.toCommentListModel
 import com.example.project_sns.ui.mapper.toEntity
 import com.example.project_sns.ui.mapper.toKakaoListEntity
 import com.example.project_sns.ui.mapper.toModel
-import com.example.project_sns.ui.mapper.toPostDataListModel
 import com.example.project_sns.ui.mapper.toPostListModel
-import com.example.project_sns.ui.mapper.toReCommentListModel
 import com.example.project_sns.ui.mapper.toUserDataListModel
 import com.example.project_sns.ui.model.CommentDataModel
 import com.example.project_sns.ui.model.CommentModel
 import com.example.project_sns.ui.model.KakaoDocumentsModel
 import com.example.project_sns.ui.model.PostDataModel
-import com.example.project_sns.ui.model.PostModel
 import com.example.project_sns.ui.model.ReCommentDataModel
-import com.example.project_sns.ui.model.ReCommentModel
 import com.example.project_sns.ui.model.UserDataModel
 import com.example.project_sns.ui.util.CheckEditProfile
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -91,8 +84,8 @@ class MainSharedViewModel @Inject constructor(
     private val _userData = MutableLiveData<UserDataModel?>()
     val userData: LiveData<UserDataModel?> get() = _userData
 
-    private val _postList = MutableStateFlow<List<PostDataModel>>(emptyList())
-    val postList: StateFlow<List<PostDataModel>> get() = _postList
+//    private val _postList = MutableStateFlow<List<PostDataModel>>(emptyList())
+//    val postList: StateFlow<List<PostDataModel>> get() = _postList
 
     private val _postData = MutableLiveData<PostDataModel?>()
     val postData: LiveData<PostDataModel?> get() = _postData
@@ -121,8 +114,8 @@ class MainSharedViewModel @Inject constructor(
     private val _requestFriendResult = MutableStateFlow<Boolean?>(null)
     val requestFriendResult: StateFlow<Boolean?> get() = _requestFriendResult
 
-    private val _friendList = MutableStateFlow<List<UserDataModel>>(emptyList())
-    val friendList: StateFlow<List<UserDataModel>> get() = _friendList
+//    private val _friendList = MutableStateFlow<List<UserDataModel>>(emptyList())
+//    val friendList: StateFlow<List<UserDataModel>> get() = _friendList
 
     private val _deleteFriendResult = MutableStateFlow<Boolean?>(null)
     val deleteFriendResult: StateFlow<Boolean?> get() = _deleteFriendResult
@@ -137,6 +130,16 @@ class MainSharedViewModel @Inject constructor(
     val commentListData: LiveData<List<CommentModel>> get() = _commentListData
 
 
+
+    //currentUserData
+    private val _currentUserData = MutableLiveData<String>()
+    val currentUserData: LiveData<String> get() = _currentUserData
+
+    fun getCurrentUserData(uid: String) {
+        viewModelScope.launch {
+            _currentUserData.value = uid
+        }
+    }
 
 
     //로그인 관련
@@ -171,9 +174,9 @@ class MainSharedViewModel @Inject constructor(
 
 
     // <!-- logoutMethod -->
-    fun logoutData() {
-        _postList.value = emptyList()
-    }
+//    fun logoutData() {
+//        _postList.value = emptyList()
+//    }
 
 
     // <!-- commentPageSet -->
@@ -296,14 +299,14 @@ class MainSharedViewModel @Inject constructor(
     }
 
 
-    fun getFriendList(uid: String) {
-        _friendList.value = emptyList()
-        viewModelScope.launch {
-            getFriendListDataUseCase(uid).collect { data ->
-                _friendList.value = data.toUserDataListModel()
-            }
-        }
-    }
+//    fun getFriendList(uid: String) {
+//        _friendList.value = emptyList()
+//        viewModelScope.launch {
+//            getFriendListDataUseCase(uid).collect { data ->
+//                _friendList.value = data.toUserDataListModel()
+//            }
+//        }
+//    }
 
 
     fun requestFriend(requestId: String, sendUid: String, receiveUid: String) {
@@ -323,14 +326,14 @@ class MainSharedViewModel @Inject constructor(
         }
     }
 
-    fun getUserPost(uid: String) {
-        viewModelScope.launch {
-            getCurrentUserPostDataUseCase(uid).collect {
-                val postList = it.toPostListModel()
-                _postList.value = postList
-            }
-        }
-    }
+//    fun getUserPost(uid: String) {
+//        viewModelScope.launch {
+//            getCurrentUserPostDataUseCase(uid).collect {
+//                val postList = it.toPostListModel()
+//                _postList.value = postList
+//            }
+//        }
+//    }
 
     fun getUserData(uid: String?) {
         viewModelScope.launch {

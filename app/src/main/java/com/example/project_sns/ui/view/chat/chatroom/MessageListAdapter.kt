@@ -94,6 +94,14 @@ class MessageListAdapter(private val onItemClick: MessageItemClickListener) :
                 it.containsValue(false)
             }
 
+            if (messageData.message == "imageListLoading") {
+                binding.pbItemChatReceiveImageLoading.visibility = View.VISIBLE
+                binding.rvItemChatReceiveImage.visibility = View.GONE
+            } else {
+                binding.pbItemChatReceiveImageLoading.visibility = View.GONE
+                binding.rvItemChatReceiveImage.visibility = View.VISIBLE
+            }
+
             if (messageData.imageList != null) {
                 val imageSize = messageData.imageList.size
                 if (imageSize <= 3) {
@@ -132,6 +140,14 @@ class MessageListAdapter(private val onItemClick: MessageItemClickListener) :
                 Glide.with(binding.root).load(R.drawable.ic_user_fill).into(binding.ivItemSenderProfile)
             }
             binding.ivItemSenderProfile.clipToOutline = true
+
+            if (messageData.message == "imageListLoading") {
+                binding.pbItemChatSendImageLoading.visibility = View.VISIBLE
+                binding.rvItemChatSendImage.visibility = View.GONE
+            } else {
+                binding.pbItemChatSendImageLoading.visibility = View.GONE
+                binding.rvItemChatSendImage.visibility = View.VISIBLE
+            }
 
             if (userData == null) {
                 binding.tvItemSenderName.text = "탈퇴한 사용자"

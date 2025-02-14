@@ -74,7 +74,6 @@ class UserSearchFragment : BaseFragment<FragmentUserSearchBinding>() {
     private fun getDataByUid(item: UserDataModel) {
         viewLifecycleOwner.lifecycleScope.launch {
             mainSharedViewModel.getUserData(item.uid)
-            mainSharedViewModel.getUserPost(item.uid)
             mainSharedViewModel.checkFriendRequest(item.uid)
         }
     }

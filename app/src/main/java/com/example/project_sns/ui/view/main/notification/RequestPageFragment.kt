@@ -61,9 +61,9 @@ class RequestPageFragment : BaseFragment<FragmentRequestPageBinding>() {
         notificationViewModel.checkRequestList()
         notificationViewModel.checkRequestResult.observe(viewLifecycleOwner) { result ->
             if (result == true) {
-                getRequestList()
+                getRefreshItem()
             } else {
-                getRequestList()
+                getRefreshItem()
             }
         }
     }
