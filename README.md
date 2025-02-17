@@ -247,7 +247,7 @@ Cube SNS는 세 가지 계층으로 구성되어 있습니다.
 
 ## 시연 영상
 
-[유튜브 링크](https://youtu.be/Mi1KWiafQKM)
+https://youtu.be/Mi1KWiafQKM
 
 
 ㅤ
