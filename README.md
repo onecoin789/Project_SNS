@@ -8,7 +8,9 @@
 
 - 개발 기간 : 7개월(2024.07 ~ 2024.02)
   
-- 개발 인원 : 1명
+- 개발 인원 : 1명 (기여도 100%)
+
+- 블로그 링크 : https://velog.io/@one_coin/posts
 ㅤ
 
 
@@ -17,17 +19,99 @@
 
 
 ## 목차
-> 1. [앱 기능 소개](#앱-기능-소개)
-> 2. [기술 스택](#기술-스택)
-> 3. [Architecture](#architecture)
-> 4. [시연 영상](#시연-영상)
-> 5. [블로그 링크](#블로그-링크)
+> 1. [기술 스택](#기술-스택)
+> 2. [Architecture](#architecture)
+> 3. [시연 영상](#시연-영상)
+> 4. [앱 기능 소개](#앱-기능-소개)
 
 
 ㅤ
 
 
 ㅤ
+
+
+
+## Architecture
+
+**Cube SNS**는 Clean Architecture를 기반으로 하고 있습니다.
+
+![Image](https://github.com/user-attachments/assets/80955ea4-f3f1-4e04-b2be-0f179c423acf)
+
+Cube SNS는 세 가지 계층으로 구성되어 있습니다.
+
+### UI Layer
+- UI Layer 에서는 사용자와 상호작용 하는 화면을 구성하는 UI 요소와 ViewModel이 위치해 있습니다.<br/>ViewModel의 LiveData가 데이터를 관찰하고 있다가 변화를 감지해 UI에 적용시켜 줍니다.
+
+
+### Domain Layer
+- Domain Layer 를 통하여 나중에 앱의 기능이 추가 되거나 수정될 경우를 대비해 유지 보수에 이점을 얻었습니다.
+
+
+### Data Layer
+- 외부의 데이터를 받아오는 역할을 하는 계층입니다.
+
+
+ㅤ
+
+
+ㅤ
+
+
+## 시연 영상
+
+[https://youtu.be/BBEdpLKbM00](https://youtu.be/BBEdpLKbM00)
+
+
+ㅤ
+
+
+ㅤ
+
+
+## 기술 스택 
+
+- Jetpack
+  - ViewModel
+  - ViewBinding
+  - Hilt
+  - ViewPager2
+  - SwipeRefreshLayout
+
+  
+- Architecture
+  - Clean Architecture
+  - Domain Layer
+  - Repository Pattern
+
+  
+- Firebase
+  - Firebase Firestore
+  - Firebase Authentication
+  - Firebase Functions
+  - Firebase Cloud Messaging
+
+
+- Library
+  - Retrofit2 및 OkHttp3
+  - Glide
+  - ExoPlayer
+  - Naver Maps Api
+  - Kakao Maps Api
+  - kakao login api
+  - OAuth2
+
+- 비동기
+  - Async
+  - Flow
+  - Coroutine
+
+
+ㅤ
+
+
+ㅤ
+
 
 
 ## 앱 기능 소개
@@ -175,87 +259,3 @@
 ㅤ
 
 
-## 기술 스택 
-
-- Jetpack
-  - ViewModel
-  - ViewBinding
-  - Hilt
-  - ViewPager2
-  - SwipeRefreshLayout
-
-  
-- Architecture
-  - Clean Architecture
-  - Domain Layer
-  - Repository Pattern
-
-  
-- Firebase
-  - Firebase Firestore
-  - Firebase Authentication
-  - Firebase Functions
-  - Firebase Cloud Messaging
-
-
-- Library
-  - Retrofit2 및 OkHttp3
-  - Glide
-  - ExoPlayer
-  - Naver Maps Api
-  - Kakao Maps Api
-  - kakao login api
-  - OAuth2
-
-- 비동기
-  - Async
-  - Flow
-  - Coroutine
-
-
-ㅤ
-
-
-ㅤ
-
-
-## Architecture
-
-**Cube SNS**는 Clean Architecture를 기반으로 하고 있습니다.
-
-![Image](https://github.com/user-attachments/assets/80955ea4-f3f1-4e04-b2be-0f179c423acf)
-
-Cube SNS는 세 가지 계층으로 구성되어 있습니다.
-
-### UI Layer
-- UI Layer 에서는 사용자와 상호작용 하는 화면을 구성하는 UI 요소와 ViewModel이 위치해 있습니다.<br/>ViewModel의 LiveData가 데이터를 관찰하고 있다가 변화를 감지해 UI에 적용시켜 줍니다.
-
-
-### Domain Layer
-- Domain Layer 를 통하여 나중에 앱의 기능이 추가 되거나 수정될 경우를 대비해 유지 보수에 이점을 얻었습니다.
-
-
-### Data Layer
-- 외부의 데이터를 받아오는 역할을 하는 계층입니다.
-
-
-ㅤ
-
-
-ㅤ
-
-
-## 시연 영상
-
-[https://youtu.be/BBEdpLKbM00](https://youtu.be/BBEdpLKbM00)
-
-
-ㅤ
-
-
-ㅤ
-
-
-## 블로그 링크
-
-https://velog.io/@one_coin/posts
