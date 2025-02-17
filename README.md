@@ -79,7 +79,7 @@
 
 **Cube SNS**는 Clean Architecture를 기반으로 하고 있습니다.
 
-![Image](https://github.com/user-attachments/assets/80955ea4-f3f1-4e04-b2be-0f179c423acf)
+![Image](https://github.com/user-attachments/assets/74f37bc2-43b5-4515-846b-8eadd2a8d9a0)
 
 Cube SNS는 세 가지 계층으로 구성되어 있습니다.
 
