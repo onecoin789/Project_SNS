@@ -135,6 +135,9 @@ class PostDetailFragment : BaseFragment<FragmentPostDetailBinding>() {
                 binding.tvPDComment.setOnClickListener {
                     findNavController().navigate(R.id.commentFragment)
                 }
+                binding.tvPDHeartCount.setOnClickListener {
+                    findNavController().navigate(R.id.postLikeUserFragment)
+                }
             }
         }
     }

@@ -179,9 +179,8 @@ class MainHomeFragment : BaseFragment<FragmentMainHomeBinding>() {
     private fun initPostData() {
         mainViewModel.pagingData.observe(viewLifecycleOwner) { data ->
             val dataByCreatedAt = data.sortedByDescending { it.postData.createdAt }
-            postList = dataByCreatedAt.toMutableList()
+            postList = data.toMutableList()
             postAdapter.submitList(postList)
-            postAdapter.notifyItemInserted(data.size - 1)
 
             if (data.isNotEmpty()) {
                 binding.rvHome.visibility = View.VISIBLE
@@ -220,7 +219,6 @@ class MainHomeFragment : BaseFragment<FragmentMainHomeBinding>() {
 
     private fun navigateView() {
         binding.ivHomeDM.setOnClickListener {
-            getFriendList()
             findNavController().navigate(R.id.action_mainFragment_to_chatListFragment)
         }
         binding.ivHomeNotification.setOnClickListener {
@@ -237,19 +235,18 @@ class MainHomeFragment : BaseFragment<FragmentMainHomeBinding>() {
     private fun getDataByUid(item: PostModel) {
         viewLifecycleOwner.lifecycleScope.launch {
             mainSharedViewModel.getUserData(item.userData.uid)
-            mainSharedViewModel.getUserPost(item.userData.uid)
             mainSharedViewModel.checkFriendRequest(item.userData.uid)
         }
     }
 
-    private fun getFriendList() {
-        val currentUser = CurrentUser.userData?.uid
-        viewLifecycleOwner.lifecycleScope.launch {
-            if (currentUser != null) {
-                mainSharedViewModel.getFriendList(currentUser)
-            }
-        }
-    }
+//    private fun getFriendList() {
+//        val currentUser = CurrentUser.userData?.uid
+//        viewLifecycleOwner.lifecycleScope.launch {
+//            if (currentUser != null) {
+//                mainViewModel.getFriendList(currentUser)
+//            }
+//        }
+//    }
 
 
     private fun navigateFragment() {

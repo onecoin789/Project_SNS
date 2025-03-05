@@ -147,7 +147,7 @@ fun touch(activity: Activity?) {
 fun visibleBottomBar(view: View) {
     ViewCompat.setOnApplyWindowInsetsListener(view) { v, insets ->
         val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-        v.setPadding(0, 0, 0,systemBars.bottom)
+        v.setPadding(0, systemBars.top, 0,systemBars.bottom)
         insets
     }
 }

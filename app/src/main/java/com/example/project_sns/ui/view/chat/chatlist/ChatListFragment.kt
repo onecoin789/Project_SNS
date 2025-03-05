@@ -18,8 +18,10 @@ import com.example.project_sns.databinding.FragmentChatListBinding
 import com.example.project_sns.ui.BaseDialog
 import com.example.project_sns.ui.BaseFragment
 import com.example.project_sns.ui.BaseSnackBar
+import com.example.project_sns.ui.CurrentUser
 import com.example.project_sns.ui.model.ChatRoomModel
 import com.example.project_sns.ui.model.UserDataModel
+import com.example.project_sns.ui.util.visibleBottomBar
 import com.example.project_sns.ui.view.chat.ChatSharedViewModel
 import com.example.project_sns.ui.view.chat.ChatViewModel
 import com.example.project_sns.ui.view.main.MainSharedViewModel
@@ -57,10 +59,13 @@ class ChatListFragment : BaseFragment<FragmentChatListBinding>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        visibleBottomBar(binding.clChatList)
+
         initRv()
         initView()
         checkChatRoomList()
         collectCheckChatRoomList()
+        getFriendList()
 
 
     }
@@ -71,6 +76,14 @@ class ChatListFragment : BaseFragment<FragmentChatListBinding>() {
             chatViewModel.checkChatRoomList()
         }
     }
+
+    private fun getFriendList() {
+        val currentUserData = CurrentUser.userData
+        if (currentUserData != null) {
+            chatViewModel.getFriendList(currentUserData.uid)
+        }
+    }
+
 
     private fun collectCheckChatRoomList() {
         viewLifecycleOwner.lifecycleScope.launch {
@@ -99,7 +112,7 @@ class ChatListFragment : BaseFragment<FragmentChatListBinding>() {
 
     private fun initView() {
         viewLifecycleOwner.lifecycleScope.launch {
-            mainSharedViewModel.friendList.collect { friendList ->
+            chatViewModel.friendList.observe(viewLifecycleOwner) { friendList ->
                 if (friendList.isEmpty()) {
                     binding.rvChatListFriend.visibility = View.GONE
                 } else {
@@ -198,23 +211,25 @@ class ChatListFragment : BaseFragment<FragmentChatListBinding>() {
 
     private fun checkChatRoomExist(userData: UserDataModel) {
         CoroutineScope(Dispatchers.Main).launch {
-            Log.d("ChatListFragment_userData", "$userData")
+            Log.d("check_chat_userData", "$userData")
             checkFirst(userData)
             delay(200)
             chatSharedViewModel.checkChatRoomData.observe(viewLifecycleOwner) { result ->
-                Log.d("ChatListFragment", "$result")
+                Log.d("check_chat_result", "$result")
                 if (result == true) {
                     getChatRoomData(userData)
-                    Log.d("ChatListFragment", "1")
                     chatViewModel.chatRoomData.observe(viewLifecycleOwner) { data ->
                         if (data != null) {
+                            Log.d("check_chat_go", "${data.participant}")
                             chatSharedViewModel.getChatRoomId(data.chatRoomId)
+                            chatSharedViewModel.getChatRoomData(userData.uid)
                             onClickFriendList(userData)
                         }
                     }
                 } else if (result == false) {
                     onClickFriendList(userData)
-                    Log.d("ChatListFragment", "2")
+                    Log.d("check_chat_go", userData.uid)
+                    Log.d("check_chat_stop", "2")
                 }
             }
         }

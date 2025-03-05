@@ -7,7 +7,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="60dp"
         android:layout_height="60dp"
-        android:background="@drawable/item_radius_3"
+        android:background="@drawable/item_radius_5"
         android:backgroundTint="@color/chat"
         android:layout_marginStart="2dp"
         android:layout_marginTop="3dp"
@@ -18,10 +18,16 @@
             android:id="@+id/ivItemChatImage"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@drawable/item_radius_3"
+            android:background="@drawable/item_radius_5"
             android:scaleType="centerCrop"
-            android:backgroundTint="@color/black"
+            android:backgroundTint="@color/item"
             android:contentDescription="@string/contentDescription"/>
+
+        <ProgressBar
+            android:id="@+id/pbItemChatImage"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="12dp"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

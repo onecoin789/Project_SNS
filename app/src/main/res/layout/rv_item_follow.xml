@@ -25,6 +25,7 @@
             android:background="@drawable/item_profile"
             android:layout_marginVertical="10dp"
             android:layout_marginStart="10dp"
+            android:scaleType="centerCrop"
             android:contentDescription="@string/contentDescription"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"

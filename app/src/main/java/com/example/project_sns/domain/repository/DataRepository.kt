@@ -74,4 +74,6 @@ interface DataRepository {
 
     suspend fun updateLike(postId: String, likeValue: Boolean): Flow<Boolean>
 
+    suspend fun getLikeUserData(postId: String): Flow<List<UserDataEntity>>
+
 }
