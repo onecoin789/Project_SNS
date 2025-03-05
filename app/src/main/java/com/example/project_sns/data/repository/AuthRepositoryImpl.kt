@@ -275,6 +275,11 @@ class AuthRepositoryImpl @Inject constructor(
                 .getHttpsCallable("kakaoCustomAuth")
                 .call(data)
                 .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        Log.d("kakao_task", "1")
+                    } else {
+                        Log.d("kakao_task", "2")
+                    }
                     val result = task.result?.getData() as HashMap<*, *>
                     var mKey: String? = null
                     for (key in result.keys) {

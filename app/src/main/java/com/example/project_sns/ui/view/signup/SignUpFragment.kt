@@ -79,6 +79,7 @@ class SignUpFragment : BaseFragment<FragmentSignUpBinding>() {
         TedImagePicker.with(requireContext()).start {
             uri = it
             binding.ivSignUpPhoto.clipToOutline = true
+            binding.ivSignUpPhoto.visibility = View.VISIBLE
             binding.ivSignUpPhotoNull.visibility = View.VISIBLE
             Glide.with(requireContext()).load(it).into(binding.ivSignUpPhoto)
         }

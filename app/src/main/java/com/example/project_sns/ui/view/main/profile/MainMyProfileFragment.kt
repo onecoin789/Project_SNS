@@ -113,6 +113,7 @@ class MainMyProfileFragment : BaseFragment<FragmentMainMyProfileBinding>() {
                             .into(binding.ivMyProfile)
                     } else {
                         binding.ivMyProfile.visibility = View.GONE
+                        binding.clMyProfileLoading.visibility = View.GONE
                     }
                     if (userData.intro == "") {
                         binding.tvMyIntro.text = "한줄 소개"

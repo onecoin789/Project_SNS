@@ -118,7 +118,7 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
                             Toast.makeText(requireContext(), checkLogin.message, Toast.LENGTH_SHORT)
                                 .show()
                             Thread.sleep(3000)
-                            findNavController().navigate(R.id.mainFragment)
+                            mainSharedViewModel.checkLogin(true)
                         }
 
                         is CheckLogin.LoginFail -> {

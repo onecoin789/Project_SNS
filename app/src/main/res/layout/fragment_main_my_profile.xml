@@ -61,7 +61,6 @@
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/clMyProfileLoading"
                     android:layout_width="match_parent"
-                    android:background="@color/item"
                     android:layout_height="match_parent">
                     <ProgressBar
                         android:layout_width="match_parent"

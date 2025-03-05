@@ -10,6 +10,7 @@ import com.example.project_sns.data.mapper.toReCommentListEntity
 import com.example.project_sns.data.mapper.toUserListEntity
 import com.example.project_sns.data.response.ChatRoomDataResponse
 import com.example.project_sns.data.response.CommentDataResponse
+import com.example.project_sns.data.response.FriendDataResponse
 import com.example.project_sns.data.response.MessageDataResponse
 import com.example.project_sns.data.response.PostDataResponse
 import com.example.project_sns.data.response.ReCommentDataResponse
@@ -33,6 +34,7 @@ import com.example.project_sns.domain.repository.DataRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FieldValue
+import com.google.firebase.firestore.Filter
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.storage.FirebaseStorage
@@ -652,21 +654,20 @@ class DataRepositoryImpl @Inject constructor(
             val senderUid = auth.currentUser?.uid
             if (senderUid != null) {
                 db.collection(COLLECTION_CHAT)
-                    .whereArrayContainsAny("participant", listOf(senderUid, recipientUid))
-                    .addSnapshotListener { snapshot, e ->
-                        if (e != null) {
-                            Log.d("check_chat2", "${e.message}")
-                            trySend(false)
-                        }
+                    .where(Filter.or(Filter.equalTo("participant", listOf(recipientUid, senderUid)), Filter.equalTo("participant", listOf(senderUid, recipientUid))))
+                    .get().addOnSuccessListener { snapshot ->
                         if (snapshot != null) {
-                            val document = snapshot.documents
-                            if (document.size != 0) {
-                                Log.d("check_chat1", "$document")
-                                trySend(true)
-                            } else {
-                                Log.d("check_chat2", "null data")
-                                trySend(false)
-                            }
+                            val chatRoomList = snapshot.toObjects(ChatRoomDataResponse::class.java)
+                                .toChatRoomListEntity()
+                                if (chatRoomList.isNotEmpty()) {
+                                    Log.d("check_chat1", "$chatRoomList")
+                                    trySend(true)
+                                } else {
+                                    Log.d("check_chat2", "$chatRoomList")
+                                    trySend(false)
+                                }
+                        } else {
+                            Log.d("check_chat3", "null data")
                         }
                     }
             }
@@ -686,10 +687,14 @@ class DataRepositoryImpl @Inject constructor(
                             trySend(null)
                         }
                         if (chatRoomData != null) {
-                            val chatRoomEntity =
-                                chatRoomData.toObjects(ChatRoomDataResponse::class.java).first()
-                                    .toEntity()
-                            trySend(chatRoomEntity)
+                            val chatRoomList =
+                                chatRoomData.toObjects(ChatRoomDataResponse::class.java).toChatRoomListEntity()
+                            if (chatRoomList.isNotEmpty()) {
+                                val chatRoomEntity = chatRoomList.last()
+                                trySend(chatRoomEntity)
+                            } else {
+                                trySend(null)
+                            }
                         } else {
                             trySend(null)
                         }
@@ -1153,7 +1158,7 @@ class DataRepositoryImpl @Inject constructor(
                                                             )
                                                         )
                                                     }
-                                                    trySend(chatRoomList)
+                                                    trySend(chatRoomList.sortedByDescending { it.chatRoomData.lastMessageData.lastSendAt })
                                                 }
                                         }
                                 }
@@ -1423,6 +1428,44 @@ class DataRepositoryImpl @Inject constructor(
                     transaction.update(postRef, "likePost", FieldValue.arrayRemove(currentUser))
                 }
             }
+            awaitClose()
+        }
+    }
+
+    override suspend fun getLikeUserData(postId: String): Flow<List<UserDataEntity>> {
+        return callbackFlow {
+            val friendList = mutableListOf<UserDataEntity>()
+            db.collection(COLLECTION_POST).document(postId)
+                .get().addOnSuccessListener { postResponse ->
+//                    if (error != null) {
+//                        trySend(emptyList())
+//                    }
+                    if (postResponse != null) {
+                        val postEntity =
+                            postResponse.toObject(PostDataResponse::class.java)?.toEntity()
+                        if (postEntity != null) {
+                            postEntity.likePost.map { friendUid ->
+                                db.collection(COLLECTION_USER).document(friendUid)
+                                    .addSnapshotListener { userData, error ->
+                                        if (error != null) {
+                                            trySend(emptyList())
+                                        }
+                                        if (userData != null) {
+                                            val userEntity =
+                                                userData.toObject(UserDataResponse::class.java)
+                                                    ?.toEntity()
+                                            if (userEntity != null) {
+                                                friendList.addAll(listOf(userEntity))
+                                                trySend(friendList)
+                                            }
+                                        }
+                                    }
+                            }
+                        } else {
+                            trySend(emptyList())
+                        }
+                    }
+                }
             awaitClose()
         }
     }

@@ -254,6 +254,10 @@
         android:name="com.example.project_sns.ui.view.main.setting.CancelAccountFragment"
         android:label="fragment_cancel_account"
         tools:layout="@layout/fragment_cancel_account" />
+    <dialog
+        android:id="@+id/postLikeUserFragment"
+        android:name="com.example.project_sns.ui.view.main.profile.detail.PostLikeUserFragment"
+        android:label="PostLikeUserFragment" />
 
 
 </navigation>

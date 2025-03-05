@@ -211,23 +211,25 @@ class ChatListFragment : BaseFragment<FragmentChatListBinding>() {
 
     private fun checkChatRoomExist(userData: UserDataModel) {
         CoroutineScope(Dispatchers.Main).launch {
-            Log.d("ChatListFragment_userData", "$userData")
+            Log.d("check_chat_userData", "$userData")
             checkFirst(userData)
             delay(200)
             chatSharedViewModel.checkChatRoomData.observe(viewLifecycleOwner) { result ->
-                Log.d("ChatListFragment", "$result")
+                Log.d("check_chat_result", "$result")
                 if (result == true) {
                     getChatRoomData(userData)
-                    Log.d("ChatListFragment", "1")
                     chatViewModel.chatRoomData.observe(viewLifecycleOwner) { data ->
                         if (data != null) {
+                            Log.d("check_chat_go", "${data.participant}")
                             chatSharedViewModel.getChatRoomId(data.chatRoomId)
+                            chatSharedViewModel.getChatRoomData(userData.uid)
                             onClickFriendList(userData)
                         }
                     }
                 } else if (result == false) {
                     onClickFriendList(userData)
-                    Log.d("ChatListFragment", "2")
+                    Log.d("check_chat_go", userData.uid)
+                    Log.d("check_chat_stop", "2")
                 }
             }
         }

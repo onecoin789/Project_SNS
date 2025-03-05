@@ -86,7 +86,7 @@ class ChatRoomFragment : BaseFragment<FragmentChatRoomBinding>() {
 
         sendUserSession()
 
-        getMessageList()
+
 
         binding.rvChat.smoothScrollToPosition(messageListSize)
     }
@@ -300,13 +300,13 @@ class ChatRoomFragment : BaseFragment<FragmentChatRoomBinding>() {
                     chatSharedViewModel.getChatRoomData(userData.uid)
                 }
             }
-            delay(500)
             chatSharedViewModel.chatRoomData.observe(viewLifecycleOwner) {
                 if (it != null) {
                     chatSharedViewModel.getChatRoomId(it.chatRoomId)
-                    checkChatRoomExist()
                 }
             }
+            delay(500)
+            checkChatRoomExist()
             delay(500)
             getMessageList()
         }
@@ -314,15 +314,13 @@ class ChatRoomFragment : BaseFragment<FragmentChatRoomBinding>() {
 
     private fun getMessageList() {
         val lastVisibleItem = chatViewModel.messageLastVisibleItem
-        viewLifecycleOwner.lifecycleScope.launch {
-            chatSharedViewModel.chatRoomId.observe(viewLifecycleOwner) { chatRoomId ->
-                Log.d("chatRoomId", "$chatRoomId")
-                if (chatRoomId != null) {
-                    chatViewModel.getMessageList(chatRoomId, lastVisibleItem)
-                }
+        chatSharedViewModel.chatRoomId.observe(viewLifecycleOwner) { chatRoomId ->
+            Log.d("chatRoomId", "$chatRoomId")
+            if (chatRoomId != null) {
+                chatViewModel.getMessageList(chatRoomId, lastVisibleItem)
             }
-            binding.rvChat.smoothScrollToPosition(messageListSize)
         }
+        binding.rvChat.smoothScrollToPosition(messageListSize)
     }
 
 
@@ -511,7 +509,7 @@ class ChatRoomFragment : BaseFragment<FragmentChatRoomBinding>() {
             chatViewModel.sendFirstMessageResult.observe(viewLifecycleOwner) { result ->
                 if (result == true) {
                     binding.etChat.text.clear()
-                    setChatRoom()
+                    getChatRoomData()
                 } else if (result == false) {
                     Log.d(TAG, "첫 메세지 보내기 실패")
                 }
@@ -602,7 +600,7 @@ class ChatRoomFragment : BaseFragment<FragmentChatRoomBinding>() {
                 if (result == true) {
                     binding.clChatRoomImageList.visibility = View.GONE
                     binding.clChatRoomSendChat.visibility = View.VISIBLE
-                    setChatRoom()
+//                    setChatRoom()
                 } else if (result == false) {
                     Log.d(TAG, "메세지 보내기 실패")
                 }
